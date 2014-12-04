@@ -28,7 +28,7 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 }
 
 
-void GenHists::fill(Event & event){
+void GenHists::fill(const Event & event){
     // fill the histograms. Don't forget to always use the weight when filling:
 //     double weight = event.weight;
     

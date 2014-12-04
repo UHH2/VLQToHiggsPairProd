@@ -30,7 +30,7 @@ StandardHists::StandardHists(Context & ctx, const string & dirname): Hists(ctx, 
 }
 
 
-void StandardHists::fill(Event & event){
+void StandardHists::fill(const Event & event){
     // fill the histograms. Don't forget to always use the weight when filling:
     double weight = event.weight;
     
