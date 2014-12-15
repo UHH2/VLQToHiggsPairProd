@@ -24,9 +24,6 @@ StandardHists::StandardHists(Context & ctx, const string & dirname): Hists(ctx, 
 
   // primary vertices
   book<TH1F>("N_pv", "N^{PV}", 50, 0, 50);
-  
-  // b variables
-  book<TH1F>("DeltaR_bb", "#Delta R_{bb}", 50, 0, 5);
 }
 
 
@@ -62,29 +59,7 @@ void StandardHists::fill(const Event & event){
     int Npvs = event.pvs->size();
     hist("N_pv")->Fill(Npvs, weight);
     
-    GenParticle const * b1 = 0;
-    GenParticle const * b2 = 0;
     
-    for (GenParticle const & igenp : *event.genparticles){
-        if (abs(igenp.pdgId()) == 5){
-            GenParticle const * imother = igenp.mother(event.genparticles);
-            if (!imother) imother = igenp.mother(event.genparticles, 2);
-            if (!imother) continue;
-            else if (abs(imother->pdgId()) == 25) {
-                if (!b1) b1 = &igenp;
-                else if (b1->index() != igenp.index()){
-                    GenParticle const * b1mother = b1->mother(event.genparticles);
-                    if (!b1mother) b1mother = b1->mother(event.genparticles, 2);
-                    if (b1mother->index() == imother->index()) b2 = &igenp;
-                }
-            }
-        }
-    }
-    
-    if (b1 && b2){
-        double deltaR = b1->deltaR(*b2);
-        hist("DeltaR_bb")->Fill(deltaR, weight);
-    }
   
   
 }
