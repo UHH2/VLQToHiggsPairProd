@@ -1,4 +1,4 @@
-#include "UHH2/VLQToHiggsPairProd/include/StandardSelections.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
 #include "UHH2/core/include/Event.h"
 
 #include <stdexcept>

@@ -1,1 +1,11 @@
 obj/*
+input/
+output/
+*~
+*NOT
+scripts/go.py
+scripts/Varial
+scripts/SFrame_Plotter/Plots
+output/plot.py
+input/jochen-files
+input/own-files

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2vlqToHPairProd"/>
+    <Package Name="SUHH2vlqToHPairProd.par" />
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
+        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TpTp_40x25" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_0_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_1_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_2_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_3_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_4_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_5_Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" /> -->
+        </InputData>
+        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TpTp_20x25" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_6_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_7_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_8_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_9_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_10_Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" /> -->
+        </InputData>
+        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TTJets" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_0_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_100_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_101_Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>                
+            
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
+            <Item Name="ElectronCollection" Value="slimmedElectrons" />
+            <Item Name="MuonCollection" Value="slimmedMuons" /> 
+            <Item Name="TauCollection" Value="slimmedTaus" />
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+
+            <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:
+            
+                 PrimaryVertexCollection
+                 ElectronCollection
+                 MuonCollection
+                 TauCollection
+                 PhotonCollection
+                 JetCollection
+                 TopJetCollection
+                 METName
+                 
+                 GenInfoName
+                 GenJetCollection
+                 GenTopJetCollection
+                 GenParticleCollection
+                 
+                 Note that the last four are only read in for MC (InputData Type="MC"), so it is save to specify
+                 them for real data, although those branches do not exist.
+                 
+                 As 'Value', always use the branch name (if in doubt, open the input file in ROOT).
+                 
+                 By default, triggers are read. To explicitly disable reading triggers, use:
+                 <Item Name="readTrigger" Value="false" />
+            -->
+            
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <Item Name="AnalysisModule" Value="VLQToHiggsPairProdAnalysis" /> 
+            
+            <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
+            <Item Name="TestKey" Value="TestKeyValue" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

@@ -1,4 +1,4 @@
-#include "UHH2/VLQToHiggsPairProd/include/StandardHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
 #include "UHH2/core/include/Event.h"
 
 #include "TH1F.h"
@@ -7,7 +7,7 @@
 using namespace std;
 using namespace uhh2;
 
-StandardHists::StandardHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
+VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   // book all histograms here
   // jets
   book<TH1F>("N_jets", "N_{jets}", 20, 0, 20);  
@@ -27,7 +27,7 @@ StandardHists::StandardHists(Context & ctx, const string & dirname): Hists(ctx, 
 }
 
 
-void StandardHists::fill(const Event & event){
+void VLQToHiggsPairProdHists::fill(const Event & event){
     // fill the histograms. Don't forget to always use the weight when filling:
     double weight = event.weight;
     
@@ -64,4 +64,4 @@ void StandardHists::fill(const Event & event){
   
 }
 
-StandardHists::~StandardHists(){}
+VLQToHiggsPairProdHists::~VLQToHiggsPairProdHists(){}

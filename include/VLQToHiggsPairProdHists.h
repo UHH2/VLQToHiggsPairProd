@@ -6,11 +6,11 @@
  *   Example class for booking and filling histograms, the new version using AnalysisModule mechanisms.
  */
 
-class StandardHists: public uhh2::Hists {
+class VLQToHiggsPairProdHists: public uhh2::Hists {
 public:
     // use the same constructor arguments as Hists for forwarding:
-    StandardHists(uhh2::Context & ctx, const std::string & dirname);
+    VLQToHiggsPairProdHists(uhh2::Context & ctx, const std::string & dirname);
 
     virtual void fill(const uhh2::Event & ev) override;
-    virtual ~StandardHists();
+    virtual ~VLQToHiggsPairProdHists();
 };
