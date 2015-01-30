@@ -1,38 +1,43 @@
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
-#include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/AnalysisModule.h"
 
 #include <stdexcept>
 
 using namespace uhh2;
 using namespace std;
+using namespace vlqToHiggsPair;
 
-NJetSelection::NJetSelection(int nmin_, int nmax_): nmin(nmin_), nmax(nmax_){}
+JetPtSelection::JetPtSelection(float minpt, float maxpt, const boost::optional<JetId> & jetid) : minpt_(minpt), maxpt_(maxpt), jetid_(jetid) {} 
 
-bool NJetSelection::passes(const Event & event){
-    int njets = event.jets->size();
-    return njets >= nmin && (nmax < 0 || njets <= nmax);
+bool JetPtSelection::passes(const Event & event)
+{
+    const auto & jets = event.jets;
+
+    assert(jets);
+    bool pass = false;
+    if (jets->size() > 0)
+    {
+        pass = (*jets)[0].pt() > minpt_ && (maxpt_ < 0 || (*jets)[0].pt() < maxpt_);
+        if (pass && jetid_)
+        {
+            pass = (*jetid_)((*jets)[0], event);
+        }
+    }
+
+    return pass;
+
 }
 
+HTSelection::HTSelection(Context & ctx, float minht, float maxht) : h_ht_(ctx.get_handle<float>("HT")), minht_(minht), maxht_(maxht) {} 
 
-// see https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation53XReReco
-float btagging::csv_threshold(const csv_wp & wp){
-    using namespace btagging;
-    switch(wp){
-        case csv_wp::loose: return 0.244f;
-        case csv_wp::medium: return 0.679f;
-        case csv_wp::tight: return 0.898f;
+bool HTSelection::passes(const Event & event)
+{
+    if (event.get_state(h_ht_)==GenericEvent::state::valid)
+    {
+        float ht = event.get(h_ht_);
+        return ht > minht_ && (maxht_ < 0 || ht < maxht_);
     }
-    // This should never happen; even if, the coompiler should warn in the switch.
-    // But to avoid a compiler warning that no value is returned, include this line:
-    throw invalid_argument("unknown working point given to btagging::csv_threshold");
-}
 
-NBTagSelection::NBTagSelection(int nmin_, int nmax_, btagging::csv_wp wp): nmin(nmin_), nmax(nmax_), min_csv(btagging::csv_threshold(wp)){}
+    return false;
 
-bool NBTagSelection::passes(const Event & event){
-    int nbtag = 0;
-    for(const Jet & j : *event.jets){
-        if(j.btag_combinedSecondaryVertex() >= min_csv) ++nbtag;
-    }
-    return nbtag >= nmin && (nmax < 0 || nbtag <= nmax);
 }

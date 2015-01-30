@@ -13,6 +13,8 @@ dirname = 'VLQToHiggsPairProd'
 
 varial.settings.rootfile_postfixes += ['.pdf']
 
+varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
+
 current_tag = varial.settings.git_tag
 
 # def new_commit():
@@ -36,23 +38,34 @@ current_tag = varial.settings.git_tag
 
 
 def make_eff_graphs(wrps):
-    token = lambda w: w.legend + ":" + "/".join(w.in_file_path)[:-4]
+    def token(w):
+        token_str = "/".join(w.in_file_path)
+        token_str = token_str.replace('_sub_', '_')
+        token_str = token_str.replace('_tot_', '_')
+        return w.legend + ":" + token_str
     subs, tots = {}, {}
     res = []
     for wrp in wrps:
         yield wrp
-        if wrp.name.endswith('_sub'):
+        if '_sub_' in wrp.name:
             t = token(wrp)
             if t in tots:
                 res.append(varial.operations.eff((wrp, tots.pop(t))))
             else:
                 subs[t] = wrp
-        elif wrp.name.endswith('_tot'):
+        elif '_tot_' in wrp.name:
             t = token(wrp)
             if t in subs:
                 res.append(varial.operations.eff((subs.pop(t), wrp)))
             else:
                 tots[t] = wrp
+
+        # if subs:
+        #     print 'subs: ', list(subs.keys())
+        # if tots:
+        #     print 'tots: ', list(tots.keys())
+        # if res:
+        #     print 'res: ', res
         if res and not (subs or tots):
             for _ in xrange(len(res)):
                 yield res.pop(0)
@@ -86,14 +99,10 @@ def plotter_factory(**kws):
     kws['hook_loaded_histos'] = loader_hook
     return varial.tools.Plotter(**kws)
 
-<<<<<<< HEAD
-tagger = varial.tools.GitTagger()
-=======
 def create_name(name):
     return name+'v'+varial.settings.git_tag
 
 tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_2_1_patch4/src/UHH2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
->>>>>>> 3565e26... Test commit 5
 
 tagger.run()
 
@@ -103,24 +112,8 @@ pl = varial.tools.mk_rootfile_plotter(
     combine_files=True
 )
 
-<<<<<<< HEAD
-def create_name(name):
-    return name+'v'+varial.settings.git_tag
-
-p = varial.toolinterface.ToolChain(create_name(dirname), [tagger, pl])
-
-pp = varial.toolinterface.ToolChain('SuperChain', [p])
-
-
-=======
->>>>>>> 3565e26... Test commit 5
-
 time.sleep(1)
-<<<<<<< HEAD
-pp.run()
-=======
 pl.run()
->>>>>>> caf8146... Test commit 6
 varial.tools.WebCreator().run()
 # os.system('rm -r ~/www/%s' % dirname)
 # os.system('mv -f %s ~/www' % dirname)

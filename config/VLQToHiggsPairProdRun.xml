@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
+[
+<!ENTITY WJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_LNu_20x25.xml">
+<!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml">
+<!ENTITY TTbar SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TTJets_20x25.xml">
+<!ENTITY TpTp_M1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TpTp_M1000_20x25.xml">
+]
+>
+
+
 <JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TpTp_40x25" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_0_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_1_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_2_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_3_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_4_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_5_Ntuple.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
+            &TpTp_M1000;
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+        <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="TTJets" Cacheable="False">
+            &TTbar;
             <InputTree Name="AnalysisTree" />
             <!-- <OutputTree Name="AnalysisTree" /> -->
         </InputData>
-        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TpTp_20x25" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_6_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_7_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_8_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_9_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_20x25_10_Ntuple.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="WJets" Cacheable="False">
+            &WJets;
             <InputTree Name="AnalysisTree" />
             <!-- <OutputTree Name="AnalysisTree" /> -->
         </InputData>
-        <InputData Lumi="1" NEventsMax="5000" Type="MC" Version="TTJets" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_0_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_100_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/usaiem/gc-output/PHYS14v0/ttbar//MC_TTJets_20x25_101_Ntuple.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="ZJets" Cacheable="False">
+            &ZJets;
             <InputTree Name="AnalysisTree" />
-        </InputData>                
+            <!-- <OutputTree Name="AnalysisTree" /> -->
+        </InputData>               
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
