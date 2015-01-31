@@ -28,13 +28,13 @@ bool JetPtSelection::passes(const Event & event)
 
 }
 
-HTSelection::HTSelection(Context & ctx, float minht, float maxht) : h_ht_(ctx.get_handle<float>("HT")), minht_(minht), maxht_(maxht) {} 
+HTSelection::HTSelection(Context & ctx, float minht, float maxht) : h_ht_(ctx.get_handle<double>("HT")), minht_(minht), maxht_(maxht) {} 
 
 bool HTSelection::passes(const Event & event)
 {
     if (event.get_state(h_ht_)==GenericEvent::state::valid)
     {
-        float ht = event.get(h_ht_);
+        double ht = event.get(h_ht_);
         return ht > minht_ && (maxht_ < 0 || ht < maxht_);
     }
 

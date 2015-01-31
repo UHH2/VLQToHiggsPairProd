@@ -15,25 +15,24 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <InputTree Name="AnalysisTree" />
         </InputData>
         <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="TTJets" Cacheable="False">
             &TTbar;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" /> -->
         </InputData>
         <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="WJets" Cacheable="False">
             &WJets;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" /> -->
         </InputData>
         <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" /> -->
-        </InputData>               
+        </InputData> 
+
+        <!-- <OutputTree Name="AnalysisTree" /> -->      
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->

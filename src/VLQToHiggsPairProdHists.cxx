@@ -21,8 +21,8 @@ VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & d
     csv_jets        = book<TH1F>("csv_jets","csv-disriminator all jets",50,0,1);
     pt_jet1         = book<TH1F>("pt_jet1", "#pt^{jet 1}", 60, 0, 1500);
     pt_jet2         = book<TH1F>("pt_jet2", "#pt^{jet 2}", 60, 0, 1500);
-    csv_jet1        = book<TH1F>("csv_jet1","csv-disriminator all jets",50,0,1);
-    csv_jet2        = book<TH1F>("csv_jet2","csv-disriminator all jets",50,0,1);
+    csv_jet1        = book<TH1F>("csv_jet1","csv-disriminator first jet",50,0,1);
+    csv_jet2        = book<TH1F>("csv_jet2","csv-disriminator second jet",50,0,1);
     drmin_jet1      = book<TH1F>("dR_j1_closestJ", "#Delta R_{min}(First jet,nearest jet)", 40, 0, 2.0);
     drmin_jet2      = book<TH1F>("dR_j2_closestJ", "#Delta R_{min}(Second jet,nearest jet)", 40, 0, 2.0);
 

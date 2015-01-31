@@ -25,7 +25,7 @@ public:
     virtual bool passes(const Event &);
 
 private:
-    Event::Handle<float> h_ht_;
+    Event::Handle<double> h_ht_;
     float minht_, maxht_;
 };
 
