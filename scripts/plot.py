@@ -35,7 +35,10 @@ current_tag = varial.settings.git_tag
 #         }
 
 
-
+def log_scale(wrps):
+    for wrp in wrps:
+        print type(wrp)
+        yield wrp
 
 def make_eff_graphs(wrps):
     def token(w):
@@ -92,11 +95,19 @@ def loader_hook(wrps):
     wrps = label_axes(wrps)
     wrps = make_eff_graphs(wrps)
     # wrps = norm_histos_to_integral(wrps)
+    # wrps = log_scale(wrps)
+    return wrps
+
+def canvas_hook(wrps):
+    wrps = log_scale(wrps)
     return wrps
 
 
 def plotter_factory(**kws):
     kws['hook_loaded_histos'] = loader_hook
+    kws['save_log_scale'] = True
+    # kws['hook_canvas_pre_build'] = canvas_hook
+    # kws['hook_canvas_post_build'] = canvas_hook
     return varial.tools.Plotter(**kws)
 
 def create_name(name):
@@ -115,5 +126,5 @@ pl = varial.tools.mk_rootfile_plotter(
 time.sleep(1)
 pl.run()
 varial.tools.WebCreator().run()
-os.system('rm -r ~/www/TprimeAnalysis%s' % create_name(dirname))
+os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
 os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))
