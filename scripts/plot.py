@@ -91,7 +91,7 @@ def label_axes(wrps):
 def loader_hook(wrps):
     wrps = label_axes(wrps)
     wrps = make_eff_graphs(wrps)
-    wrps = norm_histos_to_integral(wrps)
+    # wrps = norm_histos_to_integral(wrps)
     return wrps
 
 

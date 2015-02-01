@@ -33,7 +33,82 @@ namespace vlqToHiggsPair {
         "JetPtCut",
         "HTCut"
     };
+
+    void fill_hists(
+        Event const & event,
+        std::map<const char *, bool> const & pass_selection,
+        std::map<const char *, std::unique_ptr<Hists> > & nm1_hists,
+        std::unique_ptr<Hists> & allsel_hists
+    )
+    {
+        bool pass_all_selections = true;
+
+        // std::cout << "Fill Histograms:" << std::endl;
+
+        for (std::map<const char *, bool>::const_iterator iSel = pass_selection.begin();
+            iSel != pass_selection.end(); ++iSel)
+        {
+            const char * sel_name = iSel->first;
+            bool pass_sel = iSel->second;
+
+            // std::cout << "  " << sel_name << " " << pass_sel << std::endl;
+
+            if (!pass_sel)
+                pass_all_selections = false;
+
+            bool pass_nm1 = true;
+
+            // std::cout << std::endl << "  Fill nm1 histograms:" << std::endl;
+
+            for (size_t iName = 0; iName < number_selections; ++iName)
+            {
+                try
+                {
+                    // std::cout << "    " << sel_name << " " << selection_names[iName] << " "
+                    // << pass_selection.at(selection_names[iName]) << std::endl;
+                    if (string(sel_name) != selection_names[iName]
+                        && !pass_selection.at(selection_names[iName]))
+                        pass_nm1 = false;
+                }
+                catch (const std::out_of_range & e)
+                {
+                    continue;
+                }
+            }
+
+            // std::cout << "    Bool pass_nm1: " << pass_nm1 << std::endl << std::endl;
+
+            if (pass_nm1)
+                nm1_hists[sel_name]->fill(event);
+        }
+
+    // std::cout << "Bool pass_all_selections: " << pass_all_selections << std::endl << std::endl;
+
+        if (pass_all_selections)
+            allsel_hists->fill(event);
+    }
 }
+
+class BTagCalculator : public AnalysisModule {
+public:
+    explicit BTagCalculator(Context & ctx, CSVBTag::wp wp_ = CSVBTag::WP_MEDIUM) :
+        tagger_(wp_), h_btag_(ctx.get_handle<int>("n_btags")) {}
+
+    virtual bool process(Event & event) {
+        int n_btags = 0;
+        for (const Jet & jet : *event.jets)
+        {
+            if (tagger_(jet, event))
+                n_btags++;
+        }
+        event.set(h_btag_, n_btags);
+        return true;
+    }
+
+private:
+    CSVBTag tagger_;
+    Event::Handle<int> h_btag_;
+};
 
 using namespace vlqToHiggsPair;
 
@@ -74,7 +149,7 @@ private:
     
     std::vector<std::unique_ptr<AnalysisModule> > modules;
 
-    // std::unique_ptr<CommonModules> cm;
+    std::unique_ptr<CommonModules> cm;
 
     // std::unique_ptr<Selection> ele_selection, mu_selection;
     std::map<const char*, std::unique_ptr<Selection> > all_selections;
@@ -84,6 +159,8 @@ private:
 
 
 VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
+
+    CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -94,36 +171,38 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
     
     // 1. setup other modules. Here, only the jet cleaner
 
-    // cm.reset(new CommonModules);
+    cm.reset(new CommonModules);
 
-    // cm->set_jet_id(PtEtaCut(30.0, 2.4));
-    // cm->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)));
-    // cm->set_muon_id(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1)));
+    cm->set_jet_id(PtEtaCut(30.0, 2.4));
+    cm->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)));
+    cm->set_muon_id(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1)));
     // cm.set_tau_id(PtEtaCut(30.0, 2.4));
 
     
-    // cm->init(ctx);
+    cm->init(ctx);
+
+    modules.emplace_back(new BTagCalculator(ctx, btag_wp));
     
     // nbtagprod.reset(new NBTagProducer(ctx));
     // fwdjetswitch.reset(new FwdJetSwitch(ctx));
     // jetcleaner.reset(new JetCleaner(30.0, 7.0));
 
-    modules.emplace_back(new JetCleaner(30.0, 2.4));
-    modules.emplace_back(new ElectronCleaner(
-        AndId<Electron>(
-            ElectronID_PHYS14_25ns_medium,
-            PtEtaCut(20.0, 2.4)
-        )
-    ));
+    // modules.emplace_back(new JetCleaner(30.0, 2.4));
+    // modules.emplace_back(new ElectronCleaner(
+    //     AndId<Electron>(
+    //         ElectronID_PHYS14_25ns_medium,
+    //         PtEtaCut(20.0, 2.4)
+    //     )
+    // ));
 
-    modules.emplace_back(new MuonCleaner(
-        AndId<Muon>(
-            MuonIDTight(),
-            PtEtaCut(20.0, 2.1)
-        )
-    ));
+    // modules.emplace_back(new MuonCleaner(
+    //     AndId<Muon>(
+    //         MuonIDTight(),
+    //         PtEtaCut(20.0, 2.1)
+    //     )
+    // ));
 
-    modules.emplace_back(new HTCalculator(ctx));
+    // modules.emplace_back(new HTCalculator(ctx));
 
     
     // 2. set up selections:
@@ -203,7 +282,7 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
     
     // run all modules (here: only jet cleaning).
 
-    // cm->process(event);
+    cm->process(event);
 
     for(auto & m: modules){
         m->process(event);
@@ -226,6 +305,9 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         {
             const char * sel_name = selection_names[i];
             bool pass = all_selections.at(sel_name)->passes(event);
+
+            if (pass)
+                onecut_hists.at(sel_name)->fill(event);
 
             if (string(sel_name) == "OneElectronCut")
                 pass_oneel_selection[sel_name] = pass;
@@ -254,54 +336,11 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
 
     // std::cout << std::endl;
 
-    bool pass_all_oneel = true;
+    fill_hists(event, pass_oneel_selection, nm1_oneel_hists, allsel_oneel_hists);
+    fill_hists(event, pass_onemu_selection, nm1_onemu_hists, allsel_onemu_hists);
+    fill_hists(event, pass_el_selection, nm1_el_hists, allsel_el_hists);
+    fill_hists(event, pass_mu_selection, nm1_mu_hists, allsel_mu_hists);
 
-    // std::cout << "Fill Histograms:" << std::endl;
-
-    for (std::map<const char *, bool>::const_iterator iSel = pass_oneel_selection.begin();
-        iSel != pass_oneel_selection.end(); ++iSel)
-    {
-        const char * sel_name = iSel->first;
-        bool pass_sel = iSel->second;
-
-        // std::cout << "  " << sel_name << " " << pass_sel << std::endl;
-
-        if (pass_sel)
-        {
-            onecut_hists[sel_name]->fill(event);
-        }
-        else pass_all_oneel = false;
-
-        bool pass_nm1 = true;
-
-        // std::cout << std::endl << "  Fill nm1 histograms:" << std::endl;
-
-        for (size_t iName = 0; iName < number_selections; ++iName)
-        {
-            try
-            {
-                // std::cout << "    " << sel_name << " " << selection_names[iName] << " "
-                    // << pass_oneel_selection.at(selection_names[iName]) << std::endl;
-                if (string(sel_name) != selection_names[iName]
-                    && !pass_oneel_selection.at(selection_names[iName]))
-                    pass_nm1 = false;
-            }
-            catch (const std::out_of_range & e)
-            {
-                continue;
-            }
-        }
-
-        // std::cout << "    Bool pass_nm1: " << pass_nm1 << std::endl << std::endl;
-
-        if (pass_nm1)
-            nm1_oneel_hists[sel_name]->fill(event);
-    }
-
-    // std::cout << "Bool pass_all_oneel: " << pass_all_oneel << std::endl << std::endl;
-
-    if (pass_all_oneel)
-        allsel_oneel_hists->fill(event);
 
 
 

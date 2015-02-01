@@ -12,10 +12,14 @@
 using namespace std;
 using namespace uhh2;
 
-VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & dirname, bool gen_plots): Hists(ctx, dirname), gen_plots_(gen_plots), h_ht_(ctx.get_handle<double>("HT")){
+VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & dirname, bool gen_plots):
+    Hists(ctx, dirname), gen_plots_(gen_plots), h_ht_(ctx.get_handle<double>("HT")),
+    h_btags_(ctx.get_handle<int>("n_btags"))
+{
 	// book all histograms here
     // jets
-    n_jets          = book<TH1F>("N_jets", "N_{jets}", 20, 0, 20);  
+    n_jets          = book<TH1F>("N_jets", "N_{jets}", 20, 0, 20);     
+    n_bjets         = book<TH1F>("N_bjets", "N_{b-tags}", 20, 0, 20);
     eta_jets        = book<TH1F>("eta_jets", "#eta^{jets}", 40, -2.5, 2.5);
     pt_jets         = book<TH1F>("pt_jets", "#pt^{jets}", 60, 0, 1500);
     csv_jets        = book<TH1F>("csv_jets","csv-disriminator all jets",50,0,1);
@@ -129,6 +133,9 @@ void VLQToHiggsPairProdHists::fill(const Event & event){
 
     assert(event.jets);
     n_jets->Fill(event.jets->size(), w);
+
+    int n_btags = event.get(h_btags_);
+    n_bjets->Fill(n_btags, w);
     
     for(const auto & jet : *event.jets){
         pt_jets->Fill(jet.pt(), w);
