@@ -14,7 +14,7 @@ public:
 
 private:
     // jets
-    TH1F *n_jets, *n_bjets, *eta_jets, *pt_jets, *csv_jets, *pt_jet1, *pt_jet2, *csv_jet1, *csv_jet2, *drmin_jet1, *drmin_jet2;
+    TH1F *n_jets, *n_bjets, *n_topjets, *eta_jets, *pt_jets, *csv_jets, *pt_jet1, *pt_jet2, *csv_jet1, *csv_jet2, *drmin_jet1, *drmin_jet2;
 
     // electron
     TH1F *number_el, *pt_el, *eta_el, *isolation_el, *ptrel_el, *deltaRmin_el;
@@ -36,7 +36,7 @@ private:
     TH1F *N_PrimVertices, *MET, *HT;
     bool gen_plots_;
     uhh2::Event::Handle<double> h_ht_;
-    uhh2::Event::Handle<int> h_btags_;
+    uhh2::Event::Handle<int> h_btags_, h_toptags_;
 
 
 
