@@ -135,6 +135,83 @@ private:
     Event::Handle<int> hndl_;
 };
 
+
+// template<typename Id> class tagger_helper;
+
+// template<>
+// class tagger_helper<CMSTopTag>
+// {
+// public:
+//     explicit tagger_helper(const CMSTopTag & tagger) : tagger_(tagger) {}
+//     explicit tagger_helper(const CSVBTag & tagger) : tagger_(0., 0., 0.) {}
+
+//     bool operator()(const TopJet & topjet, const uhh2::Event & event) const {return tagger_(topjet, event);}
+//     bool operator()(const Jet & jet, const uhh2::Event & event) const {return false;}
+
+// private:
+//     CMSTopTag tagger_;
+
+// };
+
+// template<>
+// class tagger_helper<CSVBTag>
+// {
+// public:
+//     explicit tagger_helper(const CSVBTag & tagger) : tagger_(tagger) {}
+//     explicit tagger_helper(const CMSTopTag & tagger) : tagger_(CSVBTag::WP_LOOSE) {}
+
+//     bool operator()(const Jet & jet, const uhh2::Event & event) const {return tagger_(jet, event);}
+//     bool operator()(const TopJet & topjet, const uhh2::Event & event) const {return false;}
+
+// private:
+//     CSVBTag tagger_;
+
+// };
+
+
+// template<typename T>
+// class NJetIdCalculator : public AnalysisModule {
+// public:
+//     // typedef std::function<bool (const T&, const uhh2::Event &)> id_type;
+
+//     // typedef typename T::input_type input_type;
+
+//     NJetIdCalculator(Context & ctx, const T & tagger, std::string handle_name) :
+//         tagger_(tagger), hndl(ctx.get_handle<int>(handle_name)) {}
+
+//     virtual bool process(Event & event) {
+//         int n_tags = 0;
+//         if (event.jets)
+//         {
+//             for (const Jet & jet : *event.jets)
+//             {
+//                 if (tagger_(jet, event))
+//                     n_tags++;
+//             }
+//         }
+//         if (event.topjets)
+//         {
+//             for (const TopJet & jet : *event.topjets)
+//             {
+//                 if (tagger_(jet, event))
+//                     n_tags++;
+//             }
+//         }
+//         event.set(hndl, n_tags);
+//         return true;
+//     }
+
+// private:
+//     tagger_helper<T> tagger_;
+//     Event::Handle<int> hndl;
+
+// };
+
+
+
+
+
+
 using namespace vlqToHiggsPair;
 
 /** \brief Basic analysis example of an AnalysisModule (formerly 'cycle') in UHH2
@@ -155,6 +232,7 @@ private:
     // std::vector<std::unique_ptr<Selection> > v_sel;
     
     // store the Hists collection as member variables.
+    std::unique_ptr<Hists> gen_nocuts_hist;
     std::unique_ptr<Hists> 
             nocuts_hists,
             allsel_el_hists,
@@ -171,6 +249,7 @@ private:
                            // vh_nm1;
 
     JetId btag;
+    TopJetId toptag;
     
     std::vector<std::unique_ptr<AnalysisModule> > modules;
 
@@ -183,9 +262,13 @@ private:
 };
 
 
-VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
+VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
     CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
+
+    btag = CSVBTag(btag_wp);
+    toptag =CMSTopTag();
+
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -208,6 +291,13 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
 
     modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
     modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
+
+    // CSVBTag bttagger(btag_wp);
+    // CMSTopTag toptagger;
+
+    // modules.emplace_back(new NJetIdCalculator<CSVBTag>(ctx, bttagger, "n_btags"));
+    // modules.emplace_back(new NJetIdCalculator<CMSTopTag>(ctx, toptagger, "n_toptags"));
+
     
     // nbtagprod.reset(new NBTagProducer(ctx));
     // fwdjetswitch.reset(new FwdJetSwitch(ctx));
@@ -232,7 +322,6 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
 
     
     // 2. set up selections:
-    btag = CSVBTag(CSVBTag::WP_MEDIUM);
 
     // ele_selection.reset(new NElectronSelection(1,1));
     // mu_selection.reset(new NMuonSelection(1,1));
@@ -252,6 +341,9 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
 
 
     // 3. Set up Hists classes:
+
+    // gen histograms
+    gen_nocuts_hist.reset(new GenHists(ctx, "GenNoCuts"));
 
     // no cuts histogram
     nocuts_hists.reset(new VLQToHiggsPairProdHists(ctx, "NoCuts"));
@@ -317,6 +409,7 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
 
     // 2.b fill histograms
     nocuts_hists->fill(event);
+    gen_nocuts_hist->fill(event);
 
     std::map<const char *, bool> 
             pass_oneel_selection,

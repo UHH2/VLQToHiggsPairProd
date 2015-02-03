@@ -94,9 +94,11 @@ def label_axes(wrps):
 def loader_hook(wrps):
     wrps = label_axes(wrps)
     wrps = make_eff_graphs(wrps)
-    # wrps = norm_histos_to_integral(wrps)
+    wrps = norm_histos_to_integral(wrps)
     # wrps = log_scale(wrps)
-    return wrps
+    for w in wrps:
+        w.legend = "Tprime"
+        yield w
 
 def canvas_hook(wrps):
     wrps = log_scale(wrps)
@@ -104,8 +106,9 @@ def canvas_hook(wrps):
 
 
 def plotter_factory(**kws):
+    kws['filter_keyfunc'] = lambda w: w.in_file_path[0] in ['NoCuts', 'GenNoCuts']
     kws['hook_loaded_histos'] = loader_hook
-    kws['save_log_scale'] = True
+    # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
     # kws['hook_canvas_post_build'] = canvas_hook
     return varial.tools.Plotter(**kws)

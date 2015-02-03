@@ -70,9 +70,9 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
     book<TH1F>("bHPt_lead", "p_{T}^{b(H)}(lead) [GeV/c]", 200, 0, 2000);
     book<TH1F>("bHPt_subl", "p_{T}^{b(H)}(sublead) [GeV/c]", 200, 0, 2000);
 
-    book<TH1F>("m_tprime", "m_{T'} [GeV]", 200, 0, 2000);
-    book<TH1F>("m_top", "m_{t} [GeV]", 200, 0, 2000);
-    book<TH1F>("m_higgs", "m_{H} [GeV]", 200, 0, 2000);
+    book<TH1F>("m_tprime", "m_{T'} [GeV]", 200, 950, 1050);
+    book<TH1F>("m_top", "m_{t} [GeV]", 200, 150, 250);
+    book<TH1F>("m_higgs", "m_{H} [GeV]", 60, 110, 140);
 
 
       //  number plots
@@ -87,10 +87,10 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
     // decay modes
     book<TH1F>("tp_decay", "Tprime decay modes", 30, 0, 30);
     book<TH1F>("h_decay", "Higgs decay modes", 30, 0, 30);
-    book<TH1F>("t_decay", "Higgs decay modes", 30, 0, 30);
-    book<TH1F>("b_decay", "Higgs decay modes", 30, 0, 30);
-    book<TH1F>("w_decay", "Higgs decay modes", 30, 0, 30);
-    book<TH1F>("z_decay", "Higgs decay modes", 30, 0, 30);
+    book<TH1F>("t_decay", "Top decay modes", 30, 0, 30);
+    book<TH1F>("b_decay", "B decay modes", 30, 0, 30);
+    book<TH1F>("w_decay", "W decay modes", 30, 0, 30);
+    book<TH1F>("z_decay", "Z decay modes", 30, 0, 30);
 
   
     // dR variables
