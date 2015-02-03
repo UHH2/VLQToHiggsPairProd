@@ -13,6 +13,7 @@
 #include "UHH2/common/include/MuonHists.h"
 #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/JetIds.h"
+#include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
@@ -91,8 +92,8 @@ namespace vlqToHiggsPair {
 
 class BTagCalculator : public AnalysisModule {
 public:
-    explicit BTagCalculator(Context & ctx, CSVBTag::wp wp_ = CSVBTag::WP_MEDIUM) :
-        tagger_(wp_), h_btag_(ctx.get_handle<int>("n_btags")) {}
+    explicit BTagCalculator(Context & ctx, std::string hndl_name, CSVBTag const & id = CSVBTag(CSVBTag::WP_MEDIUM)) :
+        tagger_(id), hndl_(ctx.get_handle<int>(hndl_name)) {}
 
     virtual bool process(Event & event) {
         int n_btags = 0;
@@ -101,13 +102,37 @@ public:
             if (tagger_(jet, event))
                 n_btags++;
         }
-        event.set(h_btag_, n_btags);
+        event.set(hndl_, n_btags);
         return true;
     }
 
 private:
     CSVBTag tagger_;
-    Event::Handle<int> h_btag_;
+    Event::Handle<int> hndl_;
+};
+
+class CMSTopTagCalculator : public AnalysisModule {
+public:
+    explicit CMSTopTagCalculator(Context & ctx, std::string hndl_name, CMSTopTag const & id = CMSTopTag()) :
+        tagger_(id), hndl_(ctx.get_handle<int>(hndl_name)) {}
+
+    virtual bool process(Event & event) {
+        int n_toptags = 0;
+        if (event.topjets)
+        {
+            for (const TopJet & jet : *event.topjets)
+            {
+                if (tagger_(jet, event))
+                    n_toptags++;
+            }
+        }
+        event.set(hndl_, n_toptags);
+        return true;
+    }
+
+private:
+    CMSTopTag tagger_;
+    Event::Handle<int> hndl_;
 };
 
 using namespace vlqToHiggsPair;
@@ -181,7 +206,8 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx){
     
     cm->init(ctx);
 
-    modules.emplace_back(new BTagCalculator(ctx, btag_wp));
+    modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
+    modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
     
     // nbtagprod.reset(new NBTagProducer(ctx));
     // fwdjetswitch.reset(new FwdJetSwitch(ctx));
