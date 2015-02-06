@@ -41,3 +41,13 @@ bool HTSelection::passes(const Event & event)
     return false;
 
 }
+
+NGenParticleSelection::NGenParticleSelection(Event::Handle<int> const & hndl, int n_min, int n_max) : 
+    hndl_(hndl), n_min_(n_min), n_max_(n_max) {}
+
+bool NGenParticleSelection::passes(const Event & event)
+{
+    int n_particles = event.get(hndl_);
+    return n_particles >= n_min_ && (n_max_ < 0 || n_particles <= n_max_);
+}
+

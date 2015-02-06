@@ -29,4 +29,14 @@ private:
     float minht_, maxht_;
 };
 
+class NGenParticleSelection : public Selection {
+public:
+    explicit NGenParticleSelection(Event::Handle<int> const & hndl, int n_min, int n_max = -1);
+    virtual bool passes(const Event &);
+
+private:
+    Event::Handle<int> hndl_;
+    int n_min_, n_max_;
+};
+
 }
