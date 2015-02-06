@@ -1,16 +1,18 @@
 #include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
 #include "UHH2/core/include/Event.h"
 
+#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
+
 #include "TH1F.h"
+#include "TH2F.h"
 #include <iostream>
 
 using namespace std;
 using namespace uhh2;
+using namespace vlqToHiggsPair;
 
 namespace genhists
 {
-    GenParticle const * findMother (GenParticle const &, vector<GenParticle> const *);
-
     void findTopProducts(std::vector<GenParticle> const * genparticles, GenParticle const * top_daughter, GenParticle const * & top_b, GenParticle const * & top_Wq1, GenParticle const * & top_Wq2)
     {
         int decayId = top_daughter->pdgId();
@@ -96,6 +98,8 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
     // dR variables
     book<TH1F>("DeltaR_bb", "#Delta R_{bb}", 50, 0, 5);
     book<TH1F>("max_deltaR_topprod", "max #Delta R(top products)", 50, 0, 5);
+
+    book<TH2F>("top_pt_vs_max_dR", ";p_{T}(t);max #Delta R(t decay products)", 150, 0, 1500, 50, 0., 5.);
 }
 
 
@@ -127,22 +131,14 @@ void GenHists::fill(const Event & event){
             else if (!tp2) tp2 = &igenp;
         }
         if (abs(igenp.pdgId()) == 6){
-            GenParticle const * imother = findMother(igenp, genparticles);
-            if (!imother) continue;
-            else if (abs(imother->pdgId()) == 8){
-                if (!t1) t1 = &igenp;
-                else if (igenp.pt() > t1->pt()) {t2 = t1; t1 = &igenp;}
-                else if (!t2) t2 = &igenp;
-            }
+            if (!t1) t1 = &igenp;
+            else if (igenp.pt() > t1->pt()) {t2 = t1; t1 = &igenp;}
+            else if (!t2) t2 = &igenp;
         }
         if (abs(igenp.pdgId()) == 25){
-            GenParticle const * imother = findMother(igenp, genparticles);
-            if (!imother) continue;
-            else if (abs(imother->pdgId()) == 8){
-                if (!h1) h1 = &igenp;
-                else if (igenp.pt() > h1->pt()) {h2 = h1; h1 = &igenp;}
-                else if (!h2) h2 = &igenp;
-            }
+            if (!h1) h1 = &igenp;
+            else if (igenp.pt() > h1->pt()) {h2 = h1; h1 = &igenp;}
+            else if (!h2) h2 = &igenp;
         }
         if (abs(igenp.pdgId()) == 5){
             bs.push_back(&igenp);
@@ -236,7 +232,10 @@ void GenHists::fill(const Event & event){
         double max_deltaR_topprod = calcMaxDR(top_b, top_Wq1, top_Wq2);
 
         if (max_deltaR_topprod)
+        {
             hist("max_deltaR_topprod")->Fill(max_deltaR_topprod);
+            hist("top_pt_vs_max_dR")->Fill(t1->pt(), max_deltaR_topprod);
+        }
 
         hist("t_decay")->Fill(decay1);
         hist("t_decay")->Fill(decay2);
@@ -266,7 +265,10 @@ void GenHists::fill(const Event & event){
         double max_deltaR_topprod = calcMaxDR(top_b, top_Wq1, top_Wq2);
 
         if (max_deltaR_topprod)
+        {
             hist("max_deltaR_topprod")->Fill(max_deltaR_topprod);
+            hist("top_pt_vs_max_dR")->Fill(t2->pt(), max_deltaR_topprod);
+        }
 
         hist("t_decay")->Fill(decay1);
         hist("t_decay")->Fill(decay2);
@@ -353,9 +355,3 @@ void GenHists::fill(const Event & event){
 }
 
 GenHists::~GenHists(){}
-
-GenParticle const * genhists::findMother (GenParticle const & igenp, vector<GenParticle> const * genparticles){
-    GenParticle const * imother = igenp.mother(genparticles);
-    if (!imother) imother = igenp.mother(genparticles, 2);
-    return imother;
-}
