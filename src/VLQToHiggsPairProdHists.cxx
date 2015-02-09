@@ -18,55 +18,55 @@ VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & d
 {
 	// book all histograms here
     // jets
-    n_jets          = book<TH1F>("N_jets", "N_{jets}", 20, 0, 20);     
-    n_bjets         = book<TH1F>("N_bjets", "N_{b-tags}", 20, 0, 20);
-    n_topjets       = book<TH1F>("N_topjets", "N_{top jets}", 20, 0, 20);
-    eta_jets        = book<TH1F>("eta_jets", "#eta^{jets}", 40, -2.5, 2.5);
-    pt_jets         = book<TH1F>("pt_jets", "#pt^{jets}", 60, 0, 1500);
-    csv_jets        = book<TH1F>("csv_jets","csv-disriminator all jets",50,0,1);
-    pt_jet1         = book<TH1F>("pt_jet1", "#pt^{jet 1}", 60, 0, 1500);
-    pt_jet2         = book<TH1F>("pt_jet2", "#pt^{jet 2}", 60, 0, 1500);
-    csv_jet1        = book<TH1F>("csv_jet1","csv-disriminator first jet",50,0,1);
-    csv_jet2        = book<TH1F>("csv_jet2","csv-disriminator second jet",50,0,1);
-    drmin_jet1      = book<TH1F>("dR_j1_closestJ", "#Delta R_{min}(First jet,nearest jet)", 40, 0, 2.0);
-    drmin_jet2      = book<TH1F>("dR_j2_closestJ", "#Delta R_{min}(Second jet,nearest jet)", 40, 0, 2.0);
+    n_jets          = book<TH1F>("jets_N", "N_{jets}", 20, 0, 20);     
+    n_bjets         = book<TH1F>("jets_Nbs", "N_{b-tags}", 20, 0, 20);
+    n_topjets       = book<TH1F>("jets_Ntops", "N_{top jets}", 20, 0, 20);
+    eta_jets        = book<TH1F>("jets_eta", "#eta^{jets}", 40, -2.5, 2.5);
+    pt_jets         = book<TH1F>("jets_pt", "#pt^{jets}", 60, 0, 1500);
+    csv_jets        = book<TH1F>("jets_csv","csv-disriminator all jets",50,0,1);
+    pt_jet1         = book<TH1F>("jet_1_pt", "#pt^{jet 1}", 60, 0, 1500);
+    pt_jet2         = book<TH1F>("jet_2_pt", "#pt^{jet 2}", 60, 0, 1500);
+    csv_jet1        = book<TH1F>("jet_1_csv","csv-disriminator first jet",50,0,1);
+    csv_jet2        = book<TH1F>("jet_2_csv","csv-disriminator second jet",50,0,1);
+    drmin_jet1      = book<TH1F>("jet_1_dR_closestJ", "#Delta R_{min}(First jet,nearest jet)", 40, 0, 2.0);
+    drmin_jet2      = book<TH1F>("jet_2_dR_closestJ", "#Delta R_{min}(Second jet,nearest jet)", 40, 0, 2.0);
 
     // electrons
-    number_el      = book<TH1F>("number_el",      "number of electrons",7,-0.5,6.5);
+    number_el      = book<TH1F>("el_N",      "number of electrons",7,-0.5,6.5);
 
-    pt_el          = book<TH1F>("pt_el",          "p_{T} electron",           100,0,500);
-    eta_el         = book<TH1F>("eta_el",         "#eta electron",            100,-3,3);
-    isolation_el   = book<TH1F>("isolation_el",   "relIso electron",          100,0,0.5);
-    ptrel_el       = book<TH1F>("ptrel_el",       "p_{T}^{rel}(e,jet)",       40, 0, 200.);
-    deltaRmin_el   = book<TH1F>("deltaRmin_el",   "#Delta R_{min}(e,jet)",    40, 0, 2.0);
+    pt_el          = book<TH1F>("el_pt",          "p_{T} electron",           100,0,500);
+    eta_el         = book<TH1F>("el_eta",         "#eta electron",            100,-3,3);
+    isolation_el   = book<TH1F>("el_isolation",   "relIso electron",          100,0,0.5);
+    ptrel_el       = book<TH1F>("el_ptrel",       "p_{T}^{rel}(e,jet)",       40, 0, 200.);
+    deltaRmin_el   = book<TH1F>("el_deltaRmin",   "#Delta R_{min}(e,jet)",    40, 0, 2.0);
     deltaRmin_ptrel_el
-                = book<TH2F>("deltaRmin_ptrel_el",
+                = book<TH2F>("el_deltaRmin_ptrel",
                                             ";#Delta R_{min}(e,jet);p_{T}^{rel}(e,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     
-    pt_1_el        = book<TH1F>("pt_1_el",        "p_{T} electron 1",         100,0,500);
-    eta_1_el       = book<TH1F>("eta_1_el",       "#eta electron 1",          100,-3,3);
-    isolation_1_el = book<TH1F>("isolation_1_el", "relIso electron 1",        100,0,0.5);
-    ptrel_1_el     = book<TH1F>("ptrel_1_el",     "p_{T}^{rel}(e 1,jet)",     40, 0, 200.);
-    deltaRmin_1_el = book<TH1F>("deltaRmin_1_el", "#Delta R_{min}(e 1,jet)",  40, 0, 2.0);
+    pt_1_el        = book<TH1F>("el_1_pt",        "p_{T} electron 1",         100,0,500);
+    eta_1_el       = book<TH1F>("el_1_eta",       "#eta electron 1",          100,-3,3);
+    isolation_1_el = book<TH1F>("el_1_isolation", "relIso electron 1",        100,0,0.5);
+    ptrel_1_el     = book<TH1F>("el_1_ptrel",     "p_{T}^{rel}(e 1,jet)",     40, 0, 200.);
+    deltaRmin_1_el = book<TH1F>("el_1_deltaRmin", "#Delta R_{min}(e 1,jet)",  40, 0, 2.0);
     deltaRmin_ptrel_1_el
-                = book<TH2F>("deltaRmin_ptrel_1_el",
+                = book<TH2F>("el_1_deltaRmin_ptrel",
                                             ";#Delta R_{min}(e 1,jet);p_{T}^{rel}(e 1,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     
-    pt_2_el        = book<TH1F>("pt_2_el",        "p_{T} electron 2",         100,0,500);
-    eta_2_el       = book<TH1F>("eta_2_el",       "#eta electron 2",          100,-3,3);
-    isolation_2_el = book<TH1F>("isolation_2_el", "relIso electron 2",        100,0,0.5);
-    ptrel_2_el     = book<TH1F>("ptrel_2_el",     "p_{T}^{rel}(e 2,jet)",     40, 0, 200.);
-    deltaRmin_2_el = book<TH1F>("deltaRmin_2_el", "#Delta R_{min}(e 2,jet)",  40, 0, 2.0);
+    pt_2_el        = book<TH1F>("el_2_pt",        "p_{T} electron 2",         100,0,500);
+    eta_2_el       = book<TH1F>("el_2_eta",       "#eta electron 2",          100,-3,3);
+    isolation_2_el = book<TH1F>("el_2_isolation", "relIso electron 2",        100,0,0.5);
+    ptrel_2_el     = book<TH1F>("el_2_ptrel",     "p_{T}^{rel}(e 2,jet)",     40, 0, 200.);
+    deltaRmin_2_el = book<TH1F>("el_2_deltaRmin", "#Delta R_{min}(e 2,jet)",  40, 0, 2.0);
     deltaRmin_ptrel_2_el
-                = book<TH2F>("deltaRmin_ptrel_2_el",
+                = book<TH2F>("el_2_deltaRmin_ptrel",
                                             ";#Delta R_{min}(e 2,jet);p_{T}^{rel}(e 2,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     if (gen_plots_) {
-        eff_sub_el     = book<TH1F>("eff_sub_el",     "p_{T}",                100,0,500);
-        eff_tot_el     = book<TH1F>("eff_tot_el",     "p_{T}",                100,0,500);
-        pt_response_el = book<TH1F>("pt_response_el", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
+        eff_sub_el     = book<TH1F>("el_eff_sub",     "p_{T}",                100,0,500);
+        eff_tot_el     = book<TH1F>("el_eff_tot",     "p_{T}",                100,0,500);
+        pt_response_el = book<TH1F>("el_pt_response", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
                                                                         800,-1.,1.);
     } else {
         eff_sub_el     = 0;
@@ -75,41 +75,41 @@ VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & d
     }
 
     // muons
-    number_mu      = book<TH1F>("number_mu",      "number of muons",7,-0.5,6.5);
+    number_mu      = book<TH1F>("mu_N",      "number of muons",7,-0.5,6.5);
 
-    pt_mu          = book<TH1F>("pt_mu",          "p_{T} muon",           100,0,500);
-    eta_mu         = book<TH1F>("eta_mu",         "#eta muon",            100,-3,3);
-    isolation_mu   = book<TH1F>("isolation_mu",   "relIso muon",          100,0,0.5);
-    ptrel_mu       = book<TH1F>("ptrel_mu",       "p_{T}^{rel}(mu,jet)",       40, 0, 200.);
-    deltaRmin_mu   = book<TH1F>("deltaRmin_mu",   "#Delta R_{min}(mu,jet)",    40, 0, 2.0);
+    pt_mu          = book<TH1F>("mu_pt",          "p_{T} muon",           100,0,500);
+    eta_mu         = book<TH1F>("mu_eta",         "#eta muon",            100,-3,3);
+    isolation_mu   = book<TH1F>("mu_isolation",   "relIso muon",          100,0,0.5);
+    ptrel_mu       = book<TH1F>("mu_ptrel",       "p_{T}^{rel}(mu,jet)",       40, 0, 200.);
+    deltaRmin_mu   = book<TH1F>("mu_deltaRmin",   "#Delta R_{min}(mu,jet)",    40, 0, 2.0);
     deltaRmin_ptrel_mu
-                = book<TH2F>("deltaRmin_ptrel_mu",
+                = book<TH2F>("mu_deltaRmin_ptrel",
                                             ";#Delta R_{min}(mu,jet);p_{T}^{rel}(mu,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     
-    pt_1_mu        = book<TH1F>("pt_1_mu",        "p_{T} muon 1",         100,0,500);
-    eta_1_mu       = book<TH1F>("eta_1_mu",       "#eta muon 1",          100,-3,3);
-    isolation_1_mu = book<TH1F>("isolation_1_mu", "relIso muon 1",        100,0,0.5);
-    ptrel_1_mu     = book<TH1F>("ptrel_1_mu",     "p_{T}^{rel}(mu 1,jet)",     40, 0, 200.);
-    deltaRmin_1_mu = book<TH1F>("deltaRmin_1_mu", "#Delta R_{min}(mu 1,jet)",  40, 0, 2.0);
+    pt_1_mu        = book<TH1F>("mu_1_pt",        "p_{T} muon 1",         100,0,500);
+    eta_1_mu       = book<TH1F>("mu_1_eta",       "#eta muon 1",          100,-3,3);
+    isolation_1_mu = book<TH1F>("mu_1_isolation", "relIso muon 1",        100,0,0.5);
+    ptrel_1_mu     = book<TH1F>("mu_1_ptrel",     "p_{T}^{rel}(mu 1,jet)",     40, 0, 200.);
+    deltaRmin_1_mu = book<TH1F>("mu_1_deltaRmin", "#Delta R_{min}(mu 1,jet)",  40, 0, 2.0);
     deltaRmin_ptrel_1_mu
-                = book<TH2F>("deltaRmin_ptrel_1_mu",
+                = book<TH2F>("mu_1_deltaRmin_ptrel",
                                             ";#Delta R_{min}(mu 1,jet);p_{T}^{rel}(mu 1,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     
-    pt_2_mu        = book<TH1F>("pt_2_mu",        "p_{T} muon 2",         100,0,500);
-    eta_2_mu       = book<TH1F>("eta_2_mu",       "#eta muon 2",          100,-3,3);
-    isolation_2_mu = book<TH1F>("isolation_2_mu", "relIso muon 2",        100,0,0.5);
-    ptrel_2_mu     = book<TH1F>("ptrel_2_mu",     "p_{T}^{rel}(mu 2,jet)",     40, 0, 200.);
-    deltaRmin_2_mu = book<TH1F>("deltaRmin_2_mu", "#Delta R_{min}(mu 2,jet)",  40, 0, 2.0);
+    pt_2_mu        = book<TH1F>("mu_2_pt",        "p_{T} muon 2",         100,0,500);
+    eta_2_mu       = book<TH1F>("mu_2_eta",       "#eta muon 2",          100,-3,3);
+    isolation_2_mu = book<TH1F>("mu_2_isolation", "relIso muon 2",        100,0,0.5);
+    ptrel_2_mu     = book<TH1F>("mu_2_ptrel",     "p_{T}^{rel}(mu 2,jet)",     40, 0, 200.);
+    deltaRmin_2_mu = book<TH1F>("mu_2_deltaRmin", "#Delta R_{min}(mu 2,jet)",  40, 0, 2.0);
     deltaRmin_ptrel_2_mu
-                = book<TH2F>("deltaRmin_ptrel_2_mu",
+                = book<TH2F>("mu_2_deltaRmin_ptrel",
                                             ";#Delta R_{min}(mu 2,jet);p_{T}^{rel}(mu 2,jet)",
                                                                         40, 0, 2.0, 40, 0, 200.);
     if (gen_plots_) {
-        eff_sub_mu     = book<TH1F>("eff_sub_mu",     "p_{T}",                100,0,500);
-        eff_tot_mu     = book<TH1F>("eff_tot_mu",     "p_{T}",                100,0,500);
-        pt_response_mu = book<TH1F>("pt_response_mu", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
+        eff_sub_mu     = book<TH1F>("mu_eff_sub",     "p_{T}",                100,0,500);
+        eff_tot_mu     = book<TH1F>("mu_eff_tot",     "p_{T}",                100,0,500);
+        pt_response_mu = book<TH1F>("mu_pt_response", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
                                                                         800,-1.,1.);
     } else {
         eff_sub_mu     = 0;
@@ -118,9 +118,9 @@ VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & d
     }
 
     // event variables
-    N_PrimVertices = book<TH1F>("N_pv", "N^{PV}", 50, 0, 50);
-    MET = book<TH1F>("MET", "missing E_{T}", 200,0,1000);
-    HT = book<TH1F>("HT", "H_{T} Jets", 100, 0, 3500);
+    N_PrimVertices = book<TH1F>("event_N_pv", "N^{PV}", 50, 0, 50);
+    MET = book<TH1F>("event_MET", "missing E_{T}", 200,0,1000);
+    HT = book<TH1F>("event_HT", "H_{T} Jets", 100, 0, 3500);
 
 
 }
