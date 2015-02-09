@@ -120,7 +120,7 @@ def plotter_factory(**kws):
     return varial.tools.Plotter(**kws)
 
 def create_name(name):
-    return name+'v'+current_tag
+    return name+'v'+varial.settings.git_tag
 
 tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_2_1_patch4/src/UHH2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
 
