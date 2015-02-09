@@ -196,8 +196,8 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     // 3. Set up Hists classes:
 
     // gen histograms
-    nocuts_gen_hists.reset(new GenHists(ctx, "Gen_NoCuts"));
-    gensel_gen_hists.reset(new GenHists(ctx, "Gen_GenSelection"));
+    nocuts_gen_hists.reset(new GenHists(ctx, "Gen-NoCuts"));
+    gensel_gen_hists.reset(new GenHists(ctx, "Gen-GenSelection"));
 
 
     // reco histograms

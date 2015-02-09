@@ -122,16 +122,19 @@ def plotter_factory(**kws):
 def create_name(name):
     return name+'v'+varial.settings.git_tag
 
+    
+
 tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_2_1_patch4/src/UHH2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
 
 tagger.run()
 
 pl = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
+    # filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
     plotter_factory=plotter_factory,
     combine_files=True
 )
+
 
 time.sleep(1)
 pl.run()

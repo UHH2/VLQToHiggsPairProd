@@ -1,0 +1,8 @@
+1.0 20150127T185446 Test commit 7
+1.1 20150130T154918 Implemented first selections on 1 lepton, 1 btag, ht and leading jet pt
+1.2 20150131T221930 Implemented n-minus-1 and all-cuts selections
+1.3 20150201T195809 Only TTJets background, start weighting to lumi
+1.4 20150202T154607 more statistics (2.5 mio ttbar events), use log scale
+1.5 20150204T105351 Add more genhists (decay modes, dR between top daughters) and top tag multiplicity
+1.6 20150206T114144 Added more GenHists and implemented GenSelection for signal efficiency
+1.7 20150209T151438 New naming convention for hists and selection dirs
