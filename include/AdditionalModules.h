@@ -25,13 +25,6 @@ namespace vlqToHiggsPair {
         "HTCut"
     };
 
-    inline GenParticle const * findMother(GenParticle const & igenp, vector<GenParticle> const * genparticles)
-    {
-        GenParticle const * imother = igenp.mother(genparticles);
-        if (!imother) imother = igenp.mother(genparticles, 2);
-        return imother;
-    }
-
     inline void fill_hists(
         Event const & event,
         std::map<const char *, bool> const & pass_selection,
@@ -98,46 +91,46 @@ namespace vlqToHiggsPair {
 
 
 
-class NGenParticleCalculator : public AnalysisModule {
-public:
-    explicit NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id = boost::none) :
-        hndl_(ctx.get_handle<int>(hndl_name)), genp_id_(genp_id), mother_id_(mother_id) {}
+// class NGenParticleCalculator : public AnalysisModule {
+// public:
+//     explicit NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id = boost::none) :
+//         hndl_(ctx.get_handle<int>(hndl_name)), genp_id_(genp_id), mother_id_(mother_id) {}
 
-    virtual bool process(Event & event) {
-        int n_particles = 0;
-        for (GenParticle const & genp : *event.genparticles)
-        {
-            if (abs(genp.pdgId()) == genp_id_)
-            {
-                if (mother_id_)
-                {
-                    bool right_mother = false;
-                    GenParticle const * gen_mother = vlqToHiggsPair::findMother(genp, event.genparticles);
-                    while (gen_mother)
-                    {
-                        if (abs(gen_mother->pdgId()) == *mother_id_)
-                        {
-                            right_mother = true;
-                            break;
-                        }
-                        gen_mother = vlqToHiggsPair::findMother(*gen_mother, event.genparticles);
-                    }
-                    if (!right_mother)
-                        continue;
-                }
-                n_particles++;
-            }
-        }
+//     virtual bool process(Event & event) {
+//         int n_particles = 0;
+//         for (GenParticle const & genp : *event.genparticles)
+//         {
+//             if (abs(genp.pdgId()) == genp_id_)
+//             {
+//                 if (mother_id_)
+//                 {
+//                     bool right_mother = false;
+//                     GenParticle const * gen_mother = vlqToHiggsPair::findMother(genp, event.genparticles);
+//                     while (gen_mother)
+//                     {
+//                         if (abs(gen_mother->pdgId()) == *mother_id_)
+//                         {
+//                             right_mother = true;
+//                             break;
+//                         }
+//                         gen_mother = vlqToHiggsPair::findMother(*gen_mother, event.genparticles);
+//                     }
+//                     if (!right_mother)
+//                         continue;
+//                 }
+//                 n_particles++;
+//             }
+//         }
 
-        event.set(hndl_, n_particles);
-        return true;
-    }
+//         event.set(hndl_, n_particles);
+//         return true;
+//     }
 
-private:
-    Event::Handle<int> hndl_;
-    int genp_id_;
-    boost::optional<int> mother_id_;
-};
+// private:
+//     Event::Handle<int> hndl_;
+//     int genp_id_;
+//     boost::optional<int> mother_id_;
+// };
 
 
 class BTagCalculator : public AnalysisModule {

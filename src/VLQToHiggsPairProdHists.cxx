@@ -244,16 +244,16 @@ void VLQToHiggsPairProdHists::fill(const Event & event){
     // buffer values for ptrel and drmin to avoid recomputation:
     drmin_buf.clear();
     ptrel_buf.clear();
-    for(const auto & ele : *event.muons){
-        pt_mu->Fill(ele.pt(), w);
-        eta_mu->Fill(ele.eta(), w);
-        isolation_mu->Fill(ele.relIso(), w);
+    for(const auto & muon : *event.muons){
+        pt_mu->Fill(muon.pt(), w);
+        eta_mu->Fill(muon.eta(), w);
+        isolation_mu->Fill(muon.relIso(), w);
         
         if(event.jets){
-            auto nj = nextJet(ele, *event.jets);
-            auto drmin_val = nj ? deltaR(ele, *nj) : numeric_limits<float>::infinity();
+            auto nj = nextJet(muon, *event.jets);
+            auto drmin_val = nj ? deltaR(muon, *nj) : numeric_limits<float>::infinity();
             drmin_buf.push_back(drmin_val);
-            ptrel_buf.push_back(pTrel(ele, nj));
+            ptrel_buf.push_back(pTrel(muon, nj));
             ptrel_mu->Fill(ptrel_buf.back(), w);
             deltaRmin_mu->Fill(drmin_buf.back(), w);
             deltaRmin_ptrel_mu->Fill(drmin_buf.back(), ptrel_buf.back(), w);
@@ -261,10 +261,10 @@ void VLQToHiggsPairProdHists::fill(const Event & event){
     }
     
     if(event.muons->size() > 0){
-        const auto & ele = (*event.muons)[0];
-        pt_1_mu->Fill(ele.pt(), w);
-        eta_1_mu->Fill(ele.eta(), w);
-        isolation_1_mu->Fill(ele.relIso(), w);
+        const auto & muon = (*event.muons)[0];
+        pt_1_mu->Fill(muon.pt(), w);
+        eta_1_mu->Fill(muon.eta(), w);
+        isolation_1_mu->Fill(muon.relIso(), w);
         if(event.jets){
             ptrel_1_mu->Fill(ptrel_buf[0], w);
             deltaRmin_1_mu->Fill(drmin_buf[0], w);
@@ -272,10 +272,10 @@ void VLQToHiggsPairProdHists::fill(const Event & event){
         }
     }
     if(event.muons->size() > 1){
-        const auto & ele = (*event.muons)[1];
-        pt_2_mu->Fill(ele.pt(), w);
-        eta_2_mu->Fill(ele.eta(), w);
-        isolation_2_mu->Fill(ele.relIso(), w);
+        const auto & muon = (*event.muons)[1];
+        pt_2_mu->Fill(muon.pt(), w);
+        eta_2_mu->Fill(muon.eta(), w);
+        isolation_2_mu->Fill(muon.relIso(), w);
         if(event.jets){
             ptrel_2_mu->Fill(ptrel_buf[1], w);
             deltaRmin_2_mu->Fill(drmin_buf[1], w);

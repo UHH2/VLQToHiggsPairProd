@@ -7,6 +7,7 @@ ROOT.gROOT.ProcessLine('gErrorIgnoreLevel = kError;')
 import os
 import time
 import varial.tools
+import varial.generators as gen
 # import varial.toolinterface
 
 dirname = 'VLQToHiggsPairProd'
@@ -47,38 +48,38 @@ def log_scale(wrps):
         print type(wrp)
         yield wrp
 
-def make_eff_graphs(wrps):
-    def token(w):
-        token_str = "/".join(w.in_file_path)
-        token_str = token_str.replace('_sub_', '_')
-        token_str = token_str.replace('_tot_', '_')
-        return w.legend + ":" + token_str
-    subs, tots = {}, {}
-    res = []
-    for wrp in wrps:
-        yield wrp
-        if '_sub_' in wrp.name:
-            t = token(wrp)
-            if t in tots:
-                res.append(varial.operations.eff((wrp, tots.pop(t))))
-            else:
-                subs[t] = wrp
-        elif '_tot_' in wrp.name:
-            t = token(wrp)
-            if t in subs:
-                res.append(varial.operations.eff((subs.pop(t), wrp)))
-            else:
-                tots[t] = wrp
+# def make_eff_graphs(wrps):
+#     def token(w):
+#         token_str = "/".join(w.in_file_path)
+#         token_str = token_str.replace('_sub_', '_')
+#         token_str = token_str.replace('_tot_', '_')
+#         return w.legend + ":" + token_str
+#     subs, tots = {}, {}
+#     res = []
+#     for wrp in wrps:
+#         yield wrp
+#         if wrp.name.endswith('_sub'):
+#             t = token(wrp)
+#             if t in tots:
+#                 res.append(varial.operations.eff((wrp, tots.pop(t))))
+#             else:
+#                 subs[t] = wrp
+#         elif wrp.name.endswith('_tot'):
+#             t = token(wrp)
+#             if t in subs:
+#                 res.append(varial.operations.eff((subs.pop(t), wrp)))
+#             else:
+#                 tots[t] = wrp
 
-        # if subs:
-        #     print 'subs: ', list(subs.keys())
-        # if tots:
-        #     print 'tots: ', list(tots.keys())
-        # if res:
-        #     print 'res: ', res
-        if res and not (subs or tots):
-            for _ in xrange(len(res)):
-                yield res.pop(0)
+#         # if subs:
+#         #     print 'subs: ', list(subs.keys())
+#         # if tots:
+#         #     print 'tots: ', list(tots.keys())
+#         # if res:
+#         #     print 'res: ', res
+#         if res and not (subs or tots):
+#             for _ in xrange(len(res)):
+#                 yield res.pop(0)
 
 
 def norm_histos_to_integral(wrps):
@@ -100,11 +101,10 @@ def label_axes(wrps):
 
 def loader_hook(wrps):
     wrps = label_axes(wrps)
-    wrps = make_eff_graphs(wrps)
+    wrps = gen.gen_make_eff_graphs(wrps)
     wrps = norm_histos_to_integral(wrps)
     # wrps = log_scale(wrps)
     for w in wrps:
-        w.legend = "Tprime"
         yield w
 
 def canvas_hook(wrps):

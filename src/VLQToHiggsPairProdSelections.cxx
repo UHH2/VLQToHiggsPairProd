@@ -28,7 +28,7 @@ bool JetPtSelection::passes(const Event & event)
 
 }
 
-HTSelection::HTSelection(Context & ctx, float minht, float maxht) : h_ht_(ctx.get_handle<double>("HT")), minht_(minht), maxht_(maxht) {} 
+HTSelection::HTSelection(Event::Handle<double> const & hndl, float minht, float maxht) : h_ht_(hndl), minht_(minht), maxht_(maxht) {} 
 
 bool HTSelection::passes(const Event & event)
 {
@@ -49,5 +49,13 @@ bool NGenParticleSelection::passes(const Event & event)
 {
     int n_particles = event.get(hndl_);
     return n_particles >= n_min_ && (n_max_ < 0 || n_particles <= n_max_);
+}
+
+BoolSelection::BoolSelection(Event::Handle<bool> const & hndl) : hndl_(hndl) {}
+
+bool BoolSelection::passes(const Event & event)
+{
+    bool pass = event.get(hndl_);
+    return pass;
 }
 

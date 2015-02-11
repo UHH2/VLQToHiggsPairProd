@@ -21,7 +21,7 @@ private:
 
 class HTSelection : public Selection {
 public:
-    explicit HTSelection(Context & ctx, float minht, float maxht = -1.);
+    explicit HTSelection(Event::Handle<double> const & hndl, float minht, float maxht = -1.);
     virtual bool passes(const Event &);
 
 private:
@@ -37,6 +37,14 @@ public:
 private:
     Event::Handle<int> hndl_;
     int n_min_, n_max_;
+};
+
+class BoolSelection : public Selection {
+public:
+    explicit BoolSelection(Event::Handle<bool> const & hndl);
+    virtual bool passes(const Event &);
+private:
+    Event::Handle<bool> hndl_;
 };
 
 }

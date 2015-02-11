@@ -16,24 +16,24 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="1." NEventsMax="10000" Type="MC" Version="TpTp_M1000" Cacheable="False">
+        <InputData Lumi="1." NEventsMax="50000" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <!-- Lumi="4796772" NEventsMax="-1" -->
             <InputTree Name="AnalysisTree" />
         </InputData>
-        <InputData Lumi="1." NEventsMax="10000" Type="MC" Version="TTJets" Cacheable="False">
+        <InputData Lumi="1." NEventsMax="50000" Type="MC" Version="TTJets" Cacheable="False">
             &TTbar;
             <InputTree Name="AnalysisTree" />
         </InputData>
         <!-- Lumi="3156.803" NEventsMax="2546000" -->
-        <!-- <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="WJets" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="50000" Type="MC" Version="WJets" Cacheable="False">
             &WJets;
             <InputTree Name="AnalysisTree" />
         </InputData>
-        <InputData Lumi="1" NEventsMax="200000" Type="MC" Version="ZJets" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="50000" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
             <InputTree Name="AnalysisTree" />
-        </InputData> --> 
+        </InputData> 
 
         <!-- <OutputTree Name="AnalysisTree" /> -->      
             

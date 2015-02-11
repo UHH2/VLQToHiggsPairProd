@@ -5,4 +5,5 @@
 1.4 20150202T154607 more statistics (2.5 mio ttbar events), use log scale
 1.5 20150204T105351 Add more genhists (decay modes, dR between top daughters) and top tag multiplicity
 1.6 20150206T114144 Added more GenHists and implemented GenSelection for signal efficiency
-1.7 20150209T151438 New naming convention for hists and selection dirs
+1.7 20150209T170309 From plot.py: New naming convention for hists and selection dirs
+1.8 20150212T183020 From plot.py: Implemented AndSelections, re-designed AnalysisModule, changed histogram names -> on uhh2 branch master
