@@ -7,3 +7,4 @@
 1.6 20150206T114144 Added more GenHists and implemented GenSelection for signal efficiency
 1.7 20150209T170309 From plot.py: New naming convention for hists and selection dirs
 1.8 20150212T183120 From plot.py: Implemented AndSelections, re-designed AnalysisModule, changed histogram names -> on uhh2 branch master
+1.9 20150213T122634 New Preselection, HT > 700, N_mu >= 1 (no Nelectron cut), jet1_pt > 200, jet2_pt > 50

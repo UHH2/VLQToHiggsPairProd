@@ -12,6 +12,34 @@
 using namespace std;
 using namespace uhh2;
 
+// HistCollector::HistCollector(Context & ctx, const string & dirname, bool gen_plots) :
+//     Hists(ctx, dirname),
+//     el_hists(new ElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
+//     mu_hists(new MuonHists(ctx, dirname+"/MuonHists", gen_plots)),
+//     tau_hists(new TauHists(ctx, dirname+"/TauHists")),
+//     ev_hists(new EventHists(ctx, dirname+"/EventHists")),
+//     jet_hists(new JetHists(ctx, dirname+"/JetHists")),
+//     topjet_hists(new TopJetHists(ctx, dirname+"/TopJetHists"))
+//     gen_hists(gen_plots ? new GenHists(ctx, dirname+"/GenHists") : NULL)
+
+//     {
+//         // if (gen_plots) gen_hists = new GenHists(ctx, dirname+"/GenHists");
+//         // else gen_hists = 0;
+//     } 
+
+// void HistCollector::fill(const Event & event) {}
+
+// HistCollector::~HistCollector(){
+//     delete el_hists;
+//     delete mu_hists;
+//     delete tau_hists;
+//     delete ev_hists;
+//     delete jet_hists;
+//     delete topjet_hists;
+//     delete gen_hists;
+
+// }
+
 VLQToHiggsPairProdHists::VLQToHiggsPairProdHists(Context & ctx, const string & dirname, bool gen_plots):
     Hists(ctx, dirname), gen_plots_(gen_plots), h_ht_(ctx.get_handle<double>("HT")),
     h_btags_(ctx.get_handle<int>("n_btags")), h_toptags_(ctx.get_handle<int>("n_toptags"))

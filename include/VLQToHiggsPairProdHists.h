@@ -3,8 +3,37 @@
 #include "UHH2/core/include/Hists.h"
 #include "UHH2/core/include/Event.h"
 
+#include "UHH2/common/include/ElectronHists.h"
+#include "UHH2/common/include/EventHists.h"
+#include "UHH2/common/include/JetHists.h"
+#include "UHH2/common/include/MuonHists.h"
+#include "UHH2/common/include/TauHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
 
-class VLQToHiggsPairProdHists: public uhh2::Hists {
+
+
+
+// class HistCollector : public uhh2::Hists {
+// public:
+//     HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);
+//     virtual ~HistCollector();
+
+//     virtual void fill(const uhh2::Event & ev) override;
+
+// private:
+//     ElectronHists * el_hists;
+//     MuonHists * mu_hists;
+//     TauHists * tau_hists;
+//     EventHists * ev_hists;
+//     JetHists * jet_hists;
+//     TopJetHists * topjet_hists;
+//     GenHists * gen_hists;
+
+
+// };
+
+
+class VLQToHiggsPairProdHists : public uhh2::Hists {
 public:
     // use the same constructor arguments as Hists for forwarding:
     VLQToHiggsPairProdHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);

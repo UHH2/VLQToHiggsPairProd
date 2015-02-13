@@ -351,6 +351,8 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         gen_mu_finalselection->passes(event)
         );
 
+    bool passes_preselection = false;
+
     event.set(pass_gensel_, passes_any_gensel);
 
     if (gensel_nocuts.second->passes(event))
@@ -360,7 +362,10 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
     }
 
     if (nogensel_fin_onemu.second->passes(event))
+    {
+        passes_preselection = true;
         nogensel_fin_onemu.first->fill(event);
+    }
 
     if (gensel_fin_onemu.second->passes(event))
         gensel_fin_onemu.first->fill(event);
@@ -480,7 +485,7 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
 //     if(bjet_selection){
 //         h_bsel->fill(event);
 //     }
-    return false;
+    return passes_preselection;
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
