@@ -56,15 +56,16 @@ private:
 
     std::map<const char *, std::shared_ptr<Selection> > reco_cuts;
 
-
+    // no gen selection, no reco selection, both gen and reco plots
     std::pair< std::unique_ptr<Hists>, std::unique_ptr<Hists> >
             nogensel_nocuts
             ;
 
+    // gen selection, no reco selection, both gen and reco plots
     std::pair< std::pair< std::unique_ptr<Hists>, std::unique_ptr<Hists> >, std::unique_ptr<AndSelection> >
             gensel_nocuts;
 
-
+    // with/without gen selection, final reco selection, only reco plots
     std::pair<std::unique_ptr<Hists> , std::unique_ptr<AndSelection> >
             // allsel_el_hists,
             // allsel_mu_hists,
@@ -73,6 +74,8 @@ private:
             // allsel_oneel_gensel_hists,
             gensel_fin_onemu
             ;
+
+    // with/without gen selection, one-cut and n-minus-1 reco selections, only reco plots
     std::map<const char*, std::pair< std::unique_ptr<Hists>, std::unique_ptr<AndSelection> > >
             nogensel_onecut,
             gensel_onecut,
@@ -176,13 +179,16 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     gen_mu_finalselection->add<NGenParticleSelection>("n_gen_b >= 1", ctx.get_handle<int>("n_gen_bfromtop"), 1);
     gen_mu_finalselection->add<NGenParticleSelection>("n_gen_higgs >= 1", ctx.get_handle<int>("n_gen_higgs"), 1);
 
-    reco_cuts["OneMuonCut"] = std::shared_ptr<Selection>(new AndSelection(ctx, "one_muon"));
+    // DEFINE SELECTION HERE
+    // reco_cuts["OneMuonCut"] = std::shared_ptr<Selection>(new AndSelection(ctx, "one_muon"));
+    reco_cuts["MinOneMuon"] = std::shared_ptr<Selection>(new NMuonSelection(1, -1));
     reco_cuts["BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, btag));
-    reco_cuts["JetPtCut"] = std::shared_ptr<Selection>(new JetPtSelection(200.));
-    reco_cuts["HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 900.));
+    reco_cuts["JetPtCut1"] = std::shared_ptr<Selection>(new JetPtSelection(200.));
+    reco_cuts["JetPtCut2"] = std::shared_ptr<Selection>(new JetPtSelection(50.));
+    reco_cuts["HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
 
-    ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NMuonSelection>("n_mu = 1", 1, 1);
-    ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NElectronSelection>("n_el = 0", 0, 0);
+    // ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NMuonSelection>("n_mu = 1", 1, 1);
+    // ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NElectronSelection>("n_el = 0", 0, 0);
 
     // set handle here for later call in VLQToHiggsPairProdAnalysis::process
     pass_gensel_ = ctx.get_handle<bool>("pass_gensel");
@@ -371,8 +377,8 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         if (nogensel_nm1_onemu[sel_name].second->passes(event))
             nogensel_nm1_onemu[sel_name].first->fill(event);
 
-        if (gensel_onecut[sel_name].second->passes(event))
-            gensel_onecut[sel_name].first->fill(event);
+        if (gensel_nm1_onemu[sel_name].second->passes(event))
+            gensel_nm1_onemu[sel_name].first->fill(event);
     }
 
     // if (passes_any_gensel)
