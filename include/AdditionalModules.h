@@ -12,7 +12,6 @@ using namespace std;
 using namespace uhh2;
 
 namespace vlqToHiggsPair {
-
     static const size_t number_selections = 7;
 
     static const char* selection_names[] = {
@@ -24,7 +23,6 @@ namespace vlqToHiggsPair {
         "JetPtCut",
         "HTCut"
     };
-
     inline void fill_hists(
         Event const & event,
         std::map<const char *, bool> const & pass_selection,

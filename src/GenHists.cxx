@@ -358,7 +358,6 @@ void GenHists::fill(const Event & event){
         if (max_deltaR_topprod)
         {
             hist("spec_max_deltaR_topprod")->Fill(max_deltaR_topprod);
-            hist("spec_top_pt_vs_max_dR")->Fill(t2->pt(), max_deltaR_topprod);
         }
 
         hist("t_decay")->Fill(decay1);

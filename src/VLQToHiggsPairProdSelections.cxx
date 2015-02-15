@@ -58,4 +58,3 @@ bool BoolSelection::passes(const Event & event)
     bool pass = event.get(hndl_);
     return pass;
 }
-

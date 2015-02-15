@@ -323,6 +323,7 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     // allsel_onemu_hists.reset(new VLQToHiggsPairProdHists(ctx, "OneMuon-FinalSelection"));
 
     // allsel_onemu_gensel_hists.reset(new VLQToHiggsPairProdHists(ctx, "GenSel-OneMuon-FinalSelection"));
+
 }
 
 
@@ -385,7 +386,6 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         if (gensel_nm1_onemu[sel_name].second->passes(event))
             gensel_nm1_onemu[sel_name].first->fill(event);
     }
-
     // if (passes_any_gensel)
     // {
     //     gensel_hists->fill(event);

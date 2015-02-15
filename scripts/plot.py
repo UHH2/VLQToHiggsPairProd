@@ -130,7 +130,7 @@ tagger.run()
 
 pl = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    # filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
+    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
     plotter_factory=plotter_factory,
     combine_files=True
 )
