@@ -139,5 +139,5 @@ pl = varial.tools.mk_rootfile_plotter(
 time.sleep(1)
 pl.run()
 varial.tools.WebCreator().run()
-os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
-os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))
+# os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
+# os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))

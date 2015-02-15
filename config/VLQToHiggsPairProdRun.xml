@@ -30,18 +30,18 @@
 
         </InputData>
         <!-- Lumi="3156.803" NEventsMax="2546000" -->
-        <!-- <InputData Lumi="1" NEventsMax="1000" Type="MC" Version="WJets" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="1000" Type="MC" Version="WJets" Cacheable="False">
             &WJets;
             <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
+            <!-- <OutputTree Name="AnalysisTree" />       -->
 
-        </InputData> -->
-       <!--  <InputData Lumi="1" NEventsMax="1000" Type="MC" Version="ZJets" Cacheable="False">
+        </InputData>
+        <InputData Lumi="1" NEventsMax="1000" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
             <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
+            <!-- <OutputTree Name="AnalysisTree" />       -->
 
-        </InputData>  -->
+        </InputData> 
 
         <!-- <OutputTree Name="AnalysisTree" /> -->      
             
@@ -55,9 +55,9 @@
             <Item Name="METName" Value="slimmedMETs" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
-            <!-- <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" /> -->
-            <Item Name="TopJetCollection" Value="patJetsCmsTopTagCHSPacked" />
-            <Item Name="GenTopJetCollection" Value="cmsTopTagGen" />
+            <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
+            <!-- <Item Name="TopJetCollection" Value="patJetsCmsTopTagCHSPacked" /> -->
+            <!-- <Item Name="GenTopJetCollection" Value="cmsTopTagGen" /> -->
 
 
             <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:

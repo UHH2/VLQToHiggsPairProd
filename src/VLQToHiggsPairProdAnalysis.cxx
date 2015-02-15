@@ -168,7 +168,7 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
 
     // 2. set up no-cuts histograms
-    nogensel_nocuts.reset(new HistCollector(ctx, "NoGenSel-NoCuts-Reco"));
+    nogensel_nocuts.reset(new HistCollector(ctx, "NoGenSel-NoCuts"));
     // nogensel_nocuts.second.reset(new GenHists(ctx, "NoGenSel-NoCuts-Gen"));
 
     // 3. set up gen selection and the final reco selections
@@ -194,7 +194,7 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     pass_gensel_ = ctx.get_handle<bool>("pass_gensel");
 
     // 4. set up hists and selections with gen selection only
-    gensel_nocuts.first.reset(new HistCollector(ctx, "GenSel-NoCuts-Reco"));
+    gensel_nocuts.first.reset(new HistCollector(ctx, "GenSel-NoCuts"));
     // gensel_nocuts.second.reset(new GenHists(ctx, "GenSel-NoCuts-Gen"));
 
     gensel_nocuts.second.reset(new AndSelection(ctx, "gensel_nocuts"));
@@ -202,10 +202,10 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
 
 
-    nogensel_fin_onemu.first.reset(new HistCollector(ctx, "NoGenSel-AllCuts-Reco"));
+    nogensel_fin_onemu.first.reset(new HistCollector(ctx, "NoGenSel-AllCuts"));
     nogensel_fin_onemu.second.reset(new AndSelection(ctx, "nogensel_allcuts"));
 
-    gensel_fin_onemu.first.reset(new HistCollector(ctx, "GenSel-AllCuts-Reco"));
+    gensel_fin_onemu.first.reset(new HistCollector(ctx, "GenSel-AllCuts"));
     gensel_fin_onemu.second.reset(new AndSelection(ctx, "gensel_allcuts"));
     gensel_fin_onemu.second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
 
@@ -219,20 +219,20 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
         gensel_fin_onemu.second->add(sel_str, reco_cuts[sel_name]);
 
         // create histograms and selections for the onecut-only case
-        nogensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-OneCut-"+sel_str+"-Reco")),
+        nogensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-OneCut-"+sel_str)),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "nogensel_onecut_"+sel_str+"_cutflow")));
         nogensel_onecut[sel_name].second->add(sel_str, reco_cuts[sel_name]);
 
-        gensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-OneCut-"+sel_str+"-Reco")),
+        gensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-OneCut-"+sel_str)),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "gensel_onecut_"+sel_str+"_cutflow")));
         gensel_onecut[sel_name].second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
         gensel_onecut[sel_name].second->add(sel_str, reco_cuts[sel_name]);
 
         // create n-minus-1 selections and histograms
 
-        nogensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-Nminus1-"+sel_str+"-Reco")),
+        nogensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-Nminus1-"+sel_str)),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "nogensel_nminus1_"+sel_str+"_cutflow")));
-        gensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-Nminus1-"+sel_str+"-Reco")),
+        gensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-Nminus1-"+sel_str)),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "gensel_nminus1_"+sel_str+"_cutflow")));
         gensel_nm1_onemu[sel_name].second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
 
