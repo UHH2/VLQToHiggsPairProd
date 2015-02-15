@@ -10,27 +10,57 @@
 #include "UHH2/common/include/TauHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
 
+#include "TH1F.h"
 
 
+using namespace uhh2;
 
-// class HistCollector : public uhh2::Hists {
-// public:
-//     HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);
-//     virtual ~HistCollector();
+class ExtendedEventHists : public EventHists {
+public:
+    ExtendedEventHists(uhh2::Context & ctx, const std::string & dirname) : 
+        EventHists(ctx, dirname), h_btags_(ctx.get_handle<int>("n_btags")),
+        h_toptags_(ctx.get_handle<int>("n_toptags"))
+        {
+            h_n_btags = book<TH1F>("jets_Nbs", "N_{b-tags}", 20, 0, 20);
+            h_n_toptags = book<TH1F>("jets_Ntops", "N_{top jets}", 20, 0, 20);
 
-//     virtual void fill(const uhh2::Event & ev) override;
+        }
 
-// private:
-//     ElectronHists * el_hists;
-//     MuonHists * mu_hists;
-//     TauHists * tau_hists;
-//     EventHists * ev_hists;
-//     JetHists * jet_hists;
-//     TopJetHists * topjet_hists;
-//     GenHists * gen_hists;
+    virtual void fill(const uhh2::Event & event) override {
+        EventHists::fill(event);
+        double w = event.weight;
+        int n_btags = event.get(h_btags_);
+        int n_toptags = event.get(h_toptags_);
+
+        h_n_btags->Fill(n_btags, w);
+        h_n_toptags->Fill(n_toptags, w);
+
+    }
+
+private:
+    TH1F *h_n_btags, *h_n_toptags;
+    uhh2::Event::Handle<int> h_btags_, h_toptags_;
+};
 
 
-// };
+class HistCollector : public uhh2::Hists {
+public:
+    HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);
+    virtual ~HistCollector();
+
+    virtual void fill(const uhh2::Event & ev) override;
+
+private:
+    ElectronHists * el_hists;
+    MuonHists * mu_hists;
+    TauHists * tau_hists;
+    ExtendedEventHists * ev_hists;
+    JetHists * jet_hists;
+    TopJetHists * topjet_hists;
+    GenHists * gen_hists;
+
+
+};
 
 
 class VLQToHiggsPairProdHists : public uhh2::Hists {

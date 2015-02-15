@@ -57,12 +57,12 @@ private:
     std::map<const char *, std::shared_ptr<Selection> > reco_cuts;
 
     // no gen selection, no reco selection, both gen and reco plots
-    std::pair< std::unique_ptr<Hists>, std::unique_ptr<Hists> >
+    std::unique_ptr<Hists>
             nogensel_nocuts
             ;
 
     // gen selection, no reco selection, both gen and reco plots
-    std::pair< std::pair< std::unique_ptr<Hists>, std::unique_ptr<Hists> >, std::unique_ptr<AndSelection> >
+    std::pair< std::unique_ptr<Hists>, std::unique_ptr<AndSelection> >
             gensel_nocuts;
 
     // with/without gen selection, final reco selection, only reco plots
@@ -168,8 +168,8 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
 
     // 2. set up no-cuts histograms
-    nogensel_nocuts.first.reset(new VLQToHiggsPairProdHists(ctx, "NoGenSel-NoCuts-Reco"));
-    nogensel_nocuts.second.reset(new GenHists(ctx, "NoGenSel-NoCuts-Gen"));
+    nogensel_nocuts.reset(new HistCollector(ctx, "NoGenSel-NoCuts-Reco"));
+    // nogensel_nocuts.second.reset(new GenHists(ctx, "NoGenSel-NoCuts-Gen"));
 
     // 3. set up gen selection and the final reco selections
 
@@ -184,7 +184,7 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     reco_cuts["MinOneMuon"] = std::shared_ptr<Selection>(new NMuonSelection(1, -1));
     reco_cuts["BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, btag));
     reco_cuts["JetPtCut1"] = std::shared_ptr<Selection>(new JetPtSelection(200.));
-    reco_cuts["JetPtCut2"] = std::shared_ptr<Selection>(new JetPtSelection(50.));
+    // reco_cuts["JetPtCut2"] = std::shared_ptr<Selection>(new JetPtSelection(50.));
     reco_cuts["HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
 
     // ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NMuonSelection>("n_mu = 1", 1, 1);
@@ -194,18 +194,18 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     pass_gensel_ = ctx.get_handle<bool>("pass_gensel");
 
     // 4. set up hists and selections with gen selection only
-    gensel_nocuts.first.first.reset(new VLQToHiggsPairProdHists(ctx, "GenSel-NoCuts-Reco"));
-    gensel_nocuts.first.second.reset(new GenHists(ctx, "GenSel-NoCuts-Gen"));
+    gensel_nocuts.first.reset(new HistCollector(ctx, "GenSel-NoCuts-Reco"));
+    // gensel_nocuts.second.reset(new GenHists(ctx, "GenSel-NoCuts-Gen"));
 
     gensel_nocuts.second.reset(new AndSelection(ctx, "gensel_nocuts"));
     gensel_nocuts.second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
 
 
 
-    nogensel_fin_onemu.first.reset(new VLQToHiggsPairProdHists(ctx, "NoGenSel-AllCuts-Reco"));
+    nogensel_fin_onemu.first.reset(new HistCollector(ctx, "NoGenSel-AllCuts-Reco"));
     nogensel_fin_onemu.second.reset(new AndSelection(ctx, "nogensel_allcuts"));
 
-    gensel_fin_onemu.first.reset(new VLQToHiggsPairProdHists(ctx, "GenSel-AllCuts-Reco"));
+    gensel_fin_onemu.first.reset(new HistCollector(ctx, "GenSel-AllCuts-Reco"));
     gensel_fin_onemu.second.reset(new AndSelection(ctx, "gensel_allcuts"));
     gensel_fin_onemu.second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
 
@@ -219,20 +219,20 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
         gensel_fin_onemu.second->add(sel_str, reco_cuts[sel_name]);
 
         // create histograms and selections for the onecut-only case
-        nogensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, "NoGenSel-OneCut-"+sel_str+"-Reco")),
+        nogensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-OneCut-"+sel_str+"-Reco")),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "nogensel_onecut_"+sel_str+"_cutflow")));
         nogensel_onecut[sel_name].second->add(sel_str, reco_cuts[sel_name]);
 
-        gensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, "GenSel-OneCut-"+sel_str+"-Reco")),
+        gensel_onecut[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-OneCut-"+sel_str+"-Reco")),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "gensel_onecut_"+sel_str+"_cutflow")));
         gensel_onecut[sel_name].second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
         gensel_onecut[sel_name].second->add(sel_str, reco_cuts[sel_name]);
 
         // create n-minus-1 selections and histograms
 
-        nogensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, "NoGenSel-Nminus1-"+sel_str+"-Reco")),
+        nogensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "NoGenSel-Nminus1-"+sel_str+"-Reco")),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "nogensel_nminus1_"+sel_str+"_cutflow")));
-        gensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, "GenSel-Nminus1-"+sel_str+"-Reco")),
+        gensel_nm1_onemu[sel_name] = std::make_pair(std::unique_ptr<Hists>(new HistCollector(ctx, "GenSel-Nminus1-"+sel_str+"-Reco")),
                                                    std::unique_ptr<AndSelection>(new AndSelection(ctx, "gensel_nminus1_"+sel_str+"_cutflow")));
         gensel_nm1_onemu[sel_name].second->add<BoolSelection>("gen_finalstate_sel", pass_gensel_);
 
@@ -344,8 +344,8 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
     
 
     // 2.b fill histograms
-    nogensel_nocuts.first->fill(event);
-    nogensel_nocuts.second->fill(event);
+    nogensel_nocuts->fill(event);
+    // nogensel_nocuts.second->fill(event);
 
     bool passes_any_gensel = (
         // gen_el_finalselection->passes(event) ||
@@ -358,8 +358,8 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
 
     if (gensel_nocuts.second->passes(event))
     {
-        gensel_nocuts.first.first->fill(event);
-        gensel_nocuts.first.second->fill(event);
+        gensel_nocuts.first->fill(event);
+        // gensel_nocuts.first.second->fill(event);
     }
 
     if (nogensel_fin_onemu.second->passes(event))
