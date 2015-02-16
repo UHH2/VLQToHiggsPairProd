@@ -18,29 +18,21 @@ varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd
 
 current_tag = varial.settings.git_tag
 
-cuts = ['NoCuts', 'FinalGenSelNoCuts',
-    'GenNoCuts', 'GenFinalGenSelection',
-    'OneElectronCut', 'FinalGenSelOneElectronCut',
-    'OneElNminusBTagCut', 'FinalGenSelOneElNminusBTagCut',
-    'OneElectronFinalSelection', 'FinalGenSelOneElectronFinalSelection'
+cuts = ['NoGenSel-NoCuts', 'NoGenSel-AllCuts'
     ]
 
-# def new_commit():
-#     commit_mess = raw_input('Please enter commit message: ')
-#     os.system("git commit -m '%s'", % commit_mess)
-
-# def document_plot(option="none"):
-#     if os.system('git diff --quiet') or os.system('git diff --cached --quiet') :
-#         commit_opt = raw_input('Changes in git tree detected, want to make a new commit (c), amend (a) or do nothing (N)? ')
-#         options = {
-#             "c" : new_commit,
-#             "C" : new_commit,
-#             "a" : amend_commit,
-#             "A" : amend_commit,
-#             "n" : no_commit,
-#             "N" : no_commit,
-#             ""  : no_commit
-#         }
+varial.settings.defaults_Legend['x_pos'] = 0.80
+varial.settings.defaults_Legend['label_width'] = 0.36
+varial.settings.defaults_Legend['label_height'] = 0.03
+# varial.settings.debug_mode = True
+varial.settings.box_text_size = 0.03
+varial.settings.colors = {
+    'TTJets': 632, 
+    'WJets': 878,
+    'ZJets': 596, 
+    'TpTp_M1000': 870, 
+    # 'TpJ_TH_M800_NonTlep': 434,
+}
 
 
 def log_scale(wrps):
@@ -98,14 +90,26 @@ def label_axes(wrps):
             w.histo.SetTitle('')
         yield w
 
-
 def loader_hook(wrps):
+    wrps = gen.gen_add_wrp_info(
+        wrps,
+        sample=lambda w: w.file_path.split('.')[-2],
+        analyzer=lambda w: w.in_file_path[0],
+        legend=lambda w: ('100* ' if 'TpTp_M' in w.sample else '') + w.sample,
+        is_signal=lambda w: 'TpTp_M' in w.sample,
+        lumi=lambda w: 0.01 if 'TpTp_M' in w.sample else 1.
+    )
+    # wrps = gen.imap_conditional(wrps, lambda w: 'TpJ_TH_M800' in w.sample, gen.op.norm_to_lumi)
     wrps = label_axes(wrps)
-    wrps = gen.gen_make_eff_graphs(wrps)
-    wrps = norm_histos_to_integral(wrps)
-    # wrps = log_scale(wrps)
-    for w in wrps:
-        yield w
+    return wrps
+
+# def loader_hook(wrps):
+#     wrps = label_axes(wrps)
+#     wrps = gen.gen_make_eff_graphs(wrps)
+#     wrps = norm_histos_to_integral(wrps)
+#     # wrps = log_scale(wrps)
+#     for w in wrps:
+#         yield w
 
 def canvas_hook(wrps):
     wrps = log_scale(wrps)
@@ -113,7 +117,10 @@ def canvas_hook(wrps):
 
 
 def plotter_factory(**kws):
+    kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
     kws['hook_loaded_histos'] = loader_hook
+    kws['plot_setup'] = gen.mc_stack_n_data_sum
+    kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
     # kws['hook_canvas_post_build'] = canvas_hook
@@ -130,7 +137,7 @@ tagger.run()
 
 pl = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] not in ['AnalysisTree', 'SFrame'],
+    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
     plotter_factory=plotter_factory,
     combine_files=True
 )

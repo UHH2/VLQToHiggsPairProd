@@ -1,17 +1,17 @@
 SteerPlotter(){
   
   // steering for the plotter
-  fCycleName		= "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/uhh2.AnalysisModuleRunner"; // name of the cycle (first part of the name of the root files)
-  fInputFiles		= "MC.TpTp3Gen.root	    "; // name of the input files (second part)
-  fSampleNames		= "TpTp_M1000				"; // name of chains to be plotted
-  fSamplesWeight	= "1.0				"; // weights applied to the samples (same order as in fInputFiles)
-  fSamplesUnc		= "0.0				"; // normalisation uncertainty of individual samples 
-  fHistColors		= "632				"; // the colors of the histograms, negative numbers mean no filling
-  fHistMarkers		= "0				"; // histogram markers (0=solid line, -1=dashed line, 24=open circle...)
+  fCycleName		= "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/output/uhh2.AnalysisModuleRunner"; // name of the cycle (first part of the name of the root files)
+  fInputFiles		  = "MC.TpTp_M1000.root, MC.TTJets.root,  MC.WJets.root, MC.ZJets.root"; // name of the input files (second part)
+  fSampleNames		= "TpTp_M1000,         TTbar,           WJets,         ZJets        "; // name of chains to be plotted
+  fSamplesWeight	= "1000.0,             1.0,             1.0,           1.0          "; // weights applied to the samples (same order as in fInputFiles)
+  fSamplesUnc		  = "0.0,                0.0,             0.0,           0.0          "; // normalisation uncertainty of individual samples 
+  fHistColors		  = "632,                810,             600,           416          "; // the colors of the histograms, negative numbers mean no filling
+  fHistMarkers		= "0,                  0,               0,             0            "; // histogram markers (0=solid line, -1=dashed line, 24=open circle...)
 
-  // fSamplesToStack = "TTbar,  Wjets, SingleTop"; // the names of chains which you would like to stack (same as in input filenames)
+  // fSamplesToStack = "TTbar,  Wjets, ZJets"; // the names of chains which you would like to stack (same as in input filenames)
 
-  fOutputPsFile = "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/hists/hist.uhh2.AnalysisModuleRunner.MC.TpTp3Gen.ps";
+  fOutputPsFile = "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/output/VLQToHiggsPairProdv1.11_sframe_plotter/TpTpHists.ps";
   
   bRatioPlot = false;   // plot ratio histograms?
   bZScoreInRatio = false;   // plot z-score instead of usual ratio
@@ -19,7 +19,7 @@ SteerPlotter(){
   bShapeNorm = false;   // shape normalization? 
   bPortrait = true;    // portrait or landscape?
   bDrawEntries = false; // draw the histogram entries?
-  fLumi = 19.7; // luminosity of sample
+  fLumi = 20; // luminosity of sample
   fSysError = 0.022; // luminosity uncertainty
   bDrawLumi = false;   // plot ratio histograms?
   bForPrelim = false; // draw text saying "CMS Preliminary" -> only works if bDrawLumi is on
