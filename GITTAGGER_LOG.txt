@@ -10,3 +10,5 @@
 1.9 20150213T122634 New Preselection, HT > 700, N_mu >= 1 (no Nelectron cut), jet1_pt > 200, jet2_pt > 50
 1.10 20150215T213718 From plot.py: New histogram format, different categories (ElectronHists etc) now in different folders -> on uhh2 branch new-ntuple-format
 1.11 20150215T225935 switched back to master - old ntuple format
+1.12 20150216T105853 Ran over full samples, produce stacked plots -> used inclusive WJets/ZJets samples (low statistics in high-energy area) and no QCD
+1.13 20150217T101147 From plot.py: Ran over binned samples, added QCD, no writing out of OutputTrees

@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY WJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_LNu_20x25.xml">
-<!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml">
-<!ENTITY TTbar SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TTJets_20x25.xml">
 <!ENTITY TpTp_M1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TpTp_M1000_20x25.xml">
+<!ENTITY TTbar SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TTJets_20x25.xml">
+<!ENTITY WJets100to200 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT100to200_20x25.xml">
+<!ENTITY WJets200to400 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT200to400_20x25.xml">
+<!ENTITY WJets400to600 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT400to600_20x25.xml">
+<!ENTITY WJets600toInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT600toInf_20x25.xml">
+<!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml">
+<!ENTITY QCD_HT500to1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_QCD_HT500To1000Ext_20x25.xml">
+<!ENTITY QCD_HT1000ToInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_QCD_HT1000ToInfExt_20x25.xml">
 ]
 >
 
-
+<!-- <!ENTITY WJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_LNu_20x25.xml"> -->
 
 <JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1." > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." > -->
    <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output/" PostFix="" TargetLumi="20000" >
         <InputData Lumi="4796772." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
-            <!-- Lumi="4796772" NEventsMax="-1" -->
             <InputTree Name="AnalysisTree" />
             <!-- <OutputTree Name="AnalysisTree" /> -->
 
         </InputData>
+
         <InputData Lumi="31568.03" NEventsMax="-1" Type="MC" Version="TTJets" Cacheable="False">
             &TTbar;
             <InputTree Name="AnalysisTree" />
             <!-- <OutputTree Name="AnalysisTree" /> -->
 
         </InputData>
-        <!-- Lumi="3156.803" NEventsMax="2546000" -->
-        <InputData Lumi="162.9756" NEventsMax="-1" Type="MC" Version="WJets" Cacheable="False">
-            &WJets;
-            <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
 
-        </InputData>
         <InputData Lumi="469.5707" NEventsMax="-1" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
             <InputTree Name="AnalysisTree" />
@@ -43,7 +42,49 @@
 
         </InputData> 
 
-        <!-- <OutputTree Name="AnalysisTree" /> -->      
+        <InputData Lumi="2354.480" NEventsMax="-1" Type="MC" Version="WJets100to200" Cacheable="False">
+            &WJets100to200;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
+
+        <InputData Lumi="8510.477" NEventsMax="-1" Type="MC" Version="WJets200to400" Cacheable="False">
+            &WJets200to400;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
+
+        <InputData Lumi="67844.94" NEventsMax="-1" Type="MC" Version="WJets400to600" Cacheable="False">
+            &WJets400to600;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
+
+        <InputData Lumi="198348.0" NEventsMax="-1" Type="MC" Version="WJets600toInf" Cacheable="False">
+            &WJets600toInf;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
+
+        <InputData Lumi="120.2061" NEventsMax="-1" Type="MC" Version="QCD500to1000" Cacheable="False">
+            <!-- cross section : 26740.0 -->
+            &QCD_HT500to1000;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
+
+        <InputData Lumi="1469.039" NEventsMax="-1" Type="MC" Version="QCD1000ToInf" Cacheable="False">
+            <!-- cross section : 769.70000000000005 -->
+            &QCD_HT1000ToInf;
+            <InputTree Name="AnalysisTree" />
+            <!-- <OutputTree Name="AnalysisTree" />       -->
+
+        </InputData>
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->

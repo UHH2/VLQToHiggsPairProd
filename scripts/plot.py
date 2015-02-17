@@ -90,7 +90,16 @@ def label_axes(wrps):
             w.histo.SetTitle('')
         yield w
 
+def norm_cf_plots(wrps):
+    for w in wrps:
+        if w.name.startswith('cf_') and isinstance(w, varial.wrappers.HistoWrapper):
+            yield varial.operations.norm_to_integral(w)
+        else:
+            yield w
+
+
 def loader_hook(wrps):
+    wrps = norm_cf_plots(wrps)
     wrps = gen.gen_add_wrp_info(
         wrps,
         sample=lambda w: w.file_path.split('.')[-2],
@@ -137,7 +146,7 @@ tagger.run()
 
 pl = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts,
+    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts or w.name.startswith('cf_'),
     plotter_factory=plotter_factory,
     combine_files=True
 )
