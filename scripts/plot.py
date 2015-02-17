@@ -99,7 +99,7 @@ def norm_cf_plots(wrps):
 
 
 def loader_hook(wrps):
-    wrps = norm_cf_plots(wrps)
+    # wrps = norm_cf_plots(wrps)
     wrps = gen.gen_add_wrp_info(
         wrps,
         sample=lambda w: w.file_path.split('.')[-2],
@@ -112,6 +112,11 @@ def loader_hook(wrps):
     wrps = label_axes(wrps)
     return wrps
 
+def loader_hook2(wrps):
+    wrps = norm_histos_to_integral(wrps)
+    wrps = label_axes(wrps)
+    return wrps
+
 # def loader_hook(wrps):
 #     wrps = label_axes(wrps)
 #     wrps = gen.gen_make_eff_graphs(wrps)
@@ -120,15 +125,20 @@ def loader_hook(wrps):
 #     for w in wrps:
 #         yield w
 
-def canvas_hook(wrps):
-    wrps = log_scale(wrps)
-    return wrps
-
 
 def plotter_factory(**kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
     kws['hook_loaded_histos'] = loader_hook
     kws['plot_setup'] = gen.mc_stack_n_data_sum
+    kws['save_lin_log_scale'] = True
+    # kws['save_log_scale'] = True
+    # kws['hook_canvas_pre_build'] = canvas_hook
+    # kws['hook_canvas_post_build'] = canvas_hook
+    return varial.tools.Plotter(**kws)
+
+def plotter_factory2(**kws):
+    # kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
+    kws['hook_loaded_histos'] = loader_hook2
     kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
@@ -146,14 +156,22 @@ tagger.run()
 
 pl = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: w.in_file_path.split('/')[0] in cuts or w.name.startswith('cf_'),
+    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
     plotter_factory=plotter_factory,
+    combine_files=True
+)
+
+p2 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname),
+    filter_keyfunc=lambda w: w.name.startswith('cf_'),
+    plotter_factory=plotter_factory2,
     combine_files=True
 )
 
 
 time.sleep(1)
 pl.run()
+p2.run()
 varial.tools.WebCreator().run()
 # os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
 # os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))
