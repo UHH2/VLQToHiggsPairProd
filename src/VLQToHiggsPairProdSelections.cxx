@@ -32,7 +32,7 @@ HTSelection::HTSelection(Event::Handle<double> const & hndl, float minht, float 
 
 bool HTSelection::passes(const Event & event)
 {
-    if (event.get_state(h_ht_)==GenericEvent::state::valid)
+    if (event.is_valid(h_ht_))
     {
         double ht = event.get(h_ht_);
         return ht > minht_ && (maxht_ < 0 || ht < maxht_);

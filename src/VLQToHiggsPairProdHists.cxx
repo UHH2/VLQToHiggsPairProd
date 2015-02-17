@@ -324,7 +324,7 @@ void VLQToHiggsPairProdHists::fill(const Event & event){
     assert(event.pvs);
     N_PrimVertices->Fill(event.pvs->size(), w);
     MET->Fill(event.met->pt(), w);
-    if(event.get_state(h_ht_)==GenericEvent::state::valid){
+    if(event.is_valid(h_ht_)){
         float ht = event.get(h_ht_);
         HT->Fill(ht, w);
     }
