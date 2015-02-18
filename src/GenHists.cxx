@@ -55,100 +55,104 @@ namespace genhists
 using namespace genhists;
 
 GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
-    // book all histograms here
-    // kinematical variables 
-    book<TH1F>("tp_pt_lead", "p_{T}^{T'}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("tp_pt_subl", "p_{T}^{T'}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("tp_eta_lead", "#eta_{T'}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("tp_eta_subl", "#eta_{T'}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("tp_phi_lead", "#phi_{T'}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("tp_phi_subl", "#phi_{T'}(sublead)", 64, -3.2, 3.2);
+    
+    // TODO: pass handle when constructing the histogram to avoid hard coding handle names here
+    h_part_ht_ = ctx.get_handle<double>("parton_ht");
 
-    book<TH1F>("t_pt_lead", "p_{T}^{top}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("t_pt_subl", "p_{T}^{top}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("t_eta_lead", "#eta_{top}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("t_eta_subl", "#eta_{top}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("t_phi_lead", "#phi_{top}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("t_phi_subl", "#phi_{top}(sublead)", 64, -3.2, 3.2);
+    tp_pt_lead = book<TH1F>("tp_pt_lead", "p_{T, T'}(lead) [GeV/c]", 200, 0, 2000);
+    tp_pt_subl = book<TH1F>("tp_pt_subl", "p_{T, T'}(sublead) [GeV/c]", 200, 0, 2000);
+    tp_eta_lead = book<TH1F>("tp_eta_lead", "#eta_{T'}(lead)", 40, -2.5, 2.5);
+    tp_eta_subl = book<TH1F>("tp_eta_subl", "#eta_{T'}(sublead)", 40, -2.5, 2.5);
+    tp_phi_lead = book<TH1F>("tp_phi_lead", "#phi_{T'}(lead)", 64, -3.2, 3.2);
+    tp_phi_subl = book<TH1F>("tp_phi_subl", "#phi_{T'}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("h_pt_lead", "p_{T}^{H}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("h_pt_subl", "p_{T}^{H}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("h_eta_lead", "#eta_{H}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("h_eta_subl", "#eta_{H}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("h_phi_lead", "#phi_{H}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("h_phi_subl", "#phi_{H}(sublead)", 64, -3.2, 3.2);
+    t_pt_lead = book<TH1F>("t_pt_lead", "p_{T, top}(lead) [GeV/c]", 200, 0, 2000);
+    t_pt_subl = book<TH1F>("t_pt_subl", "p_{T, top}(sublead) [GeV/c]", 200, 0, 2000);
+    t_eta_lead = book<TH1F>("t_eta_lead", "#eta_{top}(lead)", 40, -2.5, 2.5);
+    t_eta_subl = book<TH1F>("t_eta_subl", "#eta_{top}(sublead)", 40, -2.5, 2.5);
+    t_phi_lead = book<TH1F>("t_phi_lead", "#phi_{top}(lead)", 64, -3.2, 3.2);
+    t_phi_subl = book<TH1F>("t_phi_subl", "#phi_{top}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("bTp_pt_lead", "p_{T}^{b(T')}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("bTp_pt_subl", "p_{T}^{b(T')}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("bH_pt_lead", "p_{T}^{b(H)}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("bH_pt_subl", "p_{T}^{b(H)}(sublead) [GeV/c]", 200, 0, 2000);
+    h_pt_lead = book<TH1F>("h_pt_lead", "p_{T, H}(lead) [GeV/c]", 200, 0, 2000);
+    h_pt_subl = book<TH1F>("h_pt_subl", "p_{T, H}(sublead) [GeV/c]", 200, 0, 2000);
+    h_eta_lead = book<TH1F>("h_eta_lead", "#eta_{H}(lead)", 40, -2.5, 2.5);
+    h_eta_subl = book<TH1F>("h_eta_subl", "#eta_{H}(sublead)", 40, -2.5, 2.5);
+    h_phi_lead = book<TH1F>("h_phi_lead", "#phi_{H}(lead)", 64, -3.2, 3.2);
+    h_phi_subl = book<TH1F>("h_phi_subl", "#phi_{H}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("mu_pt_lead", "p_{T}^{mu}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("mu_pt_subl", "p_{T}^{mu}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("mu_eta_lead", "#eta_{mu}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("mu_eta_subl", "#eta_{mu}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("mu_phi_lead", "#phi_{mu}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("mu_phi_subl", "#phi_{mu}(sublead)", 64, -3.2, 3.2);
+    bTp_pt_lead = book<TH1F>("bTp_pt_lead", "p_{T, b(T')}(lead) [GeV/c]", 200, 0, 2000);
+    bTp_pt_subl = book<TH1F>("bTp_pt_subl", "p_{T, b(T')}(sublead) [GeV/c]", 200, 0, 2000);
+    bH_pt_lead = book<TH1F>("bH_pt_lead", "p_{T, b(H)}(lead) [GeV/c]", 200, 0, 2000);
+    bH_pt_subl = book<TH1F>("bH_pt_subl", "p_{T, b(H)}(sublead) [GeV/c]", 200, 0, 2000);
 
-    book<TH1F>("el_pt_lead", "p_{T}^{el}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("el_pt_subl", "p_{T}^{el}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("el_eta_lead", "#eta_{el}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("el_eta_subl", "#eta_{el}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("el_phi_lead", "#phi_{el}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("el_phi_subl", "#phi_{el}(sublead)", 64, -3.2, 3.2);
+    mu_pt_lead = book<TH1F>("mu_pt_lead", "p_{T, mu}(lead) [GeV/c]", 50, 0, 500);
+    mu_pt_subl = book<TH1F>("mu_pt_subl", "p_{T, mu}(sublead) [GeV/c]", 50, 0, 500);
+    mu_eta_lead = book<TH1F>("mu_eta_lead", "#eta_{mu}(lead)", 40, -2.5, 2.5);
+    mu_eta_subl = book<TH1F>("mu_eta_subl", "#eta_{mu}(sublead)", 40, -2.5, 2.5);
+    mu_phi_lead = book<TH1F>("mu_phi_lead", "#phi_{mu}(lead)", 64, -3.2, 3.2);
+    mu_phi_subl = book<TH1F>("mu_phi_subl", "#phi_{mu}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("mutop_pt_lead", "p_{T}^{mutop}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("mutop_pt_subl", "p_{T}^{mutop}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("mutop_eta_lead", "#eta_{mutop}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("mutop_eta_subl", "#eta_{mutop}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("mutop_phi_lead", "#phi_{mutop}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("mutop_phi_subl", "#phi_{mutop}(sublead)", 64, -3.2, 3.2);
+    el_pt_lead = book<TH1F>("el_pt_lead", "p_{T, el}(lead) [GeV/c]", 50, 0, 500);
+    el_pt_subl = book<TH1F>("el_pt_subl", "p_{T, el}(sublead) [GeV/c]", 50, 0, 500);
+    el_eta_lead = book<TH1F>("el_eta_lead", "#eta_{el}(lead)", 40, -2.5, 2.5);
+    el_eta_subl = book<TH1F>("el_eta_subl", "#eta_{el}(sublead)", 40, -2.5, 2.5);
+    el_phi_lead = book<TH1F>("el_phi_lead", "#phi_{el}(lead)", 64, -3.2, 3.2);
+    el_phi_subl = book<TH1F>("el_phi_subl", "#phi_{el}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("eltop_pt_lead", "p_{T}^{eltop}(lead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("eltop_pt_subl", "p_{T}^{eltop}(sublead) [GeV/c]", 200, 0, 2000);
-    book<TH1F>("eltop_eta_lead", "#eta_{eltop}(lead)", 40, -2.5, 2.5);
-    book<TH1F>("eltop_eta_subl", "#eta_{eltop}(sublead)", 40, -2.5, 2.5);
-    book<TH1F>("eltop_phi_lead", "#phi_{eltop}(lead)", 64, -3.2, 3.2);
-    book<TH1F>("eltop_phi_subl", "#phi_{eltop}(sublead)", 64, -3.2, 3.2);
+    mutop_pt_lead = book<TH1F>("mutop_pt_lead", "p_{T, mutop}(lead) [GeV/c]", 60, 0, 600);
+    mutop_pt_subl = book<TH1F>("mutop_pt_subl", "p_{T, mutop}(sublead) [GeV/c]", 60, 0, 600);
+    mutop_eta_lead = book<TH1F>("mutop_eta_lead", "#eta_{mutop}(lead)", 40, -2.5, 2.5);
+    mutop_eta_subl = book<TH1F>("mutop_eta_subl", "#eta_{mutop}(sublead)", 40, -2.5, 2.5);
+    mutop_phi_lead = book<TH1F>("mutop_phi_lead", "#phi_{mutop}(lead)", 64, -3.2, 3.2);
+    mutop_phi_subl = book<TH1F>("mutop_phi_subl", "#phi_{mutop}(sublead)", 64, -3.2, 3.2);
 
-    book<TH1F>("tp_m", "m_{T'} [GeV]", 200, 950, 1050);
-    book<TH1F>("t_m", "m_{t} [GeV]", 200, 150, 250);
-    book<TH1F>("h_m", "m_{H} [GeV]", 60, 110, 140);
+    eltop_pt_lead = book<TH1F>("eltop_pt_lead", "p_{T, eltop}(lead) [GeV/c]", 60, 0, 600);
+    eltop_pt_subl = book<TH1F>("eltop_pt_subl", "p_{T, eltop}(sublead) [GeV/c]", 60, 0, 600);
+    eltop_eta_lead = book<TH1F>("eltop_eta_lead", "#eta_{eltop}(lead)", 40, -2.5, 2.5);
+    eltop_eta_subl = book<TH1F>("eltop_eta_subl", "#eta_{eltop}(sublead)", 40, -2.5, 2.5);
+    eltop_phi_lead = book<TH1F>("eltop_phi_lead", "#phi_{eltop}(lead)", 64, -3.2, 3.2);
+    eltop_phi_subl = book<TH1F>("eltop_phi_subl", "#phi_{eltop}(sublead)", 64, -3.2, 3.2);
+
+    tp_m = book<TH1F>("tp_m", "m_{T'} [GeV]", 200, 950, 1050);
+    t_m = book<TH1F>("t_m", "m_{t} [GeV]", 200, 150, 250);
+    h_m = book<TH1F>("h_m", "m_{H} [GeV]", 60, 110, 140);
 
 
       //  number plots
-    book<TH1F>("t_N", "Number of tops", 5, 0, 5);
-    book<TH1F>("h_N", "Number of Higgses", 5, 0, 5);
-    book<TH1F>("b_N", "Number of bs", 8, 0, 8);
-    book<TH1F>("l_N", "Number of leptons", 15, 0, 15);
-    book<TH1F>("mu_N", "Number of muons", 15, 0, 15);
-    book<TH1F>("el_N", "Number of electrons", 15, 0, 15);
-    book<TH1F>("ltop_N", "Number of leptons from top", 15, 0, 15);
-    book<TH1F>("mutop_N", "Number of muons from top", 15, 0, 15);
-    book<TH1F>("eltop_N", "Number of electrons from top", 15, 0, 15);
+    t_N = book<TH1F>("t_N", "Number of tops", 5, 0, 5);
+    h_N = book<TH1F>("h_N", "Number of Higgses", 5, 0, 5);
+    b_N = book<TH1F>("b_N", "Number of bs", 8, 0, 8);
+    l_N = book<TH1F>("l_N", "Number of leptons", 15, 0, 15);
+    mu_N = book<TH1F>("mu_N", "Number of muons", 15, 0, 15);
+    el_N = book<TH1F>("el_N", "Number of electrons", 15, 0, 15);
+    ltop_N = book<TH1F>("ltop_N", "Number of leptons from top", 15, 0, 15);
+    mutop_N = book<TH1F>("mutop_N", "Number of muons from top", 15, 0, 15);
+    eltop_N = book<TH1F>("eltop_N", "Number of electrons from top", 15, 0, 15);
 
 
     // decay modes
-    book<TH1F>("tp_decay", "Tprime decay modes", 30, 0, 30);
-    book<TH1F>("h_decay", "Higgs decay modes", 30, 0, 30);
-    book<TH1F>("t_decay", "Top decay modes", 30, 0, 30);
-    book<TH1F>("b_decay", "B decay modes", 30, 0, 30);
-    book<TH1F>("w_decay", "W decay modes", 30, 0, 30);
-    book<TH1F>("z_decay", "Z decay modes", 30, 0, 30);
+    tp_decay = book<TH1F>("tp_decay", "Tprime decay modes", 30, 0, 30);
+    h_decay = book<TH1F>("h_decay", "Higgs decay modes", 30, 0, 30);
+    t_decay = book<TH1F>("t_decay", "Top decay modes", 30, 0, 30);
+    b_decay = book<TH1F>("b_decay", "B decay modes", 30, 0, 30);
+    w_decay = book<TH1F>("w_decay", "W decay modes", 30, 0, 30);
+    z_decay = book<TH1F>("z_decay", "Z decay modes", 30, 0, 30);
 
-  
+    // parton ht
+    spec_parton_ht = book<TH1F>("spec_parton_ht", "HT (partons)", 100, 0, 3500);
+
     // dR variables
-    book<TH1F>("spec_deltaR_bb_h", "#Delta R_{bb}(Higgs)", 50, 0, 5);
-    book<TH1F>("spec_deltaR_bb_min", "#Delta R_{bb}(Min)", 50, 0, 5);
-    book<TH1F>("spec_max_deltaR_topprod", "max #Delta R(top products)", 50, 0, 5);
+    spec_deltaR_bb_h = book<TH1F>("spec_deltaR_bb_h", "#Delta R_{bb}(Higgs)", 50, 0, 5);
+    spec_deltaR_bb_min = book<TH1F>("spec_deltaR_bb_min", "#Delta R_{bb}(Min)", 50, 0, 5);
+    spec_max_deltaR_topprod = book<TH1F>("spec_max_deltaR_topprod", "max #Delta R(top products)", 50, 0, 5);
 
-    book<TH2F>("spec_top_pt_vs_max_dR", ";p_{T}(t);max #Delta R(t decay products)", 150, 0, 1500, 50, 0., 5.);
+    spec_top_pt_vs_max_dR = book<TH2F>("spec_top_pt_vs_max_dR", ";p_{T}(t);max #Delta R(t decay products)", 150, 0, 1500, 50, 0., 5.);
 }
 
 
 void GenHists::fill(const Event & event){
     // fill the histograms. Don't forget to always use the weight when filling:
-    //     double weight = event.weight;
+    double weight = event.weight;
 
     typedef map<double, GenParticle const *> ptsort_parts;
     
@@ -167,9 +171,8 @@ void GenHists::fill(const Event & event){
     ptsort_parts electrons_from_top;
     ptsort_parts muons_from_top;
     
-    //     int number_mu = 0;
-    //     int number_e = 0;
-    //     int number_lept = 0;
+    if (event.get_state(h_part_ht_) == GenericEvent::state::valid)
+        spec_parton_ht->Fill(event.get(h_part_ht_), weight);
     
     for (GenParticle const & igenp : *genparticles)
     {
@@ -235,8 +238,8 @@ void GenHists::fill(const Event & event){
             int decay2 = 0;
             if (daughter1) decay1 = abs(daughter1->pdgId());
             if (daughter2) decay2 = abs(daughter2->pdgId());
-            hist("z_decay")->Fill(decay1);
-            hist("z_decay")->Fill(decay2);
+            z_decay->Fill(decay1, weight);
+            z_decay->Fill(decay2, weight);
         }
         if (abs(igenp.pdgId()) == 24)
         {
@@ -246,59 +249,59 @@ void GenHists::fill(const Event & event){
             int decay2 = 0;
             if (daughter1) decay1 = abs(daughter1->pdgId());
             if (daughter2) decay2 = abs(daughter2->pdgId());
-            hist("w_decay")->Fill(decay1);
-            hist("w_decay")->Fill(decay2);
+            w_decay->Fill(decay1, weight);
+            w_decay->Fill(decay2, weight);
         }
     }
     
-    hist("t_N")->Fill((bool)t1+(bool)t2);
-    hist("h_N")->Fill((bool)h1+(bool)h2);
-    hist("b_N")->Fill(bs.size());
-    hist("l_N")->Fill(electrons.size()+muons.size());
-    hist("mu_N")->Fill(muons.size());
-    hist("el_N")->Fill(electrons.size());
-    hist("ltop_N")->Fill(electrons_from_top.size()+muons_from_top.size());
-    hist("mutop_N")->Fill(muons_from_top.size());
-    hist("eltop_N")->Fill(electrons_from_top.size());
+    t_N->Fill((bool)t1+(bool)t2, weight);
+    h_N->Fill((bool)h1+(bool)h2, weight);
+    b_N->Fill(bs.size(), weight);
+    l_N->Fill(electrons.size()+muons.size(), weight);
+    mu_N->Fill(muons.size(), weight);
+    el_N->Fill(electrons.size(), weight);
+    ltop_N->Fill(electrons_from_top.size()+muons_from_top.size(), weight);
+    mutop_N->Fill(muons_from_top.size(), weight);
+    eltop_N->Fill(electrons_from_top.size(), weight);
     
     if (tp1) 
     {
-        hist("tp_pt_lead")->Fill(tp1->pt());
-        hist("tp_eta_lead")->Fill(tp1->eta());
-        hist("tp_phi_lead")->Fill(tp1->phi());
-        hist("tp_m")->Fill(tp1->v4().mass());
+        tp_pt_lead->Fill(tp1->pt(), weight);
+        tp_eta_lead->Fill(tp1->eta(), weight);
+        tp_phi_lead->Fill(tp1->phi(), weight);
+        tp_m->Fill(tp1->v4().mass(), weight);
         GenParticle const * daughter1 = tp1->daughter(genparticles);
         GenParticle const * daughter2 = tp1->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = abs(daughter1->pdgId());
         if (daughter2) decay2 = abs(daughter2->pdgId());
-        hist("tp_decay")->Fill(decay1);
-        hist("tp_decay")->Fill(decay2);
+        tp_decay->Fill(decay1, weight);
+        tp_decay->Fill(decay2, weight);
     }
     
     if (tp2) 
     {
-        hist("tp_pt_subl")->Fill(tp2->pt());
-        hist("tp_eta_subl")->Fill(tp2->eta());
-        hist("tp_phi_subl")->Fill(tp2->phi());
-        hist("tp_m")->Fill(tp2->v4().mass());
+        tp_pt_subl->Fill(tp2->pt(), weight);
+        tp_eta_subl->Fill(tp2->eta(), weight);
+        tp_phi_subl->Fill(tp2->phi(), weight);
+        tp_m->Fill(tp2->v4().mass(), weight);
         GenParticle const * daughter1 = tp2->daughter(genparticles);
         GenParticle const * daughter2 = tp2->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = abs(daughter1->pdgId());
         if (daughter2) decay2 = abs(daughter2->pdgId());
-        hist("tp_decay")->Fill(decay1);
-        hist("tp_decay")->Fill(decay2);
+        tp_decay->Fill(decay1, weight);
+        tp_decay->Fill(decay2, weight);
     }
     
     if (t1) 
     {
-        hist("t_pt_lead")->Fill(t1->pt());
-        hist("t_eta_lead")->Fill(t1->eta());
-        hist("t_phi_lead")->Fill(t1->phi());
-        hist("t_m")->Fill(t1->v4().mass());
+        t_pt_lead->Fill(t1->pt(), weight);
+        t_eta_lead->Fill(t1->eta(), weight);
+        t_phi_lead->Fill(t1->phi(), weight);
+        t_m->Fill(t1->v4().mass(), weight);
         GenParticle const * daughter1 = t1->daughter(genparticles, 1);
         GenParticle const * daughter2 = t1->daughter(genparticles, 2);
         GenParticle const * top_b = 0;
@@ -321,20 +324,20 @@ void GenHists::fill(const Event & event){
 
         if (max_deltaR_topprod)
         {
-            hist("spec_max_deltaR_topprod")->Fill(max_deltaR_topprod);
-            hist("spec_top_pt_vs_max_dR")->Fill(t1->pt(), max_deltaR_topprod);
+            spec_max_deltaR_topprod->Fill(max_deltaR_topprod, weight);
+            spec_top_pt_vs_max_dR->Fill(t1->pt(), max_deltaR_topprod, weight);
         }
 
-        hist("t_decay")->Fill(decay1);
-        hist("t_decay")->Fill(decay2);
+        t_decay->Fill(decay1, weight);
+        t_decay->Fill(decay2, weight);
     }
     
     if (t2) 
     {
-        hist("t_pt_subl")->Fill(t2->pt());
-        hist("t_eta_subl")->Fill(t2->eta());
-        hist("t_phi_subl")->Fill(t2->phi());
-        hist("t_m")->Fill(t2->v4().mass());
+        t_pt_subl->Fill(t2->pt(), weight);
+        t_eta_subl->Fill(t2->eta(), weight);
+        t_phi_subl->Fill(t2->phi(), weight);
+        t_m->Fill(t2->v4().mass(), weight);
         GenParticle const * daughter1 = t2->daughter(genparticles, 1);
         GenParticle const * daughter2 = t2->daughter(genparticles, 2);
         GenParticle const * top_b = 0;
@@ -357,102 +360,102 @@ void GenHists::fill(const Event & event){
 
         if (max_deltaR_topprod)
         {
-            hist("spec_max_deltaR_topprod")->Fill(max_deltaR_topprod);
+            spec_max_deltaR_topprod->Fill(max_deltaR_topprod, weight);
         }
 
-        hist("t_decay")->Fill(decay1);
-        hist("t_decay")->Fill(decay2);
+        t_decay->Fill(decay1, weight);
+        t_decay->Fill(decay2, weight);
     }
     
     if (h1)
     {
-        hist("h_pt_lead")->Fill(h1->pt());
-        hist("h_eta_lead")->Fill(h1->eta());
-        hist("h_phi_lead")->Fill(h1->phi());
-        hist("h_m")->Fill(h1->v4().mass());
+        h_pt_lead->Fill(h1->pt(), weight);
+        h_eta_lead->Fill(h1->eta(), weight);
+        h_phi_lead->Fill(h1->phi(), weight);
+        h_m->Fill(h1->v4().mass(), weight);
         GenParticle const * daughter1 = h1->daughter(genparticles);
         GenParticle const * daughter2 = h1->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        hist("h_decay")->Fill(decay1);
-        hist("h_decay")->Fill(decay2);
+        h_decay->Fill(decay1, weight);
+        h_decay->Fill(decay2, weight);
     }
     
     if (h2)
     {
-        hist("h_pt_subl")->Fill(h2->pt());
-        hist("h_eta_subl")->Fill(h2->eta());
-        hist("h_phi_subl")->Fill(h2->phi());
-        hist("h_m")->Fill(h2->v4().mass());
+        h_pt_subl->Fill(h2->pt(), weight);
+        h_eta_subl->Fill(h2->eta(), weight);
+        h_phi_subl->Fill(h2->phi(), weight);
+        h_m->Fill(h2->v4().mass(), weight);
         GenParticle const * daughter1 = h2->daughter(genparticles);
         GenParticle const * daughter2 = h2->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        hist("h_decay")->Fill(decay1);
-        hist("h_decay")->Fill(decay2);
+        h_decay->Fill(decay1, weight);
+        h_decay->Fill(decay2, weight);
     }
 
     if (electrons.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons.rbegin();
-        hist("el_pt_lead")->Fill(sort_part->second->pt());
-        hist("el_eta_lead")->Fill(sort_part->second->eta());
-        hist("el_phi_lead")->Fill(sort_part->second->phi());
+        el_pt_lead->Fill(sort_part->second->pt(), weight);
+        el_eta_lead->Fill(sort_part->second->eta(), weight);
+        el_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons.size() > 1)
         {
             sort_part++;
-            hist("el_pt_subl")->Fill(sort_part->second->pt());
-            hist("el_eta_subl")->Fill(sort_part->second->eta());
-            hist("el_phi_subl")->Fill(sort_part->second->phi());
+            el_pt_subl->Fill(sort_part->second->pt(), weight);
+            el_eta_subl->Fill(sort_part->second->eta(), weight);
+            el_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (muons.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons.rbegin();
-        hist("mu_pt_lead")->Fill(sort_part->second->pt());
-        hist("mu_eta_lead")->Fill(sort_part->second->eta());
-        hist("mu_phi_lead")->Fill(sort_part->second->phi());
+        mu_pt_lead->Fill(sort_part->second->pt(), weight);
+        mu_eta_lead->Fill(sort_part->second->eta(), weight);
+        mu_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons.size() > 1)
         {
             sort_part++;
-            hist("mu_pt_subl")->Fill(sort_part->second->pt());
-            hist("mu_eta_subl")->Fill(sort_part->second->eta());
-            hist("mu_phi_subl")->Fill(sort_part->second->phi());
+            mu_pt_subl->Fill(sort_part->second->pt(), weight);
+            mu_eta_subl->Fill(sort_part->second->eta(), weight);
+            mu_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (electrons_from_top.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons_from_top.rbegin();
-        hist("eltop_pt_lead")->Fill(sort_part->second->pt());
-        hist("eltop_eta_lead")->Fill(sort_part->second->eta());
-        hist("eltop_phi_lead")->Fill(sort_part->second->phi());
+        eltop_pt_lead->Fill(sort_part->second->pt(), weight);
+        eltop_eta_lead->Fill(sort_part->second->eta(), weight);
+        eltop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons_from_top.size() > 1)
         {
             sort_part++;
-            hist("eltop_pt_subl")->Fill(sort_part->second->pt());
-            hist("eltop_eta_subl")->Fill(sort_part->second->eta());
-            hist("eltop_phi_subl")->Fill(sort_part->second->phi());
+            eltop_pt_subl->Fill(sort_part->second->pt(), weight);
+            eltop_eta_subl->Fill(sort_part->second->eta(), weight);
+            eltop_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (muons_from_top.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons_from_top.rbegin();
-        hist("mutop_pt_lead")->Fill(sort_part->second->pt());
-        hist("mutop_eta_lead")->Fill(sort_part->second->eta());
-        hist("mutop_phi_lead")->Fill(sort_part->second->phi());
+        mutop_pt_lead->Fill(sort_part->second->pt(), weight);
+        mutop_eta_lead->Fill(sort_part->second->eta(), weight);
+        mutop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons_from_top.size() > 1)
         {
             sort_part++;
-            hist("mutop_pt_subl")->Fill(sort_part->second->pt());
-            hist("mutop_eta_subl")->Fill(sort_part->second->eta());
-            hist("mutop_phi_subl")->Fill(sort_part->second->phi());
+            mutop_pt_subl->Fill(sort_part->second->pt(), weight);
+            mutop_eta_subl->Fill(sort_part->second->eta(), weight);
+            mutop_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
@@ -472,11 +475,11 @@ void GenHists::fill(const Event & event){
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        hist("b_decay")->Fill(decay1);
-        hist("b_decay")->Fill(decay2);
+        b_decay->Fill(decay1, weight);
+        b_decay->Fill(decay2, weight);
         GenParticle const * closestB = closestParticle(*ib, bs);
         if (closestB)
-            hist("spec_deltaR_bb_min")->Fill(deltaR(*ib, *closestB));
+            spec_deltaR_bb_min->Fill(deltaR(*ib, *closestB), weight);
         GenParticle const * imother = findMother(*ib, genparticles);
         if (!imother) continue;
         if (abs(imother->pdgId()) == 8)
@@ -496,22 +499,22 @@ void GenHists::fill(const Event & event){
                 if (imother->index() == imother2->index())
                 {
                     double dR = deltaR(*ib, *ib2);
-                    hist("spec_deltaR_bb_h")->Fill(dR);
+                    spec_deltaR_bb_h->Fill(dR, weight);
                     break;
                 }
             }
         }
     }
     
-    if (bTpPt_lead) hist("bTp_pt_lead")->Fill(bTpPt_lead);
-    if (bTpPt_subl) hist("bTp_pt_subl")->Fill(bTpPt_subl);
-    if (bHPt_lead) hist("bH_pt_lead")->Fill(bHPt_lead);
-    if (bHPt_subl) hist("bH_pt_subl")->Fill(bHPt_subl);
+    if (bTpPt_lead) bTp_pt_lead->Fill(bTpPt_lead, weight);
+    if (bTpPt_subl) bTp_pt_subl->Fill(bTpPt_subl, weight);
+    if (bHPt_lead) bH_pt_lead->Fill(bHPt_lead, weight);
+    if (bHPt_subl) bH_pt_subl->Fill(bHPt_subl, weight);
     
 //     if (b1 && b2){
 //         double deltaR = b1->deltaR(*b2);
 // //         cout << "Test2" << endl;
-//         hist("DeltaR_bb")->Fill(deltaR);
+//         DeltaR_bb->Fill(deltaR, weight);
 // //         cout << "Test3" << endl;
 //     }
     

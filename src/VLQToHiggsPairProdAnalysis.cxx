@@ -7,15 +7,14 @@
 #include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/ElectronIds.h"
 #include "UHH2/common/include/MuonIds.h"
-// #include "UHH2/common/include/EventHists.h"
 #include "UHH2/common/include/EventVariables.h"
-// #include "UHH2/common/include/ElectronHists.h"
-// #include "UHH2/common/include/MuonHists.h"
-// #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/GenTools.h"
+#include "UHH2/common/include/PartonHT.h"
+#include "UHH2/common/include/JetCorrections.h"
+
 
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
@@ -50,6 +49,13 @@ public:
     virtual bool process(Event & event);
 
 private:
+
+    std::string version;
+
+    Event::Handle<vector<TopJet> > h_hepTopTagJets_in;
+    Event::Handle<vector<TopJet> > h_ca8prunedJets_in;
+    Event::Handle<vector<TopJet> > h_hepTopTagJets_out;
+    Event::Handle<vector<TopJet> > h_ca8prunedJets_out;
 
     // // declare the Selections to use.
     // std::vector<std::unique_ptr<Selection> > v_sel;
@@ -89,8 +95,8 @@ private:
 
                            // vh_nm1;
 
-    JetId btag;
-    TopJetId toptag;
+    // JetId btag;
+    // TopJetId toptag;
     
     std::vector<std::unique_ptr<AnalysisModule> > modules;
 
@@ -102,19 +108,16 @@ private:
             reco_mu_finalselection,
             gen_mu_finalselection;
 
+
+    // handles
     Event::Handle<bool> pass_gensel_;
-    // std::map<const char*, std::unique_ptr<Selection> > all_selections;
+    Event::Handle<double> parton_ht;
    
     // internal function to fill all histograms
 };
 
 
 VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
-
-    CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
-
-    btag = CSVBTag(btag_wp);
-    toptag =CMSTopTag();
 
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
@@ -123,19 +126,44 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     for(auto kv : ctx.get_all()){
         cout << " " << kv.first << " = " << kv.second << endl;
     }
+
+    h_hepTopTagJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
+    h_ca8prunedJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
+    h_hepTopTagJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
+    h_ca8prunedJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
+
+
+    version = ctx.get("dataset_version");
+
+
+    // 1. define handles and other stuff here for later call in VLQToHiggsPairProdAnalysis::process
+
+    CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
+
+    // btag = CSVBTag(btag_wp);
+    // toptag =CMSTopTag();
+
+    pass_gensel_ = ctx.get_handle<bool>("pass_gensel");
+    parton_ht = ctx.get_handle<double>("parton_ht");
     
-    // 1. setup other modules. Here, only the jet cleaner
+
+
+
+
+
+    // 2. setup other modules. Here, only the jet cleaner
 
     cm.reset(new CommonModules);
 
-    cm->set_jet_id(PtEtaCut(30.0, 2.4));
-    cm->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)));
-    cm->set_muon_id(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1)));
+    // cm->set_jet_id(PtEtaCut(30.0, 2.4));
+    // cm->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)));
+    // cm->set_muon_id(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1)));
     // cm.set_tau_id(PtEtaCut(30.0, 2.4));
-
     
     cm->init(ctx);
 
+    // TODO: for BTag-, TopTag- and NGenParticleCalculator, use handle as input argument for the constructor instead
+    // of a string and declare these handles as private members of the analysis module
     modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
     modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
 
@@ -143,35 +171,21 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleId::HiggsId));
     modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleId::ElectronId, ParticleId::TopId));
     modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleId::MuonId, ParticleId::TopId));
+    modules.emplace_back(new PartonHT(parton_ht));
+
+    modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4))));
+    modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1))));
+    modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
+    modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
+    modules.emplace_back(new JetPtSorter());
 
 
 
-    // std::pair<std::unique_ptr<Hists> , std::unique_ptr<AndSelection> >
-    //         gensel_hists, gensel_gen_hists,
-    //         // allsel_el_hists,
-    //         // allsel_mu_hists,
-    //         // allsel_oneel_hists,
-    //         allsel_onemu_hists,
-    //         // allsel_oneel_gensel_hists,
-    //         allsel_onemu_gensel_hists
-    //         ;
-    // std::map<const char*, std::pair<std::unique_ptr<Hists>, std::unique_ptr<AndSelection> >
-    //         onecut_hists,
-    //         onecut_gensel_hists,
-    //         // nm1_el_hists,
-    //         // nm1_mu_hists,
-    //         // nm1_oneel_hists,
-    //         nm1_onemu_hists,
-    //         // nm1_oneel_gensel_hists,
-    //         nm1_onemu_gensel_hists
-    //         ;
 
-
-    // 2. set up no-cuts histograms
+    // 3. set up no-cuts histograms
     nogensel_nocuts.reset(new HistCollector(ctx, "NoGenSel-NoCuts"));
-    // nogensel_nocuts.second.reset(new GenHists(ctx, "NoGenSel-NoCuts-Gen"));
 
-    // 3. set up gen selection and the final reco selections
+    // 4. set up gen selection and the final reco selections
 
     gen_mu_finalselection.reset(new AndSelection(ctx, "final_gen_sel_cutflow"));
     gen_mu_finalselection->add<NGenParticleSelection>("n_gen_mu = 1", ctx.get_handle<int>("n_gen_muon"), 1, 1);
@@ -182,7 +196,7 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     // DEFINE SELECTION HERE
     // reco_cuts["OneMuonCut"] = std::shared_ptr<Selection>(new AndSelection(ctx, "one_muon"));
     reco_cuts["MinOneMuon"] = std::shared_ptr<Selection>(new NMuonSelection(1, -1));
-    reco_cuts["BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, btag));
+    reco_cuts["BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
     reco_cuts["JetPtCut1"] = std::shared_ptr<Selection>(new JetPtSelection(200.));
     // reco_cuts["JetPtCut2"] = std::shared_ptr<Selection>(new JetPtSelection(50.));
     reco_cuts["HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
@@ -190,10 +204,12 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     // ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NMuonSelection>("n_mu = 1", 1, 1);
     // ((AndSelection*)reco_cuts["OneMuonCut"].get())->add<NElectronSelection>("n_el = 0", 0, 0);
 
-    // set handle here for later call in VLQToHiggsPairProdAnalysis::process
-    pass_gensel_ = ctx.get_handle<bool>("pass_gensel");
 
-    // 4. set up hists and selections with gen selection only
+
+
+
+
+    // 5. set up hists and selections with gen selection only
     gensel_nocuts.first.reset(new HistCollector(ctx, "GenSel-NoCuts"));
     // gensel_nocuts.second.reset(new GenHists(ctx, "GenSel-NoCuts-Gen"));
 
@@ -252,78 +268,6 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
     }
 
-
-    // // 4. set up final selection with hists (with and without gen selection)
-    // allsel_onemu_hists.first.reset(new VLQToHiggsPairProdHists(ctx, "OneMuon-FinalSelection"));
-    // allsel_onemu_gensel_hists.first.reset(new VLQToHiggsPairProdHists(ctx, "GenSel-OneMuon-FinalSelection"));
-
-    // allsel_onemu_hists.second.reset(new AndSelection(ctx, ));
-    // allsel_onemu_gensel_hists.second.reset(new AndSelection(ctx, ));
-
-
-
-    // reco_mu_finalselection.reset(new AndSelection(ctx, "reco_mu_final"));
-    // reco_mu_finalselection->add<NMuonSelection>("n_mu = 1", 1, 1);
-    // reco_mu_finalselection->add<NElectronSelection>("n_el = 0", 0, 0);
-    // reco_mu_finalselection->add<NJetSelection>("n_btag >= 1", 1, -1, btag);
-    // reco_mu_finalselection->add<JetPtSelection>("ld_jet_pt >= 200", 200.);
-    // reco_mu_finalselection->add<HTSelection>("ht >= 900", ctx, 900.);
-    
-    // 2. set up selections:
-
-    // ele_selection.reset(new NElectronSelection(1,1));
-    // mu_selection.reset(new NMuonSelection(1,1));
-
-    // gen_el_finalselection.reset(new AndSelection(ctx, "gen_el_final"));
-
-    // gen_el_finalselection->add<NGenParticleSelection>("n_gen_el = 1", ctx.get_handle<int>("n_gen_electron"), 1, 1);
-    // gen_el_finalselection->add<NGenParticleSelection>("n_gen_mu = 0", ctx.get_handle<int>("n_gen_muon"), 0, 0);
-    // gen_el_finalselection->add<NGenParticleSelection>("n_gen_b >= 1", ctx.get_handle<int>("n_gen_bfromtop"), 1);
-    // gen_el_finalselection->add<NGenParticleSelection>("n_gen_higgs >= 1", ctx.get_handle<int>("n_gen_higgs"), 1);
-
-    
-
-
-    // all_selections["OneElectronCut"] = std::unique_ptr<Selection>(new AndSelection(ctx, "ele"));
-    // all_selections["OneMuonCut"] = std::unique_ptr<Selection>(new AndSelection(ctx, "muon"));
-    // // all_selections["ElectronCut"] = std::unique_ptr<Selection>(new NElectronSelection(1, -1));
-    // // all_selections["MuonCut"] = std::unique_ptr<Selection>(new NMuonSelection(1, -1));
-    // all_selections["BTagCut"] = std::unique_ptr<Selection>(new NJetSelection(1, -1, btag));
-    // all_selections["JetPtCut"] = std::unique_ptr<Selection>(new JetPtSelection(200.));
-    // all_selections["HTCut"] = std::unique_ptr<Selection>(new HTSelection(ctx, 900.));
-
-    // // ((AndSelection*)all_selections["OneElectronCut"].get())->add<NElectronSelection>("n_el = 1", 1, 1);
-    // // ((AndSelection*)all_selections["OneElectronCut"].get())->add<NMuonSelection>("n_mu = 0", 0, 0);
-    // ((AndSelection*)all_selections["OneMuonCut"].get())->add<NMuonSelection>("n_mu = 1", 1, 1);
-    // ((AndSelection*)all_selections["OneMuonCut"].get())->add<NElectronSelection>("n_el = 1", 0, 0);
-
-
-    // 3. Set up Hists classes:
-
-
-
-
-    // one-cut histograms
-    // for (auto & iSelName : all_selections)
-    // {
-    //     std::string sel_str =  string(iSelName.first);
-    //     onecut_hists[iSelName.first] = std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, sel_str));
-
-    //     sel_str =  "GenSel-"+string(iSelName.first);
-    //     onecut_gensel_hists[iSelName.first] = std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, sel_str));
-
-    //     sel_str =  "OneMuNminus1-"+string(iSelName.first);
-    //     nm1_onemu_hists[iSelName.first] = std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, sel_str));
-
-    //     sel_str =  "GenSel-OneMuNminus1-"+string(iSelName.first);
-    //     nm1_onemu_gensel_hists[iSelName.first] = std::unique_ptr<Hists>(new VLQToHiggsPairProdHists(ctx, sel_str));
-    // }
-
-    // // final selection (preliminary) histograms
-    // allsel_onemu_hists.reset(new VLQToHiggsPairProdHists(ctx, "OneMuon-FinalSelection"));
-
-    // allsel_onemu_gensel_hists.reset(new VLQToHiggsPairProdHists(ctx, "GenSel-OneMuon-FinalSelection"));
-
 }
 
 
@@ -341,6 +285,20 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
     for(auto & m: modules){
         m->process(event);
     }
+
+    const std::vector<TopJet> & hepTopTagJets = event.get(h_hepTopTagJets_in);
+    const std::vector<TopJet> & ca8prunedJets = event.get(h_ca8prunedJets_in);
+
+    event.set(h_hepTopTagJets_out, std::move(hepTopTagJets));
+    event.set(h_ca8prunedJets_out, std::move(ca8prunedJets));
+
+    // use the following lines if you want to run over the inclusive Z/W+Jets samples but want to combine this with the ht-binned samples
+    // float part_ht = event.get(parton_ht);
+
+    // if ((version == "ZJets" || version == "WJets") && part_ht > 100.)
+    //     return false;
+
+
     
 
     // 2.b fill histograms
@@ -386,105 +344,7 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         if (gensel_nm1_onemu[sel_name].second->passes(event))
             gensel_nm1_onemu[sel_name].first->fill(event);
     }
-    // if (passes_any_gensel)
-    // {
-    //     gensel_hists->fill(event);
-    //     gensel_gen_hists->fill(event);
-    // }
-
-    // std::map<const char *, bool> 
-    //         // pass_oneel_selection,
-    //         pass_onemu_selection
-    //         // pass_el_selection,
-    //         // pass_mu_selection
-    //         ;
-
-    // // std::cout << "Passed selections:" << std::endl;
-    // for (size_t i = 0; i < number_selections; ++i)
-    // {
-    //     try
-    //     {
-    //         const char * sel_name = selection_names[i];
-    //         bool pass = all_selections.at(sel_name)->passes(event);
-
-    //         // std::cout << "Selection: " << sel_name << " ";
-
-    //         try
-    //         {
-    //             if (pass)
-    //             {
-    //                 onecut_hists.at(sel_name)->fill(event);
-    //                 // if (string(sel_name) == "OneElectronCut" && gen_el_finalselection->passes(event))
-    //                 //     onecut_gensel_hists.at(sel_name)->fill(event);
-    //                 if (string(sel_name) == "OneMuonCut" && gen_mu_finalselection->passes(event))
-    //                     onecut_gensel_hists.at(sel_name)->fill(event);
-    //                 else if (passes_any_gensel)
-    //                     onecut_gensel_hists.at(sel_name)->fill(event);
-    //             }
-    //         }
-    //         catch (const std::out_of_range & e)
-    //         {
-    //             // std::cout << "NOT a valid selection: " << std::endl;
-    //             continue;
-    //         }
-
-    //         // if (string(sel_name) == "OneElectronCut")
-    //         // {
-    //         //     // std::cout << "passed" << std::endl;
-    //         //     pass_oneel_selection[sel_name] = pass;
-    //         // }
-    //         if (string(sel_name) == "OneMuonCut")
-    //         {
-    //             // std::cout << "passed" << std::endl;
-    //             pass_onemu_selection[sel_name] = pass;
-    //         }
-    //         // else if (string(sel_name) == "ElectronCut")
-    //         //     pass_el_selection[sel_name] = pass;
-    //         // else if (string(sel_name) == "MuonCut")
-    //         //     pass_mu_selection[sel_name] = pass;
-    //         else
-    //         {
-    //             // std::cout << "passed" << std::endl;
-    //             // pass_oneel_selection[sel_name] = pass;
-    //             pass_onemu_selection[sel_name] = pass;
-    //             // pass_el_selection[sel_name] = pass;
-    //             // pass_mu_selection[sel_name] = pass;
-    //         }
-
-    //         // std::cout << "  " << sel_name << " " << pass << std::endl;
-    //     }
-    //     catch (const std::out_of_range & e)
-    //     {
-    //         // std::cerr << "WARNING: Selection name not defined!" << std::endl;
-    //         continue;
-    //     }
-    // }
-
-    // // std::cout << std::endl;
-
-    // // fill_hists(event, pass_oneel_selection, nm1_oneel_hists, allsel_oneel_hists);
-    // fill_hists(event, pass_onemu_selection, nm1_onemu_hists, allsel_onemu_hists);
-
-    // // if (gen_el_finalselection->passes(event))
-    // //     fill_hists(event, pass_oneel_selection, nm1_oneel_gensel_hists, allsel_oneel_gensel_hists);
-    // if (gen_mu_finalselection->passes(event))
-    //     fill_hists(event, pass_onemu_selection, nm1_onemu_gensel_hists, allsel_onemu_gensel_hists);
-    // fill_hists(event, pass_el_selection, nm1_el_hists, allsel_el_hists);
-    // fill_hists(event, pass_mu_selection, nm1_mu_hists, allsel_mu_hists);
-
-
-
-
-    // nocuts_hists->fill(event);
-//     
-//     bool njet_selection = njet_sel->passes(event);
-//     if(njet_selection){
-//         h_njet->fill(event);
-//     }
-//     bool bjet_selection = bsel->passes(event);
-//     if(bjet_selection){
-//         h_bsel->fill(event);
-//     }
+    
     return passes_preselection;
 }
 

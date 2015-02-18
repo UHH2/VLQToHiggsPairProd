@@ -3,70 +3,107 @@
 [
 <!ENTITY TpTp_M1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TpTp_M1000_20x25.xml">
 <!ENTITY TTbar SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_TTJets_20x25.xml">
+<!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml">
 <!ENTITY WJets100to200 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT100to200_20x25.xml">
 <!ENTITY WJets200to400 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT200to400_20x25.xml">
 <!ENTITY WJets400to600 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT400to600_20x25.xml">
 <!ENTITY WJets600toInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_HT600toInf_20x25.xml">
-<!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml">
 <!ENTITY QCD_HT500to1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_QCD_HT500To1000Ext_20x25.xml">
 <!ENTITY QCD_HT1000ToInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_QCD_HT1000ToInfExt_20x25.xml">
 ]
 >
 
 <!-- <!ENTITY WJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_WJets_LNu_20x25.xml"> -->
+<!-- <!ENTITY ZJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_LNu_20x25.xml"> -->
+<!-- <!ENTITY ZJets100to200 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_HT100to200_20x25.xml">
+<!ENTITY ZJets200to400 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_HT200to400_20x25.xml">
+<!ENTITY ZJets400to600 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_HT400to600_20x25.xml">
+<!ENTITY ZJets600toInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/common/datasets/MC_ZJets_HT600toInf_20x25.xml"> -->
 
 <JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output/" PostFix="" TargetLumi="20000" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output_new/" PostFix="" TargetLumi="1." > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@naf-uhhcms02.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output_new/" PostFix="" TargetLumi="10000" >
         <InputData Lumi="4796772." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" /> -->
+            <OutputTree Name="AnalysisTree" />
 
         </InputData>
 
         <InputData Lumi="31568.03" NEventsMax="-1" Type="MC" Version="TTJets" Cacheable="False">
             &TTbar;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" /> -->
+            <OutputTree Name="AnalysisTree" />
 
         </InputData>
 
         <InputData Lumi="469.5707" NEventsMax="-1" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData> 
+
+        <!-- <InputData Lumi="18944.66" NEventsMax="-1" Type="MC" Version="ZJets100to200" Cacheable="False">
+            4054159 events, 214 pb
+            &ZJets100to200;
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />      
+
+        </InputData>
+
+        <InputData Lumi="81156.45" NEventsMax="-1" Type="MC" Version="ZJets200to400" Cacheable="False">
+            4666496 events, 57.5 pb
+            &ZJets200to400;
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />      
+
+        </InputData>
+
+        <InputData Lumi="684912.7" NEventsMax="-1" Type="MC" Version="ZJets400to600" Cacheable="False">
+            4931372 events, 7.20 pb
+            &ZJets400to600;
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />      
+
+        </InputData>
+
+        <InputData Lumi="1872322" NEventsMax="-1" Type="MC" Version="ZJets600toInf" Cacheable="False">
+            4493574 events, 2.40 pb
+            &ZJets600toInf;
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />      
+
+        </InputData> -->
 
         <InputData Lumi="2354.480" NEventsMax="-1" Type="MC" Version="WJets100to200" Cacheable="False">
             &WJets100to200;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
 
         <InputData Lumi="8510.477" NEventsMax="-1" Type="MC" Version="WJets200to400" Cacheable="False">
             &WJets200to400;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
 
         <InputData Lumi="67844.94" NEventsMax="-1" Type="MC" Version="WJets400to600" Cacheable="False">
             &WJets400to600;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
 
         <InputData Lumi="198348.0" NEventsMax="-1" Type="MC" Version="WJets600toInf" Cacheable="False">
             &WJets600toInf;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
 
@@ -74,7 +111,7 @@
             <!-- cross section : 26740.0 -->
             &QCD_HT500to1000;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
 
@@ -82,7 +119,7 @@
             <!-- cross section : 769.70000000000005 -->
             &QCD_HT1000ToInf;
             <InputTree Name="AnalysisTree" />
-            <!-- <OutputTree Name="AnalysisTree" />       -->
+            <OutputTree Name="AnalysisTree" />      
 
         </InputData>
             
@@ -128,6 +165,9 @@
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
             <Item Name="AnalysisModule" Value="VLQToHiggsPairProdAnalysis" />
+
+            <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
+            <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->
 
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC

@@ -12,4 +12,6 @@
 1.11 20150215T225935 switched back to master - old ntuple format
 1.12 20150216T105853 Ran over full samples, produce stacked plots -> used inclusive WJets/ZJets samples (low statistics in high-energy area) and no QCD
 1.13 20150217T103243 From plot.py: Ran over binned samples, added QCD, no writing out of OutputTrees
-1.14 20150217T110028 From plot.py: Test new plotter -> plot cf histos and other histos separately
+1.14 20150217T132512 From plot.py: Test new plotter -> plot cf histos and other histos separately
+1.15 20150219T090758 From plot.py: Ran over full samples (old format), changed binning, added part_ht and JLCleaner, changed plotter
+1.16 20150219T181547 Initial commit of VertexCategorizer
