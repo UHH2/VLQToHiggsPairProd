@@ -9,6 +9,8 @@ import time
 import varial.tools
 import varial.generators as gen
 import itertools
+from varial.sample import Sample
+import varial.analysis as analysis
 # import varial.toolinterface
 
 dirname = 'VLQToHiggsPairProd'
@@ -21,6 +23,32 @@ current_tag = varial.settings.git_tag
 
 cuts = ['NoGenSel-NoCuts', 'NoGenSel-AllCuts'
     ]
+
+# sample definitions
+smpls = list()
+
+
+smpls.append(Sample(
+    name='QCD',
+    legend='QCD'
+))
+
+smpls.append(Sample(
+    name='TTJets',
+    legend='TTJets'
+))
+
+smpls.append(Sample(
+    name='WJets',
+    legend='WJets'
+))
+
+smpls.append(Sample(
+    name='ZJets',
+    legend='ZJets'
+))
+
+analysis.all_samples = dict((s.name, s) for s in smpls)
 
 varial.settings.defaults_Legend['x_pos'] = 0.80
 varial.settings.defaults_Legend['label_width'] = 0.36
@@ -115,33 +143,47 @@ def loader_hook4(wrps):
     return wrps
 
 # use these functions to specifically select histograms for plotting
-current_cut = 'AllCuts'
+current_cuts = ['NoCuts', 'Nminus1-BTagCut', 'OneCut-JetPtCut1', 'OneCut-HTCut']
+
+varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
+
+# def calc_stack_order(wrps):
+#     for w in wrps:
+
+
+# def stack_by_max(wrps):
+#     wrps = calc_stack_order(wrps)
+#     wrps = gen.mc_stack_n_data_sum(wrps)
+#     return wrps
+
 
 def select_histograms(wrp):
     use_this = True
-    if 'NoGenSel-'+current_cut not in wrp.in_file_path:
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
         use_this = False
     if wrp.name.startswith('cf_') or 'TauHists' in wrp.in_file_path:
         use_this = False
     if 'NoGenSel' not in wrp.in_file_path:
         use_this = False
-    if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'AllCuts' not in wrp.in_file_path):
-        use_this = False
+    # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
+    #     use_this = False
     return use_this
 
 def select_splithistograms(wrp):
     use_this = False
-    if 'NoGenSel-'+current_cut not in wrp.in_file_path:
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
         return False
     if any(n in wrp.in_file_path for n in ['TauHists','TopJetHists']):
         return False
     if 'GenHists' in wrp.in_file_path and (wrp.name.startswith('mu_') or 'parton' in wrp.name):
         use_this = True
-    if 'EventHists' in wrp.in_file_path and ('HT' in wrp.name or 'jets' in wrp.name):
+    if 'EventHists' in wrp.in_file_path:
         use_this = True
-    if 'JetHists' in wrp.in_file_path and any(s in wrp.name for s in ['jet', '1', '2']):
+    if 'JetHists' in wrp.in_file_path and any(s in wrp.name for s in ['jet', '1', '2', 'number']):
         use_this = True
-    if 'MuonHists' in wrp.in_file_path and 'charge' not in wrp.name:
+    if 'MuonHists' in wrp.in_file_path:
+        use_this = True
+    if 'ElectronHists' in wrp.in_file_path:
         use_this = True
     return use_this 
 
@@ -196,7 +238,8 @@ tagger.run()
 
 p1 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    filter_keyfunc=select_histograms,
     plotter_factory=plotter_factory,
     combine_files=True
 )
@@ -225,7 +268,8 @@ p4 = varial.tools.mk_rootfile_plotter(
 
 p5 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname)+'split',
-    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    filter_keyfunc=select_splithistograms,
     plotter_factory=plotter_factory4,
     combine_files=True
 )
@@ -247,13 +291,13 @@ p7 = varial.tools.mk_rootfile_plotter(
 )
 
 time.sleep(1)
-# p1.run()
+p1.run()
 # p2.run()
 # p3.run()
-p4.run()
+# p4.run()
 p5.run()
-p6.run()
-p7.run()
+# p6.run()
+# p7.run()
 varial.tools.WebCreator().run()
 # os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
 # os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))
