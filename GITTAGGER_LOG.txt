@@ -15,4 +15,4 @@
 1.14 20150217T132512 From plot.py: Test new plotter -> plot cf histos and other histos separately
 1.15 20150219T090758 From plot.py: Ran over full samples (old format), changed binning, added part_ht and JLCleaner, changed plotter (file in v1.17)
 1.16 20150219T183656 From plot.py: Ran over full samples (old format), changed binning, added part_ht and JLCleaner, changed plotter (file in v1.17)
-1.17 20150223T014854 From plot.py: Add stuff wanted by Johannes (right stacking order etc.)
+1.17 20150223T020137 From plot.py: Add stuff wanted by Johannes (right stacking order etc.)
