@@ -15,7 +15,7 @@
 
 using namespace uhh2;
 
-class ExtendedEventHists : public EventHists {
+class ExtendedEventHists : private EventHists {
 public:
     ExtendedEventHists(uhh2::Context & ctx, const std::string & dirname) : 
         EventHists(ctx, dirname), h_btags_(ctx.get_handle<int>("n_btags")),
@@ -43,6 +43,7 @@ private:
 };
 
 
+// TODO: implement a way to pass handles to the individual histograms that they might need to avoid hard coding handle names
 class HistCollector : public uhh2::Hists {
 public:
     HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);
