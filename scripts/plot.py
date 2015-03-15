@@ -8,6 +8,9 @@ import os
 import time
 import varial.tools
 import varial.generators as gen
+import itertools
+from varial.sample import Sample
+import varial.analysis as analysis
 # import varial.toolinterface
 
 dirname = 'VLQToHiggsPairProd'
@@ -20,6 +23,32 @@ current_tag = varial.settings.git_tag
 
 cuts = ['NoGenSel-NoCuts', 'NoGenSel-AllCuts'
     ]
+
+# sample definitions
+smpls = list()
+
+
+smpls.append(Sample(
+    name='QCD',
+    legend='QCD'
+))
+
+smpls.append(Sample(
+    name='TTJets',
+    legend='TTJets'
+))
+
+smpls.append(Sample(
+    name='WJets',
+    legend='WJets'
+))
+
+smpls.append(Sample(
+    name='ZJets',
+    legend='ZJets'
+))
+
+analysis.all_samples = dict((s.name, s) for s in smpls)
 
 varial.settings.defaults_Legend['x_pos'] = 0.80
 varial.settings.defaults_Legend['label_width'] = 0.36
@@ -34,45 +63,20 @@ varial.settings.colors = {
     # 'TpJ_TH_M800_NonTlep': 434,
 }
 
+def norm_to_first_bin(wrp):
+    histo = wrp.histo.Clone()
+    firstbin = histo.GetBinContent(1)
+    histo.Scale(1. / firstbin)
+    info = wrp.all_info()
+    info["lumi"] /= firstbin
+    return varial.wrappers.HistoWrapper(histo, **info)
 
-def log_scale(wrps):
+def norm_histos_to_first_bin(wrps):
     for wrp in wrps:
-        print type(wrp)
-        yield wrp
-
-# def make_eff_graphs(wrps):
-#     def token(w):
-#         token_str = "/".join(w.in_file_path)
-#         token_str = token_str.replace('_sub_', '_')
-#         token_str = token_str.replace('_tot_', '_')
-#         return w.legend + ":" + token_str
-#     subs, tots = {}, {}
-#     res = []
-#     for wrp in wrps:
-#         yield wrp
-#         if wrp.name.endswith('_sub'):
-#             t = token(wrp)
-#             if t in tots:
-#                 res.append(varial.operations.eff((wrp, tots.pop(t))))
-#             else:
-#                 subs[t] = wrp
-#         elif wrp.name.endswith('_tot'):
-#             t = token(wrp)
-#             if t in subs:
-#                 res.append(varial.operations.eff((subs.pop(t), wrp)))
-#             else:
-#                 tots[t] = wrp
-
-#         # if subs:
-#         #     print 'subs: ', list(subs.keys())
-#         # if tots:
-#         #     print 'tots: ', list(tots.keys())
-#         # if res:
-#         #     print 'res: ', res
-#         if res and not (subs or tots):
-#             for _ in xrange(len(res)):
-#                 yield res.pop(0)
-
+        if isinstance(wrp, varial.wrappers.HistoWrapper):
+            yield norm_to_first_bin(wrp)
+        else:
+            yield wrp
 
 def norm_histos_to_integral(wrps):
     for wrp in wrps:
@@ -100,6 +104,7 @@ def norm_cf_plots(wrps):
 
 def loader_hook(wrps):
     # wrps = norm_cf_plots(wrps)
+    wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
     wrps = gen.gen_add_wrp_info(
         wrps,
         sample=lambda w: w.file_path.split('.')[-2],
@@ -113,18 +118,74 @@ def loader_hook(wrps):
     return wrps
 
 def loader_hook2(wrps):
-    wrps = norm_histos_to_integral(wrps)
+    wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
+    wrps = norm_histos_to_first_bin(wrps)
     wrps = label_axes(wrps)
     return wrps
 
-# def loader_hook(wrps):
-#     wrps = label_axes(wrps)
-#     wrps = gen.gen_make_eff_graphs(wrps)
-#     wrps = norm_histos_to_integral(wrps)
-#     # wrps = log_scale(wrps)
-#     for w in wrps:
-#         yield w
+def loader_hook3(wrps):
+    wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
+    wrps = label_axes(wrps)
+    return wrps
 
+def loader_hook4(wrps):
+    wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
+    wrps = gen.gen_add_wrp_info(
+        wrps,
+        sample=lambda w: w.file_path.split('.')[-2],
+        analyzer=lambda w: w.in_file_path[0],
+        legend=lambda w: ('100* ' if 'TpTp_M' in w.sample else '') + w.sample,
+        is_signal=lambda w: 'TpTp_M' in w.sample,
+        lumi=lambda w: 0.01 if 'TpTp_M' in w.sample else 1.
+    )
+    wrps = gen.gen_make_eff_graphs(wrps)
+    wrps = label_axes(wrps)
+    return wrps
+
+# use these functions to specifically select histograms for plotting
+current_cuts = ['NoCuts', 'Nminus1-BTagCut', 'OneCut-JetPtCut1', 'OneCut-HTCut']
+
+varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
+
+# def calc_stack_order(wrps):
+#     for w in wrps:
+
+
+# def stack_by_max(wrps):
+#     wrps = calc_stack_order(wrps)
+#     wrps = gen.mc_stack_n_data_sum(wrps)
+#     return wrps
+
+
+def select_histograms(wrp):
+    use_this = True
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        use_this = False
+    if wrp.name.startswith('cf_') or 'TauHists' in wrp.in_file_path:
+        use_this = False
+    if 'NoGenSel' not in wrp.in_file_path:
+        use_this = False
+    # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
+    #     use_this = False
+    return use_this
+
+def select_splithistograms(wrp):
+    use_this = False
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        return False
+    if any(n in wrp.in_file_path for n in ['TauHists','TopJetHists']):
+        return False
+    if 'GenHists' in wrp.in_file_path and (wrp.name.startswith('mu_') or 'parton' in wrp.name):
+        use_this = True
+    if 'EventHists' in wrp.in_file_path:
+        use_this = True
+    if 'JetHists' in wrp.in_file_path and any(s in wrp.name for s in ['jet', '1', '2', 'number']):
+        use_this = True
+    if 'MuonHists' in wrp.in_file_path:
+        use_this = True
+    if 'ElectronHists' in wrp.in_file_path:
+        use_this = True
+    return use_this 
 
 def plotter_factory(**kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
@@ -140,6 +201,25 @@ def plotter_factory2(**kws):
     # kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
     kws['hook_loaded_histos'] = loader_hook2
     kws['save_lin_log_scale'] = True
+    kws['save_name_func'] = lambda w : w.name + '_norm'
+    # kws['save_log_scale'] = True
+    # kws['hook_canvas_pre_build'] = canvas_hook
+    # kws['hook_canvas_post_build'] = canvas_hook
+    return varial.tools.Plotter(**kws)
+
+def plotter_factory3(**kws):
+    # kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
+    kws['hook_loaded_histos'] = loader_hook3
+    kws['save_lin_log_scale'] = True
+    # kws['save_log_scale'] = True
+    # kws['hook_canvas_pre_build'] = canvas_hook
+    # kws['hook_canvas_post_build'] = canvas_hook
+    return varial.tools.Plotter(**kws)
+
+def plotter_factory4(**kws):
+    kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
+    kws['hook_loaded_histos'] = loader_hook4
+    kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
     # kws['hook_canvas_post_build'] = canvas_hook
@@ -154,24 +234,70 @@ tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_2_
 
 tagger.run()
 
-pl = varial.tools.mk_rootfile_plotter(
+
+
+p1 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    filter_keyfunc=select_histograms,
     plotter_factory=plotter_factory,
     combine_files=True
 )
 
 p2 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
-    filter_keyfunc=lambda w: w.name.startswith('cf_'),
+    filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
     plotter_factory=plotter_factory2,
     combine_files=True
 )
 
+p3 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname),
+    filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
+    plotter_factory=plotter_factory3,
+    combine_files=True
+)
+
+p4 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname)+'split',
+    pattern='temp-VLQv15/*.root',
+    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    plotter_factory=plotter_factory4,
+    combine_files=False
+)
+
+p5 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname)+'split',
+    # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
+    filter_keyfunc=select_splithistograms,
+    plotter_factory=plotter_factory4,
+    combine_files=True
+)
+
+p6 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname)+'split',
+    pattern='temp-VLQv15/*.root',
+    filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
+    plotter_factory=plotter_factory2,
+    combine_files=False
+)
+
+p7 = varial.tools.mk_rootfile_plotter(
+    name=create_name(dirname)+'split',
+    pattern='temp-VLQv15/*.root',
+    filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
+    plotter_factory=plotter_factory3,
+    combine_files=False
+)
 
 time.sleep(1)
-pl.run()
-p2.run()
+p1.run()
+# p2.run()
+# p3.run()
+# p4.run()
+p5.run()
+# p6.run()
+# p7.run()
 varial.tools.WebCreator().run()
 # os.system('rm -r ~/www/TprimeAnalysis/%s' % create_name(dirname))
 # os.system('cp -r %s ~/www/TprimeAnalysis/' % create_name(dirname))

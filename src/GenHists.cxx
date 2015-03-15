@@ -152,7 +152,7 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 
 void GenHists::fill(const Event & event){
     // fill the histograms. Don't forget to always use the weight when filling:
-    //     double weight = event.weight;
+    double weight = event.weight;
 
     typedef map<double, GenParticle const *> ptsort_parts;
     
@@ -238,8 +238,8 @@ void GenHists::fill(const Event & event){
             int decay2 = 0;
             if (daughter1) decay1 = abs(daughter1->pdgId());
             if (daughter2) decay2 = abs(daughter2->pdgId());
-            z_decay->Fill(decay1);
-            z_decay->Fill(decay2);
+            z_decay->Fill(decay1, weight);
+            z_decay->Fill(decay2, weight);
         }
         if (abs(igenp.pdgId()) == 24)
         {
@@ -249,59 +249,59 @@ void GenHists::fill(const Event & event){
             int decay2 = 0;
             if (daughter1) decay1 = abs(daughter1->pdgId());
             if (daughter2) decay2 = abs(daughter2->pdgId());
-            w_decay->Fill(decay1);
-            w_decay->Fill(decay2);
+            w_decay->Fill(decay1, weight);
+            w_decay->Fill(decay2, weight);
         }
     }
     
-    t_N->Fill((bool)t1+(bool)t2);
-    h_N->Fill((bool)h1+(bool)h2);
-    b_N->Fill(bs.size());
-    l_N->Fill(electrons.size()+muons.size());
-    mu_N->Fill(muons.size());
-    el_N->Fill(electrons.size());
-    ltop_N->Fill(electrons_from_top.size()+muons_from_top.size());
-    mutop_N->Fill(muons_from_top.size());
-    eltop_N->Fill(electrons_from_top.size());
+    t_N->Fill((bool)t1+(bool)t2, weight);
+    h_N->Fill((bool)h1+(bool)h2, weight);
+    b_N->Fill(bs.size(), weight);
+    l_N->Fill(electrons.size()+muons.size(), weight);
+    mu_N->Fill(muons.size(), weight);
+    el_N->Fill(electrons.size(), weight);
+    ltop_N->Fill(electrons_from_top.size()+muons_from_top.size(), weight);
+    mutop_N->Fill(muons_from_top.size(), weight);
+    eltop_N->Fill(electrons_from_top.size(), weight);
     
     if (tp1) 
     {
-        tp_pt_lead->Fill(tp1->pt());
-        tp_eta_lead->Fill(tp1->eta());
-        tp_phi_lead->Fill(tp1->phi());
-        tp_m->Fill(tp1->v4().mass());
+        tp_pt_lead->Fill(tp1->pt(), weight);
+        tp_eta_lead->Fill(tp1->eta(), weight);
+        tp_phi_lead->Fill(tp1->phi(), weight);
+        tp_m->Fill(tp1->v4().mass(), weight);
         GenParticle const * daughter1 = tp1->daughter(genparticles);
         GenParticle const * daughter2 = tp1->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = abs(daughter1->pdgId());
         if (daughter2) decay2 = abs(daughter2->pdgId());
-        tp_decay->Fill(decay1);
-        tp_decay->Fill(decay2);
+        tp_decay->Fill(decay1, weight);
+        tp_decay->Fill(decay2, weight);
     }
     
     if (tp2) 
     {
-        tp_pt_subl->Fill(tp2->pt());
-        tp_eta_subl->Fill(tp2->eta());
-        tp_phi_subl->Fill(tp2->phi());
-        tp_m->Fill(tp2->v4().mass());
+        tp_pt_subl->Fill(tp2->pt(), weight);
+        tp_eta_subl->Fill(tp2->eta(), weight);
+        tp_phi_subl->Fill(tp2->phi(), weight);
+        tp_m->Fill(tp2->v4().mass(), weight);
         GenParticle const * daughter1 = tp2->daughter(genparticles);
         GenParticle const * daughter2 = tp2->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = abs(daughter1->pdgId());
         if (daughter2) decay2 = abs(daughter2->pdgId());
-        tp_decay->Fill(decay1);
-        tp_decay->Fill(decay2);
+        tp_decay->Fill(decay1, weight);
+        tp_decay->Fill(decay2, weight);
     }
     
     if (t1) 
     {
-        t_pt_lead->Fill(t1->pt());
-        t_eta_lead->Fill(t1->eta());
-        t_phi_lead->Fill(t1->phi());
-        t_m->Fill(t1->v4().mass());
+        t_pt_lead->Fill(t1->pt(), weight);
+        t_eta_lead->Fill(t1->eta(), weight);
+        t_phi_lead->Fill(t1->phi(), weight);
+        t_m->Fill(t1->v4().mass(), weight);
         GenParticle const * daughter1 = t1->daughter(genparticles, 1);
         GenParticle const * daughter2 = t1->daughter(genparticles, 2);
         GenParticle const * top_b = 0;
@@ -324,20 +324,20 @@ void GenHists::fill(const Event & event){
 
         if (max_deltaR_topprod)
         {
-            spec_max_deltaR_topprod->Fill(max_deltaR_topprod);
-            spec_top_pt_vs_max_dR->Fill(t1->pt(), max_deltaR_topprod);
+            spec_max_deltaR_topprod->Fill(max_deltaR_topprod, weight);
+            spec_top_pt_vs_max_dR->Fill(t1->pt(), max_deltaR_topprod, weight);
         }
 
-        t_decay->Fill(decay1);
-        t_decay->Fill(decay2);
+        t_decay->Fill(decay1, weight);
+        t_decay->Fill(decay2, weight);
     }
     
     if (t2) 
     {
-        t_pt_subl->Fill(t2->pt());
-        t_eta_subl->Fill(t2->eta());
-        t_phi_subl->Fill(t2->phi());
-        t_m->Fill(t2->v4().mass());
+        t_pt_subl->Fill(t2->pt(), weight);
+        t_eta_subl->Fill(t2->eta(), weight);
+        t_phi_subl->Fill(t2->phi(), weight);
+        t_m->Fill(t2->v4().mass(), weight);
         GenParticle const * daughter1 = t2->daughter(genparticles, 1);
         GenParticle const * daughter2 = t2->daughter(genparticles, 2);
         GenParticle const * top_b = 0;
@@ -360,102 +360,102 @@ void GenHists::fill(const Event & event){
 
         if (max_deltaR_topprod)
         {
-            spec_max_deltaR_topprod->Fill(max_deltaR_topprod);
+            spec_max_deltaR_topprod->Fill(max_deltaR_topprod, weight);
         }
 
-        t_decay->Fill(decay1);
-        t_decay->Fill(decay2);
+        t_decay->Fill(decay1, weight);
+        t_decay->Fill(decay2, weight);
     }
     
     if (h1)
     {
-        h_pt_lead->Fill(h1->pt());
-        h_eta_lead->Fill(h1->eta());
-        h_phi_lead->Fill(h1->phi());
-        h_m->Fill(h1->v4().mass());
+        h_pt_lead->Fill(h1->pt(), weight);
+        h_eta_lead->Fill(h1->eta(), weight);
+        h_phi_lead->Fill(h1->phi(), weight);
+        h_m->Fill(h1->v4().mass(), weight);
         GenParticle const * daughter1 = h1->daughter(genparticles);
         GenParticle const * daughter2 = h1->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        h_decay->Fill(decay1);
-        h_decay->Fill(decay2);
+        h_decay->Fill(decay1, weight);
+        h_decay->Fill(decay2, weight);
     }
     
     if (h2)
     {
-        h_pt_subl->Fill(h2->pt());
-        h_eta_subl->Fill(h2->eta());
-        h_phi_subl->Fill(h2->phi());
-        h_m->Fill(h2->v4().mass());
+        h_pt_subl->Fill(h2->pt(), weight);
+        h_eta_subl->Fill(h2->eta(), weight);
+        h_phi_subl->Fill(h2->phi(), weight);
+        h_m->Fill(h2->v4().mass(), weight);
         GenParticle const * daughter1 = h2->daughter(genparticles);
         GenParticle const * daughter2 = h2->daughter(genparticles, 2);
         int decay1 = 0;
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        h_decay->Fill(decay1);
-        h_decay->Fill(decay2);
+        h_decay->Fill(decay1, weight);
+        h_decay->Fill(decay2, weight);
     }
 
     if (electrons.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons.rbegin();
-        el_pt_lead->Fill(sort_part->second->pt());
-        el_eta_lead->Fill(sort_part->second->eta());
-        el_phi_lead->Fill(sort_part->second->phi());
+        el_pt_lead->Fill(sort_part->second->pt(), weight);
+        el_eta_lead->Fill(sort_part->second->eta(), weight);
+        el_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons.size() > 1)
         {
             sort_part++;
-            el_pt_subl->Fill(sort_part->second->pt());
-            el_eta_subl->Fill(sort_part->second->eta());
-            el_phi_subl->Fill(sort_part->second->phi());
+            el_pt_subl->Fill(sort_part->second->pt(), weight);
+            el_eta_subl->Fill(sort_part->second->eta(), weight);
+            el_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (muons.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons.rbegin();
-        mu_pt_lead->Fill(sort_part->second->pt());
-        mu_eta_lead->Fill(sort_part->second->eta());
-        mu_phi_lead->Fill(sort_part->second->phi());
+        mu_pt_lead->Fill(sort_part->second->pt(), weight);
+        mu_eta_lead->Fill(sort_part->second->eta(), weight);
+        mu_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons.size() > 1)
         {
             sort_part++;
-            mu_pt_subl->Fill(sort_part->second->pt());
-            mu_eta_subl->Fill(sort_part->second->eta());
-            mu_phi_subl->Fill(sort_part->second->phi());
+            mu_pt_subl->Fill(sort_part->second->pt(), weight);
+            mu_eta_subl->Fill(sort_part->second->eta(), weight);
+            mu_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (electrons_from_top.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons_from_top.rbegin();
-        eltop_pt_lead->Fill(sort_part->second->pt());
-        eltop_eta_lead->Fill(sort_part->second->eta());
-        eltop_phi_lead->Fill(sort_part->second->phi());
+        eltop_pt_lead->Fill(sort_part->second->pt(), weight);
+        eltop_eta_lead->Fill(sort_part->second->eta(), weight);
+        eltop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons_from_top.size() > 1)
         {
             sort_part++;
-            eltop_pt_subl->Fill(sort_part->second->pt());
-            eltop_eta_subl->Fill(sort_part->second->eta());
-            eltop_phi_subl->Fill(sort_part->second->phi());
+            eltop_pt_subl->Fill(sort_part->second->pt(), weight);
+            eltop_eta_subl->Fill(sort_part->second->eta(), weight);
+            eltop_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
     if (muons_from_top.size())
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons_from_top.rbegin();
-        mutop_pt_lead->Fill(sort_part->second->pt());
-        mutop_eta_lead->Fill(sort_part->second->eta());
-        mutop_phi_lead->Fill(sort_part->second->phi());
+        mutop_pt_lead->Fill(sort_part->second->pt(), weight);
+        mutop_eta_lead->Fill(sort_part->second->eta(), weight);
+        mutop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons_from_top.size() > 1)
         {
             sort_part++;
-            mutop_pt_subl->Fill(sort_part->second->pt());
-            mutop_eta_subl->Fill(sort_part->second->eta());
-            mutop_phi_subl->Fill(sort_part->second->phi());
+            mutop_pt_subl->Fill(sort_part->second->pt(), weight);
+            mutop_eta_subl->Fill(sort_part->second->eta(), weight);
+            mutop_phi_subl->Fill(sort_part->second->phi(), weight);
         }
     }
 
@@ -475,11 +475,11 @@ void GenHists::fill(const Event & event){
         int decay2 = 0;
         if (daughter1) decay1 = daughter1->pdgId();
         if (daughter2) decay2 = daughter2->pdgId();
-        b_decay->Fill(decay1);
-        b_decay->Fill(decay2);
+        b_decay->Fill(decay1, weight);
+        b_decay->Fill(decay2, weight);
         GenParticle const * closestB = closestParticle(*ib, bs);
         if (closestB)
-            spec_deltaR_bb_min->Fill(deltaR(*ib, *closestB));
+            spec_deltaR_bb_min->Fill(deltaR(*ib, *closestB), weight);
         GenParticle const * imother = findMother(*ib, genparticles);
         if (!imother) continue;
         if (abs(imother->pdgId()) == 8)
@@ -499,22 +499,22 @@ void GenHists::fill(const Event & event){
                 if (imother->index() == imother2->index())
                 {
                     double dR = deltaR(*ib, *ib2);
-                    spec_deltaR_bb_h->Fill(dR);
+                    spec_deltaR_bb_h->Fill(dR, weight);
                     break;
                 }
             }
         }
     }
     
-    if (bTpPt_lead) bTp_pt_lead->Fill(bTpPt_lead);
-    if (bTpPt_subl) bTp_pt_subl->Fill(bTpPt_subl);
-    if (bHPt_lead) bH_pt_lead->Fill(bHPt_lead);
-    if (bHPt_subl) bH_pt_subl->Fill(bHPt_subl);
+    if (bTpPt_lead) bTp_pt_lead->Fill(bTpPt_lead, weight);
+    if (bTpPt_subl) bTp_pt_subl->Fill(bTpPt_subl, weight);
+    if (bHPt_lead) bH_pt_lead->Fill(bHPt_lead, weight);
+    if (bHPt_subl) bH_pt_subl->Fill(bHPt_subl, weight);
     
 //     if (b1 && b2){
 //         double deltaR = b1->deltaR(*b2);
 // //         cout << "Test2" << endl;
-//         DeltaR_bb->Fill(deltaR);
+//         DeltaR_bb->Fill(deltaR, weight);
 // //         cout << "Test3" << endl;
 //     }
     

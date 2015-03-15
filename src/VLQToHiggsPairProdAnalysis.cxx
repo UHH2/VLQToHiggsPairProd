@@ -52,6 +52,14 @@ private:
 
     std::string version;
 
+<<<<<<< HEAD
+=======
+    Event::Handle<vector<TopJet> > h_hepTopTagJets_in;
+    Event::Handle<vector<TopJet> > h_ca8prunedJets_in;
+    Event::Handle<vector<TopJet> > h_hepTopTagJets_out;
+    Event::Handle<vector<TopJet> > h_ca8prunedJets_out;
+
+>>>>>>> remotes/origin/for-new-ntuple-branch
     // // declare the Selections to use.
     // std::vector<std::unique_ptr<Selection> > v_sel;
 
@@ -122,6 +130,13 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
         cout << " " << kv.first << " = " << kv.second << endl;
     }
 
+    // need to include the following collections -> how to do this in the new ntuple format?
+
+    // h_hepTopTagJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
+    // h_ca8prunedJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
+    // h_hepTopTagJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
+    // h_ca8prunedJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
+
 
     version = ctx.get("dataset_version");
 
@@ -168,7 +183,6 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
     modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
     modules.emplace_back(new JetPtSorter());
-
 
 
 
@@ -276,10 +290,20 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         m->process(event);
     }
 
+    // use the following lines if you want to run over the inclusive Z/W+Jets samples but want to combine this with the ht-binned samples
+    // float part_ht = event.get(parton_ht);
+
     float part_ht = event.get(parton_ht);
 
     if ((version == "ZJets" || version == "WJets") && part_ht > 100.)
         return false;
+
+    // add the collections that you want here
+
+    // const std::vector<TopJet> & hepTopTagJets = event.get(h_hepTopTagJets_in);
+    // const std::vector<TopJet> & ca8prunedJets = event.get(h_ca8prunedJets_in);
+    // event.set(h_hepTopTagJets_out, std::move(hepTopTagJets));
+    // event.set(h_ca8prunedJets_out, std::move(ca8prunedJets));
     
 
     // 2.b fill histograms
@@ -325,105 +349,7 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         if (gensel_nm1_onemu[sel_name].second->passes(event))
             gensel_nm1_onemu[sel_name].first->fill(event);
     }
-    // if (passes_any_gensel)
-    // {
-    //     gensel_hists->fill(event);
-    //     gensel_gen_hists->fill(event);
-    // }
-
-    // std::map<const char *, bool> 
-    //         // pass_oneel_selection,
-    //         pass_onemu_selection
-    //         // pass_el_selection,
-    //         // pass_mu_selection
-    //         ;
-
-    // // std::cout << "Passed selections:" << std::endl;
-    // for (size_t i = 0; i < number_selections; ++i)
-    // {
-    //     try
-    //     {
-    //         const char * sel_name = selection_names[i];
-    //         bool pass = all_selections.at(sel_name)->passes(event);
-
-    //         // std::cout << "Selection: " << sel_name << " ";
-
-    //         try
-    //         {
-    //             if (pass)
-    //             {
-    //                 onecut_hists.at(sel_name)->fill(event);
-    //                 // if (string(sel_name) == "OneElectronCut" && gen_el_finalselection->passes(event))
-    //                 //     onecut_gensel_hists.at(sel_name)->fill(event);
-    //                 if (string(sel_name) == "OneMuonCut" && gen_mu_finalselection->passes(event))
-    //                     onecut_gensel_hists.at(sel_name)->fill(event);
-    //                 else if (passes_any_gensel)
-    //                     onecut_gensel_hists.at(sel_name)->fill(event);
-    //             }
-    //         }
-    //         catch (const std::out_of_range & e)
-    //         {
-    //             // std::cout << "NOT a valid selection: " << std::endl;
-    //             continue;
-    //         }
-
-    //         // if (string(sel_name) == "OneElectronCut")
-    //         // {
-    //         //     // std::cout << "passed" << std::endl;
-    //         //     pass_oneel_selection[sel_name] = pass;
-    //         // }
-    //         if (string(sel_name) == "OneMuonCut")
-    //         {
-    //             // std::cout << "passed" << std::endl;
-    //             pass_onemu_selection[sel_name] = pass;
-    //         }
-    //         // else if (string(sel_name) == "ElectronCut")
-    //         //     pass_el_selection[sel_name] = pass;
-    //         // else if (string(sel_name) == "MuonCut")
-    //         //     pass_mu_selection[sel_name] = pass;
-    //         else
-    //         {
-    //             // std::cout << "passed" << std::endl;
-    //             // pass_oneel_selection[sel_name] = pass;
-    //             pass_onemu_selection[sel_name] = pass;
-    //             // pass_el_selection[sel_name] = pass;
-    //             // pass_mu_selection[sel_name] = pass;
-    //         }
-
-    //         // std::cout << "  " << sel_name << " " << pass << std::endl;
-    //     }
-    //     catch (const std::out_of_range & e)
-    //     {
-    //         // std::cerr << "WARNING: Selection name not defined!" << std::endl;
-    //         continue;
-    //     }
-    // }
-
-    // // std::cout << std::endl;
-
-    // // fill_hists(event, pass_oneel_selection, nm1_oneel_hists, allsel_oneel_hists);
-    // fill_hists(event, pass_onemu_selection, nm1_onemu_hists, allsel_onemu_hists);
-
-    // // if (gen_el_finalselection->passes(event))
-    // //     fill_hists(event, pass_oneel_selection, nm1_oneel_gensel_hists, allsel_oneel_gensel_hists);
-    // if (gen_mu_finalselection->passes(event))
-    //     fill_hists(event, pass_onemu_selection, nm1_onemu_gensel_hists, allsel_onemu_gensel_hists);
-    // fill_hists(event, pass_el_selection, nm1_el_hists, allsel_el_hists);
-    // fill_hists(event, pass_mu_selection, nm1_mu_hists, allsel_mu_hists);
-
-
-
-
-    // nocuts_hists->fill(event);
-//     
-//     bool njet_selection = njet_sel->passes(event);
-//     if(njet_selection){
-//         h_njet->fill(event);
-//     }
-//     bool bjet_selection = bsel->passes(event);
-//     if(bjet_selection){
-//         h_bsel->fill(event);
-//     }
+    
     return passes_preselection;
 }
 
