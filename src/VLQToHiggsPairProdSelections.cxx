@@ -28,6 +28,23 @@ bool JetPtSelection::passes(const Event & event)
 
 }
 
+MuonPtSelection::MuonPtSelection(float minpt, float maxpt) : minpt_(minpt), maxpt_(maxpt) {} 
+
+bool MuonPtSelection::passes(const Event & event)
+{
+    const auto & muons = event.muons;
+
+    assert(muons);
+    bool pass = false;
+    if (muons->size() > 0)
+    {
+        pass = (*muons)[0].pt() > minpt_ && (maxpt_ < 0 || (*muons)[0].pt() < maxpt_);
+    }
+
+    return pass;
+
+}
+
 HTSelection::HTSelection(Event::Handle<double> const & hndl, float minht, float maxht) : h_ht_(hndl), minht_(minht), maxht_(maxht) {} 
 
 bool HTSelection::passes(const Event & event)

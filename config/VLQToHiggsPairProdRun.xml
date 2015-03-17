@@ -11,6 +11,7 @@
 <!ENTITY ZJets200to400 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_ZJets_HT200to400_LNu_20x25.xml">
 <!ENTITY ZJets400to600 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_ZJets_HT400to600_LNu_20x25.xml">
 <!ENTITY ZJets600toInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_ZJets_HT600toInf_LNu_20x25.xml">
+<!ENTITY QCD_HT250to500 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_QCD_HT250To500Ext_20x25.xml">
 <!ENTITY QCD_HT500to1000 SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_QCD_HT500To1000Ext_20x25.xml">
 <!ENTITY QCD_HT1000ToInf SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_QCD_HT1000ToInfExt_20x25.xml">
 <!ENTITY WJets SYSTEM "/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/common/datasets/MC_WJets_LNu_20x25.xml">
@@ -40,22 +41,22 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output/" PostFix="" TargetLumi="10000" > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@naf-uhhcms02.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output_new/" PostFix="" TargetLumi="10000" >
-        <InputData Lumi="4796772." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@naf-uhhcms02.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output_new/" PostFix="" TargetLumi="10000" > -->
+        <InputData Lumi="4796772." NEventsMax="1000" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
 
         </InputData>
 
-        <InputData Lumi="31568.03" NEventsMax="-1" Type="MC" Version="TTJets" Cacheable="False">
+        <!-- <InputData Lumi="31568.03" NEventsMax="-1" Type="MC" Version="TTJets" Cacheable="False">
             &TTbar;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="162.9756" NEventsMax="-1" Type="MC" Version="WJets" Cacheable="False">
             &WJets;
@@ -96,7 +97,7 @@
 
         </InputData> -->
 
-        <InputData Lumi="2354.480" NEventsMax="-1" Type="MC" Version="WJets100to200" Cacheable="False">
+        <!-- <InputData Lumi="2354.480" NEventsMax="-1" Type="MC" Version="WJets100to200" Cacheable="False">
             &WJets100to200;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -122,7 +123,7 @@
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="469.5707" NEventsMax="-1" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
@@ -131,8 +132,8 @@
 
         </InputData> -->
 
-        <InputData Lumi="18944.66" NEventsMax="-1" Type="MC" Version="ZJets100to200" Cacheable="False">
-            <!-- 4054159 events, 214 pb -->
+        <!-- <InputData Lumi="18944.66" NEventsMax="-1" Type="MC" Version="ZJets100to200" Cacheable="False">
+            4054159 events, 214 pb
             &ZJets100to200;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -140,7 +141,7 @@
         </InputData>
 
         <InputData Lumi="81156.45" NEventsMax="-1" Type="MC" Version="ZJets200to400" Cacheable="False">
-            <!-- 4666496 events, 57.5 pb -->
+            4666496 events, 57.5 pb
             &ZJets200to400;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -148,7 +149,7 @@
         </InputData>
 
         <InputData Lumi="684912.7" NEventsMax="-1" Type="MC" Version="ZJets400to600" Cacheable="False">
-            <!-- 4931372 events, 7.20 pb -->
+            4931372 events, 7.20 pb
             &ZJets400to600;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -156,12 +157,12 @@
         </InputData>
 
         <InputData Lumi="1872322" NEventsMax="-1" Type="MC" Version="ZJets600toInf" Cacheable="False">
-            <!-- 4493574 events, 2.40 pb -->
+            4493574 events, 2.40 pb
             &ZJets600toInf;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="120.2061" NEventsMax="-1" Type="MC" Version="QCD500to1000" Cacheable="False">
             cross section : 26740.0
@@ -185,7 +186,8 @@
             <Item Name="ElectronCollection" Value="slimmedElectrons" />
             <Item Name="MuonCollection" Value="slimmedMuons" /> 
             <Item Name="TauCollection" Value="slimmedTaus" />
-            <Item Name="JetCollection" Value="slimmedJets" />
+            <!-- <Item Name="JetCollection" Value="slimmedJets" /> -->
+            <Item Name="JetCollection" Value="patJetsAk4PFCHS" />
             <Item Name="METName" Value="slimmedMETs" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />

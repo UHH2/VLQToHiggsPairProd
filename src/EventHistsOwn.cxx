@@ -1,9 +1,9 @@
-#include "UHH2/common/include/EventHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/EventHistsOwn.h"
 #include "TH1F.h"
 
 using namespace uhh2;
 
-EventHists::EventHists(uhh2::Context & ctx, const std::string & dirname): Hists(ctx, dirname){
+EventHistsOwn::EventHistsOwn(uhh2::Context & ctx, const std::string & dirname): Hists(ctx, dirname){
     N_PrimVertices = book<TH1F>("N_PrimVertices", "number of primary vertices", 56, -0.5, 55.5);
     Weights = book<TH1F>("Weights", "weights", 2000,0,200);
     MET = book<TH1F>("MET", "missing E_{T}", 200,0,1000);
@@ -16,7 +16,7 @@ EventHists::EventHists(uhh2::Context & ctx, const std::string & dirname): Hists(
 }
 
 
-void EventHists::fill(const uhh2::Event & e){
+void EventHistsOwn::fill(const uhh2::Event & e){
     assert(e.met);
     assert(e.pvs);
     N_PrimVertices->Fill(e.pvs->size(), e.weight);

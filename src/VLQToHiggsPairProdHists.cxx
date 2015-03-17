@@ -14,8 +14,8 @@ using namespace uhh2;
 
 HistCollector::HistCollector(Context & ctx, const string & dirname, bool gen_plots) :
     Hists(ctx, dirname),
-    el_hists(new ElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
-    mu_hists(new MuonHists(ctx, dirname+"/MuonHists", gen_plots)),
+    el_hists(new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
+    mu_hists(new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots)),
     tau_hists(new TauHists(ctx, dirname+"/TauHists")),
     ev_hists(new ExtendedEventHists(ctx, dirname+"/EventHists")),
     jet_hists(new JetHists(ctx, dirname+"/JetHists")),

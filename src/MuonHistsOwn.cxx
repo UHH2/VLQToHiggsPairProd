@@ -1,4 +1,4 @@
-#include "UHH2/common/include/MuonHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/MuonHistsOwn.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/LorentzVector.h"
@@ -11,7 +11,7 @@
 using namespace uhh2;
 using namespace std;
 
-MuonHists::MuonHists(Context & ctx, const std::string & dname, bool gen_plots): Hists(ctx, dname){
+MuonHistsOwn::MuonHistsOwn(Context & ctx, const std::string & dname, bool gen_plots): Hists(ctx, dname){
     number = book<TH1F>("number","number of muons",7,-0.5,6.5);
     
     pt = book<TH1F>("pt","p_{T} muon",100,0,500);
@@ -53,7 +53,7 @@ MuonHists::MuonHists(Context & ctx, const std::string & dname, bool gen_plots): 
     }
 }
 
-void MuonHists::fill(const Event & event){
+void MuonHistsOwn::fill(const Event & event){
     auto w = event.weight;
     assert(event.muons);
     number->Fill(event.muons->size(), w);

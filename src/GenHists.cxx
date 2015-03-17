@@ -63,22 +63,32 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
     tp_pt_subl = book<TH1F>("tp_pt_subl", "p_{T, T'}(sublead) [GeV/c]", 200, 0, 2000);
     tp_eta_lead = book<TH1F>("tp_eta_lead", "#eta_{T'}(lead)", 40, -2.5, 2.5);
     tp_eta_subl = book<TH1F>("tp_eta_subl", "#eta_{T'}(sublead)", 40, -2.5, 2.5);
-    tp_phi_lead = book<TH1F>("tp_phi_lead", "#phi_{T'}(lead)", 64, -3.2, 3.2);
-    tp_phi_subl = book<TH1F>("tp_phi_subl", "#phi_{T'}(sublead)", 64, -3.2, 3.2);
+    tp_phi_lead = book<TH1F>("tp_phi_lead", "#phi_{T'}(lead)", 64, -M_PI, M_PI);
+    tp_phi_subl = book<TH1F>("tp_phi_subl", "#phi_{T'}(sublead)", 64, -M_PI, M_PI);
 
     t_pt_lead = book<TH1F>("t_pt_lead", "p_{T, top}(lead) [GeV/c]", 200, 0, 2000);
     t_pt_subl = book<TH1F>("t_pt_subl", "p_{T, top}(sublead) [GeV/c]", 200, 0, 2000);
     t_eta_lead = book<TH1F>("t_eta_lead", "#eta_{top}(lead)", 40, -2.5, 2.5);
     t_eta_subl = book<TH1F>("t_eta_subl", "#eta_{top}(sublead)", 40, -2.5, 2.5);
-    t_phi_lead = book<TH1F>("t_phi_lead", "#phi_{top}(lead)", 64, -3.2, 3.2);
-    t_phi_subl = book<TH1F>("t_phi_subl", "#phi_{top}(sublead)", 64, -3.2, 3.2);
+    t_phi_lead = book<TH1F>("t_phi_lead", "#phi_{top}(lead)", 64, -M_PI, M_PI);
+    t_phi_subl = book<TH1F>("t_phi_subl", "#phi_{top}(sublead)", 64, -M_PI, M_PI);
 
     h_pt_lead = book<TH1F>("h_pt_lead", "p_{T, H}(lead) [GeV/c]", 200, 0, 2000);
     h_pt_subl = book<TH1F>("h_pt_subl", "p_{T, H}(sublead) [GeV/c]", 200, 0, 2000);
     h_eta_lead = book<TH1F>("h_eta_lead", "#eta_{H}(lead)", 40, -2.5, 2.5);
     h_eta_subl = book<TH1F>("h_eta_subl", "#eta_{H}(sublead)", 40, -2.5, 2.5);
-    h_phi_lead = book<TH1F>("h_phi_lead", "#phi_{H}(lead)", 64, -3.2, 3.2);
-    h_phi_subl = book<TH1F>("h_phi_subl", "#phi_{H}(sublead)", 64, -3.2, 3.2);
+    h_phi_lead = book<TH1F>("h_phi_lead", "#phi_{H}(lead)", 64, -M_PI, M_PI);
+    h_phi_subl = book<TH1F>("h_phi_subl", "#phi_{H}(sublead)", 64, -M_PI, M_PI);
+
+    genjet_pt_lead = book<TH1F>("genjet_pt_lead", "p_{T, GenJet}(lead) [GeV/c]", 200, 0, 2000);
+    genjet_pt_subl = book<TH1F>("genjet_pt_subl", "p_{T, GenJet}(sublead) [GeV/c]", 200, 0, 2000);
+    genjet_pt_all = book<TH1F>("genjet_pt_all", "p_{T, GenJet}(all) [GeV/c]", 200, 0, 2000);
+    genjet_eta_lead = book<TH1F>("genjet_eta_lead", "#eta_{GenJet}(lead)", 40, -2.5, 2.5);
+    genjet_eta_subl = book<TH1F>("genjet_eta_subl", "#eta_{GenJet}(sublead)", 40, -2.5, 2.5);
+    genjet_eta_all = book<TH1F>("genjet_eta_all", "#eta_{GenJet}(all)", 40, -2.5, 2.5);
+    genjet_phi_lead = book<TH1F>("genjet_phi_lead", "#phi_{GenJet}(lead)", 64, -M_PI, M_PI);
+    genjet_phi_subl = book<TH1F>("genjet_phi_subl", "#phi_{GenJet}(sublead)", 64, -M_PI, M_PI);
+    genjet_phi_all = book<TH1F>("genjet_phi_all", "#phi_{GenJet}(all)", 64, -M_PI, M_PI);
 
     bTp_pt_lead = book<TH1F>("bTp_pt_lead", "p_{T, b(T')}(lead) [GeV/c]", 200, 0, 2000);
     bTp_pt_subl = book<TH1F>("bTp_pt_subl", "p_{T, b(T')}(sublead) [GeV/c]", 200, 0, 2000);
@@ -86,32 +96,40 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
     bH_pt_subl = book<TH1F>("bH_pt_subl", "p_{T, b(H)}(sublead) [GeV/c]", 200, 0, 2000);
 
     mu_pt_lead = book<TH1F>("mu_pt_lead", "p_{T, mu}(lead) [GeV/c]", 50, 0, 500);
+    mu_pt_lead2 = book<TH1F>("mu_pt_lead2", "p_{T, mu}(lead) [GeV/c]", 20, 0, 100);
     mu_pt_subl = book<TH1F>("mu_pt_subl", "p_{T, mu}(sublead) [GeV/c]", 50, 0, 500);
+    mu_pt_subl2 = book<TH1F>("mu_pt_subl2", "p_{T, mu}(sublead) [GeV/c]", 20, 0, 100);
     mu_eta_lead = book<TH1F>("mu_eta_lead", "#eta_{mu}(lead)", 40, -2.5, 2.5);
     mu_eta_subl = book<TH1F>("mu_eta_subl", "#eta_{mu}(sublead)", 40, -2.5, 2.5);
-    mu_phi_lead = book<TH1F>("mu_phi_lead", "#phi_{mu}(lead)", 64, -3.2, 3.2);
-    mu_phi_subl = book<TH1F>("mu_phi_subl", "#phi_{mu}(sublead)", 64, -3.2, 3.2);
+    mu_phi_lead = book<TH1F>("mu_phi_lead", "#phi_{mu}(lead)", 64, -M_PI, M_PI);
+    mu_phi_subl = book<TH1F>("mu_phi_subl", "#phi_{mu}(sublead)", 64, -M_PI, M_PI);
 
     el_pt_lead = book<TH1F>("el_pt_lead", "p_{T, el}(lead) [GeV/c]", 50, 0, 500);
+    el_pt_lead2 = book<TH1F>("el_pt_lead2", "p_{T, el}(lead) [GeV/c]", 20, 0, 100);
     el_pt_subl = book<TH1F>("el_pt_subl", "p_{T, el}(sublead) [GeV/c]", 50, 0, 500);
+    el_pt_subl2 = book<TH1F>("el_pt_subl2", "p_{T, el}(sublead) [GeV/c]", 20, 0, 100);
     el_eta_lead = book<TH1F>("el_eta_lead", "#eta_{el}(lead)", 40, -2.5, 2.5);
     el_eta_subl = book<TH1F>("el_eta_subl", "#eta_{el}(sublead)", 40, -2.5, 2.5);
-    el_phi_lead = book<TH1F>("el_phi_lead", "#phi_{el}(lead)", 64, -3.2, 3.2);
-    el_phi_subl = book<TH1F>("el_phi_subl", "#phi_{el}(sublead)", 64, -3.2, 3.2);
+    el_phi_lead = book<TH1F>("el_phi_lead", "#phi_{el}(lead)", 64, -M_PI, M_PI);
+    el_phi_subl = book<TH1F>("el_phi_subl", "#phi_{el}(sublead)", 64, -M_PI, M_PI);
 
     mutop_pt_lead = book<TH1F>("mutop_pt_lead", "p_{T, mutop}(lead) [GeV/c]", 60, 0, 600);
+    mutop_pt_lead2 = book<TH1F>("mutop_pt_lead2", "p_{T, mutop}(lead) [GeV/c]", 20, 0, 100);
     mutop_pt_subl = book<TH1F>("mutop_pt_subl", "p_{T, mutop}(sublead) [GeV/c]", 60, 0, 600);
+    mutop_pt_subl2 = book<TH1F>("mutop_pt_subl2", "p_{T, mutop}(sublead) [GeV/c]", 20, 0, 100);
     mutop_eta_lead = book<TH1F>("mutop_eta_lead", "#eta_{mutop}(lead)", 40, -2.5, 2.5);
     mutop_eta_subl = book<TH1F>("mutop_eta_subl", "#eta_{mutop}(sublead)", 40, -2.5, 2.5);
-    mutop_phi_lead = book<TH1F>("mutop_phi_lead", "#phi_{mutop}(lead)", 64, -3.2, 3.2);
-    mutop_phi_subl = book<TH1F>("mutop_phi_subl", "#phi_{mutop}(sublead)", 64, -3.2, 3.2);
+    mutop_phi_lead = book<TH1F>("mutop_phi_lead", "#phi_{mutop}(lead)", 64, -M_PI, M_PI);
+    mutop_phi_subl = book<TH1F>("mutop_phi_subl", "#phi_{mutop}(sublead)", 64, -M_PI, M_PI);
 
     eltop_pt_lead = book<TH1F>("eltop_pt_lead", "p_{T, eltop}(lead) [GeV/c]", 60, 0, 600);
+    eltop_pt_lead2 = book<TH1F>("eltop_pt_lead2", "p_{T, eltop}(lead) [GeV/c]", 20, 0, 100);
     eltop_pt_subl = book<TH1F>("eltop_pt_subl", "p_{T, eltop}(sublead) [GeV/c]", 60, 0, 600);
+    eltop_pt_subl2 = book<TH1F>("eltop_pt_subl2", "p_{T, eltop}(sublead) [GeV/c]", 20, 0, 100);
     eltop_eta_lead = book<TH1F>("eltop_eta_lead", "#eta_{eltop}(lead)", 40, -2.5, 2.5);
     eltop_eta_subl = book<TH1F>("eltop_eta_subl", "#eta_{eltop}(sublead)", 40, -2.5, 2.5);
-    eltop_phi_lead = book<TH1F>("eltop_phi_lead", "#phi_{eltop}(lead)", 64, -3.2, 3.2);
-    eltop_phi_subl = book<TH1F>("eltop_phi_subl", "#phi_{eltop}(sublead)", 64, -3.2, 3.2);
+    eltop_phi_lead = book<TH1F>("eltop_phi_lead", "#phi_{eltop}(lead)", 64, -M_PI, M_PI);
+    eltop_phi_subl = book<TH1F>("eltop_phi_subl", "#phi_{eltop}(sublead)", 64, -M_PI, M_PI);
 
     tp_m = book<TH1F>("tp_m", "m_{T'} [GeV]", 200, 950, 1050);
     t_m = book<TH1F>("t_m", "m_{t} [GeV]", 200, 150, 250);
@@ -119,6 +137,7 @@ GenHists::GenHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
 
 
       //  number plots
+    genjet_N = book<TH1F>("genjet_N", "Number of GenJets", 20, 0, 20);
     t_N = book<TH1F>("t_N", "Number of tops", 5, 0, 5);
     h_N = book<TH1F>("h_N", "Number of Higgses", 5, 0, 5);
     b_N = book<TH1F>("b_N", "Number of bs", 8, 0, 8);
@@ -252,6 +271,28 @@ void GenHists::fill(const Event & event){
             w_decay->Fill(decay1, weight);
             w_decay->Fill(decay2, weight);
         }
+    }
+
+    genjet_N->Fill(event.genjets->size(), weight);
+
+    for (size_t iGenJet = 0; iGenJet < event.genjets->size(); ++iGenJet)
+    {
+        GenJet const & gen_jet = event.genjets[iGenJet];
+        if (iGenJet == 0)
+        {
+            genjet_pt_lead->Fill(gen_jet.pt(), weight);
+            genjet_eta_lead->Fill(gen_jet.eta(), weight);
+            genjet_phi_lead->Fill(gen_jet.phi(), weight);
+        }
+        else if (iGenJet == 1)
+        {
+            genjet_pt_subl->Fill(gen_jet.pt(), weight);
+            genjet_eta_subl->Fill(gen_jet.eta(), weight);
+            genjet_phi_subl->Fill(gen_jet.phi(), weight);
+        }
+        genjet_pt_all->Fill(gen_jet.pt(), weight);
+        genjet_eta_all->Fill(gen_jet.eta(), weight);
+        genjet_phi_all->Fill(gen_jet.phi(), weight);
     }
     
     t_N->Fill((bool)t1+(bool)t2, weight);
@@ -403,12 +444,14 @@ void GenHists::fill(const Event & event){
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons.rbegin();
         el_pt_lead->Fill(sort_part->second->pt(), weight);
+        el_pt_lead2->Fill(sort_part->second->pt(), weight);
         el_eta_lead->Fill(sort_part->second->eta(), weight);
         el_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons.size() > 1)
         {
             sort_part++;
             el_pt_subl->Fill(sort_part->second->pt(), weight);
+            el_pt_subl2->Fill(sort_part->second->pt(), weight);
             el_eta_subl->Fill(sort_part->second->eta(), weight);
             el_phi_subl->Fill(sort_part->second->phi(), weight);
         }
@@ -418,12 +461,14 @@ void GenHists::fill(const Event & event){
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons.rbegin();
         mu_pt_lead->Fill(sort_part->second->pt(), weight);
+        mu_pt_lead2->Fill(sort_part->second->pt(), weight);
         mu_eta_lead->Fill(sort_part->second->eta(), weight);
         mu_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons.size() > 1)
         {
             sort_part++;
             mu_pt_subl->Fill(sort_part->second->pt(), weight);
+            mu_pt_subl2->Fill(sort_part->second->pt(), weight);
             mu_eta_subl->Fill(sort_part->second->eta(), weight);
             mu_phi_subl->Fill(sort_part->second->phi(), weight);
         }
@@ -433,12 +478,14 @@ void GenHists::fill(const Event & event){
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = electrons_from_top.rbegin();
         eltop_pt_lead->Fill(sort_part->second->pt(), weight);
+        eltop_pt_lead2->Fill(sort_part->second->pt(), weight);
         eltop_eta_lead->Fill(sort_part->second->eta(), weight);
         eltop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (electrons_from_top.size() > 1)
         {
             sort_part++;
             eltop_pt_subl->Fill(sort_part->second->pt(), weight);
+            eltop_pt_subl2->Fill(sort_part->second->pt(), weight);
             eltop_eta_subl->Fill(sort_part->second->eta(), weight);
             eltop_phi_subl->Fill(sort_part->second->phi(), weight);
         }
@@ -448,12 +495,14 @@ void GenHists::fill(const Event & event){
     {
         std::reverse_iterator<ptsort_parts::iterator> sort_part = muons_from_top.rbegin();
         mutop_pt_lead->Fill(sort_part->second->pt(), weight);
+        mutop_pt_lead2->Fill(sort_part->second->pt(), weight);
         mutop_eta_lead->Fill(sort_part->second->eta(), weight);
         mutop_phi_lead->Fill(sort_part->second->phi(), weight);
         if (muons_from_top.size() > 1)
         {
             sort_part++;
             mutop_pt_subl->Fill(sort_part->second->pt(), weight);
+            mutop_pt_subl2->Fill(sort_part->second->pt(), weight);
             mutop_eta_subl->Fill(sort_part->second->eta(), weight);
             mutop_phi_subl->Fill(sort_part->second->phi(), weight);
         }

@@ -19,6 +19,16 @@ private:
     boost::optional<JetId> jetid_;
 };
 
+class MuonPtSelection : public Selection {
+public:
+    explicit MuonPtSelection(float minpt, float maxpt = -1.);
+    virtual bool passes(const Event &);
+
+private:
+    float minpt_, maxpt_;
+    boost::optional<JetId> jetid_;
+};
+
 class HTSelection : public Selection {
 public:
     explicit HTSelection(Event::Handle<double> const & hndl, float minht, float maxht = -1.);

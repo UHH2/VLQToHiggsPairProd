@@ -15,15 +15,17 @@
 
 using namespace uhh2;
 
-class ExtendedEventHists : private EventHists {
+class ExtendedEventHists : public EventHists {
 public:
     ExtendedEventHists(uhh2::Context & ctx, const std::string & dirname) : 
         EventHists(ctx, dirname), h_btags_(ctx.get_handle<int>("n_btags")),
         h_toptags_(ctx.get_handle<int>("n_toptags"))
         {
+            Weights = book<TH1F>("Weights_own", "weights", 2000,0,200);
             h_n_btags = book<TH1F>("jets_Nbs", "N_{b-tags}", 20, 0, 20);
             h_n_toptags = book<TH1F>("jets_Ntops", "N_{top jets}", 20, 0, 20);
 
+            h_primlep = ctx.get_handle<FlavorParticle>("PrimaryMuon");
         }
 
     virtual void fill(const uhh2::Event & event) override {
@@ -42,6 +44,36 @@ private:
     uhh2::Event::Handle<int> h_btags_, h_toptags_;
 };
 
+// new el hists class based on the ElectronHists class in the common package but changing the histogram ranges for some of the histograms
+
+class ExtendedElectronHists : public ElectronHists {
+public:
+    ExtendedElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots) : 
+        ElectronHists(ctx, dirname, gen_plots)
+        {
+            isolation   = book<TH1F>("isolation_own",   "relIso electron",          200,0,10);
+            isolation_1 = book<TH1F>("isolation_1_own", "relIso electron 1",        200,0,10);
+            isolation_2 = book<TH1F>("isolation_2_own", "relIso electron 2",        200,0,10);
+
+        }
+
+};
+
+// new muon hists class based on the MuonHists class in the common package but changing the histogram ranges for some of the histograms
+
+class ExtendedMuonHists : public MuonHists {
+public:
+    ExtendedMuonHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots) : 
+        MuonHists(ctx, dirname, gen_plots)
+        {
+            isolation   = book<TH1F>("isolation_own",   "relIso electron",          200,0,10);
+            isolation_1 = book<TH1F>("isolation_1_own", "relIso electron 1",        200,0,10);
+            isolation_2 = book<TH1F>("isolation_2_own", "relIso electron 2",        200,0,10);
+
+        }
+
+};
+
 
 // TODO: implement a way to pass handles to the individual histograms that they might need to avoid hard coding handle names
 class HistCollector : public uhh2::Hists {
@@ -52,8 +84,8 @@ public:
     virtual void fill(const uhh2::Event & ev) override;
 
 private:
-    ElectronHists * el_hists;
-    MuonHists * mu_hists;
+    ExtendedElectronHists * el_hists;
+    ExtendedMuonHists * mu_hists;
     TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     JetHists * jet_hists;

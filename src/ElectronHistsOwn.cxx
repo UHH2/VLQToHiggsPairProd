@@ -1,4 +1,4 @@
-#include "UHH2/common/include/ElectronHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/ElectronHistsOwn.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/LorentzVector.h"
@@ -11,7 +11,7 @@
 using namespace uhh2;
 using namespace std;
 
-ElectronHists::ElectronHists(Context & ctx, const std::string & dname, bool gen_plots): Hists(ctx, dname){
+ElectronHistsOwn::ElectronHistsOwn(Context & ctx, const std::string & dname, bool gen_plots): Hists(ctx, dname){
     number      = book<TH1F>("number",      "number of electrons",7,-0.5,6.5);
 
     pt          = book<TH1F>("pt",          "p_{T} electron",           100,0,500);
@@ -61,7 +61,7 @@ ElectronHists::ElectronHists(Context & ctx, const std::string & dname, bool gen_
     }
 }
 
-void ElectronHists::fill(const Event & event){
+void ElectronHistsOwn::fill(const Event & event){
     auto w = event.weight;
     assert(event.electrons);
     number->Fill(event.electrons->size(), w);

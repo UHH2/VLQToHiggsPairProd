@@ -7,6 +7,7 @@
 
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/TopJetIds.h"
+#include "UHH2/common/include/Utils.h"
 
 using namespace std;
 using namespace uhh2;
@@ -96,17 +97,7 @@ public:
     explicit JetPtSorter() {}
     virtual bool process(uhh2::Event & event) override {
         std::vector<Jet> & ev_jets = *event.jets;
-        std::map<double, Jet> sorted_jets;
-        std::vector<Jet> result;
-        for (const Jet & jet : ev_jets) {
-            sorted_jets[jet.pt()] = jet;
-        }
-        for (std::map<double, Jet>::reverse_iterator it = sorted_jets.rbegin();
-            it != sorted_jets.rend();
-            ++it) {
-            result.push_back(it->second);
-        }
-        std::swap(result, ev_jets);
+        sort_by_pt(ev_jets);
 
         return true;
     }
