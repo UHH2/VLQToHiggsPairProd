@@ -22,7 +22,7 @@ private:
 	TH1F *t_pt_lead, *t_pt_subl, *t_eta_lead, *t_eta_subl, *t_phi_lead, *t_phi_subl;
 	TH1F *h_pt_lead, *h_pt_subl, *h_eta_lead, *h_eta_subl, *h_phi_lead, *h_phi_subl;
 	TH1F *bTp_pt_lead, *bTp_pt_subl, *bH_pt_lead, *bH_pt_subl;
-	TH1F *genjet_pt_lead, *genjet_pt_subl, *genjet_pt_all, *genjet_eta_lead, *genjet_eta_subl, *genjet_eta_all, *genjet_phi_lead, *genjet_phi_subl, *genjet_phi_all;
+	TH1F *genjet_N, *genjet_pt_lead, *genjet_pt_subl, *genjet_pt_all, *genjet_eta_lead, *genjet_eta_subl, *genjet_eta_all, *genjet_phi_lead, *genjet_phi_subl, *genjet_phi_all;
 	TH1F *mu_pt_lead, *mu_pt_lead2, *mu_pt_subl, *mu_pt_subl2, *mu_eta_lead, *mu_eta_subl, *mu_phi_lead, *mu_phi_subl;
 	TH1F *el_pt_lead, *el_pt_lead2, *el_pt_subl, *el_pt_subl2, *el_eta_lead, *el_eta_subl, *el_phi_lead, *el_phi_subl;
 	TH1F *mutop_pt_lead, *mutop_pt_lead2, *mutop_pt_subl, *mutop_pt_subl2, *mutop_eta_lead, *mutop_eta_subl, *mutop_phi_lead, *mutop_phi_subl;

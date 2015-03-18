@@ -14,6 +14,7 @@
 
 
 using namespace uhh2;
+using namespace std;
 
 class ExtendedEventHists : public EventHists {
 public:
@@ -48,13 +49,12 @@ private:
 
 class ExtendedElectronHists : public ElectronHists {
 public:
-    ExtendedElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots) : 
+    ExtendedElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true) : 
         ElectronHists(ctx, dirname, gen_plots)
         {
             isolation   = book<TH1F>("isolation_own",   "relIso electron",          200,0,10);
             isolation_1 = book<TH1F>("isolation_1_own", "relIso electron 1",        200,0,10);
             isolation_2 = book<TH1F>("isolation_2_own", "relIso electron 2",        200,0,10);
-
         }
 
 };
@@ -63,14 +63,61 @@ public:
 
 class ExtendedMuonHists : public MuonHists {
 public:
-    ExtendedMuonHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots) : 
+    ExtendedMuonHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true) : 
         MuonHists(ctx, dirname, gen_plots)
         {
             isolation   = book<TH1F>("isolation_own",   "relIso electron",          200,0,10);
             isolation_1 = book<TH1F>("isolation_1_own", "relIso electron 1",        200,0,10);
             isolation_2 = book<TH1F>("isolation_2_own", "relIso electron 2",        200,0,10);
-
         }
+
+};
+
+// new jet hists class based on the MuonHists class in the common package; add jet histos w/o JEC
+
+class ExtendedJetHists : public JetHists {
+public:
+    ExtendedJetHists(uhh2::Context & ctx, const std::string & dirname, const unsigned int NumberOfPlottedJets=4, const std::string & collection = "") : 
+        JetHists(ctx, dirname, NumberOfPlottedJets, collection)
+    {
+        alljets_nojec = book_jetHist("jet_nojec","_jet_nojec",20,1500);
+
+        std::vector<double> minPt {20,20,20,20};
+        std::vector<double> maxPt {1500,1000,500,350};
+        std::vector<std::string> axis_suffix {"first jet no jec","second jet no jec","third jet no jec","fourth jet no jec"};
+
+        for(unsigned int i =0; i<NumberOfPlottedJets; i++){
+            if(i<4){
+                single_jetHists_nojec.push_back(book_jetHist(axis_suffix[i],"_"+to_string(i+1)+"_nojec",minPt[i],maxPt[i]));
+            }
+            else {
+                single_jetHists_nojec.push_back(book_jetHist(to_string(i+1)+"-th jet","_"+to_string(i+1)+"_nojec",20,500));
+            }
+        }
+
+    }
+
+    virtual void fill(const uhh2::Event & event) override
+    {
+        JetHists::fill(event);
+
+        auto w = event.weight;
+        const auto jets = collection.empty() ? event.jets : &event.get(h_jets);
+        assert(jets);
+        for(unsigned int i = 0; i <jets->size(); i++){
+            auto jet = (*jets)[i];
+            jet.set_v4(jet.v4() * jet.JEC_factor_raw());
+            fill_jetHist(jet,alljets_nojec,w);
+            if(i < single_jetHists_nojec.size()){
+                fill_jetHist(jet, single_jetHists_nojec[i], w);
+            }
+        }
+
+    }
+
+protected:
+    jetHist alljets_nojec;
+    std::vector<jetHist> single_jetHists_nojec;
 
 };
 
@@ -88,7 +135,7 @@ private:
     ExtendedMuonHists * mu_hists;
     TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
-    JetHists * jet_hists;
+    ExtendedJetHists * jet_hists;
     TopJetHists * topjet_hists;
     GenHists * gen_hists;
 

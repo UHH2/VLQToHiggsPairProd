@@ -277,7 +277,7 @@ void GenHists::fill(const Event & event){
 
     for (size_t iGenJet = 0; iGenJet < event.genjets->size(); ++iGenJet)
     {
-        GenJet const & gen_jet = event.genjets[iGenJet];
+        Particle const & gen_jet = (*event.genjets)[iGenJet];
         if (iGenJet == 0)
         {
             genjet_pt_lead->Fill(gen_jet.pt(), weight);

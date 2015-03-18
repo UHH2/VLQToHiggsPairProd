@@ -17,7 +17,7 @@ dirname = 'VLQToHiggsPairProd'
 
 varial.settings.rootfile_postfixes += ['.pdf']
 
-varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/uhh2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
+varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
 
 current_tag = varial.settings.git_tag
 
@@ -63,6 +63,46 @@ varial.settings.colors = {
     # 'TpJ_TH_M800_NonTlep': 434,
 }
 
+# SELECT HISTOGRAMS TO PLOT HERE!
+
+# use these functions to specifically select histograms for plotting
+current_cuts = ['NoCuts'] # 'NoCuts', 'Nminus1-MuonPtCut', 'OneCut-HTCut'
+current_hists = ['/ElectronHists']
+
+varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
+
+def select_histograms(wrp):
+    use_this = True
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        use_this = False
+    if wrp.name.startswith('cf_'):
+        use_this = False
+    if all(c not in wrp.in_file_path for c in current_hists):
+        use_this = False
+    # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
+    #     use_this = False
+    # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
+    #     use_this = False
+    return use_this
+
+def select_splithistograms(wrp):
+    use_this = True
+    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        use_this = False
+    if wrp.name.startswith('cf_'):
+        use_this = False
+    if all(c not in wrp.in_file_path for c in current_hists):
+        use_this = False
+    # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
+    #     use_this = False
+    # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
+    #     use_this = False
+    return use_this 
+
+
+
+# SOME FUNCTIONS TO MANIPULATE HISTOGRAMS
+
 def norm_to_first_bin(wrp):
     histo = wrp.histo.Clone()
     firstbin = histo.GetBinContent(1)
@@ -102,7 +142,9 @@ def norm_cf_plots(wrps):
             yield w
 
 
-def loader_hook(wrps):
+# HOOK FUNCTIONS FOR PLOTTER_FACTORIES; manipulate histograms here
+
+def for_stacked_hook(wrps):
     # wrps = norm_cf_plots(wrps)
     wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
     wrps = gen.gen_add_wrp_info(
@@ -117,18 +159,18 @@ def loader_hook(wrps):
     wrps = label_axes(wrps)
     return wrps
 
-def loader_hook2(wrps):
+def norm_cf_hook(wrps):
     wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
     wrps = norm_histos_to_first_bin(wrps)
     wrps = label_axes(wrps)
     return wrps
 
-def loader_hook3(wrps):
+def do_nothing_hook(wrps):
     wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
     wrps = label_axes(wrps)
     return wrps
 
-def loader_hook4(wrps):
+def for_eff_plots_hook(wrps):
     wrps = itertools.ifilter(lambda w: w.histo.Integral(), wrps)
     wrps = gen.gen_add_wrp_info(
         wrps,
@@ -142,10 +184,6 @@ def loader_hook4(wrps):
     wrps = label_axes(wrps)
     return wrps
 
-# use these functions to specifically select histograms for plotting
-current_cuts = ['NoCuts', 'Nminus1-BTagCut', 'OneCut-JetPtCut1', 'OneCut-HTCut']
-
-varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
 
 # def calc_stack_order(wrps):
 #     for w in wrps:
@@ -157,39 +195,11 @@ varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
 #     return wrps
 
 
-def select_histograms(wrp):
-    use_this = True
-    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-        use_this = False
-    if wrp.name.startswith('cf_') or 'TauHists' in wrp.in_file_path:
-        use_this = False
-    if 'NoGenSel' not in wrp.in_file_path:
-        use_this = False
-    # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
-    #     use_this = False
-    return use_this
+# PLOTTER FACTORIES; select here in general which histograms to plot, how to manipulate them a.s.o.
 
-def select_splithistograms(wrp):
-    use_this = False
-    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-        return False
-    if any(n in wrp.in_file_path for n in ['TauHists','TopJetHists']):
-        return False
-    if 'GenHists' in wrp.in_file_path and (wrp.name.startswith('mu_') or 'parton' in wrp.name):
-        use_this = True
-    if 'EventHists' in wrp.in_file_path:
-        use_this = True
-    if 'JetHists' in wrp.in_file_path and any(s in wrp.name for s in ['jet', '1', '2', 'number']):
-        use_this = True
-    if 'MuonHists' in wrp.in_file_path:
-        use_this = True
-    if 'ElectronHists' in wrp.in_file_path:
-        use_this = True
-    return use_this 
-
-def plotter_factory(**kws):
+def stack_histos_factory(**kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
-    kws['hook_loaded_histos'] = loader_hook
+    kws['hook_loaded_histos'] = for_stacked_hook
     kws['plot_setup'] = gen.mc_stack_n_data_sum
     kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
@@ -197,9 +207,9 @@ def plotter_factory(**kws):
     # kws['hook_canvas_post_build'] = canvas_hook
     return varial.tools.Plotter(**kws)
 
-def plotter_factory2(**kws):
+def norm_cf_factory(**kws):
     # kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
-    kws['hook_loaded_histos'] = loader_hook2
+    kws['hook_loaded_histos'] = norm_cf_hook
     kws['save_lin_log_scale'] = True
     kws['save_name_func'] = lambda w : w.name + '_norm'
     # kws['save_log_scale'] = True
@@ -207,18 +217,18 @@ def plotter_factory2(**kws):
     # kws['hook_canvas_post_build'] = canvas_hook
     return varial.tools.Plotter(**kws)
 
-def plotter_factory3(**kws):
+def do_nothing_factory(**kws):
     # kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
-    kws['hook_loaded_histos'] = loader_hook3
+    kws['hook_loaded_histos'] = do_nothing_hook
     kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
     # kws['hook_canvas_post_build'] = canvas_hook
     return varial.tools.Plotter(**kws)
 
-def plotter_factory4(**kws):
+def for_eff_factory(**kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
-    kws['hook_loaded_histos'] = loader_hook4
+    kws['hook_loaded_histos'] = for_eff_plots_hook
     kws['save_lin_log_scale'] = True
     # kws['save_log_scale'] = True
     # kws['hook_canvas_pre_build'] = canvas_hook
@@ -230,7 +240,7 @@ def create_name(name):
 
     
 
-tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_2_1_patch4/src/UHH2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
+tagger = varial.tools.GitTagger('/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
 
 tagger.run()
 
@@ -240,29 +250,29 @@ p1 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
     # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
     filter_keyfunc=select_histograms,
-    plotter_factory=plotter_factory,
+    plotter_factory=stack_histos_factory,
     combine_files=True
 )
 
 p2 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
     filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
-    plotter_factory=plotter_factory2,
+    plotter_factory=norm_cf_factory,
     combine_files=True
 )
 
 p3 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname),
     filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
-    plotter_factory=plotter_factory3,
+    plotter_factory=do_nothing_factory,
     combine_files=True
 )
 
 p4 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname)+'split',
-    pattern='temp-VLQv15/*.root',
-    filter_keyfunc=lambda w: not w.name.startswith('cf_'),
-    plotter_factory=plotter_factory4,
+    pattern='v1.19_unmerged_files/*.root',
+    filter_keyfunc=select_splithistograms,
+    plotter_factory=for_eff_factory,
     combine_files=False
 )
 
@@ -270,23 +280,23 @@ p5 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname)+'split',
     # filter_keyfunc=lambda w: not w.name.startswith('cf_'),
     filter_keyfunc=select_splithistograms,
-    plotter_factory=plotter_factory4,
+    plotter_factory=for_eff_factory,
     combine_files=True
 )
 
 p6 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname)+'split',
-    pattern='temp-VLQv15/*.root',
+    pattern='v1.19_unmerged_files/*.root',
     filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
-    plotter_factory=plotter_factory2,
+    plotter_factory=norm_cf_factory,
     combine_files=False
 )
 
 p7 = varial.tools.mk_rootfile_plotter(
     name=create_name(dirname)+'split',
-    pattern='temp-VLQv15/*.root',
+    pattern='v1.19_unmerged_files/*.root',
     filter_keyfunc=lambda w: w.name.startswith('cf_') and not w.name.endswith('raw'),
-    plotter_factory=plotter_factory3,
+    plotter_factory=do_nothing_factory,
     combine_files=False
 )
 
@@ -295,7 +305,7 @@ p1.run()
 # p2.run()
 # p3.run()
 # p4.run()
-# p5.run()
+p5.run()
 # p6.run()
 # p7.run()
 varial.tools.WebCreator().run()

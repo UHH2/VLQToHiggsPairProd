@@ -18,7 +18,7 @@ HistCollector::HistCollector(Context & ctx, const string & dirname, bool gen_plo
     mu_hists(new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots)),
     tau_hists(new TauHists(ctx, dirname+"/TauHists")),
     ev_hists(new ExtendedEventHists(ctx, dirname+"/EventHists")),
-    jet_hists(new JetHists(ctx, dirname+"/JetHists")),
+    jet_hists(new ExtendedJetHists(ctx, dirname+"/JetHists")),
     topjet_hists(new TopJetHists(ctx, dirname+"/TopJetHists")),
     gen_hists(gen_plots ? new GenHists(ctx, dirname+"/GenHists") : NULL)
 

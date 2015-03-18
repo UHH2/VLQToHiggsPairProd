@@ -14,6 +14,7 @@
 #include "UHH2/common/include/GenTools.h"
 #include "UHH2/common/include/PartonHT.h"
 #include "UHH2/common/include/JetCorrections.h"
+#include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarReconstruction.h"
 
 
@@ -55,11 +56,6 @@ private:
 
     std::string version;
 
-    // Event::Handle<vector<TopJet> > h_hepTopTagJets_in;
-    // Event::Handle<vector<TopJet> > h_ca8prunedJets_in;
-    // Event::Handle<vector<TopJet> > h_hepTopTagJets_out;
-    // Event::Handle<vector<TopJet> > h_ca8prunedJets_out;
-
     // // declare the Selections to use.
     // std::vector<std::unique_ptr<Selection> > v_sel;
 
@@ -67,7 +63,9 @@ private:
 
     // no gen selection, no reco selection, both gen and reco plots
     std::unique_ptr<Hists>
-            nogensel_nocuts
+            nogensel_nocuts,
+            nogensel_noclean,
+            h_muonid_iso
             ;
 
     // gen selection, no reco selection, both gen and reco plots
@@ -76,11 +74,7 @@ private:
 
     // with/without gen selection, final reco selection, only reco plots
     std::pair<std::unique_ptr<Hists> , std::unique_ptr<AndSelection> >
-            // allsel_el_hists,
-            // allsel_mu_hists,
-            // allsel_oneel_hists,
             nogensel_fin_onemu
-            // allsel_oneel_gensel_hists,
             // gensel_fin_onemu
             ;
 
@@ -88,22 +82,11 @@ private:
     std::map<const char*, std::pair< std::unique_ptr<Hists>, std::unique_ptr<AndSelection> > >
             nogensel_onecut,
             // gensel_onecut,
-            // nm1_el_hists,
-            // nm1_mu_hists,
-            // nm1_oneel_hists,
             nogensel_nm1_onemu
-            // nm1_oneel_gensel_hists,
             // gensel_nm1_onemu
             ;
-
-                           // vh_nm1;
-
-    // JetId btag;
-    // TopJetId toptag;
     
-    std::vector<std::unique_ptr<AnalysisModule> > modules;
-
-    std::unique_ptr<CommonModules> cm;
+    std::vector<std::unique_ptr<AnalysisModule> > pre_modules, post_modules, muonid_iso;
 
     // std::unique_ptr<Selection> ele_selection, mu_selection;
     std::unique_ptr<AndSelection>
@@ -127,22 +110,14 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
     // not set automatically, but can be set in the python config file.
-    for(auto kv : ctx.get_all()){
-        cout << " " << kv.first << " = " << kv.second << endl;
-    }
+    // for(auto kv : ctx.get_all()){
+    //     cout << " " << kv.first << " = " << kv.second << endl;
+    // }
 
-    // need to include the following collections -> how to do this in the new ntuple format?
-
-    // h_hepTopTagJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
-    // h_ca8prunedJets_in = ctx.declare_event_input<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
-    // h_hepTopTagJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsHEPTopTagCHSPacked");
-    // h_ca8prunedJets_out = ctx.declare_event_output<std::vector<TopJet> >("patJetsCA8CHSprunedPacked");
-
+    
+    // 1. define handles and other stuff here for later call in VLQToHiggsPairProdAnalysis::process
 
     version = ctx.get("dataset_version");
-
-
-    // 1. define handles and other stuff here for later call in VLQToHiggsPairProdAnalysis::process
 
     CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
 
@@ -157,51 +132,73 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
 
 
-    // 2. setup other modules. Here, only the jet cleaner
+    // 2. setup other modules
 
-    cm.reset(new CommonModules);
+    // calculate gen variables
+    pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_bfromtop", ParticleId::BottomId, ParticleId::TopId));
+    pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleId::HiggsId));
+    pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleId::ElectronId, ParticleId::TopId));
+    pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleId::MuonId, ParticleId::TopId));
+    pre_modules.emplace_back(new PartonHT(parton_ht));
 
-    // cm->set_jet_id(PtEtaCut(30.0, 2.4));
-    // cm->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)));
-    // cm->set_muon_id(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1)));
-    // cm.set_tau_id(PtEtaCut(30.0, 2.4));
-    
-    cm->init(ctx);
+    pre_modules.emplace_back(new HTCalculator(ctx));
+    pre_modules.emplace_back(new PrimaryLepton(ctx));
+    // pre_modules.emplace_back(new HTLepCalculator(ctx));
+    pre_modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
+    pre_modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
 
-    // TODO: for BTag-, TopTag- and NGenParticleCalculator, use handle as input argument for the constructor instead
-    // of a string and declare these handles as private members of the analysis module
-    modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
-    modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
+    // all the reweighting and jet correction modules
+    bool mclumiweight = true;
+    bool mcpileupreweight = true;
+    bool jec = true;
+    bool jersmear = true;
 
-    modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_bfromtop", ParticleId::BottomId, ParticleId::TopId));
-    modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleId::HiggsId));
-    modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleId::ElectronId, ParticleId::TopId));
-    modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleId::MuonId, ParticleId::TopId));
-    modules.emplace_back(new PartonHT(parton_ht));
+    bool is_mc = ctx.get("dataset_type") == "MC";
+    if(is_mc){
+        if(mclumiweight)  pre_modules.emplace_back(new MCLumiWeight(ctx));
+        if(mcpileupreweight) pre_modules.emplace_back(new MCPileupReweight(ctx));
+        if(jec) post_modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
+        if(jersmear) post_modules.emplace_back(new JetResolutionSmearer(ctx));
+    }
+    else{
+        if(jec) post_modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
+    }
 
-    modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4))));
-    modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1))));
-    modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
-    modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
-    modules.emplace_back(new HTCalculator(ctx));
-    modules.emplace_back(new PrimaryLepton(ctx));
-    // modules.emplace_back(new HTLepCalculator(ctx));
-    modules.emplace_back(new JetPtSorter());
+    //cleaning modules
+    post_modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4))));
+    post_modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1))));
+    post_modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
+    post_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
+    post_modules.emplace_back(new JetPtSorter());
+
+    // calculate values like HT, number of b-tags, top-tags etc.
+    post_modules.emplace_back(new HTCalculator(ctx));
+    post_modules.emplace_back(new PrimaryLepton(ctx));
+    // post_modules.emplace_back(new HTLepCalculator(ctx));
+    post_modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
+    post_modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
+
+    muonid_iso.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), MuonIso(), PtEtaCut(20.0, 2.1))));
 
 
 
     // 3. set up no-cuts histograms
     nogensel_nocuts.reset(new HistCollector(ctx, "NoGenSel-NoCuts"));
+    nogensel_noclean.reset(new HistCollector(ctx, "NoGenSel-NoCleaning"));
+    h_muonid_iso.reset(new ExtendedMuonHists(ctx, "NoGenSel-NoCuts/MuonIsoHists"));
 
     // 4. set up gen selection and the final reco selections
 
+    // GENSELECTION
     // gen_mu_finalselection.reset(new AndSelection(ctx, "final_gen_sel_cutflow"));
     // gen_mu_finalselection->add<NGenParticleSelection>("n_gen_mu = 1", ctx.get_handle<int>("n_gen_muon"), 1, 1);
     // gen_mu_finalselection->add<NGenParticleSelection>("n_gen_el = 0", ctx.get_handle<int>("n_gen_electron"), 0, 0);
     // gen_mu_finalselection->add<NGenParticleSelection>("n_gen_b >= 1", ctx.get_handle<int>("n_gen_bfromtop"), 1);
     // gen_mu_finalselection->add<NGenParticleSelection>("n_gen_higgs >= 1", ctx.get_handle<int>("n_gen_higgs"), 1);
 
-    // DEFINE SELECTION HERE
+
+
+    // DEFINE RECO SELECTIONS HERE
     // reco_cuts["OneMuonCut"] = std::shared_ptr<Selection>(new AndSelection(ctx, "one_muon"));
     reco_cuts["MinOneMuon"] = std::shared_ptr<Selection>(new NMuonSelection(1, -1));
     reco_cuts["MuonPtCut"] = std::shared_ptr<Selection>(new MuonPtSelection(50.));
@@ -283,6 +280,9 @@ VLQToHiggsPairProdAnalysis::VLQToHiggsPairProdAnalysis(Context & ctx) {
 
 bool VLQToHiggsPairProdAnalysis::process(Event & event) {
 
+    // cout << "VLQToHiggsPairProdAnalysis: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
+
+    // TEST STUFF HERE
     // if (event_count == 0) {
     //     std::vector<std::string> const & trig_names = event.get_current_triggernames();
     //     for (auto const & name : trig_names)
@@ -290,45 +290,28 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
     // }
 
     // event_count++;
-    // This is the main procedure, called for each event. Typically, do some pre-processing,
-    // such as filtering objects (applying jet pt cuts, lepton selections, etc.),
-    // then test which selection(s) the event passes and fill according histograms.
-    
-    cout << "VLQToHiggsPairProdAnalysis: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
-    
-    // run all modules (here: only jet cleaning).
 
-    cm->process(event);
 
-    for(auto & m: modules){
+    // FIRST RUN PRE_MODULES THAT NEED TO RUN AT THE BEGINNING (e.g. MC lumi re-weighting)
+
+    for(auto & m: pre_modules){
         m->process(event);
     }
-
-    // std::cout << "Jet pts: ";
-    // for (auto const & ev_jet : *event.jets) {
-    //     std::cout << ev_jet.pt() << " ";
-    // }
-    // std::cout << std::endl;
-
-    // use the following lines if you want to run over the inclusive Z/W+Jets samples but want to combine this with the ht-binned samples
-    // float part_ht = event.get(parton_ht);
 
     float part_ht = event.get(parton_ht);
 
     if ((version == "ZJets" || version == "WJets") && part_ht > 100.)
         return false;
-
-    // add the collections that you want here
-
-    // const std::vector<TopJet> & hepTopTagJets = event.get(h_hepTopTagJets_in);
-    // const std::vector<TopJet> & ca8prunedJets = event.get(h_ca8prunedJets_in);
-    // event.set(h_hepTopTagJets_out, std::move(hepTopTagJets));
-    // event.set(h_ca8prunedJets_out, std::move(ca8prunedJets));
     
+    nogensel_noclean->fill(event);
 
-    // 2.b fill histograms
+    // NOW RUN POST_MODULES AND DO THE REST
+
+    for (auto & m: post_modules){
+        m->process(event);
+    }
+
     nogensel_nocuts->fill(event);
-    // nogensel_nocuts.second->fill(event);
 
     // bool passes_any_gensel = (
     //     // gen_el_finalselection->passes(event) ||
@@ -374,10 +357,10 @@ bool VLQToHiggsPairProdAnalysis::process(Event & event) {
         // if (gensel_nm1_onemu[sel_name].second->passes(event))
         //     gensel_nm1_onemu[sel_name].first->fill(event);
     }
+
+    // TEST EFFECT OF MUON ISOLATION ON JETLEPTONCLEANER AND RELISO HERE
     
     return passes_preselection;
 }
 
-// as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
-// make sure the VLQToHiggsPairProdAnalysis is found by class name. This is ensured by this macro:
 UHH2_REGISTER_ANALYSIS_MODULE(VLQToHiggsPairProdAnalysis)
