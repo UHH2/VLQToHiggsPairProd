@@ -73,12 +73,12 @@ varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
 
 def select_histograms(wrp):
     use_this = True
-    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-        use_this = False
+    # if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+    #     use_this = False
     if wrp.name.startswith('cf_'):
         use_this = False
-    if all(c not in wrp.in_file_path for c in current_hists):
-        use_this = False
+    # if all(c not in wrp.in_file_path for c in current_hists):
+    #     use_this = False
     # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
     #     use_this = False
     # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
@@ -87,12 +87,12 @@ def select_histograms(wrp):
 
 def select_splithistograms(wrp):
     use_this = True
-    if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-        use_this = False
+    # if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+    #     use_this = False
     if wrp.name.startswith('cf_'):
         use_this = False
-    if all(c not in wrp.in_file_path for c in current_hists):
-        use_this = False
+    # if all(c not in wrp.in_file_path for c in current_hists):
+    #     use_this = False
     # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
     #     use_this = False
     # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
@@ -302,8 +302,8 @@ p7 = varial.tools.mk_rootfile_plotter(
 
 time.sleep(1)
 p1.run()
-# p2.run()
-# p3.run()
+p2.run()
+p3.run()
 # p4.run()
 p5.run()
 # p6.run()

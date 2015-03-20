@@ -26,7 +26,16 @@ public:
 
 private:
     float minpt_, maxpt_;
-    boost::optional<JetId> jetid_;
+};
+
+class PrimaryLeptonPtSelection : public Selection {
+public:
+    explicit PrimaryLeptonPtSelection(Event::Handle<FlavorParticle> const & hndl, float minpt, float maxpt = -1.);
+    virtual bool passes(const Event &);
+
+private:
+    Event::Handle<FlavorParticle> h_primlept_;
+    float minpt_, maxpt_;
 };
 
 class HTSelection : public Selection {
@@ -37,6 +46,17 @@ public:
 private:
     Event::Handle<double> h_ht_;
     float minht_, maxht_;
+};
+
+class STSelection : public Selection {
+public:
+    explicit STSelection(Event::Handle<double> const & hndl1, Event::Handle<FlavorParticle> const & hndl2, float minst, float maxst = -1.);
+    virtual bool passes(const Event &);
+
+private:
+    Event::Handle<double> h_ht_;
+    Event::Handle<FlavorParticle> h_primlept_;
+    float minst_, maxst_;
 };
 
 class NGenParticleSelection : public Selection {

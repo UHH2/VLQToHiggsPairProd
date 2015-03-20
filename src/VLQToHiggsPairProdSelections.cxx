@@ -45,6 +45,20 @@ bool MuonPtSelection::passes(const Event & event)
 
 }
 
+PrimaryLeptonPtSelection::PrimaryLeptonPtSelection(Event::Handle<FlavorParticle> const & hndl, float minpt, float maxpt) : h_primlept_(hndl), minpt_(minpt), maxpt_(maxpt) {} 
+
+bool PrimaryLeptonPtSelection::passes(const Event & event)
+{
+    if (event.is_valid(h_primlept_))
+    {
+        float primlep_pt = event.get(h_primlept_).pt();
+        return primlep_pt > minpt_ && (maxpt_ < 0 || primlep_pt < maxpt_);
+    }
+
+    return false;
+
+}
+
 HTSelection::HTSelection(Event::Handle<double> const & hndl, float minht, float maxht) : h_ht_(hndl), minht_(minht), maxht_(maxht) {} 
 
 bool HTSelection::passes(const Event & event)
@@ -53,6 +67,32 @@ bool HTSelection::passes(const Event & event)
     {
         double ht = event.get(h_ht_);
         return ht > minht_ && (maxht_ < 0 || ht < maxht_);
+    }
+
+    return false;
+
+}
+
+STSelection::STSelection(Event::Handle<double> const & hndl1, Event::Handle<FlavorParticle> const & hndl2, float minst, float maxst) :
+    h_ht_(hndl1), h_primlept_(hndl2), minst_(minst), maxst_(maxst) {} 
+
+bool STSelection::passes(const Event & event)
+{
+    float met = event.met->pt();
+    float ht = -1.f, primlep_pt = -1.f;
+    if (event.is_valid(h_ht_))
+    {
+        ht = event.get(h_ht_);
+    }
+    if (event.is_valid(h_primlept_))
+    {
+        primlep_pt = event.get(h_primlept_).pt();
+    }
+
+    if (primlep_pt > 0.f && ht > 0.f)
+    {
+        float st = primlep_pt + met + ht;
+        return st > minst_ && (maxst_ < 0 || st < maxst_    );
     }
 
     return false;

@@ -16,3 +16,4 @@
 1.17 ==> see .../SFRAME/uhh2/VLQToHiggsPairProd for versions up to 1.17
 1.18 From plot.py: First test after switching back to new-ntuple-branch, removed b-tag and GenSel, added mu_pt > 50 cut (but not in preselection)
 1.19 20150319T181929 From plot.py: Ran on larger statistics (not full samples), added some control plots for JEC
+1.20 20150320T194602 Implemented src/PreSelection.cxx and config/PreSelection.xml
