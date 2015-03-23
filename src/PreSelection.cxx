@@ -144,8 +144,8 @@ PreSelection::PreSelection(Context & ctx) {
     post_modules.emplace_back(new HTCalculator(ctx));
     post_modules.emplace_back(new PrimaryLepton(ctx));
     // post_modules.emplace_back(new HTLepCalculator(ctx));
-    post_modules.emplace_back(new BTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
-    post_modules.emplace_back(new CMSTopTagCalculator(ctx, "n_toptags", CMSTopTag()));
+    post_modules.emplace_back(new JetTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
+    post_modules.emplace_back(new TopTagCalculator(ctx.get_handle<int>("n_toptags"), CMSTopTag()));
 
 
 

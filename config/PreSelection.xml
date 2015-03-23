@@ -29,7 +29,7 @@
 
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./presel_output/" PostFix="" TargetLumi="1." > -->
    <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./presel_output/" PostFix="" TargetLumi="10000" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="6" OutputDirectory="./presel_output/" PostFix="" TargetLumi="10000" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21003"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./presel_output/" PostFix="" TargetLumi="10000" > -->
         <InputData Lumi="4796772." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <InputTree Name="AnalysisTree" />
@@ -37,7 +37,7 @@
 
         </InputData>
 
-        <InputData Lumi="99900." NEventsMax="-1" Type="MC" Version="TpJ_TH_M800" Cacheable="False">
+        <!-- <InputData Lumi="99900." NEventsMax="-1" Type="MC" Version="TpJ_TH_M800" Cacheable="False">
             &TpJ_TH_M800;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
@@ -63,7 +63,7 @@
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="469.5707" NEventsMax="-1" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
@@ -190,7 +190,7 @@
             <Item Name="TopJetCollection" Value="patJetsCmsTopTagCHSPacked" />
             <Item Name="GenTopJetCollection" Value="cmsTopTagGen" />
 
-            <Item Name="additionalBranches" Value="patJetsHepTopTagCHSPacked patJetsCa8CHSJetsPrunedPacked" />
+            <Item Name="additionalBranches" Value="patJetsHepTopTagCHSPacked patJetsCa8CHSJetsPrunedPacked patJetsCa15CHSJetsFilteredPacked" />
 
 
             <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:

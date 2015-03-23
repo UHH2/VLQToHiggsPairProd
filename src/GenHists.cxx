@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace uhh2;
-using namespace vlqToHiggsPair;
+// using namespace vlqToHiggsPair;
 
 namespace genhists
 {

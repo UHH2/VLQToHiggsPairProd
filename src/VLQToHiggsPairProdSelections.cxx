@@ -28,7 +28,8 @@ bool JetPtSelection::passes(const Event & event)
 
 }
 
-MuonPtSelection::MuonPtSelection(float minpt, float maxpt) : minpt_(minpt), maxpt_(maxpt) {} 
+MuonPtSelection::MuonPtSelection(float minpt, float maxpt, const boost::optional<MuonId> & muonid) :
+    minpt_(minpt), maxpt_(maxpt), muonid_(muonid) {} 
 
 bool MuonPtSelection::passes(const Event & event)
 {
@@ -39,6 +40,8 @@ bool MuonPtSelection::passes(const Event & event)
     if (muons->size() > 0)
     {
         pass = (*muons)[0].pt() > minpt_ && (maxpt_ < 0 || (*muons)[0].pt() < maxpt_);
+        if (pass && muonid_)
+            pass = (*muonid_)((*muons)[0], event);
     }
 
     return pass;
@@ -115,3 +118,40 @@ bool BoolSelection::passes(const Event & event)
     bool pass = event.get(hndl_);
     return pass;
 }
+
+VetoSelection::VetoSelection(std::shared_ptr<Selection> sel) : sel_(sel) {}
+
+bool VetoSelection::passes(const Event & event)
+{
+    bool pass = sel_->passes(event);
+    return !pass;
+}
+
+// TopTagSelection::TopTagSelection(Event::Handle<int> const & hndl, int minntags, int maxntags) :
+//     h_ntopjets_(hndl), minntags_(minntags), maxntags_(maxntags) {} 
+
+// bool TopTagSelection::passes(const Event & event)
+// {
+//     if (event.is_valid(h_ntopjets_))
+//     {
+//         int n_tags = event.get(h_ntopjets_);
+//         return n_tags >= minntags_ && (maxntags_ < 0. || n_tags <= maxntags_) 
+//     }
+
+//     return false;
+
+// }
+
+// HiggsTagSelection::HiggsTagSelection(Event::Handle<double> const & hndl, float minht, float maxht) : h_ht_(hndl), minht_(minht), maxht_(maxht) {} 
+
+// bool HiggsTagSelection::passes(const Event & event)
+// {
+//     if (event.is_valid(h_ht_))
+//     {
+//         double ht = event.get(h_ht_);
+//         return ht > minht_ && (maxht_ < 0 || ht < maxht_);
+//     }
+
+//     return false;
+
+// }

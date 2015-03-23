@@ -66,8 +66,8 @@ varial.settings.colors = {
 # SELECT HISTOGRAMS TO PLOT HERE!
 
 # use these functions to specifically select histograms for plotting
-current_cuts = ['NoCuts'] # 'NoCuts', 'Nminus1-MuonPtCut', 'OneCut-HTCut'
-current_hists = ['/ElectronHists']
+current_cuts = ['NoCuts', 'FullSelection'] # 'NoCuts', 'Nminus1-MuonPtCut', 'OneCut-HTCut'
+current_hists = ['/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log']
 
 varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
 
@@ -151,9 +151,9 @@ def for_stacked_hook(wrps):
         wrps,
         sample=lambda w: w.file_path.split('.')[-2],
         analyzer=lambda w: w.in_file_path[0],
-        legend=lambda w: ('100* ' if 'TpTp_M' in w.sample else '') + w.sample,
+        legend=lambda w:  w.sample,
         is_signal=lambda w: 'TpTp_M' in w.sample,
-        lumi=lambda w: 0.01 if 'TpTp_M' in w.sample else 1.
+        lumi=lambda w: 1.
     )
     # wrps = gen.imap_conditional(wrps, lambda w: 'TpJ_TH_M800' in w.sample, gen.op.norm_to_lumi)
     wrps = label_axes(wrps)

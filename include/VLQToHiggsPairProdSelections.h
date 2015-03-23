@@ -21,11 +21,12 @@ private:
 
 class MuonPtSelection : public Selection {
 public:
-    explicit MuonPtSelection(float minpt, float maxpt = -1.);
+    explicit MuonPtSelection(float minpt, float maxpt = -1., const boost::optional<MuonId> & muonid = boost::none);
     virtual bool passes(const Event &);
 
 private:
     float minpt_, maxpt_;
+    boost::optional<MuonId> muonid_;
 };
 
 class PrimaryLeptonPtSelection : public Selection {
@@ -76,5 +77,34 @@ public:
 private:
     Event::Handle<bool> hndl_;
 };
+
+class VetoSelection : public Selection {
+public:
+    explicit VetoSelection(std::shared_ptr<Selection> sel);
+    virtual bool passes(const Event &);
+private:
+    std::shared_ptr<Selection> sel_;
+};
+
+// class TopTagSelection : public Selection {
+// public:
+//     explicit TopTagSelection(Event::Handle<int> const & hndl, int minntags, int maxntags = -1.f);
+//     virtual bool passes(const Event &);
+
+// private:
+//     Event::Handle<std::vector<TopJet> > h_ntopjets_;
+//     int minntags_, maxntags_;
+// };
+
+// class HiggsTag : public Selection {
+// public:
+//     explicit HiggsTag(Event::Handle<std::vector<TopJet> > const & hndl, int minbtags, float minpairmass);
+//     virtual bool passes(const Event &);
+
+// private:
+//     Event::Handle<std::vector<TopJet> > h_topjets_;
+//     float minpairmass_;
+//     int minbtags_;
+// };
 
 }

@@ -8,89 +8,12 @@
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/Utils.h"
+#include "UHH2/common/include/ObjectIdUtils.h"
 
 using namespace std;
 using namespace uhh2;
 
-namespace vlqToHiggsPair {
-    // DEPRECATED
-    static const size_t number_selections = 7;
 
-    // DEPRECATED
-    static const char* selection_names[] = {
-        "OneElectronCut",
-        "OneMuonCut",
-        "ElectronCut",
-        "MuonCut",
-        "BTagCut",
-        "JetPtCut",
-        "HTCut"
-    };
-
-    // DEPRECATED
-    inline void fill_hists(
-        Event const & event,
-        std::map<const char *, bool> const & pass_selection,
-        std::map<const char *, std::unique_ptr<Hists> > & nm1_hists,
-        std::unique_ptr<Hists> & allsel_hists
-    )
-    {
-        bool pass_all_selections = true;
-
-        // std::cout << "Fill Histograms:" << std::endl;
-
-        for (std::map<const char *, bool>::const_iterator iSel = pass_selection.begin();
-            iSel != pass_selection.end(); ++iSel)
-        {
-            const char * sel_name = iSel->first;
-            bool pass_sel = iSel->second;
-
-            // std::cout << "  " << sel_name << " " << pass_sel << std::endl;
-
-            if (!pass_sel)
-                pass_all_selections = false;
-
-            bool pass_nm1 = true;
-
-            // std::cout << std::endl << "  Fill nm1 histograms:" << std::endl;
-
-            for (size_t iName = 0; iName < number_selections; ++iName)
-            {
-                try
-                {
-                    // std::cout << "    " << sel_name << " " << selection_names[iName] << " "
-                    // << pass_selection.at(selection_names[iName]) << std::endl;
-                    if (string(sel_name) != selection_names[iName]
-                        && !pass_selection.at(selection_names[iName]))
-                        pass_nm1 = false;
-                }
-                catch (const std::out_of_range & e)
-                {
-                    continue;
-                }
-            }
-
-            // std::cout << "    Bool pass_nm1: " << pass_nm1 << std::endl << std::endl;
-
-            if (pass_nm1)
-                try
-                {
-                    nm1_hists.at(sel_name)->fill(event);
-                }
-                catch (const std::out_of_range & e)
-                {
-                    continue;
-                }
-
-        }
-
-    // std::cout << "Bool pass_all_selections: " << pass_all_selections << std::endl << std::endl;
-
-        if (pass_all_selections)
-            allsel_hists->fill(event);
-    }
-
-}
 
 class JetPtSorter : public AnalysisModule {
 public:
@@ -106,9 +29,9 @@ private:
 };
 
 
-class BTagCalculator : public AnalysisModule {
+class JetTagCalculator : public AnalysisModule {
 public:
-    explicit BTagCalculator(Context & ctx, std::string hndl_name, CSVBTag const & id = CSVBTag(CSVBTag::WP_MEDIUM)) :
+    explicit JetTagCalculator(Context & ctx, std::string hndl_name, JetId const & id = JetId(CSVBTag(CSVBTag::WP_MEDIUM))) :
         tagger_(id), hndl_(ctx.get_handle<int>(hndl_name)) {}
 
     virtual bool process(Event & event) {
@@ -122,20 +45,21 @@ public:
     }
 
 private:
-    CSVBTag tagger_;
+    JetId tagger_;
     Event::Handle<int> hndl_;
 };
 
-class CMSTopTagCalculator : public AnalysisModule {
+class TopTagCalculator : public AnalysisModule {
 public:
-    explicit CMSTopTagCalculator(Context & ctx, std::string hndl_name, CMSTopTag const & id = CMSTopTag()) :
-        tagger_(id), hndl_(ctx.get_handle<int>(hndl_name)) {}
+    explicit TopTagCalculator(Event::Handle<int> hndl, TopJetId const & id = TopJetId(CMSTopTag()), boost::optional<Event::Handle<std::vector<TopJet> > > const & topjets = boost::none) :
+        tagger_(id), hndl_(hndl), h_topjets_(topjets) {}
 
     virtual bool process(Event & event) {
         int n_toptags = 0;
-        if (event.topjets)
+        std::vector<TopJet> const * topjets = (h_topjets_ && event.is_valid(*h_topjets_)) ? &event.get(*h_topjets_) : event.topjets;
+        if (topjets)
         {
-            for (const TopJet & jet : *event.topjets)
+            for (const TopJet & jet : *topjets)
             {
                 if (tagger_(jet, event))
                     n_toptags++;
@@ -146,6 +70,39 @@ public:
     }
 
 private:
-    CMSTopTag tagger_;
+    TopJetId tagger_;
     Event::Handle<int> hndl_;
+    boost::optional<Event::Handle<std::vector<TopJet> > > h_topjets_;
+
 };
+
+class HiggsTag {
+public:
+    explicit HiggsTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM)) :
+        minmass_(minmass), maxmass_(maxmass), btagid_(id) {}
+
+    bool operator()(TopJet const & topjet, uhh2::Event const & event) const
+    {
+        auto subjets = topjet.subjets();
+        if(subjets.size() < 2) return false;
+        clean_collection(subjets, event, btagid_);
+        if (subjets.size() < 2) return false;
+        sort_by_pt(subjets);
+
+        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+        if(!firsttwosubjets.isTimelike()) {
+            return false;
+        }
+        auto mjet = firsttwosubjets.M();
+        if(mjet < minmass_) return false;
+        if(mjet > maxmass_) return false;
+        return true;
+    }
+
+private:
+    float minmass_, maxmass_;
+    JetId btagid_;
+
+};
+
+

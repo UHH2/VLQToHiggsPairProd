@@ -26,7 +26,7 @@ public:
             h_n_btags = book<TH1F>("jets_Nbs", "N_{b-tags}", 20, 0, 20);
             h_n_toptags = book<TH1F>("jets_Ntops", "N_{top jets}", 20, 0, 20);
 
-            h_primlep = ctx.get_handle<FlavorParticle>("PrimaryMuon");
+            h_primlep = ctx.get_handle<FlavorParticle>("PrimaryLepton");
         }
 
     virtual void fill(const uhh2::Event & event) override {
