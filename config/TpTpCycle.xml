@@ -102,7 +102,7 @@
             <Item Name="TopJetCollection" Value="patJetsCmsTopTagCHSPacked" />
             <Item Name="GenTopJetCollection" Value="cmsTopTagGen" />
 
-            <Item Name="additionalBranches" Value="patJetsHepTopTagCHSPacked patJetsCa8CHSJetsPrunedPacked" />
+            <Item Name="additionalBranches" Value="patJetsHepTopTagCHSPacked patJetsCa8CHSJetsPrunedPacked patJetsCa15CHSJetsFilteredPacked" />
 
 
             <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:

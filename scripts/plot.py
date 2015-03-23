@@ -21,9 +21,6 @@ varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd
 
 current_tag = varial.settings.git_tag
 
-cuts = ['NoGenSel-NoCuts', 'NoGenSel-AllCuts'
-    ]
-
 # sample definitions
 smpls = list()
 
@@ -66,10 +63,10 @@ varial.settings.colors = {
 # SELECT HISTOGRAMS TO PLOT HERE!
 
 # use these functions to specifically select histograms for plotting
-current_cuts = ['NoCuts', 'FullSelection'] # 'NoCuts', 'Nminus1-MuonPtCut', 'OneCut-HTCut'
+current_cuts = ['AfterPresel', 'FullSelection', 'Nminus1-6OneHiggsTagCut'] # 'Nminus1-MuonPtCut', 'OneCut-HTCut', 'FullSelection', 'Nminus1-6OneHiggsTagCut'
 current_hists = ['/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log']
 
-varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets', 'QCD']
+varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets']
 
 def select_histograms(wrp):
     use_this = True

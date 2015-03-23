@@ -17,4 +17,5 @@
 1.18 From plot.py: First test after switching back to new-ntuple-branch, removed b-tag and GenSel, added mu_pt > 50 cut (but not in preselection)
 1.19 20150319T181929 From plot.py: Ran on larger statistics (not full samples), added some control plots for JEC
 1.20 20150321T113053 From plot.py: Implemented src/PreSelection.cxx and config/PreSelection.xml
-2.0 20150323T013520 From plot.py: Implemented final selection cycle in src/TpTpCycle.cxx and config/TpTpCycle.xml
+2.0 20150323T015539 From plot.py: Implemented final selection cycle in src/TpTpCycle.cxx and config/TpTpCycle.xml
+2.1 20150323T125120 From plot.py: Run higgs-tagging now on CA15 jets

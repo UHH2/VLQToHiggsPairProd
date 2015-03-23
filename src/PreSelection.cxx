@@ -40,13 +40,13 @@ using namespace vlqToHiggsPair;
 class PreSelection: public AnalysisModule {
 public:
 
-    enum ParticleId {
-        BottomId = 5,
-        TopId = 6,
-        TprimeId = 8,
-        ElectronId = 11,
-        MuonId = 13,
-        HiggsId = 25
+    enum ParticleID {
+        BottomID = 5,
+        TopID = 6,
+        TprimeID = 8,
+        ElectronID = 11,
+        MuonID = 13,
+        HiggsID = 25
     };
     
     explicit PreSelection(Context & ctx);
@@ -119,10 +119,10 @@ PreSelection::PreSelection(Context & ctx) {
     bool is_mc = ctx.get("dataset_type") == "MC";
     if(is_mc){
         // calculate gen variables
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_bfromtop", ParticleId::BottomId, ParticleId::TopId));
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleId::HiggsId));
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleId::ElectronId, ParticleId::TopId));
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleId::MuonId, ParticleId::TopId));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_bfromtop", ParticleID::BottomID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleID::HiggsID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleID::ElectronID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleID::MuonID, ParticleID::TopID));
         pre_modules.emplace_back(new PartonHT(parton_ht));
         if(mclumiweight)  pre_modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) pre_modules.emplace_back(new MCPileupReweight(ctx));

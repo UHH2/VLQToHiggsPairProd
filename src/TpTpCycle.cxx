@@ -182,7 +182,7 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     reco_cuts["3HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
     reco_cuts["4BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
     reco_cuts["5OneTopTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(CMSTopTag())));
-    reco_cuts["6OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa8CHSJetsPrunedPacked")));
+    reco_cuts["6OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
 
 
 
