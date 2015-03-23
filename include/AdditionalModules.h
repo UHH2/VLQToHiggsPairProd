@@ -76,33 +76,4 @@ private:
 
 };
 
-class HiggsTag {
-public:
-    explicit HiggsTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM)) :
-        minmass_(minmass), maxmass_(maxmass), btagid_(id) {}
-
-    bool operator()(TopJet const & topjet, uhh2::Event const & event) const
-    {
-        auto subjets = topjet.subjets();
-        if(subjets.size() < 2) return false;
-        clean_collection(subjets, event, btagid_);
-        if (subjets.size() < 2) return false;
-        sort_by_pt(subjets);
-
-        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
-        if(!firsttwosubjets.isTimelike()) {
-            return false;
-        }
-        auto mjet = firsttwosubjets.M();
-        if(mjet < minmass_) return false;
-        if(mjet > maxmass_) return false;
-        return true;
-    }
-
-private:
-    float minmass_, maxmass_;
-    JetId btagid_;
-
-};
-
 
