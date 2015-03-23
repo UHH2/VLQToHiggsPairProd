@@ -41,9 +41,9 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./output/" PostFix="" TargetLumi="1." >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./output/" PostFix="" TargetLumi="10000" > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./new_output/" PostFix="" TargetLumi="10000" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./new_output/" PostFix="" TargetLumi="10000" > -->
         <InputData Lumi="4796772." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
             &TpTp_M1000;
             <InputTree Name="AnalysisTree" />
@@ -51,13 +51,13 @@
 
         </InputData>
 
-        <InputData Lumi="2481.389" NEventsMax="2000000" Type="MC" Version="TTJets" Cacheable="False">
-            <!-- 25446993 events, 806 pb => lumi=31568.03 -->
+        <!-- <InputData Lumi="2481.389" NEventsMax="2000000" Type="MC" Version="TTJets" Cacheable="False">
+            25446993 events, 806 pb => lumi=31568.03
             &TTbar;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="162.9756" NEventsMax="1000000" Type="MC" Version="WJets" Cacheable="False">
             &WJets;
@@ -66,8 +66,8 @@
 
         </InputData> -->
 
-        <InputData Lumi="447.4272" NEventsMax="1000000" Type="MC" Version="WJets100to200" Cacheable="False">
-            <!-- 5262265 events, 2235 pb => lumi=2354.480 -->
+        <!-- <InputData Lumi="447.4272" NEventsMax="1000000" Type="MC" Version="WJets100to200" Cacheable="False">
+            5262265 events, 2235 pb => lumi=2354.480
             &WJets100to200;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -75,7 +75,7 @@
         </InputData>
 
         <InputData Lumi="1724.137" NEventsMax="1000000" Type="MC" Version="WJets200to400" Cacheable="False">
-            <!-- 4936077 events, 580 pb => lumi=8510.477 -->
+            4936077 events, 580 pb => lumi=8510.477
             &WJets200to400;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -83,7 +83,7 @@
         </InputData>
 
         <InputData Lumi="14619.88" NEventsMax="1000000" Type="MC" Version="WJets400to600" Cacheable="False">
-            <!-- 4640594 events, 68.4 pb => lumi=67844.94 -->
+            4640594 events, 68.4 pb => lumi=67844.94
             &WJets400to600;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -91,12 +91,12 @@
         </InputData>
 
         <InputData Lumi="43290.04" NEventsMax="1000000" Type="MC" Version="WJets600toInf" Cacheable="False">
-            <!-- 4581841 events, 23.1 pb => lumi=198348.0 -->
+            4581841 events, 23.1 pb => lumi=198348.0
             &WJets600toInf;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
 
-        </InputData>
+        </InputData> -->
 
         <!-- <InputData Lumi="469.5707" NEventsMax="1000000" Type="MC" Version="ZJets" Cacheable="False">
             &ZJets;
@@ -105,8 +105,8 @@
 
         </InputData> -->
 
-        <InputData Lumi="4672.897" NEventsMax="1000000" Type="MC" Version="ZJets100to200" Cacheable="False">
-            <!-- 4054159 events, 214 pb => lumi=18944.66 -->
+        <!-- <InputData Lumi="4672.897" NEventsMax="1000000" Type="MC" Version="ZJets100to200" Cacheable="False">
+            4054159 events, 214 pb => lumi=18944.66
             &ZJets100to200;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -114,7 +114,7 @@
         </InputData>
 
         <InputData Lumi="17391.30" NEventsMax="1000000" Type="MC" Version="ZJets200to400" Cacheable="False">
-            <!-- 4666496 events, 57.5 pb => lumi=81156.45 -->
+            4666496 events, 57.5 pb => lumi=81156.45
             &ZJets200to400;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -122,7 +122,7 @@
         </InputData>
 
         <InputData Lumi="138888.8" NEventsMax="1000000" Type="MC" Version="ZJets400to600" Cacheable="False">
-            <!-- 4931372 events, 7.20 pb => lumi=684912.7 -->
+            4931372 events, 7.20 pb => lumi=684912.7
             &ZJets400to600;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -130,7 +130,7 @@
         </InputData>
 
         <InputData Lumi="416666.6" NEventsMax="1000000" Type="MC" Version="ZJets600toInf" Cacheable="False">
-            <!-- 4493574 events, 2.40 pb => lumi=1872322 -->
+            4493574 events, 2.40 pb => lumi=1872322
             &ZJets600toInf;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -138,7 +138,7 @@
         </InputData>
 
         <InputData Lumi="1.49142" NEventsMax="1000000" Type="MC" Version="QCD_HT250to500" Cacheable="False">
-            <!-- 2004219 events, 670500.0 pb => lumi=? -->
+            2004219 events, 670500.0 pb => lumi=?
             &QCD_HT250to500;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -146,7 +146,7 @@
         </InputData>
 
         <InputData Lumi="37.397" NEventsMax="1000000" Type="MC" Version="QCD500to1000" Cacheable="False">
-            <!-- 3214312 events, 26740.0 pb => lumi=120.2061 -->
+            3214312 events, 26740.0 pb => lumi=120.2061
             &QCD_HT500to1000;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
@@ -154,12 +154,12 @@
         </InputData>
 
         <InputData Lumi="1299.207" NEventsMax="1000000" Type="MC" Version="QCD1000ToInf" Cacheable="False">
-            <!-- 1130720 events, 769.70000000000005 pb => lumi=1469.039 -->
+            1130720 events, 769.70000000000005 pb => lumi=1469.039
             &QCD_HT1000ToInf;
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />      
 
-        </InputData>
+        </InputData> -->
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->

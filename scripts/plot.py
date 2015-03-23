@@ -63,19 +63,22 @@ varial.settings.colors = {
 # SELECT HISTOGRAMS TO PLOT HERE!
 
 # use these functions to specifically select histograms for plotting
-current_cuts = ['AfterPresel', 'FullSelection', 'Nminus1-6OneHiggsTagCut'] # 'Nminus1-MuonPtCut', 'OneCut-HTCut', 'FullSelection', 'Nminus1-6OneHiggsTagCut'
-current_hists = ['/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log']
+current_cuts = ['AfterPresel', 'FullSelection'] # 'Nminus1-MuonPtCut', 'OneCut-HTCut', 'FullSelection', 'Nminus1-6OneHiggsTagCut'
+current_hists = ['TopJetHists'] # "/ElectronHists", '/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log'
+
+use_cuts = True
+use_histos = True
 
 varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets']
 
 def select_histograms(wrp):
     use_this = True
-    # if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-    #     use_this = False
+    if use_cuts and all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        use_this = False
     if wrp.name.startswith('cf_'):
         use_this = False
-    # if all(c not in wrp.in_file_path for c in current_hists):
-    #     use_this = False
+    if use_histos and all(c not in wrp.in_file_path for c in current_hists):
+        use_this = False
     # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
     #     use_this = False
     # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):
@@ -84,12 +87,12 @@ def select_histograms(wrp):
 
 def select_splithistograms(wrp):
     use_this = True
-    # if all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
-    #     use_this = False
+    if use_cuts and all('NoGenSel-'+c not in wrp.in_file_path for c in current_cuts):
+        use_this = False
     if wrp.name.startswith('cf_'):
         use_this = False
-    # if all(c not in wrp.in_file_path for c in current_hists):
-    #     use_this = False
+    if use_histos and all(c not in wrp.in_file_path for c in current_hists):
+        use_this = False
     # if ('GenHists' in wrp.in_file_path and not (wrp.name.startswith('mu_') or wrp.name.startswith('genjet_'))):
     #     use_this = False
     # if 'GenHists' in wrp.in_file_path and ('NoCuts' not in wrp.in_file_path and 'Nminus1-BTagCut' not in wrp.in_file_path):

@@ -8,6 +8,12 @@
 #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/MuonHists.h"
 #include "UHH2/common/include/TauHists.h"
+#include "UHH2/common/include/Utils.h"
+#include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/JetIds.h"
+#include "UHH2/common/include/TopJetIds.h"
+
+
 #include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
 
 #include "TH1F.h"
@@ -73,7 +79,7 @@ public:
 
 };
 
-// new jet hists class based on the MuonHists class in the common package; add jet histos w/o JEC
+// new jet hists class based on the JetHists class in the common package; add jet histos w/o JEC
 
 class ExtendedJetHists : public JetHists {
 public:
@@ -121,11 +127,112 @@ protected:
 
 };
 
+// new jet hists class based on the MuonHists class in the common package; add jet histos w/o JEC
+
+class ExtendedTopJetHists : public TopJetHists {
+public:
+
+    struct tag_variables_hists
+    {
+        // for higgs-tagging
+        TH1F *higgs_n_subjet_btags, *higgs_mass_two_leading_subjets;
+        // for cmstoptagging
+        TH1F *cmstoptag_mass_allsubjets, *cmstoptag_min_mass_disubj;
+    };
+    ExtendedTopJetHists(uhh2::Context & ctx, const std::string & dirname, const JetId & b_tag = CSVBTag(CSVBTag::WP_MEDIUM), const unsigned int NumberOfPlottedJets=4, const std::string & collection = "") : 
+        TopJetHists(ctx, dirname, NumberOfPlottedJets, collection), b_tag_(b_tag)
+    {
+        alljets_tagvars = book_tagvarHist("all topjets","");
+
+        string axis_suffix = "topjet";
+        vector<string> axis_singleSubjetSuffix {"first ","second ","third ","fourth "};
+
+        for(unsigned int i =0; i<NumberOfPlottedJets; i++){
+            if(i<4){
+                single_tagvars.push_back(book_tagvarHist(axis_singleSubjetSuffix[i]+axis_suffix,string("_")+to_string(i+1)));
+            }
+            else{
+                single_tagvars.push_back(book_tagvarHist(to_string(i+1)+string("-th jet"),string("_")+to_string(i+1)));
+            }
+        }
+
+    }
+
+    tag_variables_hists book_tagvarHist(const std::string & axisSuffix, const std::string & histSuffix)
+    {
+        tag_variables_hists tag_vars;
+        tag_vars.higgs_n_subjet_btags = book<TH1F>("higgs_n_subjet_btags"+histSuffix, "number b-tagged subjets "+axisSuffix, 10, -.5, 9.5);
+        tag_vars.higgs_mass_two_leading_subjets = book<TH1F>("higgs_mass_two_leading_subjets"+histSuffix, "mass of two leading b-tagged subjets "+axisSuffix, 100, 0., 500.);
+        tag_vars.cmstoptag_mass_allsubjets = book<TH1F>("cmstoptag_mass_allsubjets"+histSuffix, "mass of all subjets "+axisSuffix, 100, 0., 500.);
+        tag_vars.cmstoptag_min_mass_disubj = book<TH1F>("cmstoptag_min_mass_disubj"+histSuffix, "min mass of two subjets "+axisSuffix, 100, 0., 500.);
+        return tag_vars;
+
+    }
+
+    void fill_tagvarHist(const uhh2::Event & event, const TopJet & topjet, tag_variables_hists & tag_vars, double weight)
+    {
+        auto subjets = topjet.subjets();
+        if(subjets.size() >= 2)
+        {
+            clean_collection(subjets, event, b_tag_);
+            tag_vars.higgs_n_subjet_btags->Fill(subjets.size(), weight);
+            if (subjets.size() >= 2)
+            {
+                sort_by_pt(subjets);
+
+                LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+                if(firsttwosubjets.isTimelike()) {
+                    auto mjet = firsttwosubjets.M();
+                    tag_vars.higgs_mass_two_leading_subjets->Fill(mjet, weight);
+                }
+            }
+        }
+
+        if(topjet.subjets().size() >= 3)
+        {
+            LorentzVector allsubjets;
+            for(const auto & subjet : topjet.subjets()) {
+                allsubjets += subjet.v4();
+            }
+            if(allsubjets.isTimelike())
+            {
+                auto mjet = allsubjets.M();
+                tag_vars.cmstoptag_mass_allsubjets->Fill(mjet, weight);
+                auto mmin = m_disubjet_min(topjet);
+                tag_vars.cmstoptag_min_mass_disubj->Fill(mmin, weight);
+            }
+        }
+    }
+
+    virtual void fill(const uhh2::Event & event) override
+    {
+        TopJetHists::fill(event);
+
+        auto w = event.weight;
+        const auto jets = collection.empty() ? event.topjets : &event.get(h_topjets);
+        assert(jets);
+        for(unsigned int i = 0; i <jets->size(); i++){
+            const auto & jet = (*jets)[i];
+            fill_tagvarHist(event,jet,alljets_tagvars,w);
+            if(i < single_tagvars.size()){
+                fill_tagvarHist(event,jet,single_tagvars[i],w);
+            }
+        }
+
+    }
+
+protected:
+    JetId b_tag_;
+    tag_variables_hists alljets_tagvars;
+    std::vector<tag_variables_hists> single_tagvars;
+
+};
+
 
 // TODO: implement a way to pass handles to the individual histograms that they might need to avoid hard coding handle names
 class HistCollector : public uhh2::Hists {
 public:
-    HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true);
+    HistCollector(uhh2::Context & ctx, const std::string & dirname, bool gen_plots = true, JetId const & btag_id = CSVBTag(CSVBTag::WP_MEDIUM));
     virtual ~HistCollector();
 
     virtual void fill(const uhh2::Event & ev) override;
@@ -136,12 +243,16 @@ private:
     TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     ExtendedJetHists * jet_hists;
-    TopJetHists * topjet_hists;
+    ExtendedTopJetHists * cmstopjet_hists;
+    ExtendedTopJetHists * heptopjet_hists;
+    ExtendedTopJetHists * ca8prunedtopjet_hists;
+    ExtendedTopJetHists * ca15filteredtopjet_hists;
     GenHists * gen_hists;
 
 
 };
 
+// DEPRECATED, no longer used by myself!
 
 class VLQToHiggsPairProdHists : public uhh2::Hists {
 public:

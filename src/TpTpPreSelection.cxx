@@ -39,7 +39,7 @@ using namespace vlqToHiggsPair;
  * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
  */
 
-class TpTpCycle: public AnalysisModule {
+class TpTpPreSelection: public AnalysisModule {
 public:
 
     enum ParticleID {
@@ -51,12 +51,14 @@ public:
         HiggsID = 25
     };
     
-    explicit TpTpCycle(Context & ctx);
+    explicit TpTpPreSelection(Context & ctx);
     virtual bool process(Event & event);
 
 private:
 
     std::string version;
+    size_t event_count;
+    double lumi_factor;
 
     // // declare the Selections to use.
     // std::vector<std::unique_ptr<Selection> > v_sel;
@@ -94,7 +96,7 @@ private:
 };
 
 
-TpTpCycle::TpTpCycle(Context & ctx) {
+TpTpPreSelection::TpTpPreSelection(Context & ctx) {
 
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
@@ -105,9 +107,13 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     // }
 
     
-    // 1. define handles and other stuff here for later call in TpTpCycle::process
+    // 1. define handles and other stuff here for later call in TpTpPreSelection::process
 
     version = ctx.get("dataset_version");
+    event_count = 0;
+    double dataset_lumi = string2double(ctx.get("dataset_lumi"));
+    double reweight_to_lumi = string2double(ctx.get("target_lumi"));
+    lumi_factor = reweight_to_lumi / dataset_lumi;
 
     CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
 
@@ -126,10 +132,10 @@ TpTpCycle::TpTpCycle(Context & ctx) {
 
 
     // all the reweighting and jet correction modules
-    bool mclumiweight = false;
-    bool mcpileupreweight = false;
-    bool jec = false;
-    bool jersmear = false;
+    bool mclumiweight = true;
+    bool mcpileupreweight = true;
+    bool jec = true;
+    bool jersmear = true;
 
     bool is_mc = ctx.get("dataset_type") == "MC";
     if(is_mc){
@@ -149,11 +155,11 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     }
 
     //cleaning modules
-    // post_modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4))));
-    // post_modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1))));
-    // post_modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
-    // post_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
-    // post_modules.emplace_back(new JetPtSorter());
+    post_modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4))));
+    post_modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.1))));
+    post_modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
+    post_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4)));
+    post_modules.emplace_back(new JetPtSorter());
 
     // calculate values like HT, number of b-tags, top-tags etc.
     post_modules.emplace_back(new HTCalculator(ctx));
@@ -172,17 +178,14 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     // DEFINE RECO SELECTIONS HERE
     // reco_cuts["PrimLepCut"] = std::shared_ptr<Selection>(new PrimaryLeptonPtSelection(ctx.get_handle<FlavorParticle>("PrimaryLepton"), 50.));
     // reco_cuts["STCut"] = std::shared_ptr<Selection>(new STSelection(ctx.get_handle<double>("HT"), ctx.get_handle<FlavorParticle>("PrimaryLepton"), 500.));
-    // // REMOVE BTAG CUT FROM TpTpCycle
+    // // REMOVE BTAG CUT FROM TpTpPreSelection
     // // reco_cuts["BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
     // reco_cuts["JetPtCut"] = std::shared_ptr<Selection>(new JetPtSelection(200.));
 
-    // std::shared_ptr<Selection> min_1el(new NElectronSelection(1, -1, ElectronId(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)))));
-    // reco_cuts["1ElectronVeto"] = std::shared_ptr<Selection>(new VetoSelection(min_1el));
-    // reco_cuts["2OneMuonCut"] = std::shared_ptr<Selection>(new NMuonSelection(1, 1, MuonId(AndId<Muon>(MuonIDTight(), PtEtaCut(50.0, 2.1)))));
-    // reco_cuts["3HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
-    reco_cuts["4BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
-    reco_cuts["5OneTopTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(CMSTopTag())));
-    reco_cuts["6OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    std::shared_ptr<Selection> min_1el(new NElectronSelection(1, -1, ElectronId(AndId<Electron>(ElectronID_PHYS14_25ns_medium, PtEtaCut(20.0, 2.4)))));
+    reco_cuts["1ElectronVeto"] = std::shared_ptr<Selection>(new VetoSelection(min_1el));
+    reco_cuts["2OneMuonCut"] = std::shared_ptr<Selection>(new NMuonSelection(1, 1, MuonId(AndId<Muon>(MuonIDTight(), PtEtaCut(50.0, 2.1)))));
+    reco_cuts["3HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
 
 
 
@@ -247,9 +250,9 @@ TpTpCycle::TpTpCycle(Context & ctx) {
 }
 
 
-bool TpTpCycle::process(Event & event) {
+bool TpTpPreSelection::process(Event & event) {
 
-    // cout << "TpTpCycle: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
+    // cout << "TpTpPreSelection: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
 
     // TEST STUFF HERE
 
@@ -267,12 +270,22 @@ bool TpTpCycle::process(Event & event) {
         m->process(event);
     }
 
+    if (!event_count)
+    {
+        // std::cout << version << " " << event.weight << " " << lumi_factor << std::endl;
+        if (event.weight != lumi_factor)
+            std::cout << "WARNING: re-weighting for lumi for the second time!!" << std::endl;
+        event_count++;
+    }
+
     nogensel_afterpresel->fill(event);
+
+    bool passes_tptppresel = false;
 
     if (nogensel_fullselection.second->passes(event))
     {
         nogensel_fullselection.first->fill(event);
-        // return true;
+        passes_tptppresel = true;
     }
 
     for (auto const & selection : reco_cuts)
@@ -294,7 +307,7 @@ bool TpTpCycle::process(Event & event) {
     }
 
     
-    return false;
+    return passes_tptppresel;
 }
 
-UHH2_REGISTER_ANALYSIS_MODULE(TpTpCycle)
+UHH2_REGISTER_ANALYSIS_MODULE(TpTpPreSelection)
