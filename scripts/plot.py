@@ -64,7 +64,7 @@ varial.settings.colors = {
 
 # use these functions to specifically select histograms for plotting
 current_cuts = ['AfterPresel', 'FullSelection'] # 'Nminus1-MuonPtCut', 'OneCut-HTCut', 'FullSelection', 'Nminus1-6OneHiggsTagCut'
-current_hists = ['TopJetHists'] # "/ElectronHists", '/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log'
+current_hists = ['/EventHists', '/MuonHists'] # "/ElectronHists", '/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log'
 
 use_cuts = True
 use_histos = True

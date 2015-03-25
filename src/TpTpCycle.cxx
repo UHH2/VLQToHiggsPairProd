@@ -57,6 +57,8 @@ public:
 private:
 
     std::string version;
+    size_t event_count;
+    double lumi_factor;
 
     // // declare the Selections to use.
     // std::vector<std::unique_ptr<Selection> > v_sel;
@@ -108,6 +110,10 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     // 1. define handles and other stuff here for later call in TpTpCycle::process
 
     version = ctx.get("dataset_version");
+    event_count = 0;
+    double dataset_lumi = string2double(ctx.get("dataset_lumi"));
+    double reweight_to_lumi = string2double(ctx.get("target_lumi"));
+    lumi_factor = reweight_to_lumi / dataset_lumi;
 
     CSVBTag::wp btag_wp = CSVBTag::WP_MEDIUM;
 
@@ -126,8 +132,8 @@ TpTpCycle::TpTpCycle(Context & ctx) {
 
 
     // all the reweighting and jet correction modules
-    bool mclumiweight = false;
-    bool mcpileupreweight = false;
+    bool mclumiweight = true;
+    bool mcpileupreweight = true;
     bool jec = false;
     bool jersmear = false;
 
@@ -265,6 +271,14 @@ bool TpTpCycle::process(Event & event) {
 
     for (auto & m: post_modules){
         m->process(event);
+    }
+
+    if (!event_count)
+    {
+        // std::cout << version << " " << event.weight << " " << lumi_factor << std::endl;
+        if (event.weight != lumi_factor)
+            std::cout << "WARNING: re-weighting for lumi for the second time!!" << std::endl;
+        event_count++;
     }
 
     nogensel_afterpresel->fill(event);
