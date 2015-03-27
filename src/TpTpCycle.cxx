@@ -48,6 +48,8 @@ public:
         TprimeID = 8,
         ElectronID = 11,
         MuonID = 13,
+        ZID = 23,
+        WID = 24,
         HiggsID = 25
     };
     
@@ -142,8 +144,10 @@ TpTpCycle::TpTpCycle(Context & ctx) {
         // calculate gen variables
         pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_bfromtop", ParticleID::BottomID, ParticleID::TopID));
         pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_higgs", ParticleID::HiggsID));
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron", ParticleID::ElectronID, ParticleID::TopID));
-        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon", ParticleID::MuonID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron_top", ParticleID::ElectronID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_electron_wtprime", ParticleID::ElectronID, ParticleID::TprimeID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon_top", ParticleID::MuonID, ParticleID::TopID));
+        pre_modules.emplace_back(new NGenParticleCalculator(ctx, "n_gen_muon_wtprime", ParticleID::MuonID, ParticleID::TprimeID, ParticleID::TopID));
         pre_modules.emplace_back(new PartonHT(parton_ht));
         if(mclumiweight)  pre_modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) pre_modules.emplace_back(new MCPileupReweight(ctx));
@@ -186,9 +190,11 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     // reco_cuts["1ElectronVeto"] = std::shared_ptr<Selection>(new VetoSelection(min_1el));
     // reco_cuts["2OneMuonCut"] = std::shared_ptr<Selection>(new NMuonSelection(1, 1, MuonId(AndId<Muon>(MuonIDTight(), PtEtaCut(50.0, 2.1)))));
     // reco_cuts["3HTCut"] = std::shared_ptr<Selection>(new HTSelection(ctx.get_handle<double>("HT"), 700.));
-    reco_cuts["4BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
-    reco_cuts["5OneTopTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(CMSTopTag())));
-    reco_cuts["6OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    std::shared_ptr<Selection> min_2mu(new NMuonSelection(2, -1, MuonId(AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.4)))));
+    reco_cuts["4SecMuonVeto"] = std::shared_ptr<Selection>(new VetoSelection(min_2mu));
+    reco_cuts["5BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
+    reco_cuts["6OneTopTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(CMSTopTag())));
+    reco_cuts["7OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
 
 
 
@@ -283,6 +289,8 @@ bool TpTpCycle::process(Event & event) {
 
     nogensel_afterpresel->fill(event);
 
+    bool passes_fullselection = false;
+
     if (nogensel_fullselection.second->passes(event))
     {
         nogensel_fullselection.first->fill(event);
@@ -300,6 +308,11 @@ bool TpTpCycle::process(Event & event) {
 
         if (nogensel_nm1cut[sel_name].second->passes(event))
         {
+            if ((std::string)selection.first == "7OneHiggsTagCut")
+            {
+                passes_fullselection = true;
+            }
+
             nogensel_nm1cut[sel_name].first->fill(event);
         }
 
@@ -308,7 +321,7 @@ bool TpTpCycle::process(Event & event) {
     }
 
     
-    return false;
+    return passes_fullselection;
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(TpTpCycle)

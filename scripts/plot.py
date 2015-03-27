@@ -66,8 +66,8 @@ varial.settings.colors = {
 current_cuts = ['AfterPresel', 'FullSelection'] # 'Nminus1-MuonPtCut', 'OneCut-HTCut', 'FullSelection', 'Nminus1-6OneHiggsTagCut'
 current_hists = ['/EventHists', '/MuonHists'] # "/ElectronHists", '/MuonHists', '/JetHists', '/TopJetHists', '/EventHists', '/GenHists/w_decay_lin', '/GenHists/w_decay_log'
 
-use_cuts = True
-use_histos = True
+use_cuts = False
+use_histos = False
 
 varial.settings.stacking_order = ['ZJets', 'WJets', 'TTJets']
 

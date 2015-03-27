@@ -21,3 +21,4 @@
 2.1 20150323T143200 From plot.py: Run higgs-tagging now on CA15 jets
 2.2 20150324T170733 From plot.py: Implemented TpTpPreSelection module to run on top of Heiner's PreSelection, added some TopJet histograms to study variables used by taggers
 2.3 20150325T152634 From plot.py: Applied lumi weighting also in full selection cycle
+2.4 20150327T134351 From plot.py: Implemented parallel plotting
