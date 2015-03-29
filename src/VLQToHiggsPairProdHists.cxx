@@ -1,4 +1,5 @@
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
 
 #include "UHH2/core/include/Event.h"
 
@@ -23,10 +24,27 @@ HistCollector::HistCollector(Context & ctx, const string & dirname, bool gen_plo
     heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 4, "patJetsHepTopTagCHSPacked")),
     ca8prunedtopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CA8PrunedTopJetHists", btag_id, 4, "patJetsCa8CHSJetsPrunedPacked")),
     ca15filteredtopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CA15FilteredTopJetHists", btag_id, 4, "patJetsCa15CHSJetsFilteredPacked")),
-    gen_hists(gen_plots ? new GenHists(ctx, dirname+"/GenHists") : NULL)
+    gen_hists(gen_plots ? new GenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
-        // if (gen_plots) gen_hists = new GenHists(ctx, dirname+"/GenHists");
-        // else gen_hists = 0;
+        if (gen_hists)
+        {
+            gen_hists->add_genhistcoll(8, 1, true, true, true, true);
+            gen_hists->add_genhistcoll(8, 2, true, true, true, true);
+            gen_hists->add_genhistcoll(6, 1, true, true, true, true);
+            gen_hists->add_genhistcoll(6, 2, true, true, true, true);
+            gen_hists->add_genhistcoll(25, 1, true, true, true, true);
+            gen_hists->add_genhistcoll(25, 2, true, true, true, true);
+            gen_hists->add_genhistcoll(0, 0);
+            gen_hists->add_genhistcoll(11, 1, false, true, false, false, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(11, 2, false, true, false, false, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(13, 1, false, true, false, false, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(13, 2, false, true, false, false, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(11, 1, false, true, false, false, GenParticleId(AndId<GenParticle>(GenParticleMotherId(24,6),GenParticleMotherId(24,25))), "_from_tpW");
+            gen_hists->add_genhistcoll(11, 2, false, true, false, false, GenParticleId(AndId<GenParticle>(GenParticleMotherId(24,6),GenParticleMotherId(24,25))), "_from_tpW");
+            gen_hists->add_genhistcoll(13, 1, false, true, false, false, GenParticleId(AndId<GenParticle>(GenParticleMotherId(24,6),GenParticleMotherId(24,25))), "_from_tpW");
+            gen_hists->add_genhistcoll(13, 2, false, true, false, false, GenParticleId(AndId<GenParticle>(GenParticleMotherId(24,6),GenParticleMotherId(24,25))), "_from_tpW");
+
+        }
     } 
 
 void HistCollector::fill(const Event & event) {

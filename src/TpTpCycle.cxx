@@ -43,6 +43,7 @@ class TpTpCycle: public AnalysisModule {
 public:
 
     enum ParticleID {
+        GenJetID = 0,
         BottomID = 5,
         TopID = 6,
         TprimeID = 8,
