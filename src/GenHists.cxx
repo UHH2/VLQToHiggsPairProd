@@ -16,40 +16,34 @@ using namespace uhh2;
 
 namespace
 {
-    class MapPdgidToString
+    std::string mapPdgidToString(int id)
     {
-    public:
-        MapPdgidToString()
+        switch (id)
         {
-            map_[5] = "b";
-            map_[6] = "t";
-            map_[8] = "tprime";
-            map_[11] = "el";
-            map_[13] = "mu";
-            map_[24] = "W";
-            map_[25] = "higgs";
-
+            case 0:
+                return "genjet";
+            case 5:
+                return "b";
+            case 6:
+                return "t";
+            case 8:
+                return "tprime";
+            case 11:
+                return "el";
+            case 13:
+                return "mu";
+            case 24:
+                return "W";
+            case 25:
+                return "higgs";
+            default:
+                std::cout << "WARNING: string conversion for this type not supported!\n";
+                throw; 
         }
 
-        std::string operator()(int id) const
-        {
-            std::string particle;
-            try {
-                particle = map_.at(id);
-            }
-            catch (const out_of_range& e)
-            {
-                std::cerr << "WARNING: provided a non-valid pdgid!" << std::endl;
-                throw;
-            }
-            return particle;
-        }
+        return "";
 
-    private:
-
-        std::map<int, std::string> map_;
-
-    } mapPdgidToString;
+    }
 
     void findTopProducts(std::vector<GenParticle> const * genparticles, GenParticle const * top_daughter, GenParticle const * & top_b, GenParticle const * & top_Wq1, GenParticle const * & top_Wq2)
     {
@@ -87,10 +81,20 @@ namespace
     }
 }
 
+std::map<int, std::pair<float, float> > GenHists::minmax_masses_ = {
+        {6, std::make_pair(150.f, 250.f)}, 
+        {8, std::make_pair(950.f, 1050.f)}, 
+        {25, std::make_pair(110.f, 140.f)}
+    };
+
+std::map<int, std::pair<float, float> > GenHists::minmax_pts_ = {};
+
+
+
 // using namespace genhists;
 
-void GenHists::addgen_histcoll(int pdgid, int mother_id, int veto_mother_id,
-                            int order_num, bool mass, bool charge, bool decay, bool mother)
+void GenHists::add_genhistcoll(int pdgid, int order_num, int mother_id, int veto_mother_id,
+                            bool mass, bool charge, bool decay, bool mother)
 {
     GenHistColl new_genhistcoll;
     new_genhistcoll.pdgid = pdgid;
@@ -98,141 +102,142 @@ void GenHists::addgen_histcoll(int pdgid, int mother_id, int veto_mother_id,
     new_genhistcoll.veto_mother_id = veto_mother_id;
     new_genhistcoll.order_num = order_num;
 
-    float minpt = 0.f;
-    float maxpt;
+    float minpt = 0.f, maxpt, minmass, maxmass;
 
-    if (pdgid < 10 || pdgid == 25)
-        maxpt = 2000.f; 
-    else
-        maxpt = 400.f;
+    try {
+        minmass = minmax_masses_.at(pdgid).first;
+        maxmass = minmax_masses_.at(pdgid).second;
+    }
+    catch (const out_of_range& e) {
+        minmass = 0.f;
+        maxmass = 1000.f;
+    }
 
-    int n_bins = maxp*0.1;
-    std::string particle = mapPdgidToString();
+    try {
+        minpt = minmax_pts_.at(pdgid).first;
+        maxpt = minmax_pts_.at(pdgid).second;   
+    }
+    catch (const out_of_range& e) {
+        if (pdgid < 10 || pdgid == 25)
+            maxpt = 2000.f; 
+        else
+            maxpt = 400.f;
+    }
+
+    int n_ptbins = (maxpt-minpt)*0.1;
+    int n_massbins = (maxmass-minmass)*0.2;
+
+    std::string particle = mapPdgidToString(pdgid);
     std::string order_str = "all";
     if (order_num > 0)
         order_str = to_string(order_num);
 
-    new_genhistcoll.h_pt = book<TH1F>(particle+"_pt", particle+" p_{T} "+order_str, n_bins, minpt, maxpt);
-    new_genhistcoll.h_eta = book<TH1F>(particle+"_eta", particle+" eta "+order_str, 40, -2.5, 2.5);
-    new_genhistcoll.h_phi = book<TH1F>(particle+"_phi", particle+" phi "+order_str, 64, -M_PI, M_PI);
-    new_genhistcoll.h_n = order_num > 0 ? NULL : book<TH1F>(particle+"_n", particle+" number "+order_str, 40, -2.5, 2.5);
+    new_genhistcoll.h_pt = book<TH1F>(particle+"_pt_"+order_str, particle+" p_{T} "+order_str, n_ptbins, minpt, maxpt);
+    new_genhistcoll.h_eta = book<TH1F>(particle+"_eta_"+order_str, particle+" eta "+order_str, 40, -2.5, 2.5);
+    new_genhistcoll.h_phi = book<TH1F>(particle+"_phi_"+order_str, particle+" phi "+order_str, 64, -M_PI, M_PI);
+    new_genhistcoll.h_n = order_num == 1 ? book<TH1F>(particle+"_n", particle+" number", 40, -2.5, 2.5) : NULL;
+    new_genhistcoll.h_mass = mass ? book<TH1F>(particle+"_mass_"+order_str, particle+" mass "+order_str, n_massbins, minmass, maxmass) : NULL;
+    new_genhistcoll.h_charge = charge ? book<TH1F>(particle+"_charge_"+order_str, particle+" charge "+order_str, 3, -1.5, 1.5) : NULL;
+    new_genhistcoll.h_decay = decay ? book<TH1F>(particle+"_decay_"+order_str, particle+" decay "+order_str, 60, -30.5, 30.5) : NULL;
+    new_genhistcoll.h_mother = mother ? book<TH1F>(particle+"_mother_"+order_str, particle+" mother "+order_str, 60, -30.5, 30.5) : NULL;
 
+    all_hists_.push_back(new_genhistcoll);
+
+
+}
+
+void GenHists::fill_hists(const Particle * ipart, const std::vector<GenParticle> & genparticles,
+    GenHistColl & gen_histcoll, double w)
+{
+    gen_histcoll.h_pt->Fill(ipart->pt(), w);
+    gen_histcoll.h_eta->Fill(ipart->pt(), w);
+    gen_histcoll.h_phi->Fill(ipart->pt(), w);
+    if (gen_histcoll.h_mass) gen_histcoll.h_mass->Fill(ipart->v4().mass(), w);
+    if (gen_histcoll.h_charge) gen_histcoll.h_charge->Fill(ipart->charge(), w);
+    if (gen_histcoll.h_charge) gen_histcoll.h_charge->Fill(ipart->charge(), w);
+    if (gen_histcoll.h_decay)
+    {
+        const GenParticle * daughter1 = ((GenParticle*)ipart)->daughter(&genparticles, 1);
+        const GenParticle * daughter2 = ((GenParticle*)ipart)->daughter(&genparticles, 2);
+        if (daughter1) gen_histcoll.h_decay->Fill(daughter1->pdgId(), w);
+        if (daughter2) gen_histcoll.h_decay->Fill(daughter2->pdgId(), w);     
+    }
+    if (gen_histcoll.h_mother)
+    {
+        const GenParticle * mother = findMother(*((GenParticle*)ipart), &genparticles);
+        if (mother) gen_histcoll.h_mother->Fill(mother->pdgId(), w);
+    }
+}
+
+void GenHists::fill_genhistcoll(const uhh2::Event & event, GenHistColl & gen_histcoll)
+{
+
+    // CONTINUE HERE: enable running on genjets as well by applying some awesome casting shit
+
+    double w = event.weight;
+    const auto & genparticles = gen_histcoll > 0 ? *event.genparticles : *event.genjets;
+
+    std::vector<const Particle*> plot_particles;
+
+    for (const auto & genp : genparticles)
+    {
+        if (gen_histcoll.pdgid == 0 || std::abs(((GenParticle*)genp).pdgId()) == gen_histcoll.pdgid)
+        {
+            if (mother_id_ > 0 || veto_mother_id_ > 0)
+            {
+                bool right_mother = mother_id_ > 0 ? false : true;
+                GenParticle const * gen_mother = findMother(((GenParticle*)genp), event.genparticles);
+                while (gen_mother)
+                {
+                    if (mother_id_ > 0 && abs(gen_mother->pdgId()) == mother_id_)
+                    {
+                        right_mother = true;
+                    }
+                    else if (veto_mother_id_ > 0 && abs(gen_mother->pdgId()) == veto_mother_id_)
+                    {
+                        right_mother = false;
+                        break;
+                    }
+                    gen_mother = findMother(*gen_mother, event.genparticles);
+                }
+                if (!right_mother)
+                    continue;
+            }
+            plot_particles.push_back(&genp);
+        }
+    }
+
+    sort_by_pt(plot_particles);
+
+    if (gen_histcoll.h_n)
+        gen_histcoll.h_n->Fill(plot_particles.size(), w);
+
+    if (gen_histcoll.order_num < 1)
+    {
+        for (auto ipart : plot_particles)
+        {
+            fill_hists(ipart, genparticles, gen_histcoll, w);
+        }
+    }
+    else
+    {
+        fill_hists(plot_particles[order_num-1], genparticles, gen_histcoll, w);
+    }
 
 }
 
 GenHists::GenHists(Context & ctx, const string & dirname, const std::string & h_part_ht):
     Hists(ctx, dirname), ctx_(ctx), dirname_(dirname), h_part_ht_(ctx.get_handle<double>(h_part_ht))
 {
-    
-    // TODO: pass handle when constructing the histogram to avoid hard coding handle names here
+    // parton ht
+    spec_parton_ht = book<TH1F>("spec_parton_ht", "HT (partons)", 100, 0, 3500);
 
-    // tp_pt_lead = book<TH1F>("tp_pt_lead", "p_{T, T'}(lead) [GeV/c]", 200, 0, 2000);
-    // tp_pt_subl = book<TH1F>("tp_pt_subl", "p_{T, T'}(sublead) [GeV/c]", 200, 0, 2000);
-    // tp_eta_lead = book<TH1F>("tp_eta_lead", "#eta_{T'}(lead)", 40, -2.5, 2.5);
-    // tp_eta_subl = book<TH1F>("tp_eta_subl", "#eta_{T'}(sublead)", 40, -2.5, 2.5);
-    // tp_phi_lead = book<TH1F>("tp_phi_lead", "#phi_{T'}(lead)", 64, -M_PI, M_PI);
-    // tp_phi_subl = book<TH1F>("tp_phi_subl", "#phi_{T'}(sublead)", 64, -M_PI, M_PI);
+    // dR variables
+    spec_deltaR_bb_h = book<TH1F>("spec_deltaR_bb_h", "#Delta R_{bb}(Higgs)", 50, 0, 5);
+    spec_deltaR_bb_min = book<TH1F>("spec_deltaR_bb_min", "#Delta R_{bb}(Min)", 50, 0, 5);
+    spec_max_deltaR_topprod = book<TH1F>("spec_max_deltaR_topprod", "max #Delta R(top products)", 50, 0, 5);
 
-    // t_pt_lead = book<TH1F>("t_pt_lead", "p_{T, top}(lead) [GeV/c]", 200, 0, 2000);
-    // t_pt_subl = book<TH1F>("t_pt_subl", "p_{T, top}(sublead) [GeV/c]", 200, 0, 2000);
-    // t_eta_lead = book<TH1F>("t_eta_lead", "#eta_{top}(lead)", 40, -2.5, 2.5);
-    // t_eta_subl = book<TH1F>("t_eta_subl", "#eta_{top}(sublead)", 40, -2.5, 2.5);
-    // t_phi_lead = book<TH1F>("t_phi_lead", "#phi_{top}(lead)", 64, -M_PI, M_PI);
-    // t_phi_subl = book<TH1F>("t_phi_subl", "#phi_{top}(sublead)", 64, -M_PI, M_PI);
-
-    // h_pt_lead = book<TH1F>("h_pt_lead", "p_{T, H}(lead) [GeV/c]", 200, 0, 2000);
-    // h_pt_subl = book<TH1F>("h_pt_subl", "p_{T, H}(sublead) [GeV/c]", 200, 0, 2000);
-    // h_eta_lead = book<TH1F>("h_eta_lead", "#eta_{H}(lead)", 40, -2.5, 2.5);
-    // h_eta_subl = book<TH1F>("h_eta_subl", "#eta_{H}(sublead)", 40, -2.5, 2.5);
-    // h_phi_lead = book<TH1F>("h_phi_lead", "#phi_{H}(lead)", 64, -M_PI, M_PI);
-    // h_phi_subl = book<TH1F>("h_phi_subl", "#phi_{H}(sublead)", 64, -M_PI, M_PI);
-
-    // genjet_pt_lead = book<TH1F>("genjet_pt_lead", "p_{T, GenJet}(lead) [GeV/c]", 200, 0, 2000);
-    // genjet_pt_subl = book<TH1F>("genjet_pt_subl", "p_{T, GenJet}(sublead) [GeV/c]", 200, 0, 2000);
-    // genjet_pt_all = book<TH1F>("genjet_pt_all", "p_{T, GenJet}(all) [GeV/c]", 200, 0, 2000);
-    // genjet_eta_lead = book<TH1F>("genjet_eta_lead", "#eta_{GenJet}(lead)", 40, -2.5, 2.5);
-    // genjet_eta_subl = book<TH1F>("genjet_eta_subl", "#eta_{GenJet}(sublead)", 40, -2.5, 2.5);
-    // genjet_eta_all = book<TH1F>("genjet_eta_all", "#eta_{GenJet}(all)", 40, -2.5, 2.5);
-    // genjet_phi_lead = book<TH1F>("genjet_phi_lead", "#phi_{GenJet}(lead)", 64, -M_PI, M_PI);
-    // genjet_phi_subl = book<TH1F>("genjet_phi_subl", "#phi_{GenJet}(sublead)", 64, -M_PI, M_PI);
-    // genjet_phi_all = book<TH1F>("genjet_phi_all", "#phi_{GenJet}(all)", 64, -M_PI, M_PI);
-
-    // bTp_pt_lead = book<TH1F>("bTp_pt_lead", "p_{T, b(T')}(lead) [GeV/c]", 200, 0, 2000);
-    // bTp_pt_subl = book<TH1F>("bTp_pt_subl", "p_{T, b(T')}(sublead) [GeV/c]", 200, 0, 2000);
-    // bH_pt_lead = book<TH1F>("bH_pt_lead", "p_{T, b(H)}(lead) [GeV/c]", 200, 0, 2000);
-    // bH_pt_subl = book<TH1F>("bH_pt_subl", "p_{T, b(H)}(sublead) [GeV/c]", 200, 0, 2000);
-
-    // mu_pt_lead = book<TH1F>("mu_pt_lead", "p_{T, mu}(lead) [GeV/c]", 50, 0, 500);
-    // mu_pt_lead2 = book<TH1F>("mu_pt_lead2", "p_{T, mu}(lead) [GeV/c]", 20, 0, 100);
-    // mu_pt_subl = book<TH1F>("mu_pt_subl", "p_{T, mu}(sublead) [GeV/c]", 50, 0, 500);
-    // mu_pt_subl2 = book<TH1F>("mu_pt_subl2", "p_{T, mu}(sublead) [GeV/c]", 20, 0, 100);
-    // mu_eta_lead = book<TH1F>("mu_eta_lead", "#eta_{mu}(lead)", 40, -2.5, 2.5);
-    // mu_eta_subl = book<TH1F>("mu_eta_subl", "#eta_{mu}(sublead)", 40, -2.5, 2.5);
-    // mu_phi_lead = book<TH1F>("mu_phi_lead", "#phi_{mu}(lead)", 64, -M_PI, M_PI);
-    // mu_phi_subl = book<TH1F>("mu_phi_subl", "#phi_{mu}(sublead)", 64, -M_PI, M_PI);
-
-    // el_pt_lead = book<TH1F>("el_pt_lead", "p_{T, el}(lead) [GeV/c]", 50, 0, 500);
-    // el_pt_lead2 = book<TH1F>("el_pt_lead2", "p_{T, el}(lead) [GeV/c]", 20, 0, 100);
-    // el_pt_subl = book<TH1F>("el_pt_subl", "p_{T, el}(sublead) [GeV/c]", 50, 0, 500);
-    // el_pt_subl2 = book<TH1F>("el_pt_subl2", "p_{T, el}(sublead) [GeV/c]", 20, 0, 100);
-    // el_eta_lead = book<TH1F>("el_eta_lead", "#eta_{el}(lead)", 40, -2.5, 2.5);
-    // el_eta_subl = book<TH1F>("el_eta_subl", "#eta_{el}(sublead)", 40, -2.5, 2.5);
-    // el_phi_lead = book<TH1F>("el_phi_lead", "#phi_{el}(lead)", 64, -M_PI, M_PI);
-    // el_phi_subl = book<TH1F>("el_phi_subl", "#phi_{el}(sublead)", 64, -M_PI, M_PI);
-
-    // mutop_pt_lead = book<TH1F>("mutop_pt_lead", "p_{T, mutop}(lead) [GeV/c]", 60, 0, 600);
-    // mutop_pt_lead2 = book<TH1F>("mutop_pt_lead2", "p_{T, mutop}(lead) [GeV/c]", 20, 0, 100);
-    // mutop_pt_subl = book<TH1F>("mutop_pt_subl", "p_{T, mutop}(sublead) [GeV/c]", 60, 0, 600);
-    // mutop_pt_subl2 = book<TH1F>("mutop_pt_subl2", "p_{T, mutop}(sublead) [GeV/c]", 20, 0, 100);
-    // mutop_eta_lead = book<TH1F>("mutop_eta_lead", "#eta_{mutop}(lead)", 40, -2.5, 2.5);
-    // mutop_eta_subl = book<TH1F>("mutop_eta_subl", "#eta_{mutop}(sublead)", 40, -2.5, 2.5);
-    // mutop_phi_lead = book<TH1F>("mutop_phi_lead", "#phi_{mutop}(lead)", 64, -M_PI, M_PI);
-    // mutop_phi_subl = book<TH1F>("mutop_phi_subl", "#phi_{mutop}(sublead)", 64, -M_PI, M_PI);
-
-    // eltop_pt_lead = book<TH1F>("eltop_pt_lead", "p_{T, eltop}(lead) [GeV/c]", 60, 0, 600);
-    // eltop_pt_lead2 = book<TH1F>("eltop_pt_lead2", "p_{T, eltop}(lead) [GeV/c]", 20, 0, 100);
-    // eltop_pt_subl = book<TH1F>("eltop_pt_subl", "p_{T, eltop}(sublead) [GeV/c]", 60, 0, 600);
-    // eltop_pt_subl2 = book<TH1F>("eltop_pt_subl2", "p_{T, eltop}(sublead) [GeV/c]", 20, 0, 100);
-    // eltop_eta_lead = book<TH1F>("eltop_eta_lead", "#eta_{eltop}(lead)", 40, -2.5, 2.5);
-    // eltop_eta_subl = book<TH1F>("eltop_eta_subl", "#eta_{eltop}(sublead)", 40, -2.5, 2.5);
-    // eltop_phi_lead = book<TH1F>("eltop_phi_lead", "#phi_{eltop}(lead)", 64, -M_PI, M_PI);
-    // eltop_phi_subl = book<TH1F>("eltop_phi_subl", "#phi_{eltop}(sublead)", 64, -M_PI, M_PI);
-
-    // tp_m = book<TH1F>("tp_m", "m_{T'} [GeV]", 200, 950, 1050);
-    // t_m = book<TH1F>("t_m", "m_{t} [GeV]", 200, 150, 250);
-    // h_m = book<TH1F>("h_m", "m_{H} [GeV]", 60, 110, 140);
-
-
-    //   //  number plots
-    // genjet_N = book<TH1F>("genjet_N", "Number of GenJets", 20, 0, 20);
-    // t_N = book<TH1F>("t_N", "Number of tops", 5, 0, 5);
-    // h_N = book<TH1F>("h_N", "Number of Higgses", 5, 0, 5);
-    // b_N = book<TH1F>("b_N", "Number of bs", 8, 0, 8);
-    // l_N = book<TH1F>("l_N", "Number of leptons", 15, 0, 15);
-    // mu_N = book<TH1F>("mu_N", "Number of muons", 15, 0, 15);
-    // el_N = book<TH1F>("el_N", "Number of electrons", 15, 0, 15);
-    // ltop_N = book<TH1F>("ltop_N", "Number of leptons from top", 15, 0, 15);
-    // mutop_N = book<TH1F>("mutop_N", "Number of muons from top", 15, 0, 15);
-    // eltop_N = book<TH1F>("eltop_N", "Number of electrons from top", 15, 0, 15);
-
-
-    // // decay modes
-    // tp_decay = book<TH1F>("tp_decay", "Tprime decay modes", 30, 0, 30);
-    // h_decay = book<TH1F>("h_decay", "Higgs decay modes", 30, 0, 30);
-    // t_decay = book<TH1F>("t_decay", "Top decay modes", 30, 0, 30);
-    // b_decay = book<TH1F>("b_decay", "B decay modes", 30, 0, 30);
-    // w_decay = book<TH1F>("w_decay", "W decay modes", 30, 0, 30);
-    // z_decay = book<TH1F>("z_decay", "Z decay modes", 30, 0, 30);
-
-    // // parton ht
-    // spec_parton_ht = book<TH1F>("spec_parton_ht", "HT (partons)", 100, 0, 3500);
-
-    // // dR variables
-    // spec_deltaR_bb_h = book<TH1F>("spec_deltaR_bb_h", "#Delta R_{bb}(Higgs)", 50, 0, 5);
-    // spec_deltaR_bb_min = book<TH1F>("spec_deltaR_bb_min", "#Delta R_{bb}(Min)", 50, 0, 5);
-    // spec_max_deltaR_topprod = book<TH1F>("spec_max_deltaR_topprod", "max #Delta R(top products)", 50, 0, 5);
-
-    // spec_top_pt_vs_max_dR = book<TH2F>("spec_top_pt_vs_max_dR", ";p_{T}(t);max #Delta R(t decay products)", 150, 0, 1500, 50, 0., 5.);
+    spec_top_pt_vs_max_dR = book<TH2F>("spec_top_pt_vs_max_dR", ";p_{T}(t);max #Delta R(t decay products)", 150, 0, 1500, 50, 0., 5.);
 }
 
 

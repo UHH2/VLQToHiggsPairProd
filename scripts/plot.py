@@ -15,7 +15,7 @@ import varial.analysis as analysis
 
 dirname = 'VLQToHiggsPairProd'
 
-varial.settings.rootfile_postfixes += ['.pdf']
+varial.settings.rootfile_postfixes = ['.png','.pdf']
 
 varial.settings.git_tag = varial.settings.readgittag('/nfs/dust/cms/user/nowatsd/sFrameNew/SFRAME/new_uhh2/VLQToHiggsPairProd/GITTAGGER_LOG.txt')
 
