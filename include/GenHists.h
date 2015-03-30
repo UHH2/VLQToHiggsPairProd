@@ -27,9 +27,6 @@ public:
                 bool decay = false, bool mother = false, const boost::optional<GenParticleId> & genp_id = boost::none,
                 std::string suffix = "");
 
-    void fill_hists(const Particle * ipart, const std::vector<GenParticle> & genparticles,
-    GenHistColl & gen_histcoll, double w);
-
     void fill_genhistcoll(const uhh2::Event & ev, GenHistColl & gen_histcoll);
     
     std::map<int, std::pair<float, float> > & minmax_pts() {
@@ -41,6 +38,14 @@ public:
 
     virtual ~GenHists();
 private:
+    template<class T>
+    void fill_wrapper(std::vector<const T*> plot_particles, const uhh2::Event & event,
+        GenHistColl & gen_histcoll);
+
+    template<class T>
+    void fill_hists(const T * ipart, const std::vector<GenParticle> & genparticles,
+        GenHistColl & gen_histcoll, double w);
+
     uhh2::Context & ctx_;
     std::string dirname_;
 	uhh2::Event::Handle<double> h_part_ht_;

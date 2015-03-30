@@ -8,7 +8,9 @@
 
 #include "TH1F.h"
 #include "TH2F.h"
+
 #include <iostream>
+#include <typeinfo>
 
 using namespace std;
 using namespace uhh2;
@@ -136,7 +138,7 @@ void GenHists::add_genhistcoll(int pdgid, int order_num, bool mass, bool charge,
     new_genhistcoll.h_pt = book<TH1F>(particle+"_pt_"+order_str, particle+" p_{T} "+order_str, n_ptbins, minpt, maxpt);
     new_genhistcoll.h_eta = book<TH1F>(particle+"_eta_"+order_str, particle+" eta "+order_str, 40, -2.5, 2.5);
     new_genhistcoll.h_phi = book<TH1F>(particle+"_phi_"+order_str, particle+" phi "+order_str, 64, -M_PI, M_PI);
-    new_genhistcoll.h_n = order_num == 1 ? book<TH1F>(particle+"_n", particle+" number", 40, -2.5, 2.5) : NULL;
+    new_genhistcoll.h_n = order_num <= 1 ? book<TH1F>(particle+"_n", particle+" number", 40, -2.5, 2.5) : NULL;
     new_genhistcoll.h_mass = mass ? book<TH1F>(particle+"_mass_"+order_str, particle+" mass "+order_str, n_massbins, minmass, maxmass) : NULL;
     new_genhistcoll.h_charge = charge ? book<TH1F>(particle+"_charge_"+order_str, particle+" charge "+order_str, 3, -1.5, 1.5) : NULL;
     new_genhistcoll.h_decay = decay ? book<TH1F>(particle+"_decay_"+order_str, particle+" decay "+order_str, 60, -30.5, 30.5) : NULL;
@@ -147,7 +149,8 @@ void GenHists::add_genhistcoll(int pdgid, int order_num, bool mass, bool charge,
 
 }
 
-void GenHists::fill_hists(const Particle * ipart, const std::vector<GenParticle> & genparticles,
+template<class T>
+void GenHists::fill_hists(const T * ipart, const std::vector<GenParticle> & genparticles,
     GenHistColl & gen_histcoll, double w)
 {
     gen_histcoll.h_pt->Fill(ipart->pt(), w);
@@ -156,48 +159,26 @@ void GenHists::fill_hists(const Particle * ipart, const std::vector<GenParticle>
     if (gen_histcoll.h_mass) gen_histcoll.h_mass->Fill(ipart->v4().mass(), w);
     if (gen_histcoll.h_charge) gen_histcoll.h_charge->Fill(ipart->charge(), w);
     if (gen_histcoll.h_charge) gen_histcoll.h_charge->Fill(ipart->charge(), w);
-    if (gen_histcoll.h_decay)
+    GenParticle const * genpart = typeid(T) == typeid(GenParticle) ? (GenParticle*)ipart : NULL;
+    if (gen_histcoll.h_decay && genpart)
     {
-        const GenParticle * daughter1 = ((GenParticle*)ipart)->daughter(&genparticles, 1);
-        const GenParticle * daughter2 = ((GenParticle*)ipart)->daughter(&genparticles, 2);
+        const GenParticle * daughter1 = genpart->daughter(&genparticles, 1);
+        const GenParticle * daughter2 = genpart->daughter(&genparticles, 2);
         if (daughter1) gen_histcoll.h_decay->Fill(daughter1->pdgId(), w);
         if (daughter2) gen_histcoll.h_decay->Fill(daughter2->pdgId(), w);     
     }
-    if (gen_histcoll.h_mother)
+    if (gen_histcoll.h_mother && genpart)
     {
-        const GenParticle * mother = findMother(*((GenParticle*)ipart), &genparticles);
+        const GenParticle * mother = findMother(*genpart, &genparticles);
         if (mother) gen_histcoll.h_mother->Fill(mother->pdgId(), w);
     }
 }
 
-void GenHists::fill_genhistcoll(const uhh2::Event & event, GenHistColl & gen_histcoll)
+template<class T>
+void GenHists::fill_wrapper(std::vector<const T*> plot_particles, const uhh2::Event & event,
+                    GenHistColl & gen_histcoll)
 {
-
-    // CONTINUE HERE: enable running on genjets as well by applying some awesome casting shit
-
     double w = event.weight;
-    std::vector<const Particle*> all_particles;
-
-    typedef std::vector<GenParticle>::const_iterator genp_it;
-    typedef std::vector<Particle>::const_iterator p_it;
-
-    if (gen_histcoll.pdgid != 0)
-        std::for_each(event.genparticles->begin(), event.genparticles->end(),[&](GenParticle it){all_particles.push_back(&it);});
-    else
-        std::for_each(event.genjets->begin(), event.genjets->end(),[&](Particle it){all_particles.push_back(&it);});
-
-
-    std::vector<const Particle*> plot_particles;
-
-    for (auto genp : all_particles)
-    {
-        if (gen_histcoll.pdgid == 0 || std::abs(((GenParticle*)genp)->pdgId()) == gen_histcoll.pdgid)
-        {
-            if (gen_histcoll.genp_id && (*gen_histcoll.genp_id)(*((GenParticle*)genp), event))
-                continue;
-            plot_particles.push_back(genp);
-        }
-    }
 
     sort_by_pt(plot_particles);
 
@@ -215,6 +196,40 @@ void GenHists::fill_genhistcoll(const uhh2::Event & event, GenHistColl & gen_his
     {
         if (plot_particles.size() >= gen_histcoll.order_num)
             fill_hists(plot_particles[gen_histcoll.order_num-1], *event.genparticles, gen_histcoll, w);
+    }
+}
+
+void GenHists::fill_genhistcoll(const uhh2::Event & event, GenHistColl & gen_histcoll)
+{
+    if (gen_histcoll.pdgid)
+    {
+        std::vector<const GenParticle*> plot_particles;
+
+        // std::cout << "Fill particles with id " << gen_histcoll.pdgid << "\n";
+
+        for (const auto & genp : *event.genparticles)
+        {
+            if (std::abs(genp.pdgId()) == gen_histcoll.pdgid)
+            {
+                // std::cout << " Found one instance, check for right mother\n";
+                if (gen_histcoll.genp_id && !(*gen_histcoll.genp_id)(genp, event))
+                    continue;
+
+                // std::cout << " Has right mother!\n";
+                plot_particles.push_back(&genp);
+            }
+        }
+
+        fill_wrapper(plot_particles, event, gen_histcoll);
+    }
+    else
+    {
+        std::vector<const Particle*> plot_particles;
+
+        for (const auto & genp : *event.genjets)
+            plot_particles.push_back(&genp);
+
+        fill_wrapper(plot_particles, event, gen_histcoll);
     }
 
 }
@@ -235,6 +250,11 @@ GenHists::GenHists(Context & ctx, const string & dirname, const std::string & h_
 
 
 void GenHists::fill(const Event & event){
+
+    // std::cout << "NEXT SELECTION, event " << event.event << "\nGenParticles:\n";
+
+    // for (auto const & genp : *event.genparticles)
+        // std::cout << " " << genp.pdgId() << "\n";
 
     for (auto & gen_histcoll : all_hists_ )
         fill_genhistcoll(event, gen_histcoll);

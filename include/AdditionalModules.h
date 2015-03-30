@@ -91,10 +91,12 @@ public:
     {
         if (mother_id_ > 0 || veto_mother_id_ > 0)
         {
+            // std::cout << "  Looking for particle with mother " << mother_id_ << " and not from " << veto_mother_id_ << std::endl;
             bool right_mother = mother_id_ > 0 ? false : true;
             GenParticle const * gen_mother = findMother(genp, event.genparticles);
             while (gen_mother)
             {
+                // std::cout << "   Mother id: " << gen_mother->pdgId() << std::endl;
                 if (mother_id_ > 0 && abs(gen_mother->pdgId()) == mother_id_)
                 {
                     right_mother = true;
@@ -107,14 +109,46 @@ public:
                 gen_mother = findMother(*gen_mother, event.genparticles);
             }
             if (!right_mother)
+            {
+                // std::cout << "  Bad mother, rejected!\n";
                 return false;
+            }
         }
 
+        // std::cout << "  Found right mother!\n";
         return true;
     }
 
 private:
     int mother_id_, veto_mother_id_;
+};
+
+class GenParticleDaughterId
+{
+public:
+    GenParticleDaughterId(int part_id, int daughter1_id = 0, int daughter2_id = 0) :
+        part_id_(part_id), daughter1_id_(daughter1_id), daughter2_id_(daughter2_id)
+        {}
+
+    bool operator()(const GenParticle & genp, const Event & event) const
+    {
+        if (std::abs(genp.pdgId()) == part_id_)
+        {
+            GenParticle const * daughter1 = genp.daughter(event.genparticles, 1);
+            GenParticle const * daughter2 = genp.daughter(event.genparticles, 2);
+            if (!(daughter1 && daughter2))
+                return false;
+            if ((std::abs(daughter1->pdgId()) == daughter1_id_ && std::abs(daughter2->pdgId()) == daughter2_id_)
+                || (std::abs(daughter1->pdgId()) == daughter2_id_ && std::abs(daughter2->pdgId()) == daughter1_id_))
+                return true;
+        }
+
+        // std::cout << "  Found right mother!\n";
+        return false;
+    }
+
+private:
+    int part_id_, daughter1_id_, daughter2_id_;
 };
 
 

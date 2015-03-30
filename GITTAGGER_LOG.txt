@@ -23,3 +23,5 @@
 2.3 20150325T152634 From plot.py: Applied lumi weighting also in full selection cycle
 2.4 20150327T134351 From plot.py: Implemented parallel plotting
 2.5 20150329T223107 test new GenHist class
+2.6 20150330T141736 Ran TpTpCycle with HT cut and CMSTopTag
+2.7 20150331T040611 Implemented PostSelection cycle with GenSelections
