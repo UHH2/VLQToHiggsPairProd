@@ -195,7 +195,7 @@ TpTpCycle::TpTpCycle(Context & ctx) {
     reco_cuts["4SecMuonVeto"] = std::shared_ptr<Selection>(new VetoSelection(min_2mu));
     reco_cuts["5BTagCut"] = std::shared_ptr<Selection>(new NJetSelection(1, -1, JetId(CSVBTag(btag_wp))));
     reco_cuts["6OneTopTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(CMSTopTag())));
-    reco_cuts["7OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    // reco_cuts["7OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
 
 
 
@@ -295,7 +295,7 @@ bool TpTpCycle::process(Event & event) {
     if (nogensel_fullselection.second->passes(event))
     {
         nogensel_fullselection.first->fill(event);
-        // return true;
+        passes_fullselection = true;
     }
 
     for (auto const & selection : reco_cuts)
@@ -309,10 +309,10 @@ bool TpTpCycle::process(Event & event) {
 
         if (nogensel_nm1cut[sel_name].second->passes(event))
         {
-            if ((std::string)selection.first == "7OneHiggsTagCut")
-            {
-                passes_fullselection = true;
-            }
+            // if ((std::string)selection.first == "7OneHiggsTagCut")
+            // {
+            //     passes_fullselection = true;
+            // }
 
             nogensel_nm1cut[sel_name].first->fill(event);
         }
