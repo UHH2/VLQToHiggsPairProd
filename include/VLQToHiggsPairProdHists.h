@@ -14,7 +14,7 @@
 #include "UHH2/common/include/TopJetIds.h"
 
 
-#include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
+#include "UHH2/VLQSemiLepPreSel/include/CustomizableGenHists.h"
 
 #include "TH1F.h"
 

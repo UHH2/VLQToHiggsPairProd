@@ -17,13 +17,14 @@
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarReconstruction.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/AdditionalSelections.h"
 
 
 
-#include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
+#include "UHH2/VLQSemiLepPreSel/include/EventHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
-#include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
-#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
+#include "UHH2/VLQSemiLepPreSel/include/CustomizableGenHists.h"
+#include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
 
 
 using namespace std;

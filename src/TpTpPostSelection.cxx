@@ -17,13 +17,14 @@
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/TTbarReconstruction.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/AdditionalSelections.h"
 
 
 
-#include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
+#include "UHH2/VLQSemiLepPreSel/include/EventHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
-#include "UHH2/VLQToHiggsPairProd/include/GenHists.h"
-#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
+#include "UHH2/VLQSemiLepPreSel/include/CustomizableGenHists.h"
+#include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
 
 
 using namespace std;
@@ -201,10 +202,12 @@ TpTpPostSelection::TpTpPostSelection(Context & ctx) {
     thbw_sel->add<GenParticleIdSelection>("gen_finalstate_sel", GenParticleId(GenParticleDaughterId(8, 5, 24)), 1, 1);
     std::shared_ptr<Selection> bwbw_sel(new GenParticleIdSelection(GenParticleId(GenParticleDaughterId(8, 5, 24)), 2, 2));
 
-    std::shared_ptr<OrSelection> other_sel(new OrSelection());
-    other_sel->add(thth_sel);
-    other_sel->add(thbw_sel);
-    other_sel->add(bwbw_sel);
+    std::shared_ptr<OrSelection> comb_sel(new OrSelection());
+    comb_sel->add(thth_sel);
+    comb_sel->add(thbw_sel);
+    comb_sel->add(bwbw_sel);
+
+    std::shared_ptr<Selection> other_sel(new VetoSelection(comb_sel));
 
     if (!gensel_)
         nogensel_afterpresel.reset(new HistCollector(ctx, "AfterPresel"));
