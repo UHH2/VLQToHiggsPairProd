@@ -179,9 +179,9 @@ TpTpPostSelection::TpTpPostSelection(Context & ctx) {
 
     // DEFINE RECO SELECTIONS HERE
     
-    reco_cuts["ZeroHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(0, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
-    reco_cuts["OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
-    reco_cuts["TwoHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(2, -1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    reco_cuts["ZeroHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(0, 0, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    reco_cuts["OneHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(1, 1, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
+    reco_cuts["TwoHiggsTagCut"] = std::shared_ptr<Selection>(new NTopJetSelection(2, 2, TopJetId(HiggsTag()), ctx.get_handle<std::vector<TopJet> >("patJetsCa15CHSJetsFilteredPacked")));
 
 
 

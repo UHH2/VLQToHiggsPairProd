@@ -8,7 +8,7 @@
     <Package Name="SUHH2vlqToHPairProd.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./tptp_postselection/" PostFix="" TargetLumi="1." >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./tptp_postselection/" PostFix="" TargetLumi="10000" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://workers=X"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./tptp_postselection/" PostFix="" TargetLumi="10000" > -->
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="6" OutputDirectory="./tptp_postselection/" PostFix="" TargetLumi="10000" > -->
         <InputData Lumi="211058." NEventsMax="10" Type="MC" Version="TpTp_M1000" Cacheable="False">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/tptppresel_output/uhh2.AnalysisModuleRunner.MC.TpTp_M1000.root" Lumi="0.0"/>
