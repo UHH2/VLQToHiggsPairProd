@@ -3,6 +3,7 @@ input/
 output/
 *~
 *NOT
+*.pyc
 scripts/go.py
 scripts/Varial
 scripts/SFrame_Plotter/Plots

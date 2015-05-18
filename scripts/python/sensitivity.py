@@ -8,7 +8,8 @@ tc = varial.tools.ToolChain(
     [
         varial.tools.HistoLoader(
             pattern='./*.root',
-            filter_keyfunc=lambda w: 'EventHists/HT' in w.in_file_path and not 'AfterPresel' in w.in_file_path,
+            filter_keyfunc=lambda w: 'EventHists/HT' in w.in_file_path and not
+                ('AfterPresel' in w.in_file_path or 'Lep' in w.in_file_path),
             hook_loaded_histos=lambda w:
                 common.add_wrp_info(
                 w),

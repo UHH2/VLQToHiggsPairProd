@@ -168,7 +168,9 @@ TpTpPostSelection::TpTpPostSelection(Context & ctx) {
     post_modules.emplace_back(new PrimaryLepton(ctx));
     // post_modules.emplace_back(new HTLepCalculator(ctx));
     post_modules.emplace_back(new JetTagCalculator(ctx, "n_btags", CSVBTag(btag_wp)));
-    post_modules.emplace_back(new TopTagCalculator(ctx.get_handle<int>("n_toptags"), TopJetId(CMSTopTag())));
+    post_modules.emplace_back(new NTaggedTopJetProducer(ctx, TopJetId(HiggsTag()), "n_higgstags", "patJetsCa15CHSJetsFilteredPacked"));
+    post_modules.emplace_back(new NTaggedTopJetProducer(ctx, TopJetId(CMSTopTag()), "n_toptags"));
+
 
 
 
