@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import common_vlq
+import settings
+
+import os
+import time
+import varial.generators as gen
+import varial.rendering as rnd
+import varial.tools
+
+
+def loader_hook(wrps):
+    wrps = common_vlq.add_wrp_info(wrps)
+    wrps = gen.sort(wrps)
+    wrps = common_vlq.merge_samples(wrps)
+    wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
+    wrps = common_vlq.label_axes(wrps)
+    return wrps
+
+
+def plotter_factory(**kws):
+    kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
+    kws['hook_loaded_histos'] = loader_hook
+    kws['plot_setup'] = gen.mc_stack_n_data_sum
+    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+    kws['save_lin_log_scale'] = True
+    return varial.tools.Plotter(**kws)
+
+
+
