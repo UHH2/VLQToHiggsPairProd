@@ -2,6 +2,7 @@ from varial import settings
 from varial.sample import Sample
 import varial.analysis as analysis
 
+settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
 settings.defaults_Legend['x_pos'] = 0.80
 settings.defaults_Legend['label_width'] = 0.36
@@ -13,10 +14,10 @@ settings.colors = {
     'TTJets': 632,
     'WJets': 878,
     'ZJets': 596,
-    'TpTp_M1000': 810,
-    'TpTp_M1000_thth': 403,
-    'TpTp_M1000_thtz': 838,
-    'TpTp_M1000_thbw': 881,
+    'TpTp_M1000': 416,
+    'TpTp_M1000_thth': 800,
+    'TpTp_M1000_thtz': 400,
+    'TpTp_M1000_thbw': 616,
     'TpTp_M1000_tztz': 797,
     'TpTp_M1000_tzbw': 902,
     'TpTp_M1000_bwbw': 593,

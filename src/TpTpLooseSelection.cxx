@@ -27,8 +27,10 @@
 #include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
 #include "UHH2/VLQSemiLepPreSel/include/SelectionHists.h"
 #include "UHH2/VLQSemiLepPreSel/include/SelectionItem.h"
+#include "UHH2/VLQSemiLepPreSel/include/VLQSLPS_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
 
 
 using namespace std;
@@ -86,7 +88,7 @@ private:
     string version;
     // modules for setting up collections and cleaning
     vector<unique_ptr<AnalysisModule>> v_pre_modules;
-    unique_ptr<AnalysisModule> sel_module;
+    unique_ptr<SelectionProducer> sel_module;
     // unique_ptr<AnalysisModule> writer_module; // for TMVA stuff
 
     // store the Hists collection
@@ -121,17 +123,20 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     if(mclumiweight)  v_pre_modules.emplace_back(new MCLumiWeight(ctx));
     if(mcpileupreweight) v_pre_modules.emplace_back(new MCPileupReweight(ctx));
     v_pre_modules.emplace_back(new ElectronCleaner(PtEtaCut(105.0, 2.4)));
-    v_pre_modules.emplace_back(new MuonCleaner(PtEtaCut(50.0, 2.4)));
+    v_pre_modules.emplace_back(new MuonCleaner(PtEtaCut(50.0, 2.1))); // TODO: put the eta cut to 2.1???
     v_pre_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4))); // get rid of fwd jets from preselection
+    v_pre_modules.emplace_back(new PtSorter<Jet>(ctx, "jets"));
+    v_pre_modules.emplace_back(new PtSorter<Muon>(ctx, "muons"));
+    v_pre_modules.emplace_back(new PtSorter<Electron>(ctx, "electrons"));
     // v_pre_modules.emplace_back(new BJetsProducer(ctx, CSVBTag::WP_MEDIUM, "b_jets"));
-    v_pre_modules.emplace_back(new PrimaryLepton(ctx)); // TODO: put PrimaryLepton module (currently in TTbarReconstruction) into own file; current handle name is "PrimaryLepton"
+    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); // TODO: put PrimaryLepton module (currently in TTbarReconstruction) into own file; current handle name is "PrimaryLepton"
     v_pre_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_pre_modules.emplace_back(new STCalculator(ctx, "ST"));
-    // v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             "jets",
-    //             "b_jets"));
-    // v_pre_modules.emplace_back(new NBTagProducer(ctx, CSVBTag::WP_MEDIUM, "n_btags"));
+    v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+                "jets",
+                "b_jets",
+                JetId(CSVBTag(CSVBTag::WP_MEDIUM))
+                ));
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "jets",
                 "n_btags",
@@ -139,9 +144,11 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 ));
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
-                "h_boost_topjets",
+                "boosted_topjets",
                 TopJetId(PtEtaCut(400., 2.4))
                 ));
+    v_pre_modules.emplace_back(new PtSorter<Jet>(ctx, "b_jets"));
+    v_pre_modules.emplace_back(new PtSorter<TopJet>(ctx, "boosted_topjets"));
     v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 "patJetsCa15CHSJetsFilteredPacked",
                 "n_higgs_tags_ca15",
@@ -153,7 +160,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
     v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "h_boost_topjets",
+                "boosted_topjets",
                 "n_toptags",
                 TopJetId(CMSTopTag())
                 ));
@@ -172,30 +179,40 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     v_pre_modules.emplace_back(new LeadingJetPtProducer(ctx, "leading_jet_pt"));
 
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
-    // v_pre_modules.emplace_back(new NFwdJetsProducer(ctx));
-    // v_pre_modules.emplace_back(new SubleadingJetPtProducer(ctx));
-    v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "primary_lepton_pt"));
+    v_pre_modules.emplace_back(new SubleadingJetPtProducer(ctx, "subleading_jet_pt"));
+    v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    v_pre_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
+    v_pre_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
+    v_pre_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
 
-    // v_pre_modules.emplace_back(new LorentzVectorInfoProducer(ctx, "tlep"));
-    // v_pre_modules.emplace_back(new LorentzVectorInfoProducer(ctx, "h"));
-    // v_pre_modules.emplace_back(new LorentzVectorInfoProducer(ctx, "vlq"));
+
 
     // Selection Producer
-    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair, ctx);
+    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_loose, ctx);
     sel_helper.declare_items_for_output();
     sel_module.reset(new SelectionProducer(ctx, sel_helper));
-
+    
     // 3. Set up Hists classes:
 
     // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-    sel_helper.fill_hists_vector(v_hists, "SelNone");
-    v_hists.emplace_back(new Nm1SelHists(ctx, "SelNm1", sel_helper));
-    v_hists.emplace_back(new VLQ2HTCutflow(ctx, "Cutflow", sel_helper));
+    sel_helper.fill_hists_vector(v_hists, "NoSelection");
+    auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
+    auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
+    v_hists.emplace_back(nm1_hists);
+    v_hists.emplace_back(cf_hists);
     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
 
     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 
+    // insert 2D cut
+    // unsigned pos_2d_cut = 9;
+    // sel_module->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, 0., 0.));
+    // nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, "Nm1Selection"));
+    // cf_hists->insert_step(pos_2d_cut, "2D cut");
+    // v_hists.insert(v_hists.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
 
     // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Ele95_CaloIdVT_GsfTrkIdT_v", true));
     // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Mu40_v", false));

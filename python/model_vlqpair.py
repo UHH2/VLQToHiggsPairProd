@@ -4,7 +4,7 @@ import os
 
 def get_model(hist_dir, final_states):
     model = theta_auto.build_model_from_rootfile(
-        os.path.join(hist_dir, 'ThetaHistos.root'),
+        hist_dir,
         include_mc_uncertainties = True)#mc uncertainties=true
     model.fill_histogram_zerobins()
     model.set_signal_processes(final_states)

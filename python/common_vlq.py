@@ -29,30 +29,64 @@ def add_wrp_info(wrps):
     )
 
 
-@varial.history.track_history
-def merge_decay_channel(w):
-    return w
+# @varial.history.track_history
+# def merge_decay_channel(w):
+#     return w
+
+# def merge_decay_channels(wrps, postfixes):
+#     """histos must be sorted!!"""
+#     buf = []
+#     for w in wrps:
+#         if any(w.sample.endswith(p) for p in postfixes):
+#             # print 'Append '+w.sample
+#             buf.append(w)
+#             if len(buf) == len(postfixes):
+#                 res = varial.operations.sum(buf)
+#                 res.sample = next(res.sample[:-len(p)]
+#                                   for p in postfixes
+#                                   if res.sample.endswith(p))
+#                 res.legend = next(res.legend[:-len(p)]
+#                                   for p in postfixes
+#                                   if res.legend.endswith(p))
+#                 res.file_path = ''
+#                 buf = []
+#                 yield merge_decay_channel(res)
+#         else:
+#             if buf: print "WARNING: buffer not empty! ", buf
+#             yield w
+
+
 
 def merge_decay_channels(wrps, postfixes):
     """histos must be sorted!!"""
+
+    @varial.history.track_history
+    def merge_decay_channel(w):
+        return w
+
+    def do_merging(buf):
+        res = varial.operations.merge(buf)
+        res.sample = next(res.sample[:-len(p)]
+                          for p in postfixes
+                          if res.sample.endswith(p))
+        res.legend = next(res.legend[:-len(p)]
+                          for p in postfixes
+                          if res.legend.endswith(p))
+        res.file_path = ''
+        del buf[:]
+        return merge_decay_channel(res)
+
     buf = []
     for w in wrps:
         if any(w.sample.endswith(p) for p in postfixes):
-            # print 'Append '+w.sample
             buf.append(w)
             if len(buf) == len(postfixes):
-                res = varial.operations.sum(buf)
-                res.sample = next(res.sample[:-len(p)]
-                                  for p in postfixes
-                                  if res.sample.endswith(p))
-                res.legend = next(res.legend[:-len(p)]
-                                  for p in postfixes
-                                  if res.legend.endswith(p))
-                res.file_path = ''
-                buf = []
-                yield merge_decay_channel(res)
+                yield do_merging(buf)
         else:
-            if buf: print "WARNING: buffer not empty!"
+            if buf:
+                print 'WARNING In merge_decay_channels: buffer not empty. ' \
+                      'Flushing remaining items:' + str(buf)
+                yield do_merging(buf)
             yield w
 
 
@@ -72,11 +106,28 @@ def merge_samples(wrps):
         '_LL_HT600toInf',
     ))
     wrps = merge_decay_channels(wrps, (
-        '_HT250to500',
+        # '_HT250to500',
         '_HT500to1000',
         '_HT1000toInf',
     ))
     return wrps
+
+# def merge_all_backgrounds(wrps):
+#     wrps = merge_decay_channels(wrps, (
+#         'TTJets',
+#         '_LNu_HT100to200',
+#         '_LNu_HT200to400',
+#         '_LNu_HT400to600',
+#         '_LNu_HT600toInf',
+#         '_LL_HT100to200',
+#         '_LL_HT200to400',
+#         '_LL_HT400to600',
+#         '_LL_HT600toInf',
+#         '_HT250to500',
+#         '_HT500to1000',
+#         '_HT1000toInf',
+#     ))
+#     return wrps
 
 
 def norm_to_first_bin(wrp):

@@ -45,7 +45,6 @@ def final_state_scaling(wrps, brs):
     for w in wrps:
         for final_state, factor in dict_factors.iteritems():
             if w.sample.endswith(final_state):
-                print 'Scale histo '+w.sample+' with factor '+str(factor)
                 w = scale_histo(w, factor)
         yield w
 
@@ -62,7 +61,6 @@ def loader_hook_scale(wrps, brs=None):
     if not brs:
         print 'WARNING: No branching ratios set, stop running!'
         return None
-    print brs
     wrps = loader_hook(wrps)
     wrps = final_state_scaling(wrps, brs)
     wrps = common_vlq.merge_decay_channels(wrps, (

@@ -44,7 +44,7 @@ def loader_hook_cf(wrps):
     return wrps
 
 def plotter_factory_cf(**kws):
-    kws['hook_loaded_histos'] = loader_hook
+    kws['hook_loaded_histos'] = loader_hook_cf
     kws['save_lin_log_scale'] = True
     return varial.tools.Plotter(**kws)
 

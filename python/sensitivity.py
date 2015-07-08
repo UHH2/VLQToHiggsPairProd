@@ -2,6 +2,7 @@
 
 import os
 import time
+import glob
 
 import common_vlq
 import common_sensitivity
@@ -16,33 +17,41 @@ from varial.extensions.limits import *
 import theta_auto
 import model_vlqpair
 
-varial.settings.use_parallel_chains = False
+# varial.settings.use_parallel_chains = False
 
 theta_auto.config.theta_dir = "/nfs/dust/cms/user/nowatsd/theta"
 
-dir_limit = 'Limits_v0_test3_triangleplots'
+src_dir_rel = '../EventLoopAndPlots'
 
-file_stack_all = [f for f in os.listdir('.') if
-    (f.endswith('.root') and 'M1000_' not in f
-        # and 'HT' not in f
-    )]
+def file_stack_all():
+    src_dir = analysis.cwd+src_dir_rel
+    file_list = []
+    for cat_dir in os.listdir(src_dir):
+        if os.path.isdir(cat_dir):
+            for fil in os.listdir(src_dir+'/'+cat_dir+'/SFrame'):
+                if (fil.endswith('.root') and 'M1000_' not in fil):
+                    file_list.append(src_dir+cat_dir+'/SFrame/'+fil)
+    return file_list
 
-file_stack_split = [f for f in os.listdir('.') if
-    (f.endswith('.root') and not f.endswith('_M1000.root')
-        # and 'HT' not in f
-    )]
+def file_stack_split():
+    src_dir = analysis.cwd+src_dir_rel
+    file_list = []
+    for cat_dir in os.listdir(src_dir):
+        if os.path.isdir(cat_dir):
+            for fil in os.listdir(src_dir+'/'+cat_dir+'/SFrame'):
+                if (fil.endswith('.root') and not (fil.endswith('_M1000.root') or 'onelep' in fil)):
+                    file_list.append(src_dir+cat_dir+'/SFrame/'+fil)
+    return file_list
 
-# brs0 = {
-#     'bw' : 0.5,
-#     'th' : 0.25,
-#     'tz' : 0.25
-# }
+def get_category(wrp):
+    return wrp.file_path.split('/')[-3]
 
-# brs1 = {
-#     'bw' : 0.333,
-#     'th' : 0.333,
-#     'tz' : 0.333
-# }
+# def file_stack_split():
+#     src_dir = analysis.cwd+src_dir_rel
+#     return [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
+#     (f.endswith('.root') and not (f.endswith('_M1000.root') or 'onelep' in f)
+#         # and 'HT' not in f
+#     )]
 
 br_list = []
 
@@ -56,44 +65,86 @@ for th_br in [i/10. for i in range(0, 12, 2)]:
             'tz' : tz_br
         })
 
-tool_list = []
-
 def loader_hook_func(brs):
     def temp(w):
         return common_sensitivity.loader_hook_scale(w, brs)
     return temp
 
-for ind, brs_ in enumerate(br_list):
-    print 'ITERATION '+str(ind)
-    print brs_
-    tool_list.append(
-        varial.tools.HistoLoader(
-            name='HistoLoaderSplit'+str(ind),
-            pattern=file_stack_split,
-            filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
-            hook_loaded_histos=loader_hook_func(brs_)
-        ))
-    tool_list.append(
-        TpTpThetaLimits(
-            input_path= '../HistoLoaderSplit'+str(ind),
-            name= 'ThetaLimitsSplit'+str(ind),
-            # asymptotic= False,
-            brs=brs_,
-            model_func= lambda w: model_vlqpair.get_model(w, ['TpTp_M1000'])
-        ))
+# maybe pack this up into a list of individual tool chains so that HistoLoader is the first
+# tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
+# input_path='..')
 
-tool_list.append(TriangleLimitPlots())
+def mk_limit_list():
+    limit_list = []
+    for ind, brs_ in enumerate(br_list):
+        if ind > 0: break
+        limit_list.append(
+            varial.tools.ToolChain('Limit'+str(ind),[
+                varial.tools.HistoLoader(
+                    # name='HistoLoaderSplit'+str(ind),
+                    pattern=file_stack_split(),
+                    cat_key=get_category,
+                    filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
+                    hook_loaded_histos=loader_hook_func(brs_)
+                ),
+                # ThetaLimitsBranchingRatios(
+                #     input_path= '../HistoLoader',
+                #     # name= 'ThetaLimitsSplit'+str(ind),
+                #     # asymptotic= False,
+                #     brs=brs_,
+                #     model_func= lambda w: model_vlqpair.get_model(w, ['TpTp_M1000'])
+                # )
+            ]))
+    return limit_list
 
-tc = varial.tools.ToolChain(
-    dir_limit, tool_list
-)
+
+# tool_list.append(TriangleLimitPlots())
+
+dir_limit = 'Limits/'
+
+def mk_limit_chain():
+    return varial.tools.ToolChainParallel(
+        'Ind_Limits', mk_limit_list()
+        )
+
+def add_draw_option(wrps, draw_option=''):
+    for wrp in wrps:
+        wrp.draw_option = draw_option
+        yield wrp
+
+def plot_setup(wrps):
+    wrps = (add_draw_option(ws, 'colz text') for ws in wrps)
+    wrps = (gen.apply_markercolor(ws, colors=[1]) for ws in wrps)
+    # print wrps.wrps[0].type
+    return wrps
+
+def mk_tc():
+    return varial.tools.ToolChain(dir_limit, [
+        mk_limit_chain(),
+        # TriangleLimitPlots(
+        #     limit_rel_path='Ind_Limits/Limit*/ThetaLimitsBranchingRatios'
+        #     ),
+        # # varial.tools.HistoLoader(
+        # #     # name='HistoLoaderSplit'+str(ind),
+        # #     pattern=dir_limit+'/TriangleLimitPlots/*.root',
+        # #     # filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
+        # #     # hook_loaded_histos=loader_hook
+        # #     ),
+        # varial.plotter.Plotter(
+        #     input_result_path='../TriangleLimitPlots',
+        #     plot_setup=plot_setup
+        #     ),
+        # varial.tools.WebCreator()
+        # varial.tools.CopyTool()
+        ])
 
 # tc = varial.tools.ToolChain("", [tc])
 
 if __name__ == '__main__':
     time.sleep(1)
-    varial.tools.Runner(tc)
-    os.chdir(dir_limit)
-    # varial.tools.WebCreator().run()
-    os.chdir('..') 
+    # print analysis.cwd
+    varial.tools.Runner(mk_tc())
+    # os.chdir(dir_limit)
+    # # varial.tools.WebCreator().run()
+    # os.chdir('..') 
 
