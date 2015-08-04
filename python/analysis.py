@@ -13,7 +13,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 
-dir_name = 'TpTpTightSelection_output2'
+dir_name = 'TpTpTightSelection_test_gittagger'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 
@@ -28,9 +28,9 @@ tc = varial.tools.ToolChain(
         ]),
         varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         sframe_tools.sframe_tools,
-        # sensitivity.tc,
-        # varial.tools.PrintToolTree(),
-        varial.tools.WebCreator(no_tool_check=True),
+        # sensitivity.mk_tc(),
+        varial.tools.GitTagger(),
+        # varial.tools.WebCreator(no_tool_check=True),
         # tex_content.tex_content,
         # varial.tools.CopyTool('~/www/test'),
     ]
@@ -39,6 +39,6 @@ tc = varial.tools.ToolChain(
 
 # varial.settings.max_num_processes = 1
 varial.settings.try_reuse_results = True
-# varial.tools.Runner(tc, True)
-import varial.main
-varial.main.main(toolchain=tc, try_reuse_results=True)
+varial.tools.Runner(tc, default_reuse=True)
+# import varial.main
+# varial.main.main(toolchain=tc, try_reuse_results=True)

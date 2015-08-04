@@ -127,6 +127,7 @@ private:
     Event::Handle<vector<T>> h_out_;
 };
 
+
 template<typename T>
 class DeltaRTwoLeadingParticleProducer: public AnalysisModule {
 public:
@@ -161,29 +162,69 @@ private:
 };
 
 
-class GenParticlePdgId
-{
+class XTopTagProducer: public AnalysisModule {
 public:
-    GenParticlePdgId(const std::vector<int> & pdgids) :
-        pdgids_(pdgids)
-        {}
+    explicit XTopTagProducer(Context & ctx,
+                               const string & h_in,
+                               const string & h_dr_out,
+                               const string & h_x_top_out,
+                               float dr_higgs = 1.5,
+                               unsigned number_top = 1):
+        h_in_(ctx.get_handle<vector<TopJet>>(h_in)),
+        h_dr_out_(ctx.get_handle<float>(h_dr_out)),
+        h_x_top_out_(ctx.get_handle<TopJet>(h_x_top_out)),
+        dr_higgs_(dr_higgs),
+        number_top_(number_top) {}
 
-    bool operator()(const GenParticle & genp, const Event & event) const
-    {
-        for (int id : pdgids_) {
-            if (genp.pdgId() == id)
-            {
-                return true;
+    virtual bool process(Event & event) override {
+        float dyn_dr_higgs = -999.;
+        if (event.is_valid(h_in_)) {
+            const vector<TopJet> & topjet_coll = event.get(h_in_);
+            if (topjet_coll.size() == number_top_) {
+                dyn_dr_higgs = dr_higgs_;
+                event.set(h_x_top_out_, topjet_coll[0]);
             }
         }
+        std::cout << dyn_dr_higgs << std::endl;
+        event.set(h_dr_out_, dyn_dr_higgs);
 
-        // cout << "  Found right mother!\n";
-        return false;
+        return true;
     }
 
 private:
-    std::vector<int> pdgids_;
+    Event::Handle<std::vector<TopJet>> h_in_;
+    Event::Handle<float> h_dr_out_;
+    Event::Handle<TopJet> h_x_top_out_;
+    float dr_higgs_;
+    unsigned number_top_;
 };
 
 
+// template<typename TYPE>
+// class SizeOneId
+// {
+// public:
+//     SizeOneId(Context & ctx,
+//                 const string & h_comp_coll,
+//                 bool size_equal_one = true) :
+//         h_comp_coll_(ctx.get_handle<vector<TYPE>>(h_comp_coll)),
+//         size_equal_one_(size_equal_one)
+//         {}
 
+//     bool operator()(const Particle & part, const Event & event) const
+//     {
+//         if (event.is_valid(h_comp_coll_)){
+//             const vector<TYPE> & comp_coll = event.get(h_comp_coll_);
+//             if (size_equal_one_ ? comp_coll.size() == 1 : comp_coll.size() > 1)
+//                 return true;
+//             else return false;
+//         }
+
+//         std::cout << "WARNING: in SizeOneId: handle to h_comp_coll_ is not valid!\n";
+//         return true;
+//     }
+
+// private:
+//     Event::Handle<vector<TYPE>> h_comp_coll_;
+//     bool size_equal_one_;
+// };

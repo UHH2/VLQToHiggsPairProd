@@ -6,7 +6,7 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
 settings.defaults_Legend['x_pos'] = 0.80
 settings.defaults_Legend['label_width'] = 0.36
-settings.defaults_Legend['label_height'] = 0.03
+settings.defaults_Legend['label_height'] = 0.04
 # settings.debug_mode = True
 settings.box_text_size = 0.03
 settings.colors = {

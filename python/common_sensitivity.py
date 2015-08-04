@@ -48,11 +48,24 @@ def final_state_scaling(wrps, brs):
                 w = scale_histo(w, factor)
         yield w
 
+def set_category(wrps):
+    for w in wrps:
+        category = w.file_path.split('/')[-3]
+        setattr(w, "category", category)
+    return wrps
+
 def loader_hook(wrps):
     wrps = common_vlq.add_wrp_info(wrps)
-    wrps = gen.sort(wrps)
+    # print wrps
+    # wrps = set_category(wrps)
+    wrps = varial.generators.gen_add_wrp_info(
+        wrps, category=lambda w: w.file_path.split('/')[-3])
+    wrps = gen.sort(wrps, key_list="category")
     wrps = common_vlq.merge_samples(wrps)
-    wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
+    # print "=====AFTER MERGING=====:"
+    # for w in wrps:
+    #     print "after:\n", w
+    # wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
     # wrps = final_state_scaling(wrps, dict_factors)
     return wrps

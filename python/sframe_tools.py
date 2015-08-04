@@ -25,7 +25,7 @@ def mk_sframe_and_plot_tools(catname):
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=set_category_and_eventnumber(catname, count="-1"), # 
+        xml_tree_callback=set_category_and_eventnumber(catname, count="1000"), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
@@ -46,8 +46,8 @@ sframe_tools = varial.tools.ToolChain(
     [
         mk_sframe_and_plot_tools('PrunedCat1htag0btag'),
         mk_sframe_and_plot_tools('PrunedCat1htag1btag'),
-        mk_sframe_and_plot_tools('PrunedCat1htag2plusbtag'),
-        mk_sframe_and_plot_tools('PrunedCat0htag2plusbtag'),
-        mk_sframe_and_plot_tools('PrunedCat2htag')
+        # mk_sframe_and_plot_tools('PrunedCat1htag2plusbtag'),
+        # mk_sframe_and_plot_tools('PrunedCat0htag2plusbtag'),
+        # mk_sframe_and_plot_tools('PrunedCat2htag')
     ]
 )

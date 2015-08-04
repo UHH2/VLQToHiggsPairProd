@@ -125,6 +125,11 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
                 TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
                 ));
 
+    // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
+    // well separated from it by making a dR requirement of 1.5
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
+
     // higgs tags, no top separation
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsCa15CHSJetsFilteredPacked",
@@ -152,33 +157,42 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
                 "patJetsCa15CHSJetsFilteredPacked",
                 "higgs_tags_ca15_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinDeltaRId<TopJet>(ctx, "toptags", 1.5)))
+                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
     v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 "patJetsCa15CHSJetsFilteredPacked",
                 "n_higgs_tags_ca15_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinDeltaRId<TopJet>(ctx, "toptags", 1.5)))
+                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsCa8CHSJetsPrunedPacked",
                 "higgs_tags_ca8_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinDeltaRId<TopJet>(ctx, "toptags", 1.5)))
+                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
     v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 "patJetsCa8CHSJetsPrunedPacked",
                 "n_higgs_tags_ca8_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinDeltaRId<TopJet>(ctx, "toptags", 1.5)))
+                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
+
+    // check if, in case there is only one top, the dR to the closest higgs is really 1.5
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsca8notop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15", "min_deltaR_top_higgsca8"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsca8notop_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15", "min_deltaR_top_higgsca8_twotop"));
+
+
+    
 
     // additional b-tags
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "b_jets",
                 "n_additional_btags",
-                JetId(AndId<Jet>(MinDeltaRId<TopJet>(ctx, "higgs_tags_ca8_notop", 1.0, true),
-                                    MinDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
+                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "higgs_tags_ca8_notop", 1.0, true),
+                                    MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
                 ));
 
     // mass producers
@@ -220,7 +234,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
         // }));
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca8_notop", "N_{H Tags (CA8), no top}", 11, -.5, 10.5,
-                1, 1)));
+                1)));
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 0, 0)));
@@ -230,7 +244,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     } else if (category == "PrunedCat1htag1btag") {
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca8_notop", "N_{H Tags (CA8), no top}", 11, -.5, 10.5,
-                1, 1)));
+                1)));
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 1, 1)));
@@ -238,7 +252,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     } else if (category == "PrunedCat1htag2plusbtag") {
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca8_notop", "N_{H Tags (CA8), no top}", 11, -.5, 10.5,
-                1, 1)));
+                1)));
         SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 2)));
@@ -270,11 +284,6 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
         assert(false);  // a category must be given
     }
 
-    for (auto const & iele : SEL_ITEMS_VLQPair_tight) {
-        std::cout << iele->name() << " ";
-    }
-    std::cout << "\n";
-
 
 
 
@@ -292,11 +301,11 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
     v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
-    v_pre_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
-    v_pre_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
-    v_pre_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
+    // v_pre_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
+    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
+    // v_pre_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
+    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
+    // v_pre_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
 
     // N Gen Leptons Producer
 
