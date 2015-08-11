@@ -1,5 +1,5 @@
 LIBRARY := SUHH2vlqToHPairProd
-USERLDFLAGS := -lSUHH2core -lSUHH2common -lGenVector -lSUHH2VLQSemiLepPreSel -lSUHH2VLQToHiggsAndLepton
+USERLDFLAGS := -lSUHH2core -lSUHH2common -lGenVector -lSUHH2VLQSemiLepPreSel # -lSUHH2VLQToHiggsAndLepton
 # enable par creation; this is necessary for all packages containing AnalysisModules
 # to be loaded from by AnalysisModuleRunner.
 PAR := 1

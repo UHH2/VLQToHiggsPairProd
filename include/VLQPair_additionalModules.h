@@ -185,7 +185,7 @@ public:
                 event.set(h_x_top_out_, topjet_coll[0]);
             }
         }
-        std::cout << dyn_dr_higgs << std::endl;
+        // std::cout << dyn_dr_higgs << std::endl;
         event.set(h_dr_out_, dyn_dr_higgs);
 
         return true;

@@ -16,7 +16,7 @@ def label_axes(wrps):
         yield w
 
 
-signal_indicators = ['_M1000']
+signal_indicators = ['TpTp']
 
 
 def add_wrp_info(wrps):
@@ -26,35 +26,8 @@ def add_wrp_info(wrps):
         analyzer=lambda w: w.in_file_path.split('/')[0],
         legend=lambda w: w.sample,
         is_signal=lambda w: any(s in w.sample for s in signal_indicators),
+        is_data=lambda w: 'Run20' in w.sample,
     )
-
-
-# @varial.history.track_history
-# def merge_decay_channel(w):
-#     return w
-
-# def merge_decay_channels(wrps, postfixes):
-#     """histos must be sorted!!"""
-#     buf = []
-#     for w in wrps:
-#         if any(w.sample.endswith(p) for p in postfixes):
-#             # print 'Append '+w.sample
-#             buf.append(w)
-#             if len(buf) == len(postfixes):
-#                 res = varial.operations.sum(buf)
-#                 res.sample = next(res.sample[:-len(p)]
-#                                   for p in postfixes
-#                                   if res.sample.endswith(p))
-#                 res.legend = next(res.legend[:-len(p)]
-#                                   for p in postfixes
-#                                   if res.legend.endswith(p))
-#                 res.file_path = ''
-#                 buf = []
-#                 yield merge_decay_channel(res)
-#         else:
-#             if buf: print "WARNING: buffer not empty! ", buf
-#             yield w
-
 
 
 def merge_decay_channels(wrps, postfixes):
@@ -92,7 +65,7 @@ def merge_decay_channels(wrps, postfixes):
 
 
 
-def merge_samples(wrps):
+def merge_samples_old(wrps):
     wrps = merge_decay_channels(wrps, (
         '_LNu_HT100to200',
         '_LNu_HT200to400',
@@ -112,23 +85,38 @@ def merge_samples(wrps):
     ))
     return wrps
 
-# def merge_all_backgrounds(wrps):
-#     wrps = merge_decay_channels(wrps, (
-#         'TTJets',
-#         '_LNu_HT100to200',
-#         '_LNu_HT200to400',
-#         '_LNu_HT400to600',
-#         '_LNu_HT600toInf',
-#         '_LL_HT100to200',
-#         '_LL_HT200to400',
-#         '_LL_HT400to600',
-#         '_LL_HT600toInf',
-#         '_HT250to500',
-#         '_HT500to1000',
-#         '_HT1000toInf',
-#     ))
-#     return wrps
-
+def merge_samples(wrps):
+    wrps = merge_decay_channels(wrps, (
+        '_Pt15to30',
+        '_Pt30to50',
+        '_Pt50to80',
+        '_Pt80to120',
+        '_Pt120to170',
+        '_Pt170to300',
+        '_Pt300to470',
+        '_Pt470to600',
+        '_Pt600to800',
+        '_Pt800to1000',
+        '_Pt1000to1400',
+        '_Pt1400to1800',
+        '_Pt1800to2400',
+        '_Pt2400to3200',
+        '_Pt3200toInf',
+    ))
+    wrps = merge_decay_channels(wrps, (
+        'M10to50',
+        'M50toInf',
+    ))
+    wrps = merge_decay_channels(wrps, (
+        '_tChannel',
+        '_WAntitop',
+        '_WTop',
+    ))
+    wrps = merge_decay_channels(wrps, (
+        '_Ele',
+        '_Mu',
+    ))
+    return wrps
 
 def norm_to_first_bin(wrp):
     histo = wrp.histo.Clone()

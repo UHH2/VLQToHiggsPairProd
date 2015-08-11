@@ -310,7 +310,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     // N Gen Leptons Producer
 
     v_pre_modules.emplace_back(new CollectionSizeProducer<GenParticle>(ctx, "genparticles", "n_genleptons",
-                GenParticleId(GenParticlePdgId({-11, 11, -13, 13}))));
+                GenParticleId(GenParticlePdgIdId({-11, 11, -13, 13}))));
     // v_pre_modules.emplace_back(new GenParticlesPrinter(ctx));
 
     
