@@ -13,7 +13,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 
-dir_name = 'TpTpLooseSelection_test2'
+dir_name = 'TpTpLooseSelection2'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 

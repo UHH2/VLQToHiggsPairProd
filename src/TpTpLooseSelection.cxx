@@ -87,7 +87,7 @@ public:
     virtual bool process(Event & event);
 
 private:
-    string version;
+    string version, type;
     // modules for setting up collections and cleaning
     vector<unique_ptr<AnalysisModule>> v_pre_modules;
     unique_ptr<SelectionProducer> sel_module;
@@ -106,6 +106,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // string testvalue = ctx.get("TestKey", "<not set>");
     // cout << "TestKey in the configuration was: " << testvalue << endl;
     version = ctx.get("dataset_version", "");
+    type = ctx.get("dataset_type", "");
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -272,6 +273,27 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 "mass_ld_toptag"
                 ));
 
+    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "higgs_tags_ca15",
+                "mass_sj_ld_higgs_tag_ca15"
+                ));
+    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "higgs_tags_ak8",
+                "mass_sj_ld_higgs_tag_ak8"
+                ));
+    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "higgs_tags_ca15_notop",
+                "mass_sj_ld_higgs_tag_ca15_notop"
+                ));
+    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "higgs_tags_ak8_notop",
+                "mass_sj_ld_higgs_tag_ak8_notop"
+                ));
+    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "toptags",
+                "mass_sj_ld_toptag"
+                ));
+
 
 
 
@@ -318,10 +340,15 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
-    // v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
-    // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+
+    if (type == "MC") {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+        v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+    } else {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+        v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+    }
 
     // append 2D cut
     unsigned pos_2d_cut = 4;
