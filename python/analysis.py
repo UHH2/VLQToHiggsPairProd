@@ -13,7 +13,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 
-dir_name = 'TpTpLooseSelection2'
+dir_name = 'TpTpLooseSelection_test'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 
@@ -29,7 +29,7 @@ tc = varial.tools.ToolChain(
         varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         sframe_tools.sframe_tools_loose,
         # sensitivity.mk_tc(),
-        # varial.tools.GitTagger(),
+        varial.tools.GitTagger(),
         varial.tools.WebCreator(no_tool_check=True),
         # tex_content.tex_content,
         # varial.tools.CopyTool('~/www/test'),

@@ -26,7 +26,8 @@ src_dir_rel = '../SFrame'
 
 # varial.settings.use_parallel_chains = False
 
-normfactor = 1.
+signormfactor = 20.
+singletnormfactor = 1.
 
 def only_tptp(filename):
     return not ('BpJ' in filename or 'TpJ' in filename)
@@ -60,7 +61,7 @@ def mk_tools():
         varial.tools.mk_rootfile_plotter(
             pattern= file_stack_all(),
             name='StackedAll',
-            plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
+            plotter_factory=lambda **w: stackplots.plotter_factory(singletnormfactor, signormfactor, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
