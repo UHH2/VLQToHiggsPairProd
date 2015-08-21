@@ -126,7 +126,6 @@ def mk_sframe_and_plot_tools_loose():
     )
     return tc
 
-
 sframe_tools_tight = varial.tools.ToolChain(
     'EventLoopAndPlots',
     [
