@@ -87,7 +87,6 @@ def set_eventnumber_and_datasets(count='-1', allowed_datasets=None):
 
 
 
-
 def mk_sframe_and_plot_tools_tight(catname):
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
@@ -113,7 +112,7 @@ def mk_sframe_and_plot_tools_loose():
         cfg_filename=sframe_cfg_loose,
         xml_tree_callback=set_eventnumber_and_datasets(count="100", allowed_datasets=tptp_loose_datasets), # 
     )
-    plots = varial.tools.ToolChainParallel(
+    plots1 = varial.tools.ToolChainParallel(
         'Plots4',
         lazy_eval_tools_func=lambda: plot_loose.mk_tools()
     )
@@ -121,7 +120,7 @@ def mk_sframe_and_plot_tools_loose():
         "EventLooptAndPlots",
         [
             # sframe,
-            plots
+            plots1
         ]
     )
     return tc
