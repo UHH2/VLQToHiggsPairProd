@@ -113,7 +113,7 @@ def mk_sframe_and_plot_tools_loose():
         xml_tree_callback=set_eventnumber_and_datasets(count="100", allowed_datasets=tptp_loose_datasets), # 
     )
     plots1 = varial.tools.ToolChainParallel(
-        'Plots4',
+        'Plots5',
         lazy_eval_tools_func=lambda: plot_loose.mk_tools()
     )
     tc = varial.tools.ToolChain(
