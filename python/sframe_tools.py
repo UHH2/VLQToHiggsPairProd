@@ -11,18 +11,19 @@ sframe_cfg_tight = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VL
 tptp_loose_datasets = [
     'Run2015B_Ele',
     'Run2015B_Mu',
+    'Run2015B_Had',
     # 'TpTp_M-700',
-    'TpTp_M-800',
+    # 'TpTp_M-800',
     # 'TpTp_M-900',
     # 'TpTp_M-1000',
     # 'TpTp_M-1100',
     # 'TpTp_M-1200',
-    'TpTp_M-1300',
+    # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
     # 'TpTp_M-1600',
     # 'TpTp_M-1700',
-    'TpTp_M-1800',
+    # 'TpTp_M-1800',
     'QCD_Pt15to30',
     'QCD_Pt30to50',
     'QCD_Pt50to80',
@@ -110,17 +111,17 @@ def mk_sframe_and_plot_tools_loose():
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg_loose,
-        xml_tree_callback=set_eventnumber_and_datasets(count="100", allowed_datasets=tptp_loose_datasets), # 
+        xml_tree_callback=set_eventnumber_and_datasets(count="-1", allowed_datasets=tptp_loose_datasets), # 
     )
-    plots1 = varial.tools.ToolChainParallel(
-        'Plots5',
+    plots = varial.tools.ToolChainParallel(
+        'Plots',
         lazy_eval_tools_func=lambda: plot_loose.mk_tools()
     )
     tc = varial.tools.ToolChain(
         "EventLooptAndPlots",
         [
-            # sframe,
-            plots1
+            sframe,
+            plots
         ]
     )
     return tc

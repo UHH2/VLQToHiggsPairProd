@@ -14,14 +14,14 @@ def norm_sigxfactor(wrps, factor=1.):
         if w.is_signal:
             w.lumi /= factor
             w = varial.op.norm_to_lumi(w)
-    return wrps
+        yield w
 
 def norm_siingletfactor(wrps, factor=1.):
     for w in wrps:
         if w.sample == 'SingleT_tChannel':
             w.lumi /= factor
             w = varial.op.norm_to_lumi(w)
-    return wrps
+        yield w
 
 def loader_hook_norm_singlet_sig(wrps, singletfactor=1., sigxfactor=1.):
     wrps = common_vlq.add_wrp_info(wrps)

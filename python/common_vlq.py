@@ -115,6 +115,7 @@ def merge_samples(wrps):
     wrps = merge_decay_channels(wrps, (
         '_Ele',
         '_Mu',
+        '_Had'
     ))
     return wrps
 
