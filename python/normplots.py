@@ -23,7 +23,7 @@ def loader_hook(wrps):
     wrps = gen.gen_make_eff_graphs(wrps)
     wrps = gen.switch(
         wrps,
-        lambda w: 'TH1' in w.type,
+        lambda w: 'TH' in w.type,
         gen.gen_noex_norm_to_integral
     )
     return wrps

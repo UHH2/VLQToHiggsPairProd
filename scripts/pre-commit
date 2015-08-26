@@ -1,0 +1,27 @@
+# copy this to .git/hooks to store the UHH2 version in each commit
+
+# script code
+cwd="$(pwd)"
+repo_base="$(git rev-parse --show-toplevel)"
+varial_dir="/nfs/dust/cms/user/nowatsd/Varial/"
+vlqsemilep_dir="$repo_base/../VLQSemiLepPreSel/"
+cd $repo_base/..
+git rev-parse --verify HEAD > UHH2_VERSION
+mv UHH2_VERSION $repo_base
+cd $varial_dir
+git rev-parse --verify HEAD > VARIAL_VERSION
+mv VARIAL_VERSION $repo_base
+cd $vlqsemilep_dir
+git rev-parse --verify HEAD > VLQSEMILEP_VERSION
+mv VLQSEMILEP_VERSION $repo_base
+cd $repo_base
+echo "Adding UHH2_VERSION:"
+cat UHH2_VERSION
+git add UHH2_VERSION
+echo "Adding VARIAL_VERSION:"
+cat VARIAL_VERSION
+git add VARIAL_VERSION
+echo "Adding VLQSEMILEP_VERSION:"
+cat VLQSEMILEP_VERSION
+git add VLQSEMILEP_VERSION
+cd $cwd

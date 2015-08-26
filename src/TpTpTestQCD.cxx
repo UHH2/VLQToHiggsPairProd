@@ -39,10 +39,10 @@ using namespace vlqToHiggsPair;
 
 typedef VectorAndSelection MyAndSelection;
 
-class TpTpTightSelection: public AnalysisModule {
+class TpTpTestQCD: public AnalysisModule {
 public:
 
-    explicit TpTpTightSelection(Context & ctx);
+    explicit TpTpTestQCD(Context & ctx);
     virtual bool process(Event & event);
 
 private:
@@ -57,16 +57,15 @@ private:
     vector<unique_ptr<Hists>> v_hists;
     vector<unique_ptr<Hists>> v_hists_after_sel;
 
-    vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_tight;
+    vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_testQCD;
 
     // check category
     // unique_ptr<Selection> cat_check_module;
-
     // Event::Handle<int> h_ngenleps;
 };
 
 
-TpTpTightSelection::TpTpTightSelection(Context & ctx) {
+TpTpTestQCD::TpTpTestQCD(Context & ctx) {
 
 
     // If needed, access the configuration of the module here, e.g.:
@@ -243,64 +242,23 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     // make copy of base sel vector to avoid inserting the same selection
     // multiple times in different runs (since the base vector is static it is not
     // deleted at the end of one cycle)
-    SEL_ITEMS_VLQPair_tight = SEL_ITEMS_VLQPair_tight_base;
+    SEL_ITEMS_VLQPair_testQCD = SEL_ITEMS_VLQPair_testQCD_base;
 
-    unsigned pos_cut = 4;
+    unsigned pos_cut = 1;
+    bool apply_2d_cut = false;
     // higgs tag with filtered jets
-    if (category == "SoftDropCat1htag0btag") {
-        // cat_check_module.reset(new MyAndSelection({
-        //     new HandleSelection<int>(ctx, "n_higgs_tags_ak8_notop", 1),
-        //     new HandleSelection<int>(ctx, "n_additional_btags", 0, 0)
-        // }));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
+    if (category == "RejectQCD") {
+        // apply_2d_cut = true;
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N_{Top Tags}", 11, -.5, 10.5,
                 1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
+
+    } else if (category == "EnrichQCD") {
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N_{Top Tags}", 11, -.5, 10.5,
                 0, 0)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
-        // v_cat_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_MEDIUM)), "patJetsCa15CHSJetsFilteredPacked_daughters", "n_htags"));
-        // v_cat_modules.emplace_back(new CollectionProducer<TopJet>(ctx, HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_MEDIUM)), "patJetsCa15CHSJetsFilteredPacked_daughters", "h_jets"));
-    } else if (category == "SoftDropCat1htag1btag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
-                1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
-                1, 1)));
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
-    } else if (category == "SoftDropCat1htag2plusbtag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
-                1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
-                2)));
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
-    } else if (category == "SoftDropCat0htag2plusbtag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
-                0, 0)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
-                2)));
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
-    } 
-    else if (category == "SoftDropCat2htag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
-                2)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5
-                )));
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
-    }
-    else if (category == "Test1HTag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
-                1)));
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
-    } else {
+    }  else {
         assert(false);  // a category must be given
     }
 
@@ -327,7 +285,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     
 
     // Selection Producer
-    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_tight, ctx);
+    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_testQCD, ctx);
     sel_helper.declare_items_for_output();
     sel_module.reset(new SelectionProducer(ctx, sel_helper));
 
@@ -360,37 +318,13 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     v_hists.insert(v_hists.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
     v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
 
-    // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-
-    // unsigned pos_cat_cut = 4;
-    // sel_module->insert_selection(pos_cat_cut, cat_check_module.release());
-    // nm1_hists->insert_hists(pos_cat_cut, new HandleHist<DATATYPE>(ctx, dir, name_, title_.c_str(), n_bins_, x_min_, x_max_));
-    // cf_hists->insert_step(pos_cat_cut, "2D cut");
-    // v_hists.insert(v_hists.begin() + pos_cat_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
-
-    // h_ngenleps = ctx.get_handle<int>("n_genleptons");
-
-
-    // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Ele95_CaloIdVT_GsfTrkIdT_v", true));
-    // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Mu40_v", false));
-
-    // if (version.substr(version.size() - 5, 100) == "_Tlep") {
-    //     gen_hists.reset(new VLQ2HTGenHists(ctx, "GenHists"));
-    // }
-
-    // if (version.substr(version.size() - 4, 100) == "Tlep") {
-    //     v_hists_after_sel.emplace_back(new VLQ2HTRecoGenComparison(ctx, "GenRecoHists"));
-    // }
-
-    // writer_module.reset(sel_helper.make_tree_writer(version)); // for TMVA stuff
-
 
 }
 
 
-bool TpTpTightSelection::process(Event & event) {
+bool TpTpTestQCD::process(Event & event) {
 
-    // cout << "TpTpTightSelection: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
+    // cout << "TpTpTestQCD: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
 
     // TEST STUFF HERE
 
@@ -447,4 +381,4 @@ bool TpTpTightSelection::process(Event & event) {
     return all_accepted;
 }
 
-UHH2_REGISTER_ANALYSIS_MODULE(TpTpTightSelection)
+UHH2_REGISTER_ANALYSIS_MODULE(TpTpTestQCD)

@@ -49,7 +49,7 @@ def loader_hook_sigxfactor(wrps, factor=1.):
 
 
 def plotter_factory(sigxfactor=1., **kws):
-    kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
+    # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
     kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, sigxfactor)
     kws['plot_setup'] = gen.mc_stack_n_data_sum
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
