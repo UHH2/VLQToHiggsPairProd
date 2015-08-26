@@ -48,7 +48,7 @@ def loader_hook_sigxfactor(wrps, factor=1.):
     return wrps
 
 
-def plotter_factory(singletfactor=1., sigxfactor=1., **kws):
+def plotter_factory(sigxfactor=1., **kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
     kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, sigxfactor)
     kws['plot_setup'] = gen.mc_stack_n_data_sum

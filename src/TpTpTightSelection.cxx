@@ -61,7 +61,6 @@ private:
 
     // check category
     // unique_ptr<Selection> cat_check_module;
-
     // Event::Handle<int> h_ngenleps;
 };
 

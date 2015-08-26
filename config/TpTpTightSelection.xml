@@ -7,7 +7,7 @@
     <Package Name="SUHH2vlqToHPairProd.par" />
 
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./TpTpTightSelection_test/" PostFix="" TargetLumi="5000." > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="5000." >
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="42.477" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="6" OutputDirectory="./tptppresel_output/" PostFix="" TargetLumi="10000" > -->
         
         <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Ele" Cacheable="True">

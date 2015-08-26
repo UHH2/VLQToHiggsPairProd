@@ -3,7 +3,8 @@
 
 # import UHH2.VLQSemiLepPreSel.vlq_settings as vlq_settings
 # import UHH2.VLQSemiLepPreSel.common as common
-import sframe_tools
+import loose_sframe
+import tight_sframe
 import sensitivity
 # import tex_content
 
@@ -13,7 +14,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 
-dir_name = 'TpTpTightSelection'
+dir_name = 'TpTpLooseSelection'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 
