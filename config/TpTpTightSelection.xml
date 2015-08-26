@@ -6,188 +6,244 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="5000." >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="5000." > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./TpTpTightSelection_test/" PostFix="" TargetLumi="5000." > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="5000." >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="6" OutputDirectory="./tptppresel_output/" PostFix="" TargetLumi="10000" > -->
         
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Ele" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.DATA.Run2015B_Ele.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thth" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thth.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Mu" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.DATA.Run2015B_Mu.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thth_onelep" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thth.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Had" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.DATA.Run2015B_Had.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thtz" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thtz.root" Lumi="0.0"/>
+        <InputData Lumi="822800" NEventsMax="-1" Type="MC" Version="TpTp_M-1000" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thtz_onelep" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thtz.root" Lumi="0.0"/>
+        <InputData Lumi="344000" NEventsMax="100" Type="MC" Version="TpTp_M-1100" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thbw" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thbw.root" Lumi="0.0"/>
+        <InputData Lumi="832800" NEventsMax="100" Type="MC" Version="TpTp_M-1200" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1200.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_thbw_onelep" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_thbw.root" Lumi="0.0"/>
+        <InputData Lumi="830400" NEventsMax="100" Type="MC" Version="TpTp_M-1300" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1300.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_tztz" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_tztz.root" Lumi="0.0"/>
+        <InputData Lumi="822800" NEventsMax="100" Type="MC" Version="TpTp_M-1400" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_tzbw" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_tzbw.root" Lumi="0.0"/>
+        <InputData Lumi="272400" NEventsMax="100" Type="MC" Version="TpTp_M-1500" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="211058." NEventsMax="-1" Type="MC" Version="TpTp_M1000_bwbw" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TpTp_M1000_bwbw.root" Lumi="0.0"/>
+        <InputData Lumi="505200" NEventsMax="100" Type="MC" Version="TpTp_M-1600" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-
-        <InputData Lumi="31568.03" NEventsMax="-1" Type="MC" Version="TTJets" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.TTJets.root" Lumi="0.0"/>
+        <InputData Lumi="391600" NEventsMax="100" Type="MC" Version="TpTp_M-1700" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <InputData Lumi="18944.66" NEventsMax="-1" Type="MC" Version="ZJets_LL_HT100to200" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.ZJets_LL_HT100to200.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="81156.45" NEventsMax="-1" Type="MC" Version="ZJets_LL_HT200to400" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.ZJets_LL_HT200to400.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="684912.7" NEventsMax="-1" Type="MC" Version="ZJets_LL_HT400to600" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.ZJets_LL_HT400to600.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="1872322" NEventsMax="-1" Type="MC" Version="ZJets_LL_HT600toInf" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.ZJets_LL_HT600toInf.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="2354.480" NEventsMax="-1" Type="MC" Version="WJets_LNu_HT100to200" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT100to200.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="8510.477" NEventsMax="-1" Type="MC" Version="WJets_LNu_HT200to400" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT200to400.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="67844.94" NEventsMax="-1" Type="MC" Version="WJets_LNu_HT400to600" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT400to600.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="198348.0" NEventsMax="-1" Type="MC" Version="WJets_LNu_HT600toInf" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT600toInf.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="2.98914" NEventsMax="-1" Type="MC" Version="QCD_HT250to500" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.QCD_HT250to500.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="120.2061" NEventsMax="-1" Type="MC" Version="QCD_HT500to1000" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.QCD_HT500to1000.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
-
-        </InputData>
-
-        <InputData Lumi="1469.039" NEventsMax="-1" Type="MC" Version="QCD_HT1000toInf" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.QCD_HT1000toInf.root" Lumi="0.0"/>
+        <InputData Lumi="227000" NEventsMax="100" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-
         </InputData>
 
-        <!-- <InputData Lumi="10000." NEventsMax="-1" Type="MC" Version="QCD" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_0_pre6/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection_output/Version1/uhh2.AnalysisModuleRunner.MC.QCD.root" Lumi="0.0"/>
+        <InputData Lumi="798600" NEventsMax="100" Type="MC" Version="TpTp_M-700" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />      
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
 
-        </InputData> -->
+        <InputData Lumi="822000" NEventsMax="100" Type="MC" Version="TpTp_M-800" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-800.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="832800" NEventsMax="100" Type="MC" Version="TpTp_M-900" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-900.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="0.00268666002688567" NEventsMax="100" Type="MC" Version="QCD_Pt15to30" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to30.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="0.0347632262367667" NEventsMax="100" Type="MC" Version="QCD_Pt30to50" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="0.258639471368391" NEventsMax="100" Type="MC" Version="QCD_Pt50to80" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt50to80.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="1.25429262306654" NEventsMax="100" Type="MC" Version="QCD_Pt80to120" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt80to120.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="7.31523455741881" NEventsMax="100" Type="MC" Version="QCD_Pt120to170" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt120to170.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="29.3160237388724" NEventsMax="100" Type="MC" Version="QCD_Pt170to300" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt170to300.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="374.61050747795" NEventsMax="100" Type="MC" Version="QCD_Pt300to470" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt300to470.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="2991.71397716754" NEventsMax="100" Type="MC" Version="QCD_Pt470to600" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt470to600.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="10113.7292669877" NEventsMax="100" Type="MC" Version="QCD_Pt600to800" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt600to800.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="59186.0774780912" NEventsMax="100" Type="MC" Version="QCD_Pt800to1000" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt800to1000.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="155146.470169776" NEventsMax="100" Type="MC" Version="QCD_Pt1000to1400" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt1000to1400.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="234924.345813802" NEventsMax="100" Type="MC" Version="QCD_Pt1400to1800" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt1400to1800.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="1695831.84708943" NEventsMax="100" Type="MC" Version="QCD_Pt1800to2400" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt1800to2400.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="29046635.2651099" NEventsMax="100" Type="MC" Version="QCD_Pt2400to3200" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt2400to3200.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="1140536129.83167" NEventsMax="100" Type="MC" Version="QCD_Pt3200toInf" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.QCD_Pt3200toInf.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="24100.7" NEventsMax="5000" Type="MC" Version="TTbar" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="60492481.7" NEventsMax="100" Type="MC" Version="WJets" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.WJets.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="24012027.4" NEventsMax="100" Type="MC" Version="ZJetsM10to50" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.ZJetsM10to50.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="51947416.4" NEventsMax="100" Type="MC" Version="ZJetsM50toInf" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.ZJetsM50toInf.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="3799299.8" NEventsMax="100" Type="MC" Version="SingleT_tChannel" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.SingleT_tChannel.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="28089.89" NEventsMax="100" Type="MC" Version="SingleT_WAntitop" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.SingleT_WAntitop.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="28044.9" NEventsMax="100" Type="MC" Version="SingleT_WTop" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/EventLooptAndPlots_v0/SFrame/uhh2.AnalysisModuleRunner.MC.SingleT_WTop.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
-            <Item Name="ElectronCollection" Value="slimmedElectrons" />
-            <Item Name="MuonCollection" Value="slimmedMuons" /> 
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
             <Item Name="TauCollection" Value="slimmedTaus" />
-            <!-- <Item Name="JetCollection" Value="slimmedJets" /> -->
-            <Item Name="JetCollection" Value="patJetsAk4PFCHS" />
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="TopJetCollection" Value="slimmedJetsAK8_CMSTopTag" />
             <Item Name="METName" Value="slimmedMETs" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
-            <Item Name="GenJetCollection" Value="slimmedGenJets" />
-            <!-- <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" /> -->
-            <Item Name="TopJetCollection" Value="patJetsCmsTopTagCHSPacked" />
-            <Item Name="GenTopJetCollection" Value="cmsTopTagGen" />
-
-            <Item Name="additionalBranches" Value="patJetsHepTopTagCHSPacked patJetsCa8CHSJetsPrunedPacked patJetsCa15CHSJetsFilteredPacked" />
+            <Item Name="additionalBranches" Value="slimmedMETsPuppi triggerNames triggerResults slimmedJetsPuppi patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsFilteredPacked_daughters patJetsHepTopTagCHSPacked_daughters" />
 
 
             <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:
@@ -224,16 +280,19 @@
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
+            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
+            <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+
             <Item Name="use_sframe_weight" Value="false" />
-            
-            <!-- configuration for MCPileupReweight (run as part of CommonModules): -->
-            <Item Name="pileup_directory" Value="" />
+
+            <Item Name="pileup_directory_data" Value="/nfs/dust/cms/user/reimersa/LQToTopMu/Run2/MCPUReweight/uhh2.AnalysisModuleRunner.DATA.DATA.root"/>
+            <Item Name="pileup_directory_50ns" Value="/nfs/dust/cms/user/mameyer/TTDMDM/preselection_RunII/uhh2.AnalysisModuleRunner.MC.TTbar.root"/>
             
             <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
             <Item Name="TestKey" Value="TestKeyValue" />
 
             <!-- define the event category -->
-            <Item Name="category" Value="PrunedCat1htag0btag" />
+            <Item Name="category" Value="SoftDropCat1htag0btag" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>

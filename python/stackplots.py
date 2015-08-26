@@ -23,10 +23,10 @@ def norm_siingletfactor(wrps, factor=1.):
             w = varial.op.norm_to_lumi(w)
         yield w
 
-def loader_hook_norm_singlet_sig(wrps, singletfactor=1., sigxfactor=1.):
+def loader_hook_norm_sig(wrps, sigxfactor=1.):
     wrps = common_vlq.add_wrp_info(wrps)
     wrps = gen.sort(wrps)
-    wrps = norm_siingletfactor(wrps, singletfactor)
+    # wrps = norm_siingletfactor(wrps, singletfactor)
     wrps = common_vlq.merge_samples(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
@@ -50,7 +50,7 @@ def loader_hook_sigxfactor(wrps, factor=1.):
 
 def plotter_factory(singletfactor=1., sigxfactor=1., **kws):
     kws['filter_keyfunc'] = lambda w: 'TH1' in w.type
-    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_singlet_sig(w, singletfactor, sigxfactor)
+    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, sigxfactor)
     kws['plot_setup'] = gen.mc_stack_n_data_sum
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
