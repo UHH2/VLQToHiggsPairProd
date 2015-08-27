@@ -11,7 +11,7 @@ typedef SelectionItemData<double>   SelDatD;
 
 static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_loose {
     shared_ptr<SelectionItem>(new SelDatI("n_leptons",              "N_{lepton}",                             11, -.5, 10.5         ,1      )),
-    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     100,  0, 5000         ,700    )),
+    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     60,  0, 3000         ,700     )),
     shared_ptr<SelectionItem>(new SelDatF("leading_jet_pt",         "leading jet p_{T}",                      50,   0, 1500         ,200    )),
     
     shared_ptr<SelectionItem>(new SelDatI("n_jets",                 "N_{jet}",                                21, -.5, 20.5                 )),
@@ -51,7 +51,7 @@ static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_tight_base {
     shared_ptr<SelectionItem>(new SelDatI("n_toptags",              "N_{Top Tags}",                           11, -.5, 10.5         ,1      )),
 
     shared_ptr<SelectionItem>(new SelDatI("n_leptons",              "N_{lepton}",                             11, -.5, 10.5                 )),
-    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     100,  0, 5000                 )),
+    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     60,  0, 3000                  )),
     shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca15",      "N_{H Tags (CA15)}",                      11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca15_notop", "N_{H Tags (CA15), no top}",             11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatF("leading_topjet_pt",      "leading topjet p_{T}",                   15,   0, 1500                 )),
@@ -82,7 +82,7 @@ static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_testQCD_base {
     shared_ptr<SelectionItem>(new SelDatF("subleading_jet_pt",      "sub-leading jet p_{T}",                  15,   0, 1500                 )),
     shared_ptr<SelectionItem>(new SelDatI("n_toptags",              "N_{Top Tags}",                           11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatI("n_leptons",              "N_{lepton}",                             11, -.5, 10.5                 )),
-    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     100,  0, 5000                 )),
+    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     60,  0, 3000                  )),
     shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca15",      "N_{H Tags (CA15)}",                      11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ca15_notop", "N_{H Tags (CA15), no top}",             11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatF("leading_topjet_pt",      "leading topjet p_{T}",                   15,   0, 1500                 )),
