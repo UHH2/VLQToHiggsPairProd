@@ -74,3 +74,34 @@ sframe_tools = varial.tools.ToolChain(
         # mk_sframe_and_plot_tools('SoftDropCat2htag')
     ]
 )
+
+# to test QCD:
+
+sframe_cfg_qcd_test = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTestQCD.xml'
+
+def mk_sframe_and_plot_tools_qcd_test(catname):
+    """Makes a toolchain for one category with sframe and plots."""
+    sframe = SFrame(
+        cfg_filename=sframe_cfg_qcd_test,
+        xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+    )
+    plots = varial.tools.ToolChainParallel(
+        'Plots',
+        lazy_eval_tools_func=lambda: tight_plot.mk_tools()
+    )
+    tc = varial.tools.ToolChain(
+        catname,
+        [
+            sframe,
+            plots
+        ]
+    )
+    return tc
+
+sframe_tools_qcd_test = varial.tools.ToolChain(
+    'EventLoopAndPlots_v0',
+    [
+        # mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
+        mk_sframe_and_plot_tools_qcd_test('EnrichQCD')
+    ]
+)

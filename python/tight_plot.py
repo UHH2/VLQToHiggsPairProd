@@ -96,9 +96,6 @@ final_dir = 'Plots'
 def mk_tools():
 
     return [
-        # p1,
-        # p5,
-        # p2,
         # varial.tools.mk_rootfile_plotter(
         #     pattern= file_stack_nosplit(),
         #     name='StackedSigNoSplit',

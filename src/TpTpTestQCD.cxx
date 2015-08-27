@@ -49,7 +49,7 @@ private:
     string version, type;
     // modules for setting up collections and cleaning
     vector<unique_ptr<AnalysisModule>> v_pre_modules;
-    unique_ptr<AnalysisModule> sel_module;
+    unique_ptr<SelectionProducer> sel_module;
     // unique_ptr<AnalysisModule> writer_module; // for TMVA stuff
 
     // store the Hists collection
@@ -244,19 +244,28 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     // deleted at the end of one cycle)
     SEL_ITEMS_VLQPair_testQCD = SEL_ITEMS_VLQPair_testQCD_base;
 
-    unsigned pos_cut = 1;
+    unsigned pos_cut = 0;
     bool apply_2d_cut = false;
     // higgs tag with filtered jets
     if (category == "RejectQCD") {
-        // apply_2d_cut = true;
+        apply_2d_cut = true;
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N_{Top Tags}", 11, -.5, 10.5,
-                1)));
+            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
+                2)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
+                100.)));
+        pos_cut += 2;
 
     } else if (category == "EnrichQCD") {
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N_{Top Tags}", 11, -.5, 10.5,
+            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 0, 0)));
+
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
+                0., 100.)));
+        pos_cut += 2;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     }  else {
         assert(false);  // a category must be given
@@ -296,10 +305,10 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
-    auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
+    // auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
-    v_hists.emplace_back(stsel_hists);
+    // v_hists.emplace_back(stsel_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
     
     if (type == "MC") {
@@ -311,12 +320,14 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     }
 
     // append 2D cut
-    unsigned pos_2d_cut = 5;
-    // sel_module->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, DR_2D_CUT_PRESEL, DPT_2D_CUT_PRESEL));
-    // nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, "Nm1Selection"));
-    // cf_hists->insert_step(pos_2d_cut, "2D cut");
-    v_hists.insert(v_hists.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
-    v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
+    if (apply_2d_cut) {
+        sel_module->insert_selection(pos_cut, new TwoDCutSel(ctx, 0.4, 500.));
+        nm1_hists->insert_hists(pos_cut, new TwoDCutHist(ctx, "Nm1Selection"));
+        cf_hists->insert_step(pos_cut, "2D cut");
+        // stsel_hists->insert_hists(pos_cut, new TwoDCutHist(ctx, "Nm1Selection"));
+    }
+    v_hists.insert(v_hists.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
+    v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
 
 
 }
