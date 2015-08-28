@@ -30,6 +30,7 @@
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
 
 
 using namespace std;
@@ -110,40 +111,64 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
         v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
         apply_2d_cut = true;
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+                0)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 2)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
                 1.)));
-        pos_cut += 2;
+        pos_cut += 3;
 
     } else if (category == "EnrichQCD") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
+        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+                0)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 0, 0)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
                 1., 100.)));
-        pos_cut += 2;
+        pos_cut += 3;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     }  else if (category == "NoSelectionNoPrimLepPtReq") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); 
+        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton"));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+                0)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
                 1.)));
-        pos_cut += 2;
+        pos_cut += 3;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     } else if (category == "NoSelectionWithPrimLepPtReq") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
+        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+                0)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
                 1.)));
-        pos_cut += 2;
+        pos_cut += 3;
+        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
+    } else if (category == "OnlyMuons") {
+        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 99999., 50.));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+                1)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
+                50.)));
+        pos_cut += 3;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     } else {
         assert(false);  // a category must be given
@@ -305,15 +330,15 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
 
     v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
     v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
-    // if (version == "Run2015B_Mu") {
-    //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS_DATA, "trigger_accept"));
+    if (version == "Run2015B_Mu") {
+        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
     // } else if (version == "Run2015B_Ele") {
     //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS_DATA, PRESEL_TRIGGER_PATHS_DATA_ELE_VETO, "trigger_accept"));
     // } else if (version == "Run2015B_Had") {
     //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS_DATA, PRESEL_TRIGGER_PATHS_DATA_HAD_VETO, "trigger_accept"));
-    // } else {
-    //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS, "trigger_accept"));
-    // }
+    } else {
+        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
+    }
 
 
     
@@ -336,13 +361,13 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     v_hists.emplace_back(noprimlepsel_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
     
-    // if (type == "MC") {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-    //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-    // } else {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
-    //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
-    // }
+    if (type == "MC") {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+        v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+    } else {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+        v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+    }
 
     // append 2D cut
     if (apply_2d_cut) {

@@ -6,21 +6,21 @@ import tight_plot
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelection.xml'
 
 tptp_tight_datasets = [
-    'Run2015B_Ele',
+    # 'Run2015B_Ele',
     'Run2015B_Mu',
-    'Run2015B_Had',
+    # 'Run2015B_Had',
     # 'TpTp_M-700',
-    'TpTp_M-800',
+    # 'TpTp_M-800',
     # 'TpTp_M-900',
     # 'TpTp_M-1000',
     # 'TpTp_M-1100',
     # 'TpTp_M-1200',
-    'TpTp_M-1300',
+    # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
     # 'TpTp_M-1600',
     # 'TpTp_M-1700',
-    'TpTp_M-1800',
+    # 'TpTp_M-1800',
     'QCD_Pt15to30',
     'QCD_Pt30to50',
     'QCD_Pt50to80',
@@ -101,9 +101,10 @@ def mk_sframe_and_plot_tools_qcd_test(catname):
 sframe_tools_qcd_test = varial.tools.ToolChain(
     'EventLoopAndPlots_v1_with_prim_lep_pt_req',
     [
-        mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
+        # mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
         # mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),
         # mk_sframe_and_plot_tools_qcd_test('NoSelectionNoPrimLepPtReq'),
         # mk_sframe_and_plot_tools_qcd_test('NoSelectionWithPrimLepPtReq')
+        mk_sframe_and_plot_tools_qcd_test('OnlyMuons'),
     ]
 )

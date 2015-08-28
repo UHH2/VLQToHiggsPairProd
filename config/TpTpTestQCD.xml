@@ -292,7 +292,7 @@
             <Item Name="TestKey" Value="TestKeyValue" />
 
             <!-- define the event category -->
-            <Item Name="category" Value="RejectQCD" />
+            <Item Name="category" Value="OnlyMuons" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>
