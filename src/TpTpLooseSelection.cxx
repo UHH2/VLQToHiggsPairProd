@@ -339,10 +339,10 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
-    auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
+    // auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
-    v_hists.emplace_back(stsel_hists);
+    // v_hists.emplace_back(stsel_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
 
     if (type == "MC") {

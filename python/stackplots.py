@@ -31,6 +31,7 @@ def loader_hook_norm_sig(wrps, sigxfactor=1.):
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
     wrps = norm_sigxfactor(wrps, sigxfactor)
+    wrps = gen.gen_make_th2_projections(wrps)
     return wrps
 
 def loader_hook(wrps):
