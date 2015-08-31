@@ -21,9 +21,9 @@ tptp_tight_datasets = [
     # 'TpTp_M-1600',
     # 'TpTp_M-1700',
     # 'TpTp_M-1800',
-    'QCD_Pt15to30',
-    'QCD_Pt30to50',
-    'QCD_Pt50to80',
+    # 'QCD_Pt15to30',
+    # 'QCD_Pt30to50',
+    # 'QCD_Pt50to80',
     'QCD_Pt80to120',
     'QCD_Pt120to170',
     'QCD_Pt170to300',
@@ -77,7 +77,7 @@ sframe_tools = varial.tools.ToolChain(
 
 # for control regions:
 
-sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTestQCD.xml'
+sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpControlRegion.xml'
 
 def mk_sframe_and_plot_tools_control_region(catname):
     """Makes a toolchain for one category with sframe and plots."""
@@ -99,7 +99,7 @@ def mk_sframe_and_plot_tools_control_region(catname):
     return tc
 
 sframe_tools_control_region = varial.tools.ToolChain(
-    'EventLoopAndPlots_v0',
+    'EventLoopAndPlots_v1',
     [
         mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBVeto'),
         mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTMassInvert'),

@@ -487,7 +487,6 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
     // TODO: continue with making SelectionItems vector, insert other selections (top tag, b tags etc...)?
 
-
     // Other CutProducers
     v_pre_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
