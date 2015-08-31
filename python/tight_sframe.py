@@ -6,9 +6,9 @@ import tight_plot
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelection.xml'
 
 tptp_tight_datasets = [
-    # 'Run2015B_Ele',
+    'Run2015B_Ele',
     'Run2015B_Mu',
-    # 'Run2015B_Had',
+    'Run2015B_Had',
     # 'TpTp_M-700',
     # 'TpTp_M-800',
     # 'TpTp_M-900',
@@ -72,6 +72,39 @@ sframe_tools = varial.tools.ToolChain(
         # mk_sframe_and_plot_tools('SoftDropCat1htag2plusbtag'),
         mk_sframe_and_plot_tools('SoftDropCat0htag2plusbtag'),
         # mk_sframe_and_plot_tools('SoftDropCat2htag')
+    ]
+)
+
+# for control regions:
+
+sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTestQCD.xml'
+
+def mk_sframe_and_plot_tools_control_region(catname):
+    """Makes a toolchain for one category with sframe and plots."""
+    sframe = SFrame(
+        cfg_filename=sframe_cfg_control_region,
+        xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+    )
+    plots = varial.tools.ToolChainParallel(
+        'Plots',
+        lazy_eval_tools_func=lambda: tight_plot.mk_tools()
+    )
+    tc = varial.tools.ToolChain(
+        catname,
+        [
+            sframe,
+            plots
+        ]
+    )
+    return tc
+
+sframe_tools_control_region = varial.tools.ToolChain(
+    'EventLoopAndPlots_v0',
+    [
+        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBVeto'),
+        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTMassInvert'),
+        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBigTau21'),
+        mk_sframe_and_plot_tools_control_region('1HiggsTag')
     ]
 )
 
