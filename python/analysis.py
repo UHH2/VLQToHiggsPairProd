@@ -14,7 +14,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 
-dir_name = 'TpTpLooseSelection'
+dir_name = 'TpTpControlRegion'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 
@@ -28,7 +28,7 @@ tc = varial.tools.ToolChain(
            uhh_base + 'VLQToHiggsPairProd',
         ]),
         varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
-        loose_sframe.sframe_tools,
+        tight_sframe.sframe_tools_control_region,
         # sensitivity.mk_tc(),
         varial.tools.GitTagger(),
         varial.tools.WebCreator(no_tool_check=True),
