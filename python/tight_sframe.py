@@ -132,7 +132,7 @@ def mk_sframe_and_plot_tools_qcd_test(catname):
     return tc
 
 sframe_tools_qcd_test = varial.tools.ToolChain(
-    'EventLoopAndPlots_v2_after_preselection',
+    'EventLoopAndPlots_v3_after_preselection',
     [
         mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
         mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),

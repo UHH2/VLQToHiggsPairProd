@@ -114,8 +114,7 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
             shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 60, 0, 3000,
                 700.)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
-                0)));
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 2)));
@@ -130,8 +129,7 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
             shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 60, 0, 3000,
                 700.)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
-                0)));
+            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 0, 0)));
