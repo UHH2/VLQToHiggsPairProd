@@ -109,66 +109,76 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     // higgs tag with filtered jets
     if (category == "RejectQCD") {
         v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
-        apply_2d_cut = true;
+        // apply_2d_cut = true;
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 60, 0, 3000,
+                700.)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
                 0)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 2)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+3, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 90, 0, 900,
                 1.)));
-        pos_cut += 3;
+        pos_cut += 4;
 
     } else if (category == "EnrichQCD") {
         v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 60, 0, 3000,
+                700.)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
                 0)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
             shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
                 0, 0)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+3, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 90, 0, 900,
                 1., 100.)));
-        pos_cut += 3;
+        pos_cut += 4;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
-    }  else if (category == "NoSelectionNoPrimLepPtReq") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton"));
+    // }  else if (category == "NoSelectionNoPrimLepPtReq") {
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton"));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
+    //         shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+    //             0)));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
+    //         shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+3, 
+    //         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 90, 0, 900,
+    //             1.)));
+    //     pos_cut += 4;
+    //     // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
+    // } else if (category == "NoSelectionWithPrimLepPtReq") {
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
+    //         shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
+    //             0)));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
+    //         shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
+    //     SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+3, 
+    //         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 90, 0, 900,
+    //             1.)));
+    //     pos_cut += 4;
+    //     // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
+    } else if (category == "RejectQCDOnlyMuons") {
+        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 99999., 55.));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
-                0)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
+            shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 60, 0, 3000,
+                700.)));
         SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
-                1.)));
-        pos_cut += 3;
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
-    } else if (category == "NoSelectionWithPrimLepPtReq") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
-                0)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
-                1.)));
-        pos_cut += 3;
-        // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
-    } else if (category == "OnlyMuons") {
-        v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 99999., 50.));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("trigger_accept", "trigger accept", 2, -.5, 1.5,
                 1)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5)));
-        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+1, 
-            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 15, 0, 1500,
-                50.)));
-        pos_cut += 3;
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+2, 
+            shared_ptr<SelectionItem>(new SelDatI("n_btags", "N_{B Tags}", 11, -.5, 10.5,
+                2)));
+        SEL_ITEMS_VLQPair_testQCD.insert(SEL_ITEMS_VLQPair_testQCD.begin()+pos_cut+3, 
+            shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "primary lepton p_{T}", 90, 0, 900,
+                55.)));
+        pos_cut += 4;
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     } else {
         assert(false);  // a category must be given
@@ -332,10 +342,10 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
     if (version == "Run2015B_Mu") {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
-    // } else if (version == "Run2015B_Ele") {
-    //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS_DATA, PRESEL_TRIGGER_PATHS_DATA_ELE_VETO, "trigger_accept"));
-    // } else if (version == "Run2015B_Had") {
-    //     v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, PRESEL_TRIGGER_PATHS_DATA, PRESEL_TRIGGER_PATHS_DATA_HAD_VETO, "trigger_accept"));
+    } else if (version == "Run2015B_Ele") {
+        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
+    } else if (version == "Run2015B_Had") {
+        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
     } else {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
     }
@@ -355,10 +365,14 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
-    auto noprimlepsel_hists = new SelectedSelHists(ctx, "NoPrimLepCut", sel_helper, {}, {"primary_lepton_pt"});
+    auto nost_hists = new SelectedSelHists(ctx, "NoSTCut", sel_helper, {}, {"ST"});
+    auto nobtag_hists = new SelectedSelHists(ctx, "NoBTagCut", sel_helper, {}, {"n_btags"});
+    auto nostandbtag_hists = new SelectedSelHists(ctx, "NoSTAndBTagCut", sel_helper, {}, {"ST", "n_btags"});
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
-    v_hists.emplace_back(noprimlepsel_hists);
+    v_hists.emplace_back(nost_hists);
+    v_hists.emplace_back(nobtag_hists);
+    v_hists.emplace_back(nostandbtag_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
     
     if (type == "MC") {
@@ -374,7 +388,9 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
         sel_module->insert_selection(pos_cut, new TwoDCutSel(ctx, 0.4, 500.));
         nm1_hists->insert_hists(pos_cut, new TwoDCutHist(ctx, "Nm1Selection"));
         cf_hists->insert_step(pos_cut, "2D cut");
-        noprimlepsel_hists->insert_hist_and_sel(pos_cut, new TwoDCutHist(ctx, "NoPrimLepCut"), "TwoDCut");
+        nost_hists->insert_hist_and_sel(pos_cut, new TwoDCutHist(ctx, "NoSTCut"), "TwoDCut");
+        nobtag_hists->insert_hist_and_sel(pos_cut, new TwoDCutHist(ctx, "NoBTagCut"), "TwoDCut");
+        nostandbtag_hists->insert_hist_and_sel(pos_cut, new TwoDCutHist(ctx, "NoSTAndBTagCut"), "TwoDCut");
     }
     v_hists.insert(v_hists.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
     v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));

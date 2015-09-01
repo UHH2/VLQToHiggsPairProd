@@ -25,7 +25,7 @@ import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 
 # varial.settings.use_parallel_chains = False
 
-normfactor = 1.
+normfactor = 20.
 
 def only_tptp(filename):
     return not ('BpJ' in filename or 'TpJ' in filename)

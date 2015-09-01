@@ -132,12 +132,12 @@ def mk_sframe_and_plot_tools_qcd_test(catname):
     return tc
 
 sframe_tools_qcd_test = varial.tools.ToolChain(
-    'EventLoopAndPlots_v1_with_prim_lep_pt_req',
+    'EventLoopAndPlots_v2_after_preselection',
     [
-        # mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
-        # mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),
+        mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
+        mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),
         # mk_sframe_and_plot_tools_qcd_test('NoSelectionNoPrimLepPtReq'),
         # mk_sframe_and_plot_tools_qcd_test('NoSelectionWithPrimLepPtReq')
-        mk_sframe_and_plot_tools_qcd_test('OnlyMuons'),
+        mk_sframe_and_plot_tools_qcd_test('RejectQCDOnlyMuons'),
     ]
 )
