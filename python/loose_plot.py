@@ -64,6 +64,7 @@ def mk_tools():
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
+        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), stackplots.loader_hook)
         ]
 
 if __name__ == '__main__':

@@ -12,6 +12,53 @@
 using namespace std;
 using namespace uhh2;
 
+namespace vlqToHiggsPair {
+
+inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
+                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_cut,
+                              int cut_min=-999., int cut_max=999.) {
+    modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                name,
+                "n_"+name
+                ));
+    modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+                name,
+                "mass_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                name,
+                "mass_sj_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
+                name,
+                "tau21_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
+                name,
+                "tau32_ld_"+name,
+                false
+                ));
+    modules.emplace_back(new PartPtProducer<TopJet>(ctx,
+                name,
+                "pt_ld_"+name,
+                1));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_"+name, "N_"+name, 11, -.5, 10.5,
+                cut_min, cut_max)));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+name, "Mass_leading_"+name, 60, 0., 300.)));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+name, "Mass_subjets_leading_"+name, 60, 0., 300.)));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+name, "Tau21_leading_"+name, 50, 0., 1.)));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+name, "Tau32_leading_"+name, 50, 0., 1.)));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+name, "Pt_leading_"+name, 15, 0., 1500.)));
+}
+
+}
+
 class NeutrinoParticleProducer: public AnalysisModule {
 public:
     explicit NeutrinoParticleProducer(Context & ctx,

@@ -163,7 +163,7 @@ def mk_tools():
         # #     plotter_factory=normplots.plotter_factory,
         # #     combine_files=True,
         # #     ),
-        # cutflow_tables.mk_cutflow_chain(file_stack_all(), stackplots.loader_hook)
+        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), stackplots.loader_hook)
         ]
 
 if __name__ == '__main__':

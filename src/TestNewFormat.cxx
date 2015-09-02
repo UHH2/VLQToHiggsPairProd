@@ -192,7 +192,7 @@ TestNewFormat::TestNewFormat(Context & ctx) {
 
 
     // Selection Producer
-    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_loose, ctx);
+    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_loose_base, ctx);
     sel_helper.declare_items_for_output();
     sel_module.reset(new SelectionProducer(ctx, sel_helper));
     

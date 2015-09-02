@@ -104,6 +104,7 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     // deleted at the end of one cycle)
     SEL_ITEMS_VLQPair_testQCD = SEL_ITEMS_VLQPair_testQCD_base;
 
+
     unsigned pos_cut = 0;
     bool apply_2d_cut = false;
     // higgs tag with filtered jets
