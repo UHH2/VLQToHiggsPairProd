@@ -310,7 +310,6 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
 
 
-
     // Other CutProducers
     v_pre_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));

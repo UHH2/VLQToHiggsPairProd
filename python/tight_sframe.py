@@ -13,14 +13,14 @@ tptp_tight_datasets = [
     'TpTp_M-800',
     # 'TpTp_M-900',
     # 'TpTp_M-1000',
-    # 'TpTp_M-1100',
+    'TpTp_M-1100',
     # 'TpTp_M-1200',
-    'TpTp_M-1300',
+    # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
-    # 'TpTp_M-1600',
+    'TpTp_M-1600',
     # 'TpTp_M-1700',
-    'TpTp_M-1800',
+    # 'TpTp_M-1800',
     # 'QCD_Pt15to30',
     # 'QCD_Pt30to50',
     # 'QCD_Pt50to80',
@@ -99,12 +99,12 @@ def mk_sframe_and_plot_tools_control_region(catname):
     return tc
 
 sframe_tools_control_region = varial.tools.ToolChain(
-    'EventLoopAndPlots_v1',
+    'FilesAndPlots_v2',
     [
-        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBVeto'),
-        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTMassInvert'),
-        mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBigTau21'),
-        mk_sframe_and_plot_tools_control_region('1HiggsTag')
+        # mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBVeto'),
+        # mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTMassInvert'),
+        # mk_sframe_and_plot_tools_control_region('0HiggsTags1AntiHTBigTau21'),
+        mk_sframe_and_plot_tools_control_region('1HiggsTagSignalRegion')
     ]
 )
 
@@ -132,7 +132,7 @@ def mk_sframe_and_plot_tools_qcd_test(catname):
     return tc
 
 sframe_tools_qcd_test = varial.tools.ToolChain(
-    'EventLoopAndPlots_v3_after_preselection',
+    'EventLoopAndPlots_v4_after_corrected_preselection',
     [
         mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
         mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),

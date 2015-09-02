@@ -204,11 +204,11 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
                 "toptags",
                 TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "topjets",
-                "n_toptags",
-                TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
-                ));
+    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "topjets",
+    //             "n_toptags",
+    //             TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
+    //             ));
 
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
@@ -221,21 +221,21 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
                 "higgs_tags_ca15",
                 TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "patJetsCa15CHSJetsFilteredPacked_daughters",
-                "n_higgs_tags_ca15",
-                TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
-                ));
+    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "patJetsCa15CHSJetsFilteredPacked_daughters",
+    //             "n_higgs_tags_ca15",
+    //             TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
+    //             ));
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsAk8CHSJetsSoftDropPacked_daughters",
                 "higgs_tags_ak8",
                 TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "patJetsAk8CHSJetsSoftDropPacked_daughters",
-                "n_higgs_tags_ak8",
-                TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
-                ));
+    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
+    //             "n_higgs_tags_ak8",
+    //             TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
+    //             ));
 
     // higgs tags, with top separation
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
@@ -244,24 +244,24 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
                     MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "patJetsCa15CHSJetsFilteredPacked_daughters",
-                "n_higgs_tags_ca15_notop",
-                TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
-                ));
+    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "patJetsCa15CHSJetsFilteredPacked_daughters",
+    //             "n_higgs_tags_ca15_notop",
+    //             TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
+    //                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
+    //             ));
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsAk8CHSJetsSoftDropPacked_daughters",
                 "higgs_tags_ak8_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
                     MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "patJetsAk8CHSJetsSoftDropPacked_daughters",
-                "n_higgs_tags_ak8_notop",
-                TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-                    MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
-                ));
+    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
+    //             "n_higgs_tags_ak8_notop",
+    //             TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
+    //                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
+    //             ));
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
     v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop"));
@@ -281,47 +281,58 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
                 ));
 
     // mass producers
-    v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                "higgs_tags_ca15",
-                "mass_ld_higgs_tag_ca15"
-                ));
-    v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                "higgs_tags_ak8",
-                "mass_ld_higgs_tag_ak8"
-                ));
-    v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                "higgs_tags_ca15_notop",
-                "mass_ld_higgs_tag_ca15_notop"
-                ));
-    v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                "higgs_tags_ak8_notop",
-                "mass_ld_higgs_tag_ak8_notop"
-                ));
-    v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                "toptags",
-                "mass_ld_toptag"
-                ));
+    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+    //             "higgs_tags_ca15",
+    //             "mass_ld_higgs_tag_ca15"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+    //             "higgs_tags_ak8",
+    //             "mass_ld_higgs_tag_ak8"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+    //             "higgs_tags_ca15_notop",
+    //             "mass_ld_higgs_tag_ca15_notop"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+    //             "higgs_tags_ak8_notop",
+    //             "mass_ld_higgs_tag_ak8_notop"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+    //             "toptags",
+    //             "mass_ld_toptag"
+    //             ));
 
-    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "higgs_tags_ca15",
-                "mass_sj_ld_higgs_tag_ca15"
-                ));
-    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "higgs_tags_ak8",
-                "mass_sj_ld_higgs_tag_ak8"
-                ));
-    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "higgs_tags_ca15_notop",
-                "mass_sj_ld_higgs_tag_ca15_notop"
-                ));
-    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "higgs_tags_ak8_notop",
-                "mass_sj_ld_higgs_tag_ak8_notop"
-                ));
-    v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "toptags",
-                "mass_sj_ld_toptag"
-                ));
+    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+    //             "higgs_tags_ca15",
+    //             "mass_sj_ld_higgs_tag_ca15"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+    //             "higgs_tags_ak8",
+    //             "mass_sj_ld_higgs_tag_ak8"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+    //             "higgs_tags_ca15_notop",
+    //             "mass_sj_ld_higgs_tag_ca15_notop"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+    //             "higgs_tags_ak8_notop",
+    //             "mass_sj_ld_higgs_tag_ak8_notop"
+    //             ));
+    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+    //             "toptags",
+    //             "mass_sj_ld_toptag"
+    //             ));
+
+    unsigned insert_sel = 8;
+
+    make_modules_and_selitem("higgs_tags_ca15", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("higgs_tags_ca15_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("higgs_tags_ak8", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
+    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_testQCD, insert_sel);
 
 
     // Other CutProducers
