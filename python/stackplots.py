@@ -43,10 +43,10 @@ def loader_hook(wrps):
     # wrps = norm_sigxfactor(wrps)
     return wrps
 
-def loader_hook_sigxfactor(wrps, factor=1.):
-    wrps = loader_hook(wrps)
-    wrps = norm_sigxfactor(wrps, factor)
-    return wrps
+# def loader_hook_sigxfactor(wrps, factor=1.):
+#     wrps = loader_hook(wrps)
+#     wrps = norm_sigxfactor(wrps, factor)
+#     return wrps
 
 
 def plotter_factory(sigxfactor=1., **kws):

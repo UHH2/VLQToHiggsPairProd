@@ -34,7 +34,7 @@
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="344000" NEventsMax="100" Type="MC" Version="TpTp_M-1100" Cacheable="True">
+        <InputData Lumi="821600" NEventsMax="100" Type="MC" Version="TpTp_M-1100" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
@@ -52,31 +52,31 @@
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="822800" NEventsMax="100" Type="MC" Version="TpTp_M-1400" Cacheable="True">
+        <InputData Lumi="832800" NEventsMax="100" Type="MC" Version="TpTp_M-1400" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="272400" NEventsMax="100" Type="MC" Version="TpTp_M-1500" Cacheable="True">
+        <InputData Lumi="812200" NEventsMax="100" Type="MC" Version="TpTp_M-1500" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="505200" NEventsMax="100" Type="MC" Version="TpTp_M-1600" Cacheable="True">
+        <InputData Lumi="804000" NEventsMax="100" Type="MC" Version="TpTp_M-1600" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="391600" NEventsMax="100" Type="MC" Version="TpTp_M-1700" Cacheable="True">
+        <InputData Lumi="832400" NEventsMax="100" Type="MC" Version="TpTp_M-1700" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="227000" NEventsMax="100" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+        <InputData Lumi="832800" NEventsMax="100" Type="MC" Version="TpTp_M-1800" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
@@ -190,7 +190,7 @@
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="24100.7" NEventsMax="5000" Type="MC" Version="TTbar" Cacheable="True">
+        <InputData Lumi="24100.7" NEventsMax="1000" Type="MC" Version="TTbar" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v2/SFrame/uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
@@ -244,42 +244,12 @@
             <Item Name="METName" Value="slimmedMETsNoHF" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
             <Item Name="additionalBranches" Value="slimmedMETsPuppi triggerNames triggerResults slimmedJetsPuppi patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsFilteredPacked_daughters patJetsHepTopTagCHSPacked_daughters" />
-
-
-            <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:
-            
-                 PrimaryVertexCollection
-                 ElectronCollection
-                 MuonCollection
-                 TauCollection
-                 PhotonCollection
-                 JetCollection
-                 TopJetCollection
-                 METName
-                 
-                 GenInfoName
-                 GenJetCollection
-                 GenTopJetCollection
-                 GenParticleCollection
-                 
-                 Note that the last four are only read in for MC (InputData Type="MC"), so it is save to specify
-                 them for real data, although those branches do not exist.
-                 
-                 As 'Value', always use the branch name (if in doubt, open the input file in ROOT).
-                 
-                 By default, triggers are read. To explicitly disable reading triggers, use:
-                 <Item Name="readTrigger" Value="false" />
-            -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
             <Item Name="AnalysisModule" Value="TpTpControlRegion" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->
-
-            <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
-                 MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
-                 event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
             <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 

@@ -91,6 +91,7 @@ private:
     string version, type;
     // modules for setting up collections and cleaning
     vector<unique_ptr<AnalysisModule>> v_pre_modules;
+    vector<unique_ptr<AnalysisModule>> v_modules;
     unique_ptr<SelectionProducer> sel_module;
     // unique_ptr<AnalysisModule> writer_module; // for TMVA stuff
 
@@ -120,7 +121,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // 1. setup modules to prepare the event.
 
     // EventWeightOutputHandle only needed for TMVA studies
-    // v_pre_modules.emplace_back(new EventWeightOutputHandle(ctx));
+    // v_modules.emplace_back(new EventWeightOutputHandle(ctx));
 
 
     // =====DISABLED FOR RUN II=====:
@@ -130,14 +131,14 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // bool mclumiweight = true;
     // bool mcpileupreweight = true;
 
-    // if(mclumiweight)  v_pre_modules.emplace_back(new MCLumiWeight(ctx));
-    // if(mcpileupreweight) v_pre_modules.emplace_back(new MCPileupReweight(ctx));
-    // v_pre_modules.emplace_back(new ElectronCleaner(PtEtaCut(105.0, 2.4)));
-    // v_pre_modules.emplace_back(new MuonCleaner(PtEtaCut(50.0, 2.1))); // TODO: put the eta cut to 2.1???
-    // v_pre_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4))); // get rid of fwd jets from preselection
-    // v_pre_modules.emplace_back(new PtSorter<Jet>(ctx, "jets"));
-    // v_pre_modules.emplace_back(new PtSorter<Muon>(ctx, "muons"));
-    // v_pre_modules.emplace_back(new PtSorter<Electron>(ctx, "electrons"));
+    // if(mclumiweight)  v_modules.emplace_back(new MCLumiWeight(ctx));
+    // if(mcpileupreweight) v_modules.emplace_back(new MCPileupReweight(ctx));
+    // v_modules.emplace_back(new ElectronCleaner(PtEtaCut(105.0, 2.4)));
+    // v_modules.emplace_back(new MuonCleaner(PtEtaCut(50.0, 2.1))); // TODO: put the eta cut to 2.1???
+    // v_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4))); // get rid of fwd jets from preselection
+    // v_modules.emplace_back(new PtSorter<Jet>(ctx, "jets"));
+    // v_modules.emplace_back(new PtSorter<Muon>(ctx, "muons"));
+    // v_modules.emplace_back(new PtSorter<Electron>(ctx, "electrons"));
 
     // =====ADDED FOR RUN II======:
     // what CommonModules now does:
@@ -145,6 +146,39 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // * apply MC pileupreweight and lumiweight
     // * apply JEC and JER smearing (if not already done, should throw warning if that's the case)
     // * does LumiSelection, so only allows good events
+
+    // std::string trigger_name, trigger_data_name;
+    // bool set_trigger = false;
+
+    // if (category == "EleNonIso") {
+    //     trigger_name = "HLT_Ele105_CaloIdVT_GsfTrkIdT_v*";
+    //     trigger_data_name = "HLT_Ele105_CaloIdVT_GsfTrkIdT_v";
+    //     set_trigger = true;
+    //     // v_pre_modules.emplace_back(ElectronCleaner(ElectronID_Spring15_50ns_medium_noIso));
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 9999.)); 
+    // } else if (category == "EleIso") {
+    //     trigger_name = "HLT_Ele32_eta2p1_WP75_Gsf_v*";
+    //     trigger_data_name = "HLT_Ele32_eta2p1_WPLoose_Gsf_v";
+    //     set_trigger = true;
+    //     v_pre_modules.emplace_back(ElectronCleaner(ElectronID_Spring15_50ns_medium));
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 40., 9999.)); 
+    // } else if (category == "MuonNonIso") {
+    //     trigger_name = "HLT_Mu45_eta2p1_v*";
+    //     trigger_data_name = "HLT_Mu45_eta2p1_v";
+    //     set_trigger = true;
+    //     // v_pre_modules.emplace_back(MuonCleaner(MuonIso()));
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999., 55.)); 
+    // } else if (category == "MuonIso") {
+    //     trigger_name = "HLT_IsoMu24_eta2p1_v*";
+    //     trigger_data_name = "HLT_IsoMu24_eta2p1_v";
+    //     set_trigger = true;
+    //     v_pre_modules.emplace_back(MuonCleaner(MuonIso()));
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999., 35.)); 
+    // } else if (category == "AllTriggers") {
+    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 55.));
+    // } else {
+    //     assert(false);  // a category must be given
+    // }
 
     CommonModules* commonObjectCleaning = new CommonModules();
     commonObjectCleaning->set_jet_id(PtEtaCut(30.0,2.4));
@@ -154,198 +188,128 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // commonObjectCleaning->switch_jetlepcleaner(true);
     commonObjectCleaning->switch_jetPtSorter(true);
     commonObjectCleaning->init(ctx);
-    v_pre_modules.emplace_back(commonObjectCleaning);
+    v_modules.emplace_back(commonObjectCleaning);
 
-    // v_pre_modules.emplace_back(new BJetsProducer(ctx, CSVBTag::WP_MEDIUM, "b_jets"));
-    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); 
-    v_pre_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
-    v_pre_modules.emplace_back(new STCalculator(ctx, "ST"));
-    v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+    // v_modules.emplace_back(new BJetsProducer(ctx, CSVBTag::WP_MEDIUM, "b_jets"));
+    // v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); 
+    v_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
+    v_modules.emplace_back(new STCalculator(ctx, "ST"));
+    v_modules.emplace_back(new CollectionProducer<Jet>(ctx,
                 "jets",
                 "b_jets",
                 JetId(CSVBTag(CSVBTag::WP_MEDIUM))
                 ));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
+    v_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "jets",
                 "n_btags",
                 JetId(CSVBTag(CSVBTag::WP_MEDIUM))
                 ));
 
     // cms top tags
-    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "toptags",
                 TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
                 ));
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "topjets",
-    //             "n_toptags",
-    //             TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
-    //             ));
 
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
+    v_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
+    v_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
 
     // higgs tags, no top separation
-    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsCa15CHSJetsFilteredPacked_daughters",
                 "higgs_tags_ca15",
                 TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsCa15CHSJetsFilteredPacked_daughters",
-    //             "n_higgs_tags_ca15",
-    //             TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
-    //             ));
-    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsAk8CHSJetsSoftDropPacked_daughters",
                 "higgs_tags_ak8",
                 TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
-    //             "n_higgs_tags_ak8",
-    //             TopJetId(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)))
-    //             ));
 
     // higgs tags, with top separation
-    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsCa15CHSJetsFilteredPacked_daughters",
                 "higgs_tags_ca15_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
                     MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsCa15CHSJetsFilteredPacked_daughters",
-    //             "n_higgs_tags_ca15_notop",
-    //             TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-    //                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
-    //             ));
-    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsAk8CHSJetsSoftDropPacked_daughters",
                 "higgs_tags_ak8_notop",
                 TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
                     MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
                 ));
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
-    //             "n_higgs_tags_ak8_notop",
-    //             TopJetId(AndId<TopJet>(HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_LOOSE)),
-    //                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs")))
-    //             ));
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop_twotop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8_twotop"));
+    v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop"));
+    v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8"));
+    v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop_twotop"));
+    v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8_twotop"));
 
 
     
 
     // additional b-tags
-    v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
+    v_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "b_jets",
                 "n_additional_btags",
                 JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "higgs_tags_ak8_notop", 1.0, true),
                                     MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
                 ));
 
-    // mass producers
-    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-    //             "higgs_tags_ca15",
-    //             "mass_ld_higgs_tag_ca15"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-    //             "higgs_tags_ak8",
-    //             "mass_ld_higgs_tag_ak8"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-    //             "higgs_tags_ca15_notop",
-    //             "mass_ld_higgs_tag_ca15_notop"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-    //             "higgs_tags_ak8_notop",
-    //             "mass_ld_higgs_tag_ak8_notop"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-    //             "toptags",
-    //             "mass_ld_toptag"
-    //             ));
-
-    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_ca15",
-    //             "mass_sj_ld_higgs_tag_ca15"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_ak8",
-    //             "mass_sj_ld_higgs_tag_ak8"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_ca15_notop",
-    //             "mass_sj_ld_higgs_tag_ca15_notop"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_ak8_notop",
-    //             "mass_sj_ld_higgs_tag_ak8_notop"
-    //             ));
-    // v_pre_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "toptags",
-    //             "mass_sj_ld_toptag"
-    //             ));
-
     SEL_ITEMS_VLQPair_loose = SEL_ITEMS_VLQPair_loose_base;
     
     unsigned insert_sel = 8;
 
-    make_modules_and_selitem("higgs_tags_ca15", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("higgs_tags_ca15_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("higgs_tags_ak8", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("higgs_tags_ca15", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("higgs_tags_ca15_notop", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("higgs_tags_ak8", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("toptags", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
+    make_modules_and_selitem("topjets", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
 
 
     // Other CutProducers
-    v_pre_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
-    v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
+    v_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
+    v_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
 
-    v_pre_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "leading_jet_pt", 1));
-    v_pre_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "subleading_jet_pt", 2));
-    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "leading_topjet_pt", 1));
-    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "leading_ak8jet_pt", 1));
-    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
+    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "leading_jet_pt", 1));
+    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "subleading_jet_pt", 2));
+    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "leading_topjet_pt", 1));
+    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "leading_ak8jet_pt", 1));
+    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
 
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
-    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
+    v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
-    v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
-    v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
+    v_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    v_modules.emplace_back(new TwoDCutProducer(ctx));
     if (version == "Run2015B_Mu") {
-        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
     } else if (version == "Run2015B_Ele") {
-        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
     } else if (version == "Run2015B_Had") {
-        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
     } else {
-        v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
     }
 
-    // v_pre_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
-    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
-    // v_pre_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
-    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
-    // v_pre_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
+    // v_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
+    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
+    // v_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
+    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
+    // v_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
 
     // N Gen Leptons Producer
 
-    // v_pre_modules.emplace_back(new CollectionSizeProducer<GenParticle>(ctx, "genparticles", "n_genleptons",
+    // v_modules.emplace_back(new CollectionSizeProducer<GenParticle>(ctx, "genparticles", "n_genleptons",
     //             GenParticleId(GenParticlePdgIdId({-11, 11, -13, 13}))));
-    // v_pre_modules.emplace_back(new GenParticlesPrinter(ctx));
+    // v_modules.emplace_back(new GenParticlesPrinter(ctx));
 
     
     // Selection Producer
@@ -390,14 +354,14 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // * 2d-cut hists
     // * trigger efficiency hists (?)
 
-    // v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx,
+    // v_modules.emplace_back(new TriggerAcceptProducer(ctx,
     //                 PRESEL_TRIGGER_PATHS,
     //                 "trigger_accept"));
-    // v_pre_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
-    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
-    // v_pre_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
-    // v_pre_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
-    // v_pre_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
+    // v_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
+    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
+    // v_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
+    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
+    // v_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
 
 
 }
@@ -454,7 +418,7 @@ bool TpTpLooseSelection::process(Event & event) {
     // }
 
     // run all modules
-    for (auto & mod : v_pre_modules) {
+    for (auto & mod : v_modules) {
         mod->process(event);
     }
 

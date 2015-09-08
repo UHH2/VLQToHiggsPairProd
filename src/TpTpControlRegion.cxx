@@ -30,8 +30,8 @@
 #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
-
 
 using namespace std;
 using namespace uhh2;
@@ -221,9 +221,10 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     SEL_ITEMS_VLQPair_controlregion = SEL_ITEMS_VLQPair_controlregion_base;
 
     unsigned insert_sel = 11;
+    unsigned insert_cut = 1;
 
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 1);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut, 1);
     make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("higgs_tags_ca15", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
@@ -243,27 +244,27 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     // multiple times in different runs (since the base vector is static it is not
     // deleted at the end of one cycle)
 
-    unsigned pos_cut = 1;
+    // unsigned pos_cut = 1;
     // higgs tag with filtered jets
     if (category == "0HiggsTags1AntiHTBVeto") {
         make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
-        make_modules_and_selitem("bveto_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 1);
+        make_modules_and_selitem("bveto_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut+1, 1);
         make_modules_and_selitem("massinvert_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("bigTau21_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
     } else if (category == "0HiggsTags1AntiHTMassInvert") {
         make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("bveto_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
-        make_modules_and_selitem("massinvert_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 1);
+        make_modules_and_selitem("massinvert_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut+1, 1);
         make_modules_and_selitem("bigTau21_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     } else if (category == "0HiggsTags1AntiHTBigTau21") {
         make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("bveto_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("massinvert_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
-        make_modules_and_selitem("bigTau21_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 1);
+        make_modules_and_selitem("bigTau21_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut+1, 1);
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
     } else if (category == "1HiggsTagSignalRegion") {
-        make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 1);
+        make_modules_and_selitem("higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut+1, 1);
         make_modules_and_selitem("bveto_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("massinvert_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
         make_modules_and_selitem("bigTau21_higgs_tags_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, 0, 0);
@@ -280,9 +281,11 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
     v_pre_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "leading_jet_pt", 1));
     v_pre_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "subleading_jet_pt", 2));
-    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "leading_topjet_pt", 1));
-    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "leading_ak8jet_pt", 1));
-    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
+    v_pre_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
+    v_pre_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
+    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "leading_topjet_pt", 1));
+    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "leading_ak8jet_pt", 1));
+    // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
 
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
     v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
@@ -320,21 +323,29 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     v_hists.emplace_back(stsel_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
     
-    // if (type == "MC") {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-    //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-    // } else {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
-    //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
-    // }
+    if (type == "MC") {
+        // v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+        // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+        // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
+        // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
+        // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
+        // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+        // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
+        // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+        // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
+        // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
+    } else {
+        // v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+        // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+    }
 
     // append 2D cut
     // unsigned pos_2d_cut = 5;
     // sel_module->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, DR_2D_CUT_PRESEL, DPT_2D_CUT_PRESEL));
     // nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, "Nm1Selection"));
     // cf_hists->insert_step(pos_2d_cut, "2D cut");
-    v_hists.insert(v_hists.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
-    v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
+    v_hists.insert(v_hists.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
+    v_hists_after_sel.insert(v_hists_after_sel.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
 
     // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 
@@ -346,17 +357,6 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
     // h_ngenleps = ctx.get_handle<int>("n_genleptons");
 
-
-    // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Ele95_CaloIdVT_GsfTrkIdT_v", true));
-    // v_hists.emplace_back(new SingleLepTrigHists(ctx, "SingleLepTrig", "HLT_Mu40_v", false));
-
-    // if (version.substr(version.size() - 5, 100) == "_Tlep") {
-    //     gen_hists.reset(new VLQ2HTGenHists(ctx, "GenHists"));
-    // }
-
-    // if (version.substr(version.size() - 4, 100) == "Tlep") {
-    //     v_hists_after_sel.emplace_back(new VLQ2HTRecoGenComparison(ctx, "GenRecoHists"));
-    // }
 
     // writer_module.reset(sel_helper.make_tree_writer(version)); // for TMVA stuff
 

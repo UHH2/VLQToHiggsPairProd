@@ -13,10 +13,8 @@ import os
 
 # varial.settings.use_parallel_chains = False
 
-
 dir_name = 'TpTpControlRegion'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
-
 
 tc = varial.tools.ToolChain(
     dir_name,
@@ -27,11 +25,12 @@ tc = varial.tools.ToolChain(
            uhh_base + 'VLQSemiLepPreSel',
            uhh_base + 'VLQToHiggsPairProd',
         ]),
-        varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
+        # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
+        varial.tools.GitAdder(),
         tight_sframe.sframe_tools_control_region,
         # sensitivity.mk_tc(),
         varial.tools.GitTagger(),
-        varial.tools.WebCreator(), # no_tool_check=True
+        varial.tools.WebCreator(no_tool_check=True), # no_tool_check=True
         # tex_content.tex_content,
         # varial.tools.CopyTool('~/www/test'),
     ]

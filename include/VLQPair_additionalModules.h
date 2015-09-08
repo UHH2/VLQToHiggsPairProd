@@ -15,8 +15,10 @@ using namespace uhh2;
 namespace vlqToHiggsPair {
 
 inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
-                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_cut,
+                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_insert, int pos_cut = -1,
                               int cut_min=-999., int cut_max=999.) {
+    if (pos_cut < 0)
+        pos_cut = pos_insert;
     modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 name,
                 "n_"+name
@@ -45,15 +47,15 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
     sel_items.insert(sel_items.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_"+name, "N_"+name, 11, -.5, 10.5,
                 cut_min, cut_max)));
-    sel_items.insert(sel_items.begin()+pos_cut, 
+    sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+name, "Mass_leading_"+name, 60, 0., 300.)));
-    sel_items.insert(sel_items.begin()+pos_cut, 
+    sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+name, "Mass_subjets_leading_"+name, 60, 0., 300.)));
-    sel_items.insert(sel_items.begin()+pos_cut, 
+    sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+name, "Tau21_leading_"+name, 50, 0., 1.)));
-    sel_items.insert(sel_items.begin()+pos_cut, 
+    sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+name, "Tau32_leading_"+name, 50, 0., 1.)));
-    sel_items.insert(sel_items.begin()+pos_cut, 
+    sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+name, "Pt_leading_"+name, 15, 0., 1500.)));
 }
 
@@ -248,30 +250,36 @@ private:
 
 
 // template<typename TYPE>
-// class SizeOneId
-// {
+// class PrimaryParticle: public uhh2::AnalysisModule {
 // public:
-//     SizeOneId(Context & ctx,
-//                 const string & h_comp_coll,
-//                 bool size_equal_one = true) :
-//         h_comp_coll_(ctx.get_handle<vector<TYPE>>(h_comp_coll)),
-//         size_equal_one_(size_equal_one)
-//         {}
+//     explicit PrimaryParticle(uhh2::Context & ctx, 
+//                            const std::string & h_in,
+//                            const std::string & h_out,
+//                            float min_pt = 0.) :
+//     h_in_coll(ctx.get_handle<vector<TYPE>>(h_in)),
+//     h_primpart(ctx.get_handle<TYPE>(h_out)),
+//     min_pt_(min_pt) {}
 
-//     bool operator()(const Particle & part, const Event & event) const
-//     {
-//         if (event.is_valid(h_comp_coll_)){
-//             const vector<TYPE> & comp_coll = event.get(h_comp_coll_);
-//             if (size_equal_one_ ? comp_coll.size() == 1 : comp_coll.size() > 1)
-//                 return true;
-//             else return false;
+//     virtual bool process(uhh2::Event & event) override {
+//         if (event.is_valid(h_in_coll)){
+//             const vector<TYPE> & in_coll = event.get(h_in_coll);
+//             TYPE primpart;
+//             if(in_coll.size()) {
+//                 for(const auto & part : h_in_coll) {
+//                     float ele_pt = ele.pt();
+//                     if(ele_pt > min_pt_ && ele_pt > ptmax) {
+//                         ptmax = ele_pt;
+//                         primpart = ele;
+//                     }
+//                 }
+//             }
+//             event.set(h_primlep, std::move(primlep));
+//             return true;
 //         }
-
-//         std::cout << "WARNING: in SizeOneId: handle to h_comp_coll_ is not valid!\n";
-//         return true;
 //     }
 
 // private:
-//     Event::Handle<vector<TYPE>> h_comp_coll_;
-//     bool size_equal_one_;
+//     uhh2::Event::Handle<vector<TYPE>> h_in_coll;
+//     uhh2::Event::Handle<TYPE> h_primpart;
+//     float min_pt_;
 // };

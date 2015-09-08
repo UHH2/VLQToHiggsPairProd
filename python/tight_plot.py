@@ -110,17 +110,24 @@ def mk_tools():
         #     combine_files=True,
         #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
         #     ),
-        varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_all_unsplit(),
-            name='Cutflows',
-            plotter_factory=normplots.plotter_factory_cf,
-            combine_files=True,
-            filter_keyfunc=lambda w: 'Cutflow' in w.in_file_path
-            ),
+        # varial.tools.mk_rootfile_plotter(
+        #     pattern=common_plot.file_stack_all_unsplit(),
+        #     name='Cutflows',
+        #     plotter_factory=normplots.plotter_factory_cf,
+        #     combine_files=True,
+        #     filter_keyfunc=lambda w: 'Cutflow' in w.in_file_path
+        #     ),
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_stack_all_unsplit(),
             name='StackedAll',
             plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
+            combine_files=True,
+            # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            ),
+        varial.tools.mk_rootfile_plotter(
+            pattern=common_plot.file_stack_all_unsplit(),
+            name='NormedAll',
+            plotter_factory=lambda **w: normplots.plotter_factory(**w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
