@@ -15,12 +15,12 @@ def loader_hook(wrps):
     wrps = common_vlq.merge_samples(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
-    wrps = gen.switch(
-        wrps,
-        lambda w: w.in_file_path.split('/')[0] == 'GenHists',
-        gen.gen_make_th2_projections
-    )
-    wrps = gen.gen_make_eff_graphs(wrps)
+    # wrps = gen.switch(
+    #     wrps,
+    #     lambda w: w.in_file_path.split('/')[0] == 'GenHists',
+    #     gen.gen_make_th2_projections
+    # )
+    # wrps = gen.gen_make_eff_graphs(wrps)
     wrps = gen.switch(
         wrps,
         lambda w: 'TH' in w.type,

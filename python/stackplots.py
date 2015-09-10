@@ -9,11 +9,12 @@ import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
 
-def norm_sigxfactor(wrps, factor=1.):
+def norm_sigxfactor(wrps, smpl_fct=None):
     for w in wrps:
-        if w.is_signal:
-            w.lumi /= factor
-            w = varial.op.norm_to_lumi(w)
+        if smpl_fct:
+            if w.sample in smpl_fct.keys():
+                w.lumi /= smpl_fct[w.sample]
+                w = varial.op.norm_to_lumi(w)
         yield w
 
 def norm_siingletfactor(wrps, factor=1.):
@@ -23,14 +24,14 @@ def norm_siingletfactor(wrps, factor=1.):
             w = varial.op.norm_to_lumi(w)
         yield w
 
-def loader_hook_norm_sig(wrps, sigxfactor=1.):
+def loader_hook_norm_sig(wrps, smpl_fct=1.):
     wrps = common_vlq.add_wrp_info(wrps)
     wrps = gen.sort(wrps)
     # wrps = norm_siingletfactor(wrps, singletfactor)
     wrps = common_vlq.merge_samples(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
-    wrps = norm_sigxfactor(wrps, sigxfactor)
+    wrps = norm_sigxfactor(wrps, smpl_fct)
     wrps = gen.gen_make_th2_projections(wrps)
     return wrps
 
@@ -49,9 +50,9 @@ def loader_hook(wrps):
 #     return wrps
 
 
-def plotter_factory(sigxfactor=1., **kws):
+def plotter_factory(smpl_fct=1., **kws):
     # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
-    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, sigxfactor)
+    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, smpl_fct)
     kws['plot_setup'] = gen.mc_stack_n_data_sum
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True

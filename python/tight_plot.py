@@ -25,7 +25,20 @@ import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 
 # varial.settings.use_parallel_chains = False
 
-normfactor = 20.
+normfactors = {
+    'TpTp_M-700' : 1/0.455,
+    'TpTp_M-800' : 1/0.196,
+    'TpTp_M-900' : 1/0.0903,
+    'TpTp_M-1000' : 1/0.0440,
+    'TpTp_M-1100' : 1/0.0224,
+    'TpTp_M-1200' : 1/0.0118,
+    'TpTp_M-1300' : 1/0.00639,
+    'TpTp_M-1400' : 1/0.00354,
+    'TpTp_M-1500' : 1/0.00200,
+    'TpTp_M-1600' : 1/0.001,
+    'TpTp_M-1700' : 1/0.0005,
+    'TpTp_M-1800' : 1/0.00025,
+}
 
 def only_tptp(filename):
     return not ('BpJ' in filename or 'TpJ' in filename)
@@ -120,7 +133,7 @@ def mk_tools():
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_stack_all_unsplit(),
             name='StackedAll',
-            plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
+            plotter_factory=lambda **w: stackplots.plotter_factory(normfactors, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
