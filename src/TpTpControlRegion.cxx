@@ -235,7 +235,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     unsigned insert_cut = 1;
 
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut, 1);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("higgs_tags_ca15", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
@@ -367,8 +367,8 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     // sel_module->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, DR_2D_CUT_PRESEL, DPT_2D_CUT_PRESEL));
     // nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, "Nm1Selection"));
     // cf_hists->insert_step(pos_2d_cut, "2D cut");
-    v_hists.insert(v_hists.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
-    v_hists_after_sel.insert(v_hists_after_sel.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
+    // v_hists.insert(v_hists.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
+    // v_hists_after_sel.insert(v_hists_after_sel.begin() + insert_sel, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
 
     // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 

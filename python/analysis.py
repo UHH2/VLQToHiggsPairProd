@@ -19,12 +19,12 @@ uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 tc = varial.tools.ToolChain(
     dir_name,
     [
-        varial.tools.CompileTool([
-           uhh_base + 'core',
-           uhh_base + 'common',
-           uhh_base + 'VLQSemiLepPreSel',
-           uhh_base + 'VLQToHiggsPairProd',
-        ]),
+        # varial.tools.CompileTool([
+        #    uhh_base + 'core',
+        #    uhh_base + 'common',
+        #    uhh_base + 'VLQSemiLepPreSel',
+        #    uhh_base + 'VLQToHiggsPairProd',
+        # ]),
         # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         tight_sframe.sframe_tools_control_region,
         varial.tools.GitAdder(),

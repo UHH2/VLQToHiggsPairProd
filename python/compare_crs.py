@@ -16,7 +16,7 @@ cat_colors = [
 
 def select_files(wrp):
     if ((wrp.in_file_path == 'PostSelection/ST'
-        # or wrp.in_file_path == 'PostSelection/leading_jet_pt'
+        or wrp.in_file_path == 'PostSelection/leading_jet_pt'
         )
         and 'MC' in wrp.file_path
         and '1HiggsLooseTagSignalRegion' not in wrp.file_path
@@ -41,7 +41,7 @@ def plot_setup(grps):
         grp = list(grp)
         dat, bkg, sig = gen.split_data_bkg_sig(grp)
         dat, bkg, sig = list(dat), list(bkg), list(sig)
-        print 'SELECTED SAMPLES: ', bkg, sig
+        # print 'SELECTED SAMPLES: ', bkg, sig
         if bkg:
             selected_smpls = bkg
         else:
@@ -74,7 +74,7 @@ def loader_hook(wrps):
         # legend=lambda w: w.file_path.split('/')[-3])
     wrps = gen.sort(wrps, key_list=['category'])
     wrps = common_vlq.merge_samples(wrps)
-    wrps = gen.sort(wrps, key_list=['sample'])
+    wrps = gen.sort(wrps, key_list=['sample', 'in_file_path'])
     wrps = gen.gen_add_wrp_info(
         wrps, legend=lambda w: w.category,
         draw_option=lambda w: 'hist' if not w.is_data else 'E1X0')
@@ -105,7 +105,7 @@ def mk_tc():
             #         gen.load(gen.fs_content())),
             # combine_files=True,
             plot_grouper=lambda ws: gen.group(
-                ws, key_func=lambda w: w.sample),
+                ws, key_func=lambda w: w.sample and w.in_file_path),
             plot_setup=lambda w: plot_setup(plot_colorizer(w)),
             save_name_func=lambda w: w.sample+'_'+w.name,
             canvas_decorators=[varial.rendering.Legend]
