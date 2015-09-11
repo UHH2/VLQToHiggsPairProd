@@ -104,7 +104,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     v_pre_modules.emplace_back(commonObjectCleaning);
 
 
-    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); 
+    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 50.f)); 
     v_pre_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_pre_modules.emplace_back(new STCalculator(ctx, "ST"));
     v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,

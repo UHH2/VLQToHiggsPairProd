@@ -100,7 +100,7 @@ def mk_sframe_and_plot_tools_control_region(catname):
     return tc
 
 sframe_tools_control_region = varial.tools.ToolChain(
-    'FilesAndPlots_v6',
+    'FilesAndPlots_v7',
     [
         mk_sframe_and_plot_tools_control_region('1AntiHTBVeto'),
         mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
