@@ -9,6 +9,8 @@ import tight_sframe
 # import tex_content
 
 import varial.tools
+import varial.extensions.git as git
+import varial.extensions.make as make
 import os
 
 # varial.settings.use_parallel_chains = False
@@ -19,7 +21,7 @@ uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 tc = varial.tools.ToolChain(
     dir_name,
     [
-        # varial.tools.CompileTool([
+        # make.CompileTool([
         #    uhh_base + 'core',
         #    uhh_base + 'common',
         #    uhh_base + 'VLQSemiLepPreSel',
@@ -27,9 +29,9 @@ tc = varial.tools.ToolChain(
         # ]),
         # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         tight_sframe.sframe_tools_control_region,
-        varial.tools.GitAdder(),
+        git.GitAdder(),
         # sensitivity.mk_tc(),
-        varial.tools.GitTagger(),
+        git.GitTagger(),
         # varial.tools.WebCreator(no_tool_check=True), # no_tool_check=True
         # tex_content.tex_content,
         # varial.tools.CopyTool('~/www/test'),

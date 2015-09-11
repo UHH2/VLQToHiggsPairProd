@@ -249,37 +249,39 @@ private:
 };
 
 
-// template<typename TYPE>
-// class PrimaryParticle: public uhh2::AnalysisModule {
-// public:
-//     explicit PrimaryParticle(uhh2::Context & ctx, 
-//                            const std::string & h_in,
-//                            const std::string & h_out,
-//                            float min_pt = 0.) :
-//     h_in_coll(ctx.get_handle<vector<TYPE>>(h_in)),
-//     h_primpart(ctx.get_handle<TYPE>(h_out)),
-//     min_pt_(min_pt) {}
+class HiggsXBTag {
+public:
+    explicit HiggsXBTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), 
+                               JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
+                               unsigned n_higgs_tags = 2) :
+        minmass_(minmass), maxmass_(maxmass), btagid_(id), n_higgs_tags_(n_higgs_tags) {}
 
-//     virtual bool process(uhh2::Event & event) override {
-//         if (event.is_valid(h_in_coll)){
-//             const vector<TYPE> & in_coll = event.get(h_in_coll);
-//             TYPE primpart;
-//             if(in_coll.size()) {
-//                 for(const auto & part : h_in_coll) {
-//                     float ele_pt = ele.pt();
-//                     if(ele_pt > min_pt_ && ele_pt > ptmax) {
-//                         ptmax = ele_pt;
-//                         primpart = ele;
-//                     }
-//                 }
-//             }
-//             event.set(h_primlep, std::move(primlep));
-//             return true;
-//         }
-//     }
+    bool operator()(TopJet const & topjet, uhh2::Event const & event) const {
+        auto subjets = topjet.subjets();
+        if(subjets.size() < 2) return false;
+        unsigned n_sj_btags = 0;
+        // unsigned n_sj_btagvetos = 0;
+        for (const auto & sj : subjets) {
+            if (btagid_(sj, event))
+                n_sj_btags++;
+        }
 
-// private:
-//     uhh2::Event::Handle<vector<TYPE>> h_in_coll;
-//     uhh2::Event::Handle<TYPE> h_primpart;
-//     float min_pt_;
-// };
+        if (n_sj_btags < n_higgs_tags_)
+            return false;
+
+        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+        if(!firsttwosubjets.isTimelike()) {
+            return false;
+        }
+        auto mjet = firsttwosubjets.M();
+        if(mjet < minmass_) return false;
+        if(mjet > maxmass_) return false;
+        return true;
+    }
+
+private:
+    float minmass_, maxmass_;
+    JetId btagid_;
+    unsigned n_higgs_tags_;
+
+};
