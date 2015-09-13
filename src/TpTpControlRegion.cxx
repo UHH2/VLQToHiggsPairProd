@@ -249,7 +249,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     SEL_ITEMS_VLQPair_controlregion = SEL_ITEMS_VLQPair_controlregion_base;
 
     unsigned insert_sel = 11;
-    unsigned insert_cut = 1;
+    unsigned insert_cut = 3;
 
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);

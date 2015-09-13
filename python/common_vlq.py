@@ -57,8 +57,8 @@ def merge_decay_channels(wrps, postfixes):
                 yield do_merging(buf)
         else:
             if buf:
-                print 'WARNING In merge_decay_channels: buffer not empty. ' \
-                      'Flushing remaining items:' + str(buf)
+                # print 'WARNING In merge_decay_channels: buffer not empty. ' \
+                #       'Flushing remaining items:' + str(buf)
                 yield do_merging(buf)
             yield w
 

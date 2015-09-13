@@ -9,10 +9,11 @@ import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
 
-def norm_sigxfactor(wrps, smpl_fct=None):
+def norm_sigxfactor(wrps, smpl_fct=None, selection=''):
     for w in wrps:
         if smpl_fct:
             if w.sample in smpl_fct.keys():
+                # if w.analyzer = 'NoSelection' or 
                 w.lumi /= smpl_fct[w.sample]
                 w = varial.op.norm_to_lumi(w)
         yield w
