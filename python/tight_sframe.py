@@ -100,11 +100,11 @@ def mk_sframe_and_plot_tools_control_region(catname):
     return tc
 
 sframe_tools_control_region = varial.tools.ToolChain(
-    'FilesAndPlots_v9_withtoptag',
+    'FilesAndPlots_v10_withouttoptag',
     [
         mk_sframe_and_plot_tools_control_region('1AntiHTBVeto'),
-        # mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
-        # mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert0BTag'),
+        mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
+        mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert0BTag'),
         mk_sframe_and_plot_tools_control_region('1TopHiggsTagSideBandRegion'),
         mk_sframe_and_plot_tools_control_region('0HiggsMedTagSideBandRegion'),
         mk_sframe_and_plot_tools_control_region('1HiggsMedTagSignalRegion'),

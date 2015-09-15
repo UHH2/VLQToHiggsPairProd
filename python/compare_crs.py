@@ -18,8 +18,8 @@ cat_colors = [
 signal_regions = ['1HiggsMedTagSignalRegion'] # , '1HiggsLooseTagSignalRegion'
 control_regions = [
     '1AntiHTBVeto',
-    # '1AntiHTMassInvert1BTag',
-    # '1AntiHTMassInvert0BTag',
+    '1AntiHTMassInvert1BTag',
+    '1AntiHTMassInvert0BTag',
     '1TopHiggsTagSideBandRegion', 
     '0HiggsMedTagSideBandRegion'
     ]
@@ -83,6 +83,8 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
 def select_files(wrp):
     if ((wrp.in_file_path == 'PostSelection/ST'
         or wrp.in_file_path == 'PostSelection/leading_jet_pt'
+        or wrp.in_file_path == 'PostSelection/met'
+        or wrp.in_file_path == 'PostSelection/primary_lepton_pt'
         or wrp.in_file_path == 'PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters'
         )
         and 'MC.TTbar' in wrp.file_path

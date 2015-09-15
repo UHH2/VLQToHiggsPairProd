@@ -21,13 +21,13 @@ uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 tc = varial.tools.ToolChain(
     dir_name,
     [
-        make.Make([
-           uhh_base + 'core',
-           uhh_base + 'common',
-           uhh_base + 'VLQSemiLepPreSel',
-           uhh_base + 'VLQToHiggsPairProd',
-        ]),
-        # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
+        # make.Make([
+        #    uhh_base + 'core',
+        #    uhh_base + 'common',
+        #    uhh_base + 'VLQSemiLepPreSel',
+        #    uhh_base + 'VLQToHiggsPairProd',
+        # ]),
+        # # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         git.GitAdder(),
         tight_sframe.sframe_tools_control_region,
         # sensitivity.mk_tc(),
