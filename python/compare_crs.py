@@ -16,7 +16,13 @@ cat_colors = [
 ]
 
 signal_regions = ['1HiggsMedTagSignalRegion'] # , '1HiggsLooseTagSignalRegion'
-control_regions = ['1AntiHTBVeto', '1AntiHTMassInvert1BTag', '1AntiHTMassInvert0BTag']
+control_regions = [
+    '1AntiHTBVeto',
+    # '1AntiHTMassInvert1BTag',
+    # '1AntiHTMassInvert0BTag',
+    '1TopHiggsTagSideBandRegion', 
+    '0HiggsMedTagSideBandRegion'
+    ]
 
 class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
     """Same as BottomPlotRatio, but split MC and data uncertainties."""
