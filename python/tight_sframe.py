@@ -7,9 +7,9 @@ import compare_crs
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelection.xml'
 
 tptp_tight_datasets = [
-    # 'Run2015B_Ele',
-    # 'Run2015B_Mu',
-    # 'Run2015B_Had',
+    'Run2015B_Ele',
+    'Run2015B_Mu',
+    'Run2015B_Had',
     # 'TpTp_M-700',
     'TpTp_M-800',
     # 'TpTp_M-900',
@@ -26,27 +26,27 @@ tptp_tight_datasets = [
     # 'QCD_Pt30to50',
     # 'QCD_Pt50to80',
     # 'QCD_Pt80to120',
-    # 'QCD_Pt120to170',
-    # 'QCD_Pt170to300',
-    # 'QCD_Pt300to470',
-    # 'QCD_Pt470to600',
-    # 'QCD_Pt600to800',
-    # 'QCD_Pt800to1000',
-    # 'QCD_Pt1000to1400',
-    # 'QCD_Pt1400to1800',
-    # 'QCD_Pt1800to2400',
-    # 'QCD_Pt2400to3200',
-    # 'QCD_Pt3200toInf',
+    'QCD_Pt120to170',
+    'QCD_Pt170to300',
+    'QCD_Pt300to470',
+    'QCD_Pt470to600',
+    'QCD_Pt600to800',
+    'QCD_Pt800to1000',
+    'QCD_Pt1000to1400',
+    'QCD_Pt1400to1800',
+    'QCD_Pt1800to2400',
+    'QCD_Pt2400to3200',
+    'QCD_Pt3200toInf',
     # 'TTbar',
     'TTbar_Mtt0to700',
     'TTbar_Mtt700to1000',
     'TTbar_Mtt1000toInf',
-    # 'WJets',
-    # 'ZJetsM10to50',
-    # 'ZJetsM50toInf',
-    # 'SingleT_tChannel',
-    # 'SingleT_WAntitop',
-    # 'SingleT_WTop',
+    'WJets',
+    'ZJetsM10to50',
+    'ZJetsM50toInf',
+    'SingleT_tChannel',
+    'SingleT_WAntitop',
+    'SingleT_WTop',
 ]
 
 def mk_sframe_and_plot_tools(catname):
@@ -87,7 +87,7 @@ def mk_sframe_and_plot_tools_control_region(catname):
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg_control_region,
-        xml_tree_callback=set_category_datasets_eventnumber_and_split(catname, count="1000", allowed_datasets=tptp_tight_datasets), # 
+        xml_tree_callback=set_category_datasets_eventnumber_and_split(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
