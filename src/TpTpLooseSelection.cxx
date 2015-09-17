@@ -19,7 +19,7 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/AdditionalSelections.h"
 #include "UHH2/common/include/CollectionProducer.h"
-
+#include "UHH2/common/include/PrintingModules.h"
 
 
 #include "UHH2/VLQSemiLepPreSel/include/EventHists.h"
@@ -44,7 +44,7 @@ using namespace vlqToHiggsPair;
 enum ParticleID {
     BottomID = 5,
     TopID = 6,
-    TprimeID = 8,
+    TprimeID = 8000001,
     ElectronID = 11,
     MuonID = 13,
     ZID = 23,
@@ -100,7 +100,12 @@ private:
     vector<unique_ptr<Hists>> v_hists;
     vector<unique_ptr<Hists>> v_hists_after_sel;
     vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_loose;
+    // unique_ptr<AnalysisModule> gen_printer;
+
+    static int event_count;
 };
+
+int TpTpLooseSelection::event_count = 0;
 
 
 TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
@@ -191,7 +196,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     v_modules.emplace_back(commonObjectCleaning);
 
     // v_modules.emplace_back(new BJetsProducer(ctx, CSVBTag::WP_MEDIUM, "b_jets"));
-    // v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton")); 
+    v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
     v_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_modules.emplace_back(new STCalculator(ctx, "ST"));
     v_modules.emplace_back(new CollectionProducer<Jet>(ctx,
@@ -248,6 +253,9 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8"));
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop_twotop"));
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8_twotop"));
+    
+    // gen_printer.reset(new GenParticlesPrinter(ctx));
+
 
 
     
@@ -325,10 +333,14 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
-    // auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
+    auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
+    auto trigsel_hists = new SelectedSelHists(ctx, "OnlyTriggerCut", sel_helper, {"trigger_accept"});
+    auto btagsel_hists = new SelectedSelHists(ctx, "OnlyBTagCut", sel_helper, {"n_btags"});
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
-    // v_hists.emplace_back(stsel_hists);
+    v_hists.emplace_back(stsel_hists);
+    v_hists.emplace_back(trigsel_hists);
+    v_hists.emplace_back(btagsel_hists);
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
 
     if (type == "MC") {
@@ -340,7 +352,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     }
 
     // append 2D cut
-    unsigned pos_2d_cut = 4;
+    unsigned pos_2d_cut = 5;
     // sel_module->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, DR_2D_CUT_PRESEL, DPT_2D_CUT_PRESEL));
     // nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, "Nm1Selection"));
     // cf_hists->insert_step(pos_2d_cut, "2D cut");
@@ -373,54 +385,59 @@ bool TpTpLooseSelection::process(Event & event) {
 
     // TEST STUFF HERE
 
-    if (version.substr(version.size() - 3, 100) == "_th") {
-        std::cout << "found _th sample!\n";
-    }
-    else if (version.substr(version.size() - 5, 100) == "_noth") {
-        std::cout << "found _noth sample!\n";
-    }
+    // if (version.substr(version.size() - 3, 100) == "_th") {
+    //     std::cout << "found _th sample!\n";
+    // }
+    // else if (version.substr(version.size() - 5, 100) == "_noth") {
+    //     std::cout << "found _noth sample!\n";
+    // }
  
-    // if (version.substr(version.size() - 5, 100) == "_thth") {
-    //     if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
-    //                 ParticleID::TopID, ParticleID::HiggsID)) {
-    //         return false;
-    //     }
-    // }
-    // if (version.substr(version.size() - 5, 100) == "_thtz") {
-    //     if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
-    //                 ParticleID::TopID, ParticleID::ZID)) {
-    //         return false;
-    //     }
-    // }
-    // if (version.substr(version.size() - 5, 100) == "_thbw") {
-    //     if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
-    //                 ParticleID::BottomID, ParticleID::WID)) {
-    //         return false;
-    //     }
-    // }
-    // if (version.substr(version.size() - 5, 100) == "_tztz") {
-    //     if (!checkDecayMode(event, ParticleID::TopID, ParticleID::ZID,
-    //                 ParticleID::TopID, ParticleID::ZID)) {
-    //         return false;
-    //     }
-    // }
-    // if (version.substr(version.size() - 5, 100) == "_tzbw") {
-    //     if (!checkDecayMode(event, ParticleID::TopID, ParticleID::ZID,
-    //                 ParticleID::BottomID, ParticleID::WID)) {
-    //         return false;
-    //     }
-    // }
-    // if (version.substr(version.size() - 5, 100) == "_bwbw") {
-    //     if (!checkDecayMode(event, ParticleID::BottomID, ParticleID::WID,
-    //                 ParticleID::BottomID, ParticleID::WID)) {
-    //         return false;
-    //     }
-    // }
+    if (version.substr(version.size() - 5, 100) == "_thth") {
+        if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
+                    ParticleID::TopID, ParticleID::HiggsID)) {
+            return false;
+        }
+    }
+    if (version.substr(version.size() - 5, 100) == "_thtz") {
+        if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
+                    ParticleID::TopID, ParticleID::ZID)) {
+            return false;
+        }
+    }
+    if (version.substr(version.size() - 5, 100) == "_thbw") {
+        if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
+                    ParticleID::BottomID, ParticleID::WID)) {
+            return false;
+        }
+    }
+    if (version.substr(version.size() - 5, 100) == "_tztz") {
+        if (!checkDecayMode(event, ParticleID::TopID, ParticleID::ZID,
+                    ParticleID::TopID, ParticleID::ZID)) {
+            return false;
+        }
+    }
+    if (version.substr(version.size() - 5, 100) == "_tzbw") {
+        if (!checkDecayMode(event, ParticleID::TopID, ParticleID::ZID,
+                    ParticleID::BottomID, ParticleID::WID)) {
+            return false;
+        }
+    }
+    if (version.substr(version.size() - 5, 100) == "_bwbw") {
+        if (!checkDecayMode(event, ParticleID::BottomID, ParticleID::WID,
+                    ParticleID::BottomID, ParticleID::WID)) {
+            return false;
+        }
+    }
 
     // run all modules
     for (auto & mod : v_modules) {
         mod->process(event);
     }
+
+    // if (TpTpLooseSelection::event_count < 100) {
+    //     event_count++;
+    //     // gen_printer->process(event);
+    // }
 
     // run selection
     bool all_accepted = sel_module->process(event);

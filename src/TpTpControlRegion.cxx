@@ -252,7 +252,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     unsigned insert_cut = 3;
 
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel, insert_cut, 1);
     make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("higgs_tags_ca15", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
@@ -267,7 +267,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     // make_modules_and_selitem("bigTau21_higgs_tags_med_ak8", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
     // make_modules_and_selitem("bigTau21_higgs_tags_med_ak8_notop", ctx, v_pre_modules, SEL_ITEMS_VLQPair_controlregion, insert_sel);
 
-    // insert_cut += 1;
+    insert_cut += 1;
 
     const string & category = ctx.get("category", "");
 

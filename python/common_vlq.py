@@ -30,7 +30,7 @@ def add_wrp_info(wrps):
     )
 
 
-def merge_decay_channels(wrps, postfixes):
+def merge_decay_channels(wrps, postfixes, suffix=''):
     """histos must be sorted!!"""
 
     @varial.history.track_history
@@ -41,10 +41,10 @@ def merge_decay_channels(wrps, postfixes):
         res = varial.operations.merge(buf)
         res.sample = next(res.sample[:-len(p)]
                           for p in postfixes
-                          if res.sample.endswith(p))
+                          if res.sample.endswith(p))+suffix
         res.legend = next(res.legend[:-len(p)]
                           for p in postfixes
-                          if res.legend.endswith(p))
+                          if res.legend.endswith(p))+suffix
         res.file_path = ''
         del buf[:]
         return merge_decay_channel(res)
@@ -113,10 +113,23 @@ def merge_samples(wrps):
         '_WTop',
     ))
     wrps = merge_decay_channels(wrps, (
+        '_Mtt0to700',
+        '_Mtt700to1000',
+        '_Mtt1000toInf',
+    ))
+    wrps = merge_decay_channels(wrps, (
         '_Ele',
         '_Mu',
         '_Had'
     ))
+    wrps = merge_decay_channels(wrps,
+        ('_thth', '_thtz', '_thbw'),
+        '_thX'
+    )
+    wrps = merge_decay_channels(wrps,
+        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
+        '_other'
+    )
     return wrps
 
 def norm_to_first_bin(wrp):

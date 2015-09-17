@@ -25,9 +25,6 @@ import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 
 # varial.settings.use_parallel_chains = False
 
-signormfactor = 20.
-singletnormfactor = 1.
-
 def only_tptp(filename):
     return not ('BpJ' in filename or 'TpJ' in filename)
 
@@ -43,17 +40,17 @@ def only_tptp(filename):
 def mk_tools():
 
     return [
+        # varial.tools.mk_rootfile_plotter(
+        #     pattern=common_plot.file_stack_all_unsplit(),
+        #     name='Cutflows',
+        #     plotter_factory=normplots.plotter_factory_cf,
+        #     combine_files=True,
+        #     filter_keyfunc=lambda w: 'Cutflow' in w.in_file_path
+        #     ),
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_all_unsplit(),
-            name='Cutflows',
-            plotter_factory=normplots.plotter_factory_cf,
-            combine_files=True,
-            filter_keyfunc=lambda w: 'Cutflow' in w.in_file_path
-            ),
-        varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_all_unsplit(),
+            pattern=common_plot.file_stack_all_split(),
             name='StackedAll',
-            plotter_factory=lambda **w: stackplots.plotter_factory(signormfactor, **w),
+            plotter_factory=lambda **w: stackplots.plotter_factory(common_plot.normfactors, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
@@ -64,7 +61,14 @@ def mk_tools():
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
-        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), stackplots.loader_hook)
+        varial.tools.mk_rootfile_plotter(
+            pattern=common_plot.file_split_signals(),
+            name='NormedSignals',
+            plotter_factory=lambda **w: normplots.plotter_factory(**w),
+            combine_files=True,
+            # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            ),
+        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), stackplots.loader_hook)
         ]
 
 if __name__ == '__main__':

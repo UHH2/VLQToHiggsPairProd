@@ -13,7 +13,7 @@ tptp_loose_datasets = [
     'TpTp_M-800',
     # 'TpTp_M-900',
     # 'TpTp_M-1000',
-    'TpTp_M-1100',
+    # 'TpTp_M-1100',
     # 'TpTp_M-1200',
     # 'TpTp_M-1300',
     # 'TpTp_M-1400',
@@ -36,7 +36,10 @@ tptp_loose_datasets = [
     'QCD_Pt1800to2400',
     'QCD_Pt2400to3200',
     'QCD_Pt3200toInf',
-    'TTbar',
+    # 'TTbar',
+    'TTbar_Mtt0to700',
+    'TTbar_Mtt700to1000',
+    'TTbar_Mtt1000toInf',
     'WJets',
     'ZJetsM10to50',
     'ZJetsM50toInf',
@@ -49,17 +52,18 @@ def mk_sframe_and_plot_tools():
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=set_eventnumber_and_datasets(count="-1", allowed_datasets=tptp_loose_datasets), # 
+        xml_tree_callback=set_eventnumber_datasets_and_split(count="-1", allowed_datasets=tptp_loose_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
         lazy_eval_tools_func=lambda: loose_plot.mk_tools()
     )
     tc = varial.tools.ToolChain(
-        "FilesAndPlots_v2",
+        "FilesAndPlots_v3_exclTTbar_splitSignal",
         [
             sframe,
-            plots
+            plots,
+            varial.tools.WebCreator(no_tool_check=True)
         ]
     )
     return tc

@@ -9,30 +9,31 @@ import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
 
-def norm_sigxfactor(wrps, smpl_fct=None, selection=''):
+def norm_smpl(wrps, smpl_fct=None, selection=''):
     for w in wrps:
         if smpl_fct:
-            if w.sample in smpl_fct.keys():
-                # if w.analyzer = 'NoSelection' or 
-                w.lumi /= smpl_fct[w.sample]
-                w = varial.op.norm_to_lumi(w)
+            for fct_key, fct_val in smpl_fct.iteritems():
+                if fct_key in w.sample:
+                    # if w.analyzer = 'NoSelection' or 
+                    w.lumi /= fct_val
+                    w = varial.op.norm_to_lumi(w)
         yield w
 
-def norm_siingletfactor(wrps, factor=1.):
-    for w in wrps:
-        if w.sample == 'SingleT_tChannel':
-            w.lumi /= factor
-            w = varial.op.norm_to_lumi(w)
-        yield w
+# def norm_siingletfactor(wrps, factor=1.):
+#     for w in wrps:
+#         if w.sample == 'SingleT_tChannel':
+#             w.lumi /= factor
+#             w = varial.op.norm_to_lumi(w)
+#         yield w
 
-def loader_hook_norm_sig(wrps, smpl_fct=1.):
+def loader_hook_norm_smpl(wrps, smpl_fct=None):
     wrps = common_vlq.add_wrp_info(wrps)
     wrps = gen.sort(wrps)
     # wrps = norm_siingletfactor(wrps, singletfactor)
     wrps = common_vlq.merge_samples(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
-    wrps = norm_sigxfactor(wrps, smpl_fct)
+    wrps = norm_smpl(wrps, smpl_fct)
     wrps = gen.gen_make_th2_projections(wrps)
     return wrps
 
@@ -51,9 +52,9 @@ def loader_hook(wrps):
 #     return wrps
 
 
-def plotter_factory(smpl_fct=1., **kws):
+def plotter_factory(smpl_fct=None, **kws):
     # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
-    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_sig(w, smpl_fct)
+    kws['hook_loaded_histos'] = lambda w: loader_hook_norm_smpl(w, smpl_fct)
     kws['plot_setup'] = gen.mc_stack_n_data_sum
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True

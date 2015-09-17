@@ -82,13 +82,13 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
 
 def select_files(wrp):
     if ((wrp.in_file_path == 'PostSelection/ST'
-        or wrp.in_file_path == 'PostSelection/leading_jet_pt'
-        or wrp.in_file_path == 'PostSelection/met'
-        or wrp.in_file_path == 'PostSelection/primary_lepton_pt'
-        or wrp.in_file_path == 'PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters'
-        )
-        and 'MC.TTbar' in wrp.file_path
-        and '1HiggsLooseTagSignalRegion' not in wrp.file_path
+            or wrp.in_file_path == 'PostSelection/leading_jet_pt'
+            or wrp.in_file_path == 'PostSelection/met'
+            or wrp.in_file_path == 'PostSelection/primary_lepton_pt'
+            or wrp.in_file_path == 'PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters'
+            )
+            and 'MC.TTbar' in wrp.file_path
+            and '1HiggsLooseTagSignalRegion' not in wrp.file_path
         ):
         return True
 
