@@ -26,27 +26,27 @@ tptp_tight_datasets = [
     # 'QCD_Pt30to50',
     # 'QCD_Pt50to80',
     # 'QCD_Pt80to120',
-    'QCD_Pt120to170',
-    'QCD_Pt170to300',
-    'QCD_Pt300to470',
-    'QCD_Pt470to600',
-    'QCD_Pt600to800',
-    'QCD_Pt800to1000',
-    'QCD_Pt1000to1400',
-    'QCD_Pt1400to1800',
-    'QCD_Pt1800to2400',
-    'QCD_Pt2400to3200',
-    'QCD_Pt3200toInf',
+    # 'QCD_Pt120to170',
+    # 'QCD_Pt170to300',
+    # 'QCD_Pt300to470',
+    # 'QCD_Pt470to600',
+    # 'QCD_Pt600to800',
+    # 'QCD_Pt800to1000',
+    # 'QCD_Pt1000to1400',
+    # 'QCD_Pt1400to1800',
+    # 'QCD_Pt1800to2400',
+    # 'QCD_Pt2400to3200',
+    # 'QCD_Pt3200toInf',
     # 'TTbar',
     'TTbar_Mtt0to700',
     'TTbar_Mtt700to1000',
     'TTbar_Mtt1000toInf',
-    'WJets',
-    'ZJetsM10to50',
-    'ZJetsM50toInf',
-    'SingleT_tChannel',
-    'SingleT_WAntitop',
-    'SingleT_WTop',
+    # 'WJets',
+    # 'ZJetsM10to50',
+    # 'ZJetsM50toInf',
+    # 'SingleT_tChannel',
+    # 'SingleT_WAntitop',
+    # 'SingleT_WTop',
 ]
 
 def mk_sframe_and_plot_tools(catname):
@@ -83,73 +83,101 @@ sframe_tools = varial.tools.ToolChain(
 
 sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpControlRegion.xml'
 
-def mk_sframe_and_plot_tools_control_region(catname):
+# def mk_sframe_and_plot_tools_control_region(catname):
+#     """Makes a toolchain for one category with sframe and plots."""
+#     sframe = SFrame(
+#         cfg_filename=sframe_cfg_control_region,
+#         xml_tree_callback=set_category_datasets_eventnumber_and_split(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+#     )
+#     plots = varial.tools.ToolChainParallel(
+#         'Plots',
+#         lazy_eval_tools_func=lambda: tight_plot.mk_tools()
+#     )
+#     tc = varial.tools.ToolChain(
+#         catname,
+#         [
+#             sframe,
+#             plots
+#         ]
+#     )
+#     return tc
+
+# sframe_tools_control_region_old = varial.tools.ToolChain(
+#     'FilesAndPlots_v11_withtoptag',
+#     [
+#         mk_sframe_and_plot_tools_control_region('1AntiHTBVeto'),
+#         mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
+#         mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert0BTag'),
+#         mk_sframe_and_plot_tools_control_region('1TopHiggsTagSideBandRegion'),
+#         mk_sframe_and_plot_tools_control_region('0HiggsMedTagSideBandRegion'),
+#         mk_sframe_and_plot_tools_control_region('1HiggsMedTagSignalRegion'),
+#         # mk_sframe_and_plot_tools_control_region('1HiggsLooseTagSignalRegion'),
+#         varial.tools.ToolChain(
+#             'CompareControlRegion',
+#             lazy_eval_tools_func=compare_crs.mk_tc
+#         ),
+#         varial.tools.WebCreator(no_tool_check=True)
+#     ]
+# )
+
+
+def mk_sframe_and_plot_tools_control_region_new():
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg_control_region,
-        xml_tree_callback=set_category_datasets_eventnumber_and_split(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+        xml_tree_callback=set_datasets_eventnumber_and_split(count="-1", allowed_datasets=tptp_tight_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
-        lazy_eval_tools_func=lambda: tight_plot.mk_tools()
+        lazy_eval_tools_func=tight_plot.mk_tools
     )
     tc = varial.tools.ToolChain(
-        catname,
+        'FilesAndPlots_v12_newCatSetup',
         [
             sframe,
-            plots
+            plots,
+            # varial.tools.ToolChain(
+            #     'CompareControlRegion',
+            #     lazy_eval_tools_func=compare_crs.mk_tc
+            #     ),
+            varial.tools.WebCreator(no_tool_check=True)
         ]
     )
     return tc
 
-sframe_tools_control_region = varial.tools.ToolChain(
-    'FilesAndPlots_v11_withtoptag',
-    [
-        mk_sframe_and_plot_tools_control_region('1AntiHTBVeto'),
-        mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
-        mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert0BTag'),
-        mk_sframe_and_plot_tools_control_region('1TopHiggsTagSideBandRegion'),
-        mk_sframe_and_plot_tools_control_region('0HiggsMedTagSideBandRegion'),
-        mk_sframe_and_plot_tools_control_region('1HiggsMedTagSignalRegion'),
-        # mk_sframe_and_plot_tools_control_region('1HiggsLooseTagSignalRegion'),
-        varial.tools.ToolChain(
-            'CompareControlRegion',
-            lazy_eval_tools_func=compare_crs.mk_tc
-        ),
-        varial.tools.WebCreator(no_tool_check=True)
-    ]
-)
+sframe_tools_control_region = mk_sframe_and_plot_tools_control_region_new()
+
 
 # to test QCD:
 
-sframe_cfg_qcd_test = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTestQCD.xml'
+# sframe_cfg_qcd_test = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTestQCD.xml'
 
-def mk_sframe_and_plot_tools_qcd_test(catname):
-    """Makes a toolchain for one category with sframe and plots."""
-    sframe = SFrame(
-        cfg_filename=sframe_cfg_qcd_test,
-        xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
-    )
-    plots = varial.tools.ToolChainParallel(
-        'Plots',
-        lazy_eval_tools_func=lambda: tight_plot.mk_tools()
-    )
-    tc = varial.tools.ToolChain(
-        catname,
-        [
-            sframe,
-            plots
-        ]
-    )
-    return tc
+# def mk_sframe_and_plot_tools_qcd_test(catname):
+#     """Makes a toolchain for one category with sframe and plots."""
+#     sframe = SFrame(
+#         cfg_filename=sframe_cfg_qcd_test,
+#         xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+#     )
+#     plots = varial.tools.ToolChainParallel(
+#         'Plots',
+#         lazy_eval_tools_func=lambda: tight_plot.mk_tools()
+#     )
+#     tc = varial.tools.ToolChain(
+#         catname,
+#         [
+#             sframe,
+#             plots
+#         ]
+#     )
+#     return tc
 
-sframe_tools_qcd_test = varial.tools.ToolChain(
-    'EventLoopAndPlots_v4_after_corrected_preselection',
-    [
-        mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
-        mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),
-        # mk_sframe_and_plot_tools_qcd_test('NoSelectionNoPrimLepPtReq'),
-        # mk_sframe_and_plot_tools_qcd_test('NoSelectionWithPrimLepPtReq')
-        mk_sframe_and_plot_tools_qcd_test('RejectQCDOnlyMuons'),
-    ]
-)
+# sframe_tools_qcd_test = varial.tools.ToolChain(
+#     'EventLoopAndPlots_v4_after_corrected_preselection',
+#     [
+#         mk_sframe_and_plot_tools_qcd_test('RejectQCD'),
+#         mk_sframe_and_plot_tools_qcd_test('EnrichQCD'),
+#         # mk_sframe_and_plot_tools_qcd_test('NoSelectionNoPrimLepPtReq'),
+#         # mk_sframe_and_plot_tools_qcd_test('NoSelectionWithPrimLepPtReq')
+#         mk_sframe_and_plot_tools_qcd_test('RejectQCDOnlyMuons'),
+#     ]
+# )

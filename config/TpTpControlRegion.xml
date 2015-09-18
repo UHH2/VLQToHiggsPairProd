@@ -206,12 +206,6 @@
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <!-- <InputData Lumi="24100.7" NEventsMax="1000" Type="MC" Version="TTbar" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v3_exclTTbar_splitSignal/SFrame/uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" />
-            <OutputTree Name="AnalysisTree" />
-        </InputData> -->
-
         <InputData Lumi="23941.8" NEventsMax="100" Type="MC" Version="TTbar_Mtt0to700" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v3_exclTTbar_splitSignal/SFrame/uhh2.AnalysisModuleRunner.MC.TTbar_Mtt0to700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
@@ -265,6 +259,14 @@
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" /> 
         </InputData>
+
+        
+
+        <!-- <InputData Lumi="24100.7" NEventsMax="1000" Type="MC" Version="TTbar" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/TpTpLooseSelection/FilesAndPlots_v3_exclTTbar_splitSignal/SFrame/uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData> -->
             
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->

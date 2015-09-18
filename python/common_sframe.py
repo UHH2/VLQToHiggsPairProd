@@ -88,6 +88,13 @@ def set_category_datasets_eventnumber_and_split(catname, count ="1000", allowed_
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
+def set_datasets_eventnumber_and_split(count ="1000", allowed_datasets=None):
+    def tmp_func(element_tree):
+        clean_input_data(element_tree, allowed_datasets)
+        split_item_and_set_filename(element_tree, def_signal_samples, def_final_states)
+        do_set_eventnumber(element_tree, count)
+    return tmp_func
+
 def set_eventnumber(count="-1"):
     def tmp_func(element_tree):
         do_set_eventnumber(element_tree, count)
