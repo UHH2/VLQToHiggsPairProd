@@ -26,27 +26,27 @@ tptp_tight_datasets = [
     # 'QCD_Pt30to50',
     # 'QCD_Pt50to80',
     # 'QCD_Pt80to120',
-    # 'QCD_Pt120to170',
-    # 'QCD_Pt170to300',
-    # 'QCD_Pt300to470',
-    # 'QCD_Pt470to600',
-    # 'QCD_Pt600to800',
-    # 'QCD_Pt800to1000',
-    # 'QCD_Pt1000to1400',
-    # 'QCD_Pt1400to1800',
-    # 'QCD_Pt1800to2400',
-    # 'QCD_Pt2400to3200',
-    # 'QCD_Pt3200toInf',
+    'QCD_Pt120to170',
+    'QCD_Pt170to300',
+    'QCD_Pt300to470',
+    'QCD_Pt470to600',
+    'QCD_Pt600to800',
+    'QCD_Pt800to1000',
+    'QCD_Pt1000to1400',
+    'QCD_Pt1400to1800',
+    'QCD_Pt1800to2400',
+    'QCD_Pt2400to3200',
+    'QCD_Pt3200toInf',
     # 'TTbar',
     'TTbar_Mtt0to700',
     'TTbar_Mtt700to1000',
     'TTbar_Mtt1000toInf',
-    # 'WJets',
-    # 'ZJetsM10to50',
-    # 'ZJetsM50toInf',
-    # 'SingleT_tChannel',
-    # 'SingleT_WAntitop',
-    # 'SingleT_WTop',
+    'WJets',
+    'ZJetsM10to50',
+    'ZJetsM50toInf',
+    'SingleT_tChannel',
+    'SingleT_WAntitop',
+    'SingleT_WTop',
 ]
 
 def mk_sframe_and_plot_tools(catname):
@@ -132,14 +132,14 @@ def mk_sframe_and_plot_tools_control_region_new():
         lazy_eval_tools_func=tight_plot.mk_tools
     )
     tc = varial.tools.ToolChain(
-        'FilesAndPlots_v12_newCatSetup',
+        'FilesAndPlots_v13_newCatSetup',
         [
             sframe,
             plots,
-            # varial.tools.ToolChain(
-            #     'CompareControlRegion',
-            #     lazy_eval_tools_func=compare_crs.mk_tc
-            #     ),
+            varial.tools.ToolChain(
+                'CompareControlRegion',
+                lazy_eval_tools_func=compare_crs.mk_tc
+                ),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )

@@ -15,13 +15,18 @@ cat_colors = [
     870,
 ]
 
-signal_regions = ['1HiggsMedTagSignalRegion'] # , '1HiggsLooseTagSignalRegion'
+signal_regions = [
+    '1HiggsLooseTagSignalRegion',
+    '1BoostHiggsLooseTagSignalRegion',
+    '1HiggsLooseTagLdJetBoostSignalRegion',
+    '1HiggsLooseTagLdAK8JetBoostSignalRegion'
+] # , '1HiggsLooseTagSignalRegion'
 control_regions = [
     '1AntiHTBVeto',
-    '1AntiHTMassInvert1BTag',
-    '1AntiHTMassInvert0BTag',
-    '1TopHiggsTagSideBandRegion', 
-    '0HiggsMedTagSideBandRegion'
+    '1AntiHTBVetoLdJetBoost',
+    '1AntiHTBVetoLdAK8JetBoost',
+    '1BoostAntiHTBVeto', 
+    # '0HiggsMedTagSideBandRegion'
     ]
 
 class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
@@ -81,11 +86,11 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
         self.main_pad.cd()
 
 def select_files(wrp):
-    if ((wrp.in_file_path == 'PostSelection/ST'
-            or wrp.in_file_path == 'PostSelection/leading_jet_pt'
-            or wrp.in_file_path == 'PostSelection/met'
-            or wrp.in_file_path == 'PostSelection/primary_lepton_pt'
-            or wrp.in_file_path == 'PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters'
+    if ((wrp.in_file_path.endswith('PostSelection/ST')
+            or wrp.in_file_path.endswith('PostSelection/leading_jet_pt')
+            or wrp.in_file_path.endswith('PostSelection/met')
+            or wrp.in_file_path.endswith('PostSelection/primary_lepton_pt')
+            or wrp.in_file_path.endswith('PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters')
             )
             and 'MC.TTbar' in wrp.file_path
             and '1HiggsLooseTagSignalRegion' not in wrp.file_path
@@ -105,8 +110,9 @@ def set_linewidth_others(wrps):
     return wrps
 
 
-def plot_setup(grps):
+def overlay_setup(grps, sig_reg=''):
     for grp in grps:
+        print sig_reg
         grp = list(grp)
         dat, bkg, sig = gen.split_data_bkg_sig(grp)
         dat, bkg, sig = list(dat), list(bkg), list(sig)
@@ -115,8 +121,8 @@ def plot_setup(grps):
             selected_smpls = bkg
         else:
             selected_smpls = sig
-        signal = filter(lambda w: '1HiggsMedTagSignalRegion' == w.legend, selected_smpls)
-        others = filter(lambda w: '1HiggsMedTagSignalRegion' != w.legend, selected_smpls)
+        signal = filter(lambda w: sig_reg == w.legend, selected_smpls)
+        others = filter(lambda w: sig_reg != w.legend, selected_smpls)
         if not signal:
             yield others + dat
         colorize_signal_region(signal[0])
@@ -132,16 +138,27 @@ def plot_colorizer(grps, colors=cat_colors):
     grps = (gen.apply_markercolor(ws, colors) for ws in grps)
     return grps
 
+def plot_setup(sig_reg=''):
+    def setup(grps):
+        grps = plot_colorizer(grps)
+        grps = overlay_setup(grps, sig_reg)
+        return grps
+    return setup
+
 
 def loader_hook(wrps):
     wrps = common_vlq.add_wrp_info(wrps)
     # wrps = add_cat_info(wrps)
     wrps = gen.gen_add_wrp_info(
-        wrps, category=lambda w: w.file_path.split('/')[-3])
+        wrps, category=lambda w: w.in_file_path.split('/')[0],
+        variable=lambda w: w.in_file_path.split('/')[-1])
         # legend=lambda w: w.file_path.split('/')[-3])
     wrps = gen.sort(wrps, key_list=['category'])
     wrps = common_vlq.merge_samples(wrps)
-    wrps = gen.sort(wrps, key_list=['sample', 'in_file_path'])
+    wrps = gen.sort(wrps, key_list=['sample', 'variable'])
+    # wrps = list(wrps)
+    # for w in wrps:
+    #     print w.sample, w.in_file_path
     wrps = gen.gen_add_wrp_info(
         wrps, legend=lambda w: w.category,
         draw_option=lambda w: 'hist' if not w.is_data else 'E1X0')
@@ -157,9 +174,13 @@ def loader_hook(wrps):
     wrps = gen.gen_norm_to_integral(wrps)
     return wrps
 
-def filter_category(cat=''):
+# CONTINUE HERE WITH FILTERING!!
+
+def filter_category(sig_cat='', cr_cat=''):
     def do_filtering(wrp):
-        if (wrp.category == cat) or (wrp.category == signal_regions[0]):
+        if (cr_cat and (wrp.category == cr_cat or wrp.category == sig_cat))\
+            or (not cr_cat and (wrp.category == sig_cat or wrp.category not in signal_regions)):
+            # print wrp.category
             return True
         else: return False
     return do_filtering
@@ -171,7 +192,9 @@ def make_bottom_plot(cat=''):
 
 def mk_tc():
     # return varial.tools.ToolChain('CompareControlRegion',
-    tc = [
+    tc = []
+    for sig in signal_regions:
+        sig_tc = [
         varial.tools.HistoLoader(
             # name='HistoLoaderSplit'+str(ind),
             # pattern=file_stack_split(),
@@ -184,26 +207,28 @@ def mk_tc():
             # load_func=gen_apply_legend(
             #         gen.load(gen.fs_content())),
             # combine_files=True,
+            filter_keyfunc=filter_category(sig),
             plot_grouper=lambda ws: gen.group(
-                ws, key_func=lambda w: w.sample and w.in_file_path),
-            plot_setup=lambda w: plot_setup(plot_colorizer(w)),
+                ws, key_func=lambda w: w.sample and w.variable),
+            plot_setup=plot_setup(sig),
             save_name_func=lambda w: w.sample+'_'+w.name,
             canvas_decorators=[varial.rendering.Legend]
             )
         ]
-    for cr in control_regions:
-        tc.append(varial.tools.Plotter(
-            name=cr,
-            input_result_path='../HistoLoader',
-            filter_keyfunc=filter_category(cr),
-            plot_grouper=lambda ws: gen.group(
-                ws, key_func=lambda w: w.sample and w.in_file_path),
-            plot_setup=lambda w: plot_setup(plot_colorizer(w)),
-            save_name_func=lambda w: w.sample+'_'+w.name,
-            save_lin_log_scale=True,
-            canvas_decorators=[
+        for cr in control_regions:
+            sig_tc.append(varial.tools.Plotter(
+                name=cr,
+                input_result_path='../HistoLoader',
+                filter_keyfunc=filter_category(sig, cr),
+                plot_grouper=lambda ws: gen.group(
+                    ws, key_func=lambda w: w.sample and w.variable),
+                plot_setup=plot_setup(sig),
+                save_name_func=lambda w: w.sample+'_'+w.name,
+                save_lin_log_scale=True,
+                canvas_decorators=[
                 make_bottom_plot(cr),
                 varial.rendering.Legend]
-            ))
+                ))
+        tc.append(varial.tools.ToolChain(sig, sig_tc))
     return tc
         # )

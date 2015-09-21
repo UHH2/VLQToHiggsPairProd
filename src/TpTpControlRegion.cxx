@@ -327,7 +327,9 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         "1BoostAntiHTBVeto",
         "1HiggsLooseTagSignalRegion",
         "1BoostHiggsLooseTagSignalRegion",
-        "1HiggsMedTagSignalRegion"
+        "1HiggsLooseTagLdJetBoostSignalRegion",
+        "1HiggsLooseTagLdAK8JetBoostSignalRegion"
+        // "1HiggsMedTagSignalRegion"
     };
 
     for (auto const & cat : categories) {
@@ -394,10 +396,16 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         //     // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
         } else if (cat == "1HiggsLooseTagSignalRegion") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_loose_ak8_notop", "N_higgs_tags_loose_ak8_notop", 11, -.5, 10.5, 1), insert_cut++);
+        } else if (cat == "1HiggsLooseTagLdJetBoostSignalRegion") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 300.), insert_cut++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_loose_ak8_notop", "N_higgs_tags_loose_ak8_notop", 11, -.5, 10.5, 1), insert_cut++);
+        } else if (cat == "1HiggsLooseTagLdAK8JetBoostSignalRegion") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatF("pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters", "Pt_leading_patJetsAk8CHSJetsSoftDropPacked_daughters", 15,   0, 1500, 500.), insert_cut++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_loose_ak8_notop", "N_higgs_tags_loose_ak8_notop", 11, -.5, 10.5, 1), insert_cut++);
         } else if (cat == "1BoostHiggsLooseTagSignalRegion") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_loose_ak8_notop_boost", "N_higgs_tags_loose_ak8_notop_boost", 11, -.5, 10.5, 1), insert_cut++);
-        } else if (cat == "1HiggsMedTagSignalRegion") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_med_ak8_notop", "N_higgs_tags_med_ak8_notop", 11, -.5, 10.5, 1), insert_cut++);
+        // } else if (cat == "1HiggsMedTagSignalRegion") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_higgs_tags_med_ak8_notop", "N_higgs_tags_med_ak8_notop", 11, -.5, 10.5, 1), insert_cut++);
         } else {
             assert(false);  // a category must be given
         }
@@ -431,21 +439,21 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         // v_hists.back().emplace_back(stsel_hists);
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
 
-        // if (type == "MC") {
-        //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-        //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-        //     // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
-        //     // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
-        //     // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
-        //     // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
-        //     // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
-        //     // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
-        //     // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
-        //     // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
-        // } else {
-        //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
-        //     v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
-        // }
+        if (type == "MC") {
+            v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+            // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
+            // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
+            // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
+            // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+            // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
+            // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+            // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
+            // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
+        } else {
+            v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+        }
 
         // append 2D cut
         // unsigned pos_2d_cut = 5;
