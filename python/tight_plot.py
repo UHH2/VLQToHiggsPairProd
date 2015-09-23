@@ -106,30 +106,82 @@ def file_stack_thonelep():
 
 final_dir = 'Plots'
 
+def mk_cutflow_chain_cr(category, loader_hook):
+    cutflow_histos = varial.tools.HistoLoader(
+        name='CutflowHistos',
+        # pattern=input_pat,
+        filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
+                       category == w.in_file_path.split('/')[0],
+        hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
+    )
+
+    cutflow_stack_plots = varial.tools.Plotter(
+        'CutflowStack',
+        stack=True,
+        input_result_path='../CutflowHistos',
+        save_log_scale=True,
+        canvas_decorators=[varial.rendering.Legend]
+    )
+
+    # cutflow_normed_plots = varial.tools.Plotter(
+    #     'CutflowNormed',
+    #     stack=False,
+    #     plot_grouper=varial.plotter.plot_grouper_by_in_file_path,
+    #     hook_loaded_histos=gen.gen_norm_to_max_val,
+    #     input_result_path='../CutflowHistos',
+    #     save_log_scale=True,
+    #     canvas_decorators=[varial.rendering.Legend]
+    # )
+
+    return varial.tools.ToolChain(category, [
+        cutflow_histos,
+        cutflow_stack_plots,
+        # cutflow_normed_plots,
+        cutflow_tables.CutflowTableContent(),
+        cutflow_tables.CutflowTableTxt(),
+        cutflow_tables.CutflowTableTex(None, True),
+    ])
+
+def mk_tools_cr(categories=None):
+    def create():
+        plot_chain = [
+            
+            varial.tools.mk_rootfile_plotter(
+                pattern=common_plot.file_stack_all_unsplit(),
+                name='StackedAll',
+                plotter_factory=lambda **w: stackplots.plotter_factory(common_plot.normfactors, **w),
+                combine_files=True,
+                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+                ),
+            varial.tools.mk_rootfile_plotter(
+                pattern=common_plot.file_no_signals(),
+                name='NormedNoSignals',
+                plotter_factory=lambda **w: normplots.plotter_factory(**w),
+                combine_files=True,
+                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+                ),
+            varial.tools.mk_rootfile_plotter(
+                pattern=common_plot.file_split_signals(),
+                name='NormedSignals',
+                plotter_factory=lambda **w: normplots.plotter_factory(**w),
+                combine_files=True,
+                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+                ),
+            
+            ]
+        cutflow_cat = []
+        for cat in categories:
+            cutflow_cat.append(mk_cutflow_chain_cr(
+                cat,
+                stackplots.loader_hook))
+        plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
+
+        return plot_chain
+    return create
+
 def mk_tools():
 
     return [
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_nosplit(),
-        #     name='StackedSigNoSplit',
-        #     plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
-        #     combine_files=True,
-        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        #     )
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_all(),
-        #     name='StackedSigAll',
-        #     plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
-        #     combine_files=True,
-        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        #     ),
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern=common_plot.file_stack_all_unsplit(),
-        #     name='Cutflows',
-        #     plotter_factory=normplots.plotter_factory_cf,
-        #     combine_files=True,
-        #     filter_keyfunc=lambda w: 'Cutflow' in w.in_file_path
-        #     ),
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_stack_all_unsplit(),
             name='StackedAll',
@@ -138,51 +190,19 @@ def mk_tools():
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_all_unsplit(),
-            name='NormedAll',
+            pattern=common_plot.file_no_signals(),
+            name='NormedNoSignals',
             plotter_factory=lambda **w: normplots.plotter_factory(**w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_th(),
-        #     name='StackedSigTH',
-        #     plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
-        #     combine_files=True,
-        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        #     ),
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_th(),
-        #     name='NormedSignalPlusBackground',
-        #     plotter_factory=normplots.plotter_factory,
-        #     combine_files=True,
-        #     ),
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_noth(),
-        #     name='StackedSigNoTH',
-        #     plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
-        #     combine_files=True,
-        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        #     ),
-        # varial.tools.mk_rootfile_plotter(
-        #     pattern= file_stack_noth(),
-        #     name='NormedSignalPlusBackgroundNoTH',
-        #     plotter_factory=normplots.plotter_factory,
-        #     combine_files=True,
-        #     ),
-        # # varial.tools.mk_rootfile_plotter(
-        # #     pattern= file_stack_thonelep(),
-        # #     name='StackedSigTHOneLep',
-        # #     plotter_factory=lambda **w: stackplots.plotter_factory(normfactor, **w),
-        # #     combine_files=True,
-        # #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        # #     ),
-        # # varial.tools.mk_rootfile_plotter(
-        # #     pattern= file_stack_thonelep(),
-        # #     name='NormedSignalPlusBackgroundOneLep',
-        # #     plotter_factory=normplots.plotter_factory,
-        # #     combine_files=True,
-        # #     ),
+        varial.tools.mk_rootfile_plotter(
+            pattern=common_plot.file_split_signals(),
+            name='NormedSignals',
+            plotter_factory=lambda **w: normplots.plotter_factory(**w),
+            combine_files=True,
+            # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            ),
         cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), stackplots.loader_hook)
         ]
 

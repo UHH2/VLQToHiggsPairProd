@@ -12,54 +12,6 @@
 using namespace std;
 using namespace uhh2;
 
-namespace vlqToHiggsPair {
-
-inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
-                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_insert, int pos_cut = -1,
-                              int cut_min=-999., int cut_max=999.) {
-    if (pos_cut < 0)
-        pos_cut = pos_insert;
-    modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                name,
-                "n_"+name
-                ));
-    modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-                name,
-                "mass_ld_"+name
-                ));
-    modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                name,
-                "mass_sj_ld_"+name
-                ));
-    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
-                name,
-                "tau21_ld_"+name
-                ));
-    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
-                name,
-                "tau32_ld_"+name,
-                false
-                ));
-    modules.emplace_back(new PartPtProducer<TopJet>(ctx,
-                name,
-                "pt_ld_"+name,
-                1));
-    sel_items.insert(sel_items.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_"+name, "N_"+name, 11, -.5, 10.5,
-                cut_min, cut_max)));
-    sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+name, "Mass_leading_"+name, 60, 0., 300.)));
-    sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+name, "Mass_subjets_leading_"+name, 60, 0., 300.)));
-    sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+name, "Tau21_leading_"+name, 50, 0., 1.)));
-    sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+name, "Tau32_leading_"+name, 50, 0., 1.)));
-    sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+name, "Pt_leading_"+name, 15, 0., 1500.)));
-}
-
-}
 
 class NeutrinoParticleProducer: public AnalysisModule {
 public:
@@ -285,3 +237,101 @@ private:
     unsigned n_higgs_tags_;
 
 };
+
+
+class SubjetCSVProducer: public AnalysisModule {
+public:
+    explicit SubjetCSVProducer(Context & ctx,
+                               const string & h_in,
+                               const string & h_out,
+                               unsigned ind_sj = 1):
+        h_in_(ctx.get_handle<std::vector<TopJet>>(h_in)),
+        h_out_(ctx.get_handle<float>(h_out)),
+        ind_sj_(ind_sj-1) {}
+
+    virtual bool process(Event & e) override {
+        if (e.is_valid(h_in_)) {
+            std::vector<TopJet> const & coll = e.get(h_in_);
+            if (coll.size()) {
+                std::vector<Jet> const & subjets = coll[0].subjets();
+                if (subjets.size() > ind_sj_) {
+                    e.set(h_out_, subjets[ind_sj_].btag_combinedSecondaryVertex());
+                }
+            } else {
+                e.set(h_out_, -1.);
+            }
+            return true;
+        } else {
+            e.set(h_out_, -1.);
+            return false;
+        }
+
+    }
+
+private:
+    Event::Handle<std::vector<TopJet>> h_in_;
+    Event::Handle<float> h_out_;
+    unsigned ind_sj_;
+};
+
+
+namespace vlqToHiggsPair {
+
+inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
+                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_insert, int pos_cut = -1,
+                              int cut_min=-9999., int cut_max=9999.) {
+    if (pos_cut < 0)
+        pos_cut = pos_insert;
+    modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                name,
+                "n_"+name
+                ));
+    modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
+                name,
+                "mass_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                name,
+                "mass_sj_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
+                name,
+                "tau21_ld_"+name
+                ));
+    modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
+                name,
+                "tau32_ld_"+name,
+                false
+                ));
+    modules.emplace_back(new PartPtProducer<TopJet>(ctx,
+                name,
+                "pt_ld_"+name,
+                1));
+    modules.emplace_back(new SubjetCSVProducer(ctx,
+                name,
+                "csv_sj1_ld_"+name,
+                1));
+    modules.emplace_back(new SubjetCSVProducer(ctx,
+                name,
+                "csv_sj2_ld_"+name,
+                2));
+    sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_"+name, "N_"+name, 11, -.5, 10.5,
+                cut_min, cut_max)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+name, "Mass_leading_"+name, 60, 0., 300.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+name, "Mass_subjets_leading_"+name, 60, 0., 300.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+name, "Tau21_leading_"+name, 50, 0., 1.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+name, "Tau32_leading_"+name, 50, 0., 1.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+name, "Pt_leading_"+name, 15, 0., 1500.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("csv_sj1_ld_"+name, "CSV_sj1_leading_"+name, 50, 0., 1.)));
+    sel_items.insert(sel_items.begin()+pos_insert, 
+            shared_ptr<SelectionItem>(new SelDatF("csv_sj2_ld_"+name, "CSV_sj2_leading_"+name, 50, 0., 1.)));
+}
+
+}

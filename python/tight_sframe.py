@@ -120,25 +120,45 @@ sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/sr
 #     ]
 # )
 
+signal_regions = [
+    '1HiggsLooseTagSignalRegion',
+    '1BoostHiggsLooseTagSignalRegion',
+    '1HiggsMedTagSignalRegion',
+] # , '1HiggsLooseTagSignalRegion'
+
+control_regions = [
+    '1AntiHTBVeto',    
+    '1BoostAntiHTBVeto',
+    '1BoostAntiHTBVetoHighMass',
+    '1AntiHTMassInvert1BTag',
+    '1AntiHTMassInvert0BTag',
+    '1BoostAntiHTMassInvert1BTag',
+    '1BoostAntiHTMassInvert0BTag',
+    # '0HiggsMedTagSideBandRegion'
+]
+
 
 def mk_sframe_and_plot_tools_control_region_new():
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg_control_region,
-        xml_tree_callback=set_datasets_eventnumber_and_split(count="-1", allowed_datasets=tptp_tight_datasets), # 
+        xml_tree_callback=set_category_datasets_eventnumber_and_split(
+            catname=' '.join(signal_regions+control_regions),
+            count="-1", allowed_datasets=tptp_tight_datasets
+        ), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
-        lazy_eval_tools_func=tight_plot.mk_tools
+        lazy_eval_tools_func=tight_plot.mk_tools_cr(signal_regions+control_regions)
     )
     tc = varial.tools.ToolChain(
-        'FilesAndPlots_v13_newCatSetup',
+        'FilesAndPlots_v14_moreCrs',
         [
             sframe,
             plots,
             varial.tools.ToolChain(
                 'CompareControlRegion',
-                lazy_eval_tools_func=compare_crs.mk_tc
+                lazy_eval_tools_func=compare_crs.mk_tc(srs=signal_regions, crs=control_regions)
                 ),
             varial.tools.WebCreator(no_tool_check=True)
         ]

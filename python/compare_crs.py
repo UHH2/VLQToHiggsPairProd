@@ -3,6 +3,7 @@ import varial.generators as gen
 import normplots
 import common_sensitivity
 import common_vlq
+# import tight_sframe
 import varial.operations as op
 import varial.analysis
 import varial.rendering
@@ -14,20 +15,6 @@ cat_colors = [
     434,
     870,
 ]
-
-signal_regions = [
-    '1HiggsLooseTagSignalRegion',
-    '1BoostHiggsLooseTagSignalRegion',
-    '1HiggsLooseTagLdJetBoostSignalRegion',
-    '1HiggsLooseTagLdAK8JetBoostSignalRegion'
-] # , '1HiggsLooseTagSignalRegion'
-control_regions = [
-    '1AntiHTBVeto',
-    '1AntiHTBVetoLdJetBoost',
-    '1AntiHTBVetoLdAK8JetBoost',
-    '1BoostAntiHTBVeto', 
-    # '0HiggsMedTagSideBandRegion'
-    ]
 
 class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
     """Same as BottomPlotRatio, but split MC and data uncertainties."""
@@ -91,9 +78,11 @@ def select_files(wrp):
             or wrp.in_file_path.endswith('PostSelection/met')
             or wrp.in_file_path.endswith('PostSelection/primary_lepton_pt')
             or wrp.in_file_path.endswith('PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters')
+            or wrp.in_file_path.endswith('PostSelection/n_jets')
+            or wrp.in_file_path.endswith('PostSelection/n_patJetsAk8CHSJetsSoftDropPacked_daughters')
             )
             and 'MC.TTbar' in wrp.file_path
-            and '1HiggsLooseTagSignalRegion' not in wrp.file_path
+            # and '1HiggsLooseTagSignalRegion' not in wrp.file_path
         ):
         return True
 
@@ -176,10 +165,10 @@ def loader_hook(wrps):
 
 # CONTINUE HERE WITH FILTERING!!
 
-def filter_category(sig_cat='', cr_cat=''):
+def filter_category(sig_cats=None, sig_cat='', cr_cat=''):
     def do_filtering(wrp):
         if (cr_cat and (wrp.category == cr_cat or wrp.category == sig_cat))\
-            or (not cr_cat and (wrp.category == sig_cat or wrp.category not in signal_regions)):
+            or (not cr_cat and (wrp.category == sig_cat or wrp.category not in sig_cats)):
             # print wrp.category
             return True
         else: return False
@@ -190,45 +179,47 @@ def make_bottom_plot(cat=''):
         return BottomPlotControlSignalRatio(target, dd=True, div_category=cat, **kws)
     return return_bottom_plot_class
 
-def mk_tc():
-    # return varial.tools.ToolChain('CompareControlRegion',
-    tc = []
-    for sig in signal_regions:
-        sig_tc = [
-        varial.tools.HistoLoader(
-            # name='HistoLoaderSplit'+str(ind),
-            # pattern=file_stack_split(),
-            filter_keyfunc=select_files,
-            hook_loaded_histos=loader_hook
-            ),
-        varial.tools.Plotter(
-            name='AllCategories',
-            input_result_path='../HistoLoader',
-            # load_func=gen_apply_legend(
-            #         gen.load(gen.fs_content())),
-            # combine_files=True,
-            filter_keyfunc=filter_category(sig),
-            plot_grouper=lambda ws: gen.group(
-                ws, key_func=lambda w: w.sample and w.variable),
-            plot_setup=plot_setup(sig),
-            save_name_func=lambda w: w.sample+'_'+w.name,
-            canvas_decorators=[varial.rendering.Legend]
-            )
-        ]
-        for cr in control_regions:
-            sig_tc.append(varial.tools.Plotter(
-                name=cr,
+def mk_tc(srs=None, crs=None):
+    def create():
+        # return varial.tools.ToolChain('CompareControlRegion',
+        tc = []
+        for sig in srs:
+            sig_tc = [
+            varial.tools.HistoLoader(
+                # name='HistoLoaderSplit'+str(ind),
+                # pattern=file_stack_split(),
+                filter_keyfunc=select_files,
+                hook_loaded_histos=loader_hook
+                ),
+            varial.tools.Plotter(
+                name='AllCategories',
                 input_result_path='../HistoLoader',
-                filter_keyfunc=filter_category(sig, cr),
+                # load_func=gen_apply_legend(
+                #         gen.load(gen.fs_content())),
+                # combine_files=True,
+                filter_keyfunc=filter_category(srs, sig),
                 plot_grouper=lambda ws: gen.group(
                     ws, key_func=lambda w: w.sample and w.variable),
                 plot_setup=plot_setup(sig),
                 save_name_func=lambda w: w.sample+'_'+w.name,
-                save_lin_log_scale=True,
-                canvas_decorators=[
-                make_bottom_plot(cr),
-                varial.rendering.Legend]
-                ))
-        tc.append(varial.tools.ToolChain(sig, sig_tc))
-    return tc
+                canvas_decorators=[varial.rendering.Legend]
+                )
+            ]
+            for cr in crs:
+                sig_tc.append(varial.tools.Plotter(
+                    name=cr,
+                    input_result_path='../HistoLoader',
+                    filter_keyfunc=filter_category(srs, sig, cr),
+                    plot_grouper=lambda ws: gen.group(
+                        ws, key_func=lambda w: w.sample and w.variable),
+                    plot_setup=plot_setup(sig),
+                    save_name_func=lambda w: w.sample+'_'+w.name,
+                    save_lin_log_scale=True,
+                    canvas_decorators=[
+                    make_bottom_plot(cr),
+                    varial.rendering.Legend]
+                    ))
+            tc.append(varial.tools.ToolChain(sig, sig_tc))
+        return tc
+    return create
         # )
