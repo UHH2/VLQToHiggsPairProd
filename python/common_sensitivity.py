@@ -5,12 +5,12 @@ import varial.generators as gen
 import varial.wrappers as wrappers
 
 dict_factors_original = {
-    'bwbw' : 0.2501776763,
-    'thth' : 0.06163234751,
-    'tztz' : 0.06168446588,
-    'thbw' : 0.2502345327,
-    'thtz' : 0.1252357172,
-    'tzbw' : 0.2510352604
+    'bwbw' : 0.111,
+    'thth' : 0.111,
+    'tztz' : 0.111,
+    'thbw' : 0.222,
+    'thtz' : 0.222,
+    'tzbw' : 0.222
 }
 
 def make_factors_new(brs):
@@ -59,8 +59,8 @@ def loader_hook(wrps):
     # print wrps
     # wrps = set_category(wrps)
     wrps = varial.generators.gen_add_wrp_info(
-        wrps, category=lambda w: w.file_path.split('/')[-3])
-    wrps = gen.sort(wrps, key_list="category")
+        wrps, category=lambda w: w.in_file_path.split('/')[0])
+    wrps = gen.sort(wrps, key_list=["category"])
     wrps = common_vlq.merge_samples(wrps)
     # print "=====AFTER MERGING=====:"
     # for w in wrps:
@@ -77,11 +77,11 @@ def loader_hook_scale(wrps, brs=None):
     wrps = loader_hook(wrps)
     wrps = final_state_scaling(wrps, brs)
     wrps = common_vlq.merge_decay_channels(wrps, (
-        '_bwbw',
         '_thbw',
         '_thth',
         '_thtz',
-        '_tzbw',
-        '_tztz'
+        '_noH_bwbw',
+        '_noH_tzbw',
+        '_noH_tztz'
         ))
     return wrps

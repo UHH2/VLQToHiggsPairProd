@@ -122,14 +122,6 @@ def merge_samples(wrps):
         '_Mu',
         '_Had'
     ))
-    wrps = merge_decay_channels(wrps,
-        ('_thth', '_thtz', '_thbw'),
-        '_thX'
-    )
-    wrps = merge_decay_channels(wrps,
-        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
-        '_other'
-    )
     return wrps
 
 def norm_to_first_bin(wrp):

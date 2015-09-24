@@ -9,7 +9,7 @@ import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
 
-def norm_smpl(wrps, smpl_fct=None, selection=''):
+def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
     for w in wrps:
         if smpl_fct:
             for fct_key, fct_val in smpl_fct.iteritems():
@@ -17,6 +17,8 @@ def norm_smpl(wrps, smpl_fct=None, selection=''):
                     # if w.analyzer = 'NoSelection' or 
                     w.lumi /= fct_val
                     w = varial.op.norm_to_lumi(w)
+        w.lumi /= norm_all
+        w = varial.op.norm_to_lumi(w)
         yield w
 
 # def norm_siingletfactor(wrps, factor=1.):
@@ -31,6 +33,14 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None):
     wrps = gen.sort(wrps)
     # wrps = norm_siingletfactor(wrps, singletfactor)
     wrps = common_vlq.merge_samples(wrps)
+    wrps = common_vlq.merge_decay_channels(wrps,
+        ('_thth', '_thtz', '_thbw'),
+        '_thX'
+    )
+    wrps = common_vlq.merge_decay_channels(wrps,
+        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
+        '_other'
+    )
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
     wrps = norm_smpl(wrps, smpl_fct)

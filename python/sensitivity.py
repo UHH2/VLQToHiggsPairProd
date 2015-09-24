@@ -10,9 +10,11 @@ import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
 import varial.wrappers as wrappers
+import stackplots
 
 from varial.sample import Sample
 from varial.extensions.limits import *
+from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
 
 import theta_auto
 import model_vlqpair
@@ -47,9 +49,9 @@ src_dir_rel = '../../../../../EventLoopAndPlots'
 #     # print file_list
 #     return file_list
 
-def get_category(wrp):
-    # print wrp.file_path.split('/')
-    return wrp.file_path.split('/')[-3]
+# def get_category(wrp):
+#     # print wrp.file_path.split('/')
+#     return wrp.file_path.split('/')[-3]
 
 # def file_stack_split():
 #     src_dir = analysis.cwd+src_dir_rel
@@ -60,7 +62,9 @@ def get_category(wrp):
 
 br_list = []
 
-for th_br in [i/10. for i in range(0, 12, 2)]:
+# only br_th = 100% for now
+
+for th_br in [i/10. for i in range(10, 12, 2)]:
     for tz_br in [ii/10. for ii in range(0, int(12-th_br*10), 2)]:
         bw_br = 1-th_br-tz_br
         # print bw_br, th_br, tz_br
@@ -75,15 +79,33 @@ def select_files(wrp):
     in_file_path = wrp.in_file_path
     # print "before selecting: "+wrp.file_path
     # print file_path
-    if file_path.endswith('.root') and not (file_path.endswith('_M1000.root')\
-        or 'onelep' in file_path or 'PrunedCat2htag' in file_path)\
-        and in_file_path == 'PostSelection/ST':
+    if file_path.endswith('.root')\
+        and 'DATA' not in file_path\
+        and in_file_path.endswith('PostSelection/ST'):
         return True
 
 def loader_hook_func(brs):
-    def temp(w):
+    def temp(wrps):
         # print varial.analysis.fs_aliases
-        return common_sensitivity.loader_hook_scale(w, brs)
+        # wrps = list (wrps)
+        # for w in wrps:
+        #     print w.file_path + '/' + w.in_file_path
+        wrps = common_sensitivity.loader_hook_scale(wrps, brs)
+        # print '===AFTER LOADER HOOK==='
+        # wrps = list (wrps)
+        # for w in wrps:
+        #     print w.sample, w.in_file_path
+        wrps = stackplots.norm_smpl(wrps,
+            smpl_fct={
+                'TpTp_M-800' : 1./0.196,
+                'TpTp_M-1600' : 1./0.001,
+            },
+            norm_all=(5000./42.477))
+        # print '===AFTER LOADER HOOK==='
+        # wrps = list (wrps)
+        # for w in wrps:
+        #     print w.sample, w.in_file_path
+        return wrps
     return temp
 
 # maybe pack this up into a list of individual tool chains so that HistoLoader is the first
@@ -109,13 +131,13 @@ def mk_limit_list():
                     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
                     save_name_func=lambda w: w.category
                 ),
-                ThetaLimitsBranchingRatios(
+                TpTpThetaLimits(
                     input_path= '../HistoLoader',
                     cat_key=lambda w: w.category,
                     # name= 'ThetaLimitsSplit'+str(ind),
                     # asymptotic= False,
                     brs=brs_,
-                    model_func= lambda w: model_vlqpair.get_model(w, ['TpTp_M1000'])
+                    model_func= lambda w: model_vlqpair.get_model(w, ['TpTp_M-800', 'TpTp_M-1600'])
                 )
             ]))
     return limit_list
@@ -123,11 +145,11 @@ def mk_limit_list():
 
 # tool_list.append(TriangleLimitPlots())
 
-dir_limit = 'Limits2'
+dir_limit = 'Limits'
 
 def mk_limit_chain():
     return varial.tools.ToolChainParallel(
-        'Ind_Limits', lazy_eval_tools_func=lambda: mk_limit_list()
+        'Ind_Limits', lazy_eval_tools_func=mk_limit_list
         )
 
 def add_draw_option(wrps, draw_option=''):
@@ -147,7 +169,7 @@ def mk_tc():
         [
         mk_limit_chain(),
         TriangleLimitPlots(
-            limit_rel_path='Ind_Limits/Limit*/ThetaLimitsBranchingRatios'
+            limit_rel_path='Ind_Limits/Limit*/TpTpThetaLimits'
             ),
         # # varial.tools.HistoLoader(
         # #     # name='HistoLoaderSplit'+str(ind),

@@ -3,6 +3,7 @@ from varial.extensions.sframe import SFrame
 import varial.tools
 import tight_plot
 import compare_crs
+import sensitivity
 
 
 tptp_tight_datasets = [
@@ -105,11 +106,12 @@ def mk_sframe_and_plot_tools_final_new():
         'FilesAndPlots_v0',
         [
             sframe,
-            plots,
+            # plots,
             # varial.tools.ToolChain(
             #     'CompareControlRegion',
             #     lazy_eval_tools_func=compare_crs.mk_tc(srs=signal_regions_final, crs=control_regions)
             #     ),
+            sensitivity.mk_tc(),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )
