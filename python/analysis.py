@@ -16,7 +16,7 @@ import os
 # varial.settings.use_parallel_chains = False
 
 # dir_name = 'TpTpLooseSelection'
-dir_name = 'TpTpControlRegion'
+dir_name = 'TpTpFinalSelection'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
 tc = varial.tools.ToolChain(
@@ -30,7 +30,7 @@ tc = varial.tools.ToolChain(
         ]),
         # # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
         git.GitAdder(),
-        tight_sframe.sframe_tools_control_region,
+        tight_sframe.sframe_tools_final,
         # loose_sframe.sframe_tools,
         # sensitivity.mk_tc(),
         git.GitTagger(),

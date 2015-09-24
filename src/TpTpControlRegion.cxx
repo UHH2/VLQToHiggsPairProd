@@ -466,10 +466,10 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
             sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
-        // auto stsel_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
+        auto notoptag_hists = new SelectedSelHists(ctx, cat+"/NoTopTagCut", *sel_helpers.back(), {}, {"n_toptags"});
         v_hists.back().emplace_back(nm1_hists);
         v_hists.back().emplace_back(cf_hists);
-        // v_hists.back().emplace_back(stsel_hists);
+        v_hists.back().emplace_back(notoptag_hists);
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
 
         // append 2D cut

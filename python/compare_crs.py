@@ -101,7 +101,7 @@ def set_linewidth_others(wrps):
 
 def overlay_setup(grps, sig_reg=''):
     for grp in grps:
-        print sig_reg
+        # print sig_reg
         grp = list(grp)
         dat, bkg, sig = gen.split_data_bkg_sig(grp)
         dat, bkg, sig = list(dat), list(bkg), list(sig)

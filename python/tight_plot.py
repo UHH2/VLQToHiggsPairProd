@@ -142,7 +142,7 @@ def mk_cutflow_chain_cr(category, loader_hook):
         cutflow_tables.CutflowTableTex(None, True),
     ])
 
-def mk_tools_cr(categories=None):
+def mk_tools_cats(categories=None):
     def create():
         plot_chain = [
             

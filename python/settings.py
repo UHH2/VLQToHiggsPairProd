@@ -1,27 +1,28 @@
 from varial import settings
 from varial.sample import Sample
 import varial.analysis as analysis
+import UHH2.VLQSemiLepPreSel.vlq_settings
 
 settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
-settings.defaults_Legend['x_pos'] = 0.80
-settings.defaults_Legend['label_width'] = 0.36
-settings.defaults_Legend['label_height'] = 0.04
+# settings.defaults_Legend['x_pos'] = 0.80
+# settings.defaults_Legend['label_width'] = 0.36
+# settings.defaults_Legend['label_height'] = 0.04
 # settings.debug_mode = True
-settings.box_text_size = 0.03
-settings.colors = {
-    'QCD' : 867,
-    'TTbar': 632,
-    'WJets': 878,
-    'ZJets': 596,
-    # 'TpTp_M800': 416,
-    # 'TpTp_M1000_thth': 800,
-    # 'TpTp_M1000_thtz': 400,
-    # 'TpTp_M1000_thbw': 616,
-    # 'TpTp_M1000_tztz': 797,
-    # 'TpTp_M1000_tzbw': 902,
-    # 'TpTp_M1000_bwbw': 593,
-}
+# settings.box_text_size = 0.03
+# settings.colors = {
+#     'QCD' : 867,
+#     'TTbar': 632,
+#     'WJets': 878,
+#     'ZJets': 596,
+#     # 'TpTp_M800': 416,
+#     # 'TpTp_M1000_thth': 800,
+#     # 'TpTp_M1000_thtz': 400,
+#     # 'TpTp_M1000_thbw': 616,
+#     # 'TpTp_M1000_tztz': 797,
+#     # 'TpTp_M1000_tzbw': 902,
+#     # 'TpTp_M1000_bwbw': 593,
+# }
 
 # sample definitions
 smpls = list()
@@ -51,41 +52,6 @@ smpls.append(Sample(
     name='SingleT',
     legend='SingleT'
 ))
-
-# smpls.append(Sample(
-#     name='TpTp_M-800',
-#     legend='TpTp_M800'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_thth',
-#     legend='TpTp_M1000_thth'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_thtz',
-#     legend='TpTp_M1000_thtz'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_thbw',
-#     legend='TpTp_M1000_thbw'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_tztz',
-#     legend='TpTp_M1000_tztz'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_tzbw',
-#     legend='TpTp_M1000_tzbw'
-# ))
-
-# smpls.append(Sample(
-#     name='TpTp_M1000_bwbw',
-#     legend='TpTp_M1000_bwbw'
-# ))
 
 analysis.all_samples = dict((s.name, s) for s in smpls)
 

@@ -4,7 +4,6 @@ import varial.tools
 import tight_plot
 import compare_crs
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelection.xml'
 
 tptp_tight_datasets = [
     'Run2015B_Ele',
@@ -49,45 +48,11 @@ tptp_tight_datasets = [
     'SingleT_WTop',
 ]
 
-def mk_sframe_and_plot_tools(catname):
-    """Makes a toolchain for one category with sframe and plots."""
-    sframe = SFrame(
-        cfg_filename=sframe_cfg,
-        xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
-    )
-    plots = varial.tools.ToolChainParallel(
-        'Plots',
-        lazy_eval_tools_func=lambda: tight_plot.mk_tools()
-    )
-    tc = varial.tools.ToolChain(
-        catname,
-        [
-            sframe,
-            plots
-        ]
-    )
-    return tc
-
-sframe_tools = varial.tools.ToolChain(
-    'EventLoopAndPlots_v0',
-    [
-        mk_sframe_and_plot_tools('SoftDropCat1htag0btag'),
-        mk_sframe_and_plot_tools('SoftDropCat1htag1btag'),
-        # mk_sframe_and_plot_tools('SoftDropCat1htag2plusbtag'),
-        mk_sframe_and_plot_tools('SoftDropCat0htag2plusbtag'),
-        # mk_sframe_and_plot_tools('SoftDropCat2htag')
-    ]
-)
-
-# for control regions:
-
-sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpControlRegion.xml'
-
-# def mk_sframe_and_plot_tools_control_region(catname):
+# def mk_sframe_and_plot_tools(catname):
 #     """Makes a toolchain for one category with sframe and plots."""
 #     sframe = SFrame(
-#         cfg_filename=sframe_cfg_control_region,
-#         xml_tree_callback=set_category_datasets_eventnumber_and_split(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
+#         cfg_filename=sframe_cfg,
+#         xml_tree_callback=set_category_datasets_and_eventnumber(catname, count="-1", allowed_datasets=tptp_tight_datasets), # 
 #     )
 #     plots = varial.tools.ToolChainParallel(
 #         'Plots',
@@ -102,23 +67,59 @@ sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/sr
 #     )
 #     return tc
 
-# sframe_tools_control_region_old = varial.tools.ToolChain(
-#     'FilesAndPlots_v11_withtoptag',
+# sframe_tools = varial.tools.ToolChain(
+#     'EventLoopAndPlots_v0',
 #     [
-#         mk_sframe_and_plot_tools_control_region('1AntiHTBVeto'),
-#         mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert1BTag'),
-#         mk_sframe_and_plot_tools_control_region('1AntiHTMassInvert0BTag'),
-#         mk_sframe_and_plot_tools_control_region('1TopHiggsTagSideBandRegion'),
-#         mk_sframe_and_plot_tools_control_region('0HiggsMedTagSideBandRegion'),
-#         mk_sframe_and_plot_tools_control_region('1HiggsMedTagSignalRegion'),
-#         # mk_sframe_and_plot_tools_control_region('1HiggsLooseTagSignalRegion'),
-#         varial.tools.ToolChain(
-#             'CompareControlRegion',
-#             lazy_eval_tools_func=compare_crs.mk_tc
-#         ),
-#         varial.tools.WebCreator(no_tool_check=True)
+#         mk_sframe_and_plot_tools('SoftDropCat1htag0btag'),
+#         mk_sframe_and_plot_tools('SoftDropCat1htag1btag'),
+#         # mk_sframe_and_plot_tools('SoftDropCat1htag2plusbtag'),
+#         mk_sframe_and_plot_tools('SoftDropCat0htag2plusbtag'),
+#         # mk_sframe_and_plot_tools('SoftDropCat2htag')
 #     ]
 # )
+
+sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelection.xml'
+
+signal_regions_final = [
+    'SignalRegion_0HiggsTags2addBtags',
+    'SignalRegion_1HiggsTag0addBtags',
+    'SignalRegion_1HiggsTag1addBtags',
+    'SignalRegion_1HiggsTag2addBtags'
+]
+
+
+def mk_sframe_and_plot_tools_final_new():
+    """Makes a toolchain for one category with sframe and plots."""
+    sframe = SFrame(
+        cfg_filename=sframe_cfg,
+        xml_tree_callback=set_category_datasets_eventnumber_and_split(
+            catname=' '.join(signal_regions_final),
+            count="-1", allowed_datasets=tptp_tight_datasets
+        ), # 
+    )
+    plots = varial.tools.ToolChainParallel(
+        'Plots',
+        lazy_eval_tools_func=tight_plot.mk_tools_cats(signal_regions_final)
+    )
+    tc = varial.tools.ToolChain(
+        'FilesAndPlots_v0',
+        [
+            sframe,
+            plots,
+            # varial.tools.ToolChain(
+            #     'CompareControlRegion',
+            #     lazy_eval_tools_func=compare_crs.mk_tc(srs=signal_regions_final, crs=control_regions)
+            #     ),
+            varial.tools.WebCreator(no_tool_check=True)
+        ]
+    )
+    return tc
+
+sframe_tools_final = mk_sframe_and_plot_tools_final_new()
+
+# for control regions:
+
+sframe_cfg_control_region = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpControlRegion.xml'
 
 signal_regions = [
     '1HiggsLooseTagSignalRegion',
@@ -149,7 +150,7 @@ def mk_sframe_and_plot_tools_control_region_new():
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
-        lazy_eval_tools_func=tight_plot.mk_tools_cr(signal_regions+control_regions)
+        lazy_eval_tools_func=tight_plot.mk_tools_cats(signal_regions+control_regions)
     )
     tc = varial.tools.ToolChain(
         'FilesAndPlots_v14_moreCrs',
