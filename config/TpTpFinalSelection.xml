@@ -282,7 +282,7 @@
             <Item Name="additionalBranches" Value="slimmedMETsPuppi triggerNames triggerResults slimmedJetsPuppi patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsFilteredPacked_daughters patJetsHepTopTagCHSPacked_daughters" />
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="TpTpTightSelectionRunII" />
+            <Item Name="AnalysisModule" Value="TpTpControlRegion" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->

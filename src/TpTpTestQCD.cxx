@@ -102,7 +102,7 @@ TpTpTestQCD::TpTpTestQCD(Context & ctx) {
     // make copy of base sel vector to avoid inserting the same selection
     // multiple times in different runs (since the base vector is static it is not
     // deleted at the end of one cycle)
-    SEL_ITEMS_VLQPair_testQCD = SEL_ITEMS_VLQPair_testQCD_base;
+    SEL_ITEMS_VLQPair_testQCD = SEL_ITEMS_VLQPair_final_base;
 
 
     unsigned pos_cut = 0;

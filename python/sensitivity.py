@@ -4,19 +4,18 @@ import os
 import time
 import glob
 
-import common_vlq
-import common_sensitivity
+import theta_auto
+
 import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
 import varial.wrappers as wrappers
-import stackplots
-
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
 
-import theta_auto
+import common_sensitivity
+import common_plot
 import model_vlqpair
 
 # varial.settings.use_parallel_chains = False
@@ -52,7 +51,7 @@ def select_files(wrp):
 def loader_hook_func(brs):
     def temp(wrps):
         wrps = common_sensitivity.loader_hook_scale(wrps, brs)
-        wrps = stackplots.norm_smpl(wrps,
+        wrps = common_plot.norm_smpl(wrps,
             smpl_fct={
                 'TpTp_M-800' : 1./0.196,
                 'TpTp_M-1600' : 1./0.001,

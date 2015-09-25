@@ -1,10 +1,11 @@
-from varial.extensions.sframe import SFrame
-import varial.tools
 import copy
+
+import varial.tools
+from varial.extensions.sframe import SFrame
 
 # sframe_cfg_test = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TestNewFormat.xml'
 
-def_final_states = [
+final_states_to_split_into = [
     'thth',
     'thtz',
     'thbw',
@@ -13,7 +14,7 @@ def_final_states = [
     'noH_bwbw',
 ]
 
-def_signal_samples = [
+signal_files_to_split = [
     'TpTp_M-700',
     'TpTp_M-800',
     'TpTp_M-900',
@@ -35,10 +36,10 @@ def do_set_cat(element_tree, catname):
             item.set('Value', catname)
             break
 
-def do_set_eventnumber(element_tree, count):
+def do_set_eventnumber(element_tree, count=-1):
     input_data = element_tree.getroot().find('Cycle').findall('InputData')
     for attr in input_data:
-        attr.set('NEventsMax', count)
+        attr.set('NEventsMax', str(count))
 
 def clean_input_data(element_tree, allowed_datasets):
     tree_cycle = element_tree.getroot().find('Cycle')
@@ -54,6 +55,7 @@ def make_higgs_split_item(element_tree, final_states=None):
                 split_smpl = copy.deepcopy(item)
                 split_smpl.set('Version', split_smpl.get('Version')+'_'+ver)
                 tree_cycle.insert(ind, split_smpl)
+            tree_cycle.remove(item)
 
 def split_item_and_set_filename(element_tree, datasets=None, final_states=None):
     tree_cycle = element_tree.getroot().find('Cycle')
@@ -70,46 +72,60 @@ def split_item_and_set_filename(element_tree, datasets=None, final_states=None):
                 tree_cycle.insert(ind, split_smpl)
             tree_cycle.remove(item)
 
+def set_analysis_module(element_tree, analysis_module=''):
+    if analysis_module:
+        user_config = element_tree.getroot().find('Cycle').find('UserConfig')
+        for item in user_config:
+            if item.get('Name') == 'AnalysisModule':
+                item.set('Value', analysis_module)
+                break
 
 
 
-def set_category_datasets_and_eventnumber(catname, count ="1000", allowed_datasets=None):
+
+def set_category_datasets_and_eventnumber(catname, count ="1000", allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
         do_set_cat(element_tree, catname)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_category_datasets_eventnumber_and_split(catname, count ="1000", allowed_datasets=None):
+def set_category_datasets_eventnumber_and_split(catname, count ="1000", allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
-        split_item_and_set_filename(element_tree, def_signal_samples, def_final_states)
+        split_item_and_set_filename(element_tree, signal_files_to_split, final_states_to_split_into)
         do_set_cat(element_tree, catname)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_datasets_eventnumber_and_split(count ="1000", allowed_datasets=None):
+def set_datasets_eventnumber_and_split(count ="1000", allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
-        split_item_and_set_filename(element_tree, def_signal_samples, def_final_states)
+        split_item_and_set_filename(element_tree, signal_files_to_split, final_states_to_split_into)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_eventnumber(count="-1"):
+def set_eventnumber(count="-1", analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_eventnumber_and_datasets(count='-1', allowed_datasets=None):
+def set_eventnumber_and_datasets(count='-1', allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_eventnumber_datasets_and_split(count='-1', allowed_datasets=None):
+def set_eventnumber_datasets_and_split(count='-1', allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
-        make_higgs_split_item(element_tree, def_final_states)
+        make_higgs_split_item(element_tree, final_states_to_split_into)
         do_set_eventnumber(element_tree, count)
     return tmp_func
 

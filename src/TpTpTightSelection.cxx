@@ -57,7 +57,7 @@ private:
     vector<unique_ptr<Hists>> v_hists;
     vector<unique_ptr<Hists>> v_hists_after_sel;
 
-    vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_tight;
+    vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_final;
 
     // check category
     // unique_ptr<Selection> cat_check_module;
@@ -243,7 +243,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     // make copy of base sel vector to avoid inserting the same selection
     // multiple times in different runs (since the base vector is static it is not
     // deleted at the end of one cycle)
-    SEL_ITEMS_VLQPair_tight = SEL_ITEMS_VLQPair_tight_base;
+    SEL_ITEMS_VLQPair_final = SEL_ITEMS_VLQPair_final_base;
 
     unsigned pos_cut = 4;
     // higgs tag with filtered jets
@@ -252,51 +252,51 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
         //     new HandleSelection<int>(ctx, "n_higgs_tags_ak8_notop", 1),
         //     new HandleSelection<int>(ctx, "n_additional_btags", 0, 0)
         // }));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 0, 0)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
         // v_cat_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_MEDIUM)), "patJetsCa15CHSJetsFilteredPacked_daughters", "n_htags"));
         // v_cat_modules.emplace_back(new CollectionProducer<TopJet>(ctx, HiggsTag(60.f, 99999., CSVBTag(CSVBTag::WP_MEDIUM)), "patJetsCa15CHSJetsFilteredPacked_daughters", "h_jets"));
     } else if (category == "SoftDropCat1htag1btag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 1, 1)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_MEDIUM)), "jets", "b_jets"));
     } else if (category == "SoftDropCat1htag2plusbtag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 1)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 2)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
     } else if (category == "SoftDropCat0htag2plusbtag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 0, 0)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5,
                 2)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
     } 
     else if (category == "SoftDropCat2htag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 2)));
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut+1, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut+1, 
             shared_ptr<SelectionItem>(new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5
                 )));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
     }
     else if (category == "Test1HTag") {
-        SEL_ITEMS_VLQPair_tight.insert(SEL_ITEMS_VLQPair_tight.begin()+pos_cut, 
+        SEL_ITEMS_VLQPair_final.insert(SEL_ITEMS_VLQPair_final.begin()+pos_cut, 
             shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_ak8_notop", "N_{H Tags (AK8), no top}", 11, -.5, 10.5,
                 1)));
         // v_cat_modules.emplace_back(new CollectionProducer<Jet>(ctx, AndId<Jet>(PtEtaCut(30., 2.4), CSVBTag(CSVBTag::WP_LOOSE)), "jets", "b_jets"));
@@ -327,7 +327,7 @@ TpTpTightSelection::TpTpTightSelection(Context & ctx) {
     
 
     // Selection Producer
-    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_tight, ctx);
+    SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_final, ctx);
     sel_helper.declare_items_for_output();
     sel_module.reset(new SelectionProducer(ctx, sel_helper));
 

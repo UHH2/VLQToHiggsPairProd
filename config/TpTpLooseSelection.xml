@@ -100,7 +100,7 @@
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="0.00268666002688567" NEventsMax="100" Type="MC" Version="QCD_Pt15to30" Cacheable="True">
+        <!-- <InputData Lumi="0.00268666002688567" NEventsMax="100" Type="MC" Version="QCD_Pt15to30" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to30.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
@@ -116,7 +116,7 @@
             <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt50to80.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-        </InputData>
+        </InputData> -->
 
         <InputData Lumi="1.25429262306654" NEventsMax="100" Type="MC" Version="QCD_Pt80to120" Cacheable="True">
             <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt80to120.root" Lumi="0.0"/>

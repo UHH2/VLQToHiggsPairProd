@@ -1,8 +1,11 @@
 import varial.history
 
-import common_vlq
 import varial.generators as gen
 import varial.wrappers as wrappers
+
+import UHH2.VLQSemiLepPreSel.common as vlq_common
+
+import common_plot
 
 dict_factors_original = {
     'bwbw' : 0.111,
@@ -55,12 +58,12 @@ def set_category(wrps):
     return wrps
 
 def loader_hook(wrps):
-    wrps = common_vlq.add_wrp_info(wrps)
+    wrps = vlq_common.add_wrp_info(wrps)
     wrps = varial.generators.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0])
     wrps = gen.sort(wrps, key_list=["category"])
-    wrps = common_vlq.merge_samples(wrps)
-    wrps = common_vlq.label_axes(wrps)
+    wrps = common_plot.merge_samples(wrps)
+    wrps = vlq_common.label_axes(wrps)
     # wrps = final_state_scaling(wrps, dict_factors)
     return wrps
 
@@ -70,7 +73,7 @@ def loader_hook_scale(wrps, brs=None):
         return None
     wrps = loader_hook(wrps)
     wrps = final_state_scaling(wrps, brs)
-    wrps = common_vlq.merge_decay_channels(wrps, (
+    wrps = vlq_common.merge_decay_channels(wrps, (
         '_thbw',
         '_thth',
         '_thtz',
