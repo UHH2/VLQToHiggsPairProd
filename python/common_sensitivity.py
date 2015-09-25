@@ -56,16 +56,10 @@ def set_category(wrps):
 
 def loader_hook(wrps):
     wrps = common_vlq.add_wrp_info(wrps)
-    # print wrps
-    # wrps = set_category(wrps)
     wrps = varial.generators.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0])
     wrps = gen.sort(wrps, key_list=["category"])
     wrps = common_vlq.merge_samples(wrps)
-    # print "=====AFTER MERGING=====:"
-    # for w in wrps:
-    #     print "after:\n", w
-    # wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = common_vlq.label_axes(wrps)
     # wrps = final_state_scaling(wrps, dict_factors)
     return wrps

@@ -25,41 +25,6 @@ theta_auto.config.theta_dir = "/nfs/dust/cms/user/nowatsd/theta"
 
 src_dir_rel = '../../../../../EventLoopAndPlots'
 
-# def file_stack_all():
-#     src_dir = analysis.cwd+src_dir_rel
-#     file_list = []
-#     for cat_dir in os.listdir(src_dir):
-#         if os.path.isdir(cat_dir):
-#             for fil in os.listdir(src_dir+'/'+cat_dir+'/SFrame'):
-#                 if (fil.endswith('.root') and 'M1000_' not in fil):
-#                     file_list.append(src_dir+cat_dir+'/SFrame/'+fil)
-#     return file_list
-
-# def file_stack_split():
-#     src_dir = analysis.cwd+src_dir_rel
-#     file_list = []
-#     for cat_dir in os.listdir(src_dir):
-#         print cat_dir
-#         print analysis.cwd
-#         if os.path.isdir(src_dir+'/'+cat_dir):
-#             print "Is Dir"
-#             for fil in os.listdir(src_dir+'/'+cat_dir+'/SFrame'):
-#                 if (fil.endswith('.root') and not (fil.endswith('_M1000.root') or 'onelep' in fil)):
-#                     file_list.append(src_dir+'/'+cat_dir+'/SFrame/'+fil)
-#     # print file_list
-#     return file_list
-
-# def get_category(wrp):
-#     # print wrp.file_path.split('/')
-#     return wrp.file_path.split('/')[-3]
-
-# def file_stack_split():
-#     src_dir = analysis.cwd+src_dir_rel
-#     return [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-#     (f.endswith('.root') and not (f.endswith('_M1000.root') or 'onelep' in f)
-#         # and 'HT' not in f
-#     )]
-
 br_list = []
 
 # only br_th = 100% for now
@@ -86,25 +51,13 @@ def select_files(wrp):
 
 def loader_hook_func(brs):
     def temp(wrps):
-        # print varial.analysis.fs_aliases
-        # wrps = list (wrps)
-        # for w in wrps:
-        #     print w.file_path + '/' + w.in_file_path
         wrps = common_sensitivity.loader_hook_scale(wrps, brs)
-        # print '===AFTER LOADER HOOK==='
-        # wrps = list (wrps)
-        # for w in wrps:
-        #     print w.sample, w.in_file_path
         wrps = stackplots.norm_smpl(wrps,
             smpl_fct={
                 'TpTp_M-800' : 1./0.196,
                 'TpTp_M-1600' : 1./0.001,
             },
-            norm_all=(5000./42.477))
-        # print '===AFTER LOADER HOOK==='
-        # wrps = list (wrps)
-        # for w in wrps:
-        #     print w.sample, w.in_file_path
+            norm_all=(3000./42.477))
         return wrps
     return temp
 
@@ -145,7 +98,7 @@ def mk_limit_list():
 
 # tool_list.append(TriangleLimitPlots())
 
-dir_limit = 'Limits'
+dir_limit = 'Limits3fb'
 
 def mk_limit_chain():
     return varial.tools.ToolChainParallel(
