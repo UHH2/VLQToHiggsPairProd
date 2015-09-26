@@ -126,11 +126,11 @@ def mk_tools():
 #====SFRAME====
 
 tptp_tight_datasets = [
-    # 'Run2015B_Ele',
-    # 'Run2015B_Mu',
-    # 'Run2015B_Had',
+    'Run2015B_Ele',
+    'Run2015B_Mu',
+    'Run2015B_Had',
     # 'TpTp_M-700',
-    # 'TpTp_M-800',
+    'TpTp_M-800',
     'TpTp_M-900',
     'TpTp_M-1000',
     'TpTp_M-1100',
@@ -138,7 +138,7 @@ tptp_tight_datasets = [
     'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
-    # 'TpTp_M-1600',
+    'TpTp_M-1600',
     # 'TpTp_M-1700',
     # 'TpTp_M-1800',
     # 'QCD_Pt15to30',
@@ -146,26 +146,26 @@ tptp_tight_datasets = [
     # 'QCD_Pt50to80',
     # 'QCD_Pt80to120',
     # 'QCD_Pt120to170',
-    # 'QCD_Pt170to300',
-    # 'QCD_Pt300to470',
-    # 'QCD_Pt470to600',
-    # 'QCD_Pt600to800',
-    # 'QCD_Pt800to1000',
-    # 'QCD_Pt1000to1400',
-    # 'QCD_Pt1400to1800',
-    # 'QCD_Pt1800to2400',
-    # 'QCD_Pt2400to3200',
-    # 'QCD_Pt3200toInf',
-    # # 'TTbar',
-    # 'TTbar_Mtt0to700',
-    # 'TTbar_Mtt700to1000',
-    # 'TTbar_Mtt1000toInf',
-    # 'WJets',
-    # 'ZJetsM10to50',
-    # 'ZJetsM50toInf',
-    # 'SingleT_tChannel',
-    # 'SingleT_WAntitop',
-    # 'SingleT_WTop',
+    'QCD_Pt170to300',
+    'QCD_Pt300to470',
+    'QCD_Pt470to600',
+    'QCD_Pt600to800',
+    'QCD_Pt800to1000',
+    'QCD_Pt1000to1400',
+    'QCD_Pt1400to1800',
+    'QCD_Pt1800to2400',
+    'QCD_Pt2400to3200',
+    'QCD_Pt3200toInf',
+    # 'TTbar',
+    'TTbar_Mtt0to700',
+    'TTbar_Mtt700to1000',
+    'TTbar_Mtt1000toInf',
+    'WJets',
+    'ZJetsM10to50',
+    'ZJetsM50toInf',
+    'SingleT_tChannel',
+    'SingleT_WAntitop',
+    'SingleT_WTop',
 ]
 
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelection.xml'
@@ -183,7 +183,8 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
     )
     plots = varial.tools.ToolChainParallel(
         'Plots_more_signals',
-        lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
+        # lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
+        lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,

@@ -53,8 +53,18 @@ def loader_hook_func(brs):
         wrps = common_sensitivity.loader_hook_scale(wrps, brs)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct={
+                'TpTp_M-700' : 1./0.455,
                 'TpTp_M-800' : 1./0.196,
+                'TpTp_M-900' : 1./0.0903,
+                'TpTp_M-1000' : 1./0.0440,
+                'TpTp_M-1100' : 1./0.0224,
+                'TpTp_M-1200' : 1./0.0118,
+                'TpTp_M-1300' : 1./0.00639,
+                'TpTp_M-1400' : 1./0.00354,
+                'TpTp_M-1500' : 1./0.00200,
                 'TpTp_M-1600' : 1./0.001,
+                'TpTp_M-1700' : 1./0.0005,
+                'TpTp_M-1800' : 1./0.00025,
             },
             norm_all=(3000./42.477))
         return wrps
@@ -89,7 +99,13 @@ def mk_limit_list():
                     # name= 'ThetaLimitsSplit'+str(ind),
                     # asymptotic= False,
                     brs=brs_,
-                    model_func= lambda w: model_vlqpair.get_model(w, ['TpTp_M-800', 'TpTp_M-1600'])
+                    model_func= lambda w: model_vlqpair.get_model(w, [
+                        'TpTp_M-800',
+                        'TpTp_M-900',
+                        'TpTp_M-1000',
+                        'TpTp_M-1100',
+                        'TpTp_M-1300',
+                        'TpTp_M-1600'])
                 )
             ]))
     return limit_list

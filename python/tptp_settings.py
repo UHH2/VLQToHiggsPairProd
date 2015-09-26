@@ -24,6 +24,9 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 #     # 'TpTp_M1000_bwbw': 593,
 # }
 
+# settings.max_open_root_files = 100
+# settings.max_num_processes = 20
+
 # sample definitions
 smpls = list()
 

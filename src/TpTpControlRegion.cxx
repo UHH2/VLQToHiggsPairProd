@@ -288,10 +288,10 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_all_loose_2b_m60_noT", "min_deltaR_top_higgsak8notop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_all_loose_2b_m60", "min_deltaR_top_higgsak8"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_all_loose_2b_m60_noT", "min_deltaR_top_higgsak8notop_twotop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_all_loose_2b_m60", "min_deltaR_top_higgsak8_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8_twotop"));
 
 
         // } else if (cat == "BVetoLdJetBoost") {

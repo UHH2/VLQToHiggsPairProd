@@ -18,11 +18,11 @@ import tptp_settings
 # varial.settings.use_parallel_chains = False
 
 # mod_name = 'TpTpLooseSelection'
-mod_name = 'TpTpControlRegion'
-# mod_name = 'TpTpFinalSelectionRunII'
+# mod_name = 'TpTpControlRegion'
+mod_name = 'TpTpTightSelectionRunII'
 uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 
-version = 'FilesAndPlots_v15_morePlots'
+version = 'FilesAndPlots_v0'
 count = -1
 
 signal_regions_final = [
@@ -63,8 +63,8 @@ tc = varial.tools.ToolChain(
             analysis_module=mod_name,
             version=version,
             count=count,
-            signal_regions=signal_regions_control,
-            control_regions=control_regions
+            signal_regions=signal_regions_final,
+            # control_regions=control_regions
         ),
         # tptplooseselection.mk_sframe_and_plot_tools(
         #     # analysis_module=mod_name,
