@@ -318,6 +318,15 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
     swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
 
+    // produce more plots for the collections you cut on
+    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_loose_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_loose_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_loose_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_med_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_med_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_med_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_med_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
 
     
     vector<string> categories = split(ctx.get("category", ""));
@@ -327,30 +336,42 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
         int insert_new = insert_cut;
 
-        if (cat == "ControlRegionBVeto") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_ex1b_m60_noT", "N_ak8_all_loose_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "ControlRegionBVetoBoost") {
+        // if (cat == "ControlRegionBVeto") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_ex1b_m60_noT", "N_ak8_all_loose_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        // } else
+        if (cat == "ControlRegionBVetoBoostLoose") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_ex1b_m60_noT", "N_ak8_boost_loose_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "ControlRegionMassInvert1BTag") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_min1b_minvert_noT", "N_ak8_all_loose_min1b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "ControlRegionMassInvert0BTag") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_0b_minvert_noT", "N_ak8_all_loose_0b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "ControlRegionMassInvert1BTagBoost") {
+        } else if (cat == "ControlRegionMassInvert1BTagBoostLoose") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_min1b_minvert_noT", "N_ak8_boost_loose_min1b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "ControlRegionMassInvert0BTagBoost") {
+        } else if (cat == "ControlRegionMassInvert0BTagBoostLoose") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_0b_minvert_noT", "N_ak8_boost_loose_0b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "SignalRegionHLoose") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        } else if (cat == "ControlRegionBVetoBoostMed") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_ex1b_m60_noT", "N_ak8_boost_med_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        } else if (cat == "ControlRegionMassInvert1BTagBoostMed") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_min1b_minvert_noT", "N_ak8_boost_med_min1b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
+        } else if (cat == "ControlRegionMassInvert0BTagBoostMed") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_0b_minvert_noT", "N_ak8_boost_med_0b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
+        // } else if (cat == "ControlRegionMassInvert1BTag") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_min1b_minvert_noT", "N_ak8_all_loose_min1b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
+        // } else if (cat == "ControlRegionMassInvert0BTag") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_0b_minvert_noT", "N_ak8_all_loose_0b_minvert_noT", 11, -.5, 10.5, 1), insert_new++);
+        // } else if (cat == "SignalRegionHLoose") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "SignalRegionHLooseBoost") {
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
-        } else if (cat == "SignalRegionHMed") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_med_2b_m60_noT", "N_ak8_all_med_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        } else if (cat == "SignalRegionHMedBoost") {
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        // } else if (cat == "SignalRegionHMed") {
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_med_2b_m60_noT", "N_ak8_all_med_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
         } else {
             assert(false);  // a category must be given
         }

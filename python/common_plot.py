@@ -78,7 +78,7 @@ def merge_samples(wrps):
         # '_Pt50to80',
         # '_Pt80to120',
         # '_Pt120to170',
-        '_Pt170to300',
+        # '_Pt170to300',
         '_Pt300to470',
         '_Pt470to600',
         '_Pt600to800',
@@ -86,11 +86,11 @@ def merge_samples(wrps):
         '_Pt1000to1400',
         '_Pt1400to1800',
         '_Pt1800to2400',
-        '_Pt2400to3200',
+        # '_Pt2400to3200',
         '_Pt3200toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
-        'M10to50',
+        # 'M10to50',
         'M50toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
