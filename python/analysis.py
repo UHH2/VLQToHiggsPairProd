@@ -94,18 +94,19 @@ control_regions = [
 ]
 
 tc_list = [
-    # make.Make([
-    #    uhh_base + 'core',
-    #    uhh_base + 'common',
-    #    uhh_base + 'VLQSemiLepPreSel',
-    #    uhh_base + 'VLQToHiggsPairProd',
-    # ]),
+    make.Make([
+       uhh_base + 'core',
+       uhh_base + 'common',
+       uhh_base + 'VLQSemiLepPreSel',
+       uhh_base + 'VLQToHiggsPairProd',
+    ]),
     # # varial.tools.UserInteraction('Really run sframe? (Kill me otherwise.)'),
     git.GitAdder(),    
 ]
 
 if len(sys.argv) < 2:
     print "ERROR not enough arguments for analysis.py!"
+    
     
 
 if str(sys.argv[1]) == 'loose':
@@ -142,7 +143,7 @@ elif str(sys.argv[1]) == 'control':
     tc_list.append(
         tptpfinalselection.mk_sframe_and_plot_tools(
             analysis_module='TpTpControlRegion',
-            version='FilesAndPlots_v16_morePlots',
+            version='FilesAndPlots_v17_morePlots',
             count=count,
             allowed_datasets=tptp_datasets_final,
             signal_regions=signal_regions_control,

@@ -140,7 +140,8 @@ def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps)
     wrps = gen.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0],
-        variable=lambda w: w.in_file_path.split('/')[-1])
+        # variable=lambda w: w.in_file_path.split('/')[-1]
+        )
     wrps = gen.sort(wrps, key_list=['category'])
     wrps = common_plot.merge_samples(wrps)
     wrps = gen.sort(wrps, key_list=['sample', 'variable'])

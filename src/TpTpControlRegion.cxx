@@ -188,8 +188,9 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     unsigned insert_sel = 12;
 
     // make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
-    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
 
 
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
@@ -319,14 +320,14 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
 
     // produce more plots for the collections you cut on
-    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_loose_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_loose_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_loose_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_med_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_med_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_med_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
-    make_modules_and_selitem("ak8_boost_med_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, true);
+    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
 
     
     vector<string> categories = split(ctx.get("category", ""));
@@ -399,10 +400,10 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
             sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
-        auto notoptag_hists = new SelectedSelHists(ctx, cat+"/NoTopTagCut", *sel_helpers.back(), {}, {"n_toptags"});
+        // auto notoptag_hists = new SelectedSelHists(ctx, cat+"/NoTopTagCut", *sel_helpers.back(), {}, {"n_toptags"});
         v_hists.back().emplace_back(nm1_hists);
         v_hists.back().emplace_back(cf_hists);
-        v_hists.back().emplace_back(notoptag_hists);
+        // v_hists.back().emplace_back(notoptag_hists);
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
 
         // append 2D cut
@@ -422,21 +423,21 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         // v_hists.insert(v_hists.begin() + pos_cat_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
     }
 
-    if (type == "MC") {
-        v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-            // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
-            // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
-            // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
-            // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
-            // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
-            // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
-            // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
-            // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
-    } else {
-        v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
-            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
-    }
+    // if (type == "MC") {
+    //     v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+    //         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+    //         // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
+    //         // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
+    //         // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
+    //         // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+    //         // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
+    //         // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_notop", 0.5);
+    //         // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
+    //         // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
+    // } else {
+    //     v_hists_nosel.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+    //         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+    // }
 
 
 }

@@ -293,27 +293,27 @@ inline std::string  switch_names(const string & coll_name) {
 
 inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
                               vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_insert, int pos_cut = -1,
-                              bool produce_all = false, int cut_min=-999999., int cut_max=999999.) {
+                              bool produce_all = false) {
     if (pos_cut < 0)
         pos_cut = pos_insert;
     bool item_exists = false;
     for (auto const & sel_it : sel_items) {
-        if (sel_it->name() == "n_"+switch_names(name)) {
+        if (sel_it->name() == "mass_sj_ld_"+switch_names(name)) {
             item_exists = true;
             break;
         }
     }
     if (!item_exists) {
-        modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-            name,
-            "n_"+switch_names(name)
-            ));
         modules.emplace_back(new LeadingTopjetMassProducer(ctx,
             name,
             "mass_sj_ld_"+switch_names(name)
             ));
     }
     if (produce_all) {
+        modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+            name,
+            "n_"+switch_names(name)
+            ));
         modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
             name,
             "mass_ld_"+switch_names(name)
@@ -342,13 +342,12 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
     }
 
     if (!item_exists) {
-        sel_items.insert(sel_items.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_"+switch_names(name), "N_"+switch_names(name), 11, -.5, 10.5,
-                cut_min, cut_max)));
         sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+switch_names(name), "Mass_subjets_leading_"+switch_names(name), 60, 0., 300.)));
     }
     if (produce_all) {
+        sel_items.insert(sel_items.begin()+pos_cut, 
+            shared_ptr<SelectionItem>(new SelDatI("n_"+switch_names(name), "N_"+switch_names(name), 11, -.5, 10.5)));
         sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+switch_names(name), "Mass_leading_"+switch_names(name), 60, 0., 300.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
