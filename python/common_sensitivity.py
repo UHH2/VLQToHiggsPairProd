@@ -81,4 +81,7 @@ def loader_hook_scale(wrps, brs=None):
         '_noH_tzbw',
         '_noH_tztz'
         ))
+    # wrps = list(wrps)
+    # for w in wrps:
+    #     print w.sample
     return wrps

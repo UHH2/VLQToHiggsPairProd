@@ -145,11 +145,11 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
     )
     tc_list = [
         sframe,
-        plots
+        # plots
     ]
     if analysis_module == 'TpTpControlRegion':
         tc_list.append(varial.tools.ToolChain(
-                'CompareControlRegion',
+                'CompareControlRegion2',
                 lazy_eval_tools_func=compare_crs.mk_tc(
                     srs=signal_regions, crs=control_regions)
                 ))

@@ -188,9 +188,10 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
 
     unsigned insert_sel = 12;
 
-    make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+    // make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
 
 
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
@@ -217,16 +218,16 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
         for (string coll_name2 : {out_name+"_med_2b", out_name+"_loose_2b"}) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
-                coll_name2+"_h_m60",
+                coll_name2+"_m60",
                 TopJetId(HiggsTag(MIN_HIGGS_MASS, MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                coll_name2+"_h_m60",
-                coll_name2+"_h_m60_noT",
+                coll_name2+"_m60",
+                coll_name2+"_m60_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
                 ));
-            make_modules_and_selitem(coll_name2+"_h_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-            make_modules_and_selitem(coll_name2+"_h_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         }
 
     }
@@ -254,10 +255,12 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
 
     int insert_cut = 3;
 
-    swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 200.), insert_cut++);
-    swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
-    swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 200.), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
     
+    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+
     vector<string> categories = split(ctx.get("category", ""));
 
     for (auto const & cat : categories) {
@@ -306,10 +309,10 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
             sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
-        auto noTtag_hists = new SelectedSelHists(ctx, cat+"/NoTTagCut", *sel_helpers.back(), {}, {"n_toptags"});
+        // auto noTtag_hists = new SelectedSelHists(ctx, cat+"/NoTTagCut", *sel_helpers.back(), {}, {"n_toptags"});
         v_hists.back().emplace_back(nm1_hists);
         v_hists.back().emplace_back(cf_hists);
-        v_hists.back().emplace_back(noTtag_hists);
+        // v_hists.back().emplace_back(noTtag_hists);
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
 
         // append 2D cut

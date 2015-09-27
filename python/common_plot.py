@@ -126,6 +126,14 @@ def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators)
     wrps = gen.sort(wrps)
     wrps = merge_samples(wrps)
+    wrps = vlq_common.merge_decay_channels(wrps,
+        ('_thth', '_thtz', '_thbw'),
+        '_thX'
+    )
+    wrps = vlq_common.merge_decay_channels(wrps,
+        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
+        '_other'
+    )
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = vlq_common.label_axes(wrps)
     # wrps = norm_sigxfactor(wrps)

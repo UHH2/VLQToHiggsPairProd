@@ -15,6 +15,10 @@ def get_model(hist_dir, final_states):
     model.add_lognormal_uncertainty('wjets_rate', math.log(1.25), 'WJets')
     model.add_lognormal_uncertainty('zjets_rate', math.log(1.50), 'ZJets')
     model.add_lognormal_uncertainty('tptp800_rate', math.log(1.15), 'TpTp_M-800')
+    model.add_lognormal_uncertainty('tptp900_rate', math.log(1.15), 'TpTp_M-900')
+    model.add_lognormal_uncertainty('tptp1000_rate', math.log(1.15), 'TpTp_M-1000')
+    model.add_lognormal_uncertainty('tptp1100_rate', math.log(1.15), 'TpTp_M-1100')
+    model.add_lognormal_uncertainty('tptp1300_rate', math.log(1.15), 'TpTp_M-1300')
     model.add_lognormal_uncertainty('tptp1600_rate', math.log(1.15), 'TpTp_M-1600')
     # for p in model.processes:
     #     if p == 'QCD': continue

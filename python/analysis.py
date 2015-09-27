@@ -5,6 +5,7 @@
 # import UHH2.VLQSemiLepPreSel.common as common
 import tptpfinalselection
 import tptplooseselection
+import tptptightselection
 # import sensitivity
 # import tex_content
 
@@ -32,11 +33,11 @@ tptp_datasets_final = [
     # 'Run2015B_Had',
     # 'TpTp_M-700',
     'TpTp_M-800',
-    # 'TpTp_M-900',
-    # 'TpTp_M-1000',
-    # 'TpTp_M-1100',
+    'TpTp_M-900',
+    'TpTp_M-1000',
+    'TpTp_M-1100',
     # 'TpTp_M-1200',
-    # 'TpTp_M-1300',
+    'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
     'TpTp_M-1600',
@@ -63,6 +64,49 @@ tptp_datasets_final = [
     'TTbar_Mtt1000toInf',
     'WJets',
     # 'ZJetsM10to50',
+    'ZJetsM50toInf',
+    'SingleT_tChannel',
+    'SingleT_WAntitop',
+    'SingleT_WTop',
+]
+
+tptp_datasets_tight = [
+    'Run2015B_Ele',
+    'Run2015B_Mu',
+    'Run2015B_Had',
+    # 'TpTp_M-700',
+    'TpTp_M-800',
+    'TpTp_M-900',
+    'TpTp_M-1000',
+    'TpTp_M-1100',
+    # 'TpTp_M-1200',
+    'TpTp_M-1300',
+    # 'TpTp_M-1400',
+    # 'TpTp_M-1500',
+    'TpTp_M-1600',
+    # 'TpTp_M-1700',
+    # 'TpTp_M-1800',
+    # 'QCD_Pt15to30',
+    # 'QCD_Pt30to50',
+    # 'QCD_Pt50to80',
+    'QCD_Pt80to120',
+    'QCD_Pt120to170',
+    'QCD_Pt170to300',
+    'QCD_Pt300to470',
+    'QCD_Pt470to600',
+    'QCD_Pt600to800',
+    'QCD_Pt800to1000',
+    'QCD_Pt1000to1400',
+    'QCD_Pt1400to1800',
+    'QCD_Pt1800to2400',
+    'QCD_Pt2400to3200',
+    'QCD_Pt3200toInf',
+    # 'TTbar',
+    'TTbar_Mtt0to700',
+    'TTbar_Mtt700to1000',
+    'TTbar_Mtt1000toInf',
+    'WJets',
+    'ZJetsM10to50',
     'ZJetsM50toInf',
     'SingleT_tChannel',
     'SingleT_WAntitop',
@@ -106,7 +150,7 @@ tc_list = [
 
 if len(sys.argv) < 2:
     print "ERROR not enough arguments for analysis.py!"
-    
+
     
 
 if str(sys.argv[1]) == 'loose':
@@ -122,9 +166,9 @@ elif str(sys.argv[1]) == 'tight':
     mod_name='TpTpTightSelectionRunII'
     tc_list.append(
         tptptightselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v0',
+            version='FilesAndPlots_v1_morePlots',
             count=count,
-            allowed_datasets=tptp_datasets
+            allowed_datasets=tptp_datasets_tight
         ),
     )
 elif str(sys.argv[1]) == 'final':

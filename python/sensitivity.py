@@ -28,7 +28,7 @@ br_list = []
 
 # only br_th = 100% for now
 
-for th_br in [i/10. for i in range(10, 12, 2)]:
+for th_br in [i/10. for i in range(6, 12, 2)]:
     for tz_br in [ii/10. for ii in range(0, int(12-th_br*10), 2)]:
         bw_br = 1-th_br-tz_br
         # print bw_br, th_br, tz_br
@@ -66,7 +66,7 @@ def loader_hook_func(brs):
                 'TpTp_M-1700' : 1./0.0005,
                 'TpTp_M-1800' : 1./0.00025,
             },
-            norm_all=(3000./42.477))
+            norm_all=(5000./42.477))
         return wrps
     return temp
 
@@ -77,7 +77,7 @@ def loader_hook_func(brs):
 def mk_limit_list():
     limit_list = []
     for ind, brs_ in enumerate(br_list):
-        if ind > 2: break
+        # if ind > 2: break
         limit_list.append(
             varial.tools.ToolChain('Limit'+str(ind),[
                 varial.tools.HistoLoader(
@@ -113,7 +113,7 @@ def mk_limit_list():
 
 # tool_list.append(TriangleLimitPlots())
 
-dir_limit = 'Limits3fb'
+dir_limit = 'Limits5fb'
 
 def mk_limit_chain():
     return varial.tools.ToolChainParallel(
@@ -147,7 +147,8 @@ def mk_tc():
         # #     ),
         varial.plotter.Plotter(
             input_result_path='../TriangleLimitPlots',
-            plot_setup=plot_setup
+            plot_setup=plot_setup,
+            save_name_func=lambda w: 'M-'+str(w.mass)
             ),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()

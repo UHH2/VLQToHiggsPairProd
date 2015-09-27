@@ -78,9 +78,9 @@ def select_files(wrp):
             or wrp.in_file_path.endswith('PostSelection/leading_jet_pt')
             or wrp.in_file_path.endswith('PostSelection/met')
             or wrp.in_file_path.endswith('PostSelection/primary_lepton_pt')
-            or wrp.in_file_path.endswith('PostSelection/pt_ld_patJetsAk8CHSJetsSoftDropPacked_daughters')
+            or wrp.in_file_path.endswith('PostSelection/pt_ld_ak8_all')
             or wrp.in_file_path.endswith('PostSelection/n_jets')
-            or wrp.in_file_path.endswith('PostSelection/n_patJetsAk8CHSJetsSoftDropPacked_daughters')
+            or wrp.in_file_path.endswith('PostSelection/n_ld_ak8_all')
             )
             and 'MC.TTbar' in wrp.file_path
             # and '1HiggsLooseTagSignalRegion' not in wrp.file_path

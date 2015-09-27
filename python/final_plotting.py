@@ -17,18 +17,7 @@ import common_plot
 
 def loader_hook_norm_smpl(wrps, smpl_fct=None):
     wrps = common_plot.loader_hook(wrps)
-    wrps = list(wrps)
-    for w in wrps:
-        print w.sample, w.in_file_path
     # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
-    wrps = vlq_common.merge_decay_channels(wrps,
-        ('_thth', '_thtz', '_thbw'),
-        '_thX'
-    )
-    wrps = vlq_common.merge_decay_channels(wrps,
-        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
-        '_other'
-    )
     wrps = common_plot.norm_smpl(wrps, smpl_fct)
     wrps = gen.gen_make_th2_projections(wrps)
     return wrps
@@ -46,14 +35,6 @@ def plotter_factory_stack(smpl_fct=None, **kws):
 def loader_hook_norm_to_int(wrps):
     wrps = common_plot.loader_hook(wrps)
     # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
-    wrps = vlq_common.merge_decay_channels(wrps,
-        ('_thth', '_thtz', '_thbw'),
-        '_thX'
-    )
-    wrps = vlq_common.merge_decay_channels(wrps,
-        ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
-        '_other'
-    )
     # wrps = gen.switch(
     #     wrps,
     #     lambda w: w.in_file_path.split('/')[0] == 'GenHists',

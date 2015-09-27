@@ -315,9 +315,9 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     
     int insert_cut = 3;
 
-    swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 200.), insert_cut++);
-    swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
-    swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 200.), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
+    // swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
 
     // produce more plots for the collections you cut on
     make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
