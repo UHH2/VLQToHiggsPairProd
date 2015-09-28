@@ -121,7 +121,7 @@ def set_eventnumber_and_datasets(count='-1', allowed_datasets=None, analysis_mod
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_eventnumber_datasets_and_split(count='-1', allowed_datasets=None, analysis_module=''):
+def set_datasets_eventnumber_and_split_loose(count='-1', allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
         set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)

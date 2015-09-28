@@ -59,12 +59,12 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=common_sframe.set_eventnumber_datasets_and_split(
+        xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split(
             count=count, allowed_datasets=allowed_datasets,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_more_signals',
+        'Plots',
         # lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
         lazy_eval_tools_func=mk_tools
     )
