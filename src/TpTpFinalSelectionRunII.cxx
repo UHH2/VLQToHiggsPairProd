@@ -87,7 +87,7 @@ private:
 TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
 
     const float MIN_HIGGS_MASS = 60.f;
-    const float MAX_HIGGS_MASS = 99999.f;
+    const float MAX_HIGGS_MASS = 150.f;
 
 
     // If needed, access the configuration of the module here, e.g.:
@@ -218,32 +218,32 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
         for (string coll_name2 : {out_name+"_med_2b", out_name+"_loose_2b"}) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
-                coll_name2+"_m60",
+                coll_name2+"_m60-150",
                 TopJetId(HiggsTag(MIN_HIGGS_MASS, MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                coll_name2+"_m60",
-                coll_name2+"_m60_noT",
+                coll_name2+"_m60-150",
+                coll_name2+"_m60-150_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
                 ));
-            make_modules_and_selitem(coll_name2+"_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-            make_modules_and_selitem(coll_name2+"_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         }
 
     }
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8_twotop"));
 
 
     // additional b-tags
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "b_jets",
                 "n_additional_btags",
-                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_boost_loose_2b_m60_noT", 1.0, true),
+                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_boost_loose_2b_m60-150_noT", 1.0, true),
                                     MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
                 ));
 
@@ -259,7 +259,7 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
     // swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
     // swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
     
-    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
 
     vector<string> categories = split(ctx.get("category", ""));
 
@@ -271,16 +271,16 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
         // insert_cut += 1;
 
         if (cat == "SignalRegion_0HiggsTags2addBtags") {
-            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5, 2), insert_new++);
         } else if (cat == "SignalRegion_1HiggsTag0addBtags") {
-            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
             swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5, 0, 0), insert_new++);
         } else if (cat == "SignalRegion_1HiggsTag1addBtags") {
-            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
             swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5, 1, 1), insert_new++);
         } else if (cat == "SignalRegion_1HiggsTag2addBtags") {
-            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
             swap_selitems(SEL_ITEMS_tightregion_vec.back(), new SelDatI("n_additional_btags", "N_{additional b-tags}", 11, -.5, 10.5, 2), insert_new++);
         } else {
             assert(false);  // a category must be given

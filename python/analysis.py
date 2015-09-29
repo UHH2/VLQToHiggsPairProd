@@ -185,7 +185,7 @@ elif str(sys.argv[1]) == 'final':
     tc_list.append(
         tptpfinalselection.mk_sframe_and_plot_tools(
             analysis_module='TpTpFinalSelectionRunII',
-            version='FilesAndPlots_v2_higgsPt300',
+            version='FilesAndPlots_v3_higgsUpperM150',
             count=count,
             allowed_datasets=tptp_datasets_final,
             signal_regions=signal_regions_final,
