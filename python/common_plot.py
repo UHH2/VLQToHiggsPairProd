@@ -29,7 +29,47 @@ normfactors = {
 
 signal_indicators = ['TpTp']
 
+datasets_to_plot = [
+    'Run2015B',
+    # 'TpTp_M-700',
+    'TpTp_M-800',
+    # 'TpTp_M-900',
+    # 'TpTp_M-1000',
+    # 'TpTp_M-1100',
+    # 'TpTp_M-1200',
+    # 'TpTp_M-1300',
+    # 'TpTp_M-1400',
+    # 'TpTp_M-1500',
+    'TpTp_M-1600',
+    # 'TpTp_M-1700',
+    # 'TpTp_M-1800',
+    # 'QCD_Pt15to30',
+    # 'QCD_Pt30to50',
+    # 'QCD_Pt50to80',
+    'QCD',
+    # 'TTbar',
+    'TTbar',
+    'WJets',
+    'ZJets',
+    'SingleT',
+]
+
 #====SELECT_FILES FUNCTIONS====
+
+def file_selected_unsplit():
+    src_dir = varial.analysis.cwd+src_dir_rel
+    file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
+        (f.endswith('.root') and any(g in f for g in datasets_to_plot)
+        )]
+    return file_list
+
+def file_selected_split():
+    src_dir = varial.analysis.cwd+src_dir_rel
+    file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
+        (f.endswith('.root') and any(g in f for g in datasets_to_plot)
+            and not ('TpTp' in f and f.endswith('00.root'))
+        )]
+    return file_list
 
 def file_stack_all_unsplit():
 	src_dir = varial.analysis.cwd+src_dir_rel
@@ -76,9 +116,9 @@ def merge_samples(wrps):
         # '_Pt15to30',
         # '_Pt30to50',
         # '_Pt50to80',
-        # '_Pt80to120',
-        # '_Pt120to170',
-        # '_Pt170to300',
+        '_Pt80to120',
+        '_Pt120to170',
+        '_Pt170to300',
         '_Pt300to470',
         '_Pt470to600',
         '_Pt600to800',
@@ -86,11 +126,11 @@ def merge_samples(wrps):
         '_Pt1000to1400',
         '_Pt1400to1800',
         '_Pt1800to2400',
-        # '_Pt2400to3200',
+        '_Pt2400to3200',
         '_Pt3200toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
-        # 'M10to50',
+        'M10to50',
         'M50toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
@@ -104,9 +144,9 @@ def merge_samples(wrps):
         '_Mtt1000toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
-        # '_Ele',
+        '_Ele',
         '_Mu',
-        # '_Had'
+        '_Had'
     ))
     return wrps
 

@@ -6,6 +6,7 @@
 import tptpfinalselection
 import tptplooseselection
 import tptptightselection
+import tptppreselection
 # import sensitivity
 # import tex_content
 
@@ -76,11 +77,11 @@ tptp_datasets_tight = [
     'Run2015B_Had',
     # 'TpTp_M-700',
     'TpTp_M-800',
-    'TpTp_M-900',
-    'TpTp_M-1000',
-    'TpTp_M-1100',
+    # 'TpTp_M-900',
+    # 'TpTp_M-1000',
+    # 'TpTp_M-1100',
     # 'TpTp_M-1200',
-    'TpTp_M-1300',
+    # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
     'TpTp_M-1600',
@@ -162,11 +163,19 @@ if str(sys.argv[1]) == 'loose':
             allowed_datasets=tptp_datasets
         ),
     )
+elif str(sys.argv[1]) == 'pre':
+    mod_name='TpTpPreSelection'
+    tc_list.append(
+        tptppreselection.mk_sframe_and_plot_tools(
+            version='FilesAndPlots_v0',
+            allowed_datasets=tptp_datasets_tight
+        ),
+    )
 elif str(sys.argv[1]) == 'tight':
     mod_name='TpTpTightSelectionRunII'
     tc_list.append(
         tptptightselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v1_morePlots',
+            version='FilesAndPlots_v2_withPtPlots',
             count=count,
             allowed_datasets=tptp_datasets_tight
         ),

@@ -26,7 +26,7 @@ def mk_tools():
 
     return [
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_all_unsplit(),
+            pattern=common_plot.file_selected_split(),
             name='StackedAll',
             plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
             combine_files=True,
@@ -46,7 +46,7 @@ def mk_tools():
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
-        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), common_plot.loader_hook)
+        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
         ]
 
 

@@ -296,9 +296,10 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
                               bool produce_all = false) {
     if (pos_cut < 0)
         pos_cut = pos_insert;
+    std::string out_name = switch_names(name);
     bool item_exists = false;
     for (auto const & sel_it : sel_items) {
-        if (sel_it->name() == "mass_sj_ld_"+switch_names(name)) {
+        if (sel_it->name() == "mass_sj_ld_"+out_name) {
             item_exists = true;
             break;
         }
@@ -306,60 +307,64 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
     if (!item_exists) {
         modules.emplace_back(new LeadingTopjetMassProducer(ctx,
             name,
-            "mass_sj_ld_"+switch_names(name)
+            "mass_sj_ld_"+out_name
             ));
+        if (out_name.find("boost") == std::string::npos) {
+            modules.emplace_back(new PartPtProducer<TopJet>(ctx,
+                name,
+                "pt_ld_"+out_name,
+                1));
+        }
     }
     if (produce_all) {
         modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
             name,
-            "n_"+switch_names(name)
+            "n_"+out_name
             ));
         modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
             name,
-            "mass_ld_"+switch_names(name)
+            "mass_ld_"+out_name
             ));
         modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
             name,
-            "tau21_ld_"+switch_names(name)
+            "tau21_ld_"+out_name
             ));
         modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
             name,
-            "tau32_ld_"+switch_names(name),
+            "tau32_ld_"+out_name,
             false
-            ));
-        modules.emplace_back(new PartPtProducer<TopJet>(ctx,
+            ));;
+        modules.emplace_back(new SubjetCSVProducer(ctx,
             name,
-            "pt_ld_"+switch_names(name),
+            "csv_sj1_ld_"+out_name,
             1));
         modules.emplace_back(new SubjetCSVProducer(ctx,
             name,
-            "csv_sj1_ld_"+switch_names(name),
-            1));
-        modules.emplace_back(new SubjetCSVProducer(ctx,
-            name,
-            "csv_sj2_ld_"+switch_names(name),
+            "csv_sj2_ld_"+out_name,
             2));
     }
 
     if (!item_exists) {
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+switch_names(name), "Mass_subjets_leading_"+switch_names(name), 60, 0., 300.)));
+            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+out_name, "Mass_subjets_leading_"+out_name, 60, 0., 300.)));
+        if (out_name.find("boost") == std::string::npos) {
+            sel_items.insert(sel_items.begin()+pos_insert, 
+                shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+out_name, "Pt_leading_"+out_name, 15, 0., 1500.)));
+        }
     }
     if (produce_all) {
         sel_items.insert(sel_items.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_"+switch_names(name), "N_"+switch_names(name), 11, -.5, 10.5)));
+            shared_ptr<SelectionItem>(new SelDatI("n_"+out_name, "N_"+out_name, 11, -.5, 10.5)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+switch_names(name), "Mass_leading_"+switch_names(name), 60, 0., 300.)));
+            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+out_name, "Mass_leading_"+out_name, 60, 0., 300.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+switch_names(name), "Tau21_leading_"+switch_names(name), 50, 0., 1.)));
+            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+out_name, "Tau21_leading_"+out_name, 50, 0., 1.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+switch_names(name), "Tau32_leading_"+switch_names(name), 50, 0., 1.)));
+            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+out_name, "Tau32_leading_"+out_name, 50, 0., 1.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+switch_names(name), "Pt_leading_"+switch_names(name), 15, 0., 1500.)));
+            shared_ptr<SelectionItem>(new SelDatF("csv_sj1_ld_"+out_name, "CSV_sj1_leading_"+out_name, 50, 0., 1.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("csv_sj1_ld_"+switch_names(name), "CSV_sj1_leading_"+switch_names(name), 50, 0., 1.)));
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("csv_sj2_ld_"+switch_names(name), "CSV_sj2_leading_"+switch_names(name), 50, 0., 1.)));
+            shared_ptr<SelectionItem>(new SelDatF("csv_sj2_ld_"+out_name, "CSV_sj2_leading_"+out_name, 50, 0., 1.)));
     }
 }
 

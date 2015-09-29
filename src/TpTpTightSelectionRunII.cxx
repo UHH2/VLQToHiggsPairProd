@@ -346,11 +346,13 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
     auto cf_hists = new VLQ2HTCutflow(ctx, "Cutflow", sel_helper);
+    auto stcut_hists = new SelectedSelHists(ctx, "OnlySTCut", sel_helper, {"ST"});
     auto noTtag_hists = new SelectedSelHists(ctx, "NoTTagCut", sel_helper, {}, {"n_toptags"});
     auto nojetpt_hists = new SelectedSelHists(ctx, "NoJetPtCut", sel_helper, {}, {"leading_jet_pt"});
     auto nonak8_hists = new SelectedSelHists(ctx, "NoNak8JetsCut", sel_helper, {}, {"n_ak8_all"});
     v_hists.emplace_back(nm1_hists);
     v_hists.emplace_back(cf_hists);
+    v_hists.emplace_back(stcut_hists);
     v_hists.emplace_back(noTtag_hists);
     v_hists.emplace_back(nojetpt_hists);
     v_hists.emplace_back(nonak8_hists);
