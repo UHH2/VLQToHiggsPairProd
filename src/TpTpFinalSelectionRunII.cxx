@@ -205,12 +205,12 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE)))
             ));
         make_modules_and_selitem(coll_name, ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         make_modules_and_selitem(out_name+"_med_2b", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);

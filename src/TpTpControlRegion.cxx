@@ -88,7 +88,7 @@ private:
 TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
     const float MIN_HIGGS_MASS = 60.f;
-    const float MAX_HIGGS_MASS = 99999.f;
+    const float MAX_HIGGS_MASS = 150.f;
 
 
     // If needed, access the configuration of the module here, e.g.:
@@ -204,45 +204,45 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_ex1b",
-            TopJetId(AntiHiggsBVetoTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+            TopJetId(AntiHiggsBVetoTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_ex1b",
-            TopJetId(AntiHiggsBVetoTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+            TopJetId(AntiHiggsBVetoTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_min1b",
-            TopJetId(HiggsXBTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM), 1))
+            TopJetId(HiggsXBTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 1))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_min1b",
-            TopJetId(HiggsXBTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 1))
+            TopJetId(HiggsXBTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 1))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM), 0),
+                HiggsXBTag(0.f, 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
             )));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0),
+                HiggsXBTag(0.f, 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
             )));
         make_modules_and_selitem(coll_name, ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
@@ -261,26 +261,26 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
             }) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
-                coll_name2+"_m60",
+                coll_name2+"_m60-150",
                 TopJetId(HiggsXBTag(MIN_HIGGS_MASS, MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                coll_name2+"_m60",
-                coll_name2+"_m60_noT",
+                coll_name2+"_m60-150",
+                coll_name2+"_m60-150_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
                 coll_name2+"_m150",
-                TopJetId(HiggsXBTag(150.f, MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0))
+                TopJetId(HiggsXBTag(MAX_HIGGS_MASS, 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 0))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2+"_m150",
                 coll_name2+"_m150_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
                 ));
-            make_modules_and_selitem(coll_name2+"_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
-            make_modules_and_selitem(coll_name2+"_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
             make_modules_and_selitem(coll_name2+"_m150", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
             make_modules_and_selitem(coll_name2+"_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);
         }
@@ -289,10 +289,10 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8_twotop"));
 
 
         // } else if (cat == "BVetoLdJetBoost") {
@@ -302,7 +302,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "b_jets",
                 "n_additional_btags",
-                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_all_loose_2b_m60_noT", 1.0, true),
+                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_all_loose_2b_m60-150_noT", 1.0, true),
                                     MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
                 ));
 
@@ -320,12 +320,12 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
     // swap_selitems(SEL_ITEMS_VLQPair_control, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
 
     // produce more plots for the collections you cut on
-    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_loose_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_ex1b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
     make_modules_and_selitem("ak8_boost_loose_min1b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
     make_modules_and_selitem("ak8_boost_loose_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_ex1b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
     make_modules_and_selitem("ak8_boost_med_min1b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
     make_modules_and_selitem("ak8_boost_med_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel, -1, true);
 
@@ -338,41 +338,41 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
         int insert_new = insert_cut;
 
         // if (cat == "ControlRegionBVeto") {
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_ex1b_m60_noT", "N_ak8_all_loose_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60-150_noT", "N_ak8_all_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_ex1b_m60-150_noT", "N_ak8_all_loose_ex1b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         // } else
         if (cat == "ControlRegionBVetoBoostLoose") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_ex1b_m60_noT", "N_ak8_boost_loose_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_ex1b_m60-150_noT", "N_ak8_boost_loose_ex1b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "ControlRegionMassInvert1BTagBoostLoose") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_min1b_m150_noT", "N_ak8_boost_loose_min1b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "ControlRegionMassInvert0BTagBoostLoose") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_0b_m150_noT", "N_ak8_boost_loose_0b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "ControlRegionBVetoBoostMed") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_ex1b_m60_noT", "N_ak8_boost_med_ex1b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60-150_noT", "N_ak8_boost_med_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_ex1b_m60-150_noT", "N_ak8_boost_med_ex1b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "ControlRegionMassInvert1BTagBoostMed") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60-150_noT", "N_ak8_boost_med_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_min1b_m150_noT", "N_ak8_boost_med_min1b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "ControlRegionMassInvert0BTagBoostMed") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60-150_noT", "N_ak8_boost_med_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
             swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_0b_m150_noT", "N_ak8_boost_med_0b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         // } else if (cat == "ControlRegionMassInvert1BTag") {
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60-150_noT", "N_ak8_all_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
         //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_min1b_m150_noT", "N_ak8_all_loose_min1b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         // } else if (cat == "ControlRegionMassInvert0BTag") {
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 0, 0), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60-150_noT", "N_ak8_all_loose_2b_m60-150_noT", 11, -.5, 10.5, 0, 0), insert_new++);
         //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_0b_m150_noT", "N_ak8_all_loose_0b_m150_noT", 11, -.5, 10.5, 1), insert_new++);
         // } else if (cat == "SignalRegionHLoose") {
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60_noT", "N_ak8_all_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_loose_2b_m60-150_noT", "N_ak8_all_loose_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "SignalRegionHLooseBoost") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60_noT", "N_ak8_boost_loose_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_loose_2b_m60-150_noT", "N_ak8_boost_loose_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else if (cat == "SignalRegionHMedBoost") {
-            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60_noT", "N_ak8_boost_med_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+            swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_boost_med_2b_m60-150_noT", "N_ak8_boost_med_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         // } else if (cat == "SignalRegionHMed") {
-        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_med_2b_m60_noT", "N_ak8_all_med_2b_m60_noT", 11, -.5, 10.5, 1), insert_new++);
+        //     swap_selitems(SEL_ITEMS_controlregion_vec.back(), new SelDatI("n_ak8_all_med_2b_m60-150_noT", "N_ak8_all_med_2b_m60-150_noT", 11, -.5, 10.5, 1), insert_new++);
         } else {
             assert(false);  // a category must be given
         }

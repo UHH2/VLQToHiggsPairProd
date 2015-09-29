@@ -128,11 +128,11 @@ def merge_samples(wrps):
         '_Pt1800to2400',
         '_Pt2400to3200',
         '_Pt3200toInf',
-    ))
+    ), print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, (
         'M10to50',
         'M50toInf',
-    ))
+    ), print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, (
         '_tChannel',
         '_WAntitop',
@@ -147,7 +147,7 @@ def merge_samples(wrps):
         '_Ele',
         '_Mu',
         '_Had'
-    ))
+    ), print_warning=False)
     return wrps
 
 def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
@@ -168,11 +168,11 @@ def loader_hook(wrps):
     wrps = merge_samples(wrps)
     wrps = vlq_common.merge_decay_channels(wrps,
         ('_thth', '_thtz', '_thbw'),
-        '_thX'
+        '_thX', print_warning=False
     )
     wrps = vlq_common.merge_decay_channels(wrps,
         ('_noH_tztz', '_noH_tzbw', '_noH_bwbw'),
-        '_other'
+        '_other', print_warning=False
     )
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = vlq_common.label_axes(wrps)
