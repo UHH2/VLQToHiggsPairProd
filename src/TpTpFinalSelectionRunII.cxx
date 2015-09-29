@@ -197,7 +197,7 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "patJetsAk8CHSJetsSoftDropPacked_daughters",
                 "ak8_boost",
-                TopJetId(PtEtaCut(400., 2.4))
+                TopJetId(PtEtaCut(300., 2.4))
                 ));
 
     for (string coll_name : {"patJetsAk8CHSJetsSoftDropPacked_daughters", "ak8_boost"}) {

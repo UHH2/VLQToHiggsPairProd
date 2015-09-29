@@ -63,7 +63,7 @@ def mk_tools_cats(categories=None):
         plot_chain = [
             
             varial.tools.mk_rootfile_plotter(
-                pattern=common_plot.file_stack_all_unsplit(),
+                pattern=common_plot.file_selected_split(),
                 name='StackedAll',
                 plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
                 combine_files=True,
@@ -139,17 +139,17 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_more_signals',
+        'Plots',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
         # lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,
-        # plots
+        plots
     ]
     if analysis_module == 'TpTpControlRegion':
         tc_list.append(varial.tools.ToolChain(
-                'CompareControlRegion2',
+                'CompareControlRegion',
                 lazy_eval_tools_func=compare_crs.mk_tc(
                     srs=signal_regions, crs=control_regions)
                 ))
