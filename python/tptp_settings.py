@@ -10,19 +10,33 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 # settings.defaults_Legend['label_height'] = 0.04
 # settings.debug_mode = True
 # settings.box_text_size = 0.03
+
+# from vlq_settings
 # settings.colors = {
-#     'QCD' : 867,
 #     'TTbar': 632,
-#     'WJets': 878,
-#     'ZJets': 596,
-#     # 'TpTp_M800': 416,
-#     # 'TpTp_M1000_thth': 800,
-#     # 'TpTp_M1000_thtz': 400,
-#     # 'TpTp_M1000_thbw': 616,
-#     # 'TpTp_M1000_tztz': 797,
-#     # 'TpTp_M1000_tzbw': 902,
-#     # 'TpTp_M1000_bwbw': 593,
+#     'WJets': 902,
+#     'ZJets': 840,
+#     'SingleT': 434,
+#     'QCD': 870,
 # }
+
+settings.colors.update({
+    # 'QCD' : 867,
+    # 'TTbar': 632,
+    # 'WJets': 878,
+    # 'ZJets': 596,
+    'TpTp_M-800_thX' : 800,
+    'TpTp_M-800_other' : 616,
+    'TpTp_M-1600_thX' : 400,
+    'TpTp_M-1600_other' : 797,
+    # 'TpTp_M800': 416,
+    # 'TpTp_M1000_thth': 800,
+    # 'TpTp_M1000_thtz': 400,
+    # 'TpTp_M1000_thbw': 616,
+    # 'TpTp_M1000_tztz': 797,
+    # 'TpTp_M1000_tzbw': 902,
+    # 'TpTp_M1000_bwbw': 593,
+})
 
 # settings.max_open_root_files = 100
 # settings.max_num_processes = 20

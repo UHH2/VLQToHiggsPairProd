@@ -145,14 +145,29 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     // cms top tags
     v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
-                "toptags",
+                "toptags_boost",
                 TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag()))
+                ));
+    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "toptags",
+                TopJetId(CMSTopTag())
+                ));
+    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "toptags_nomass_boost",
+                TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), CMSTopTag(50.f, 0.f, 99999.f)))
+                ));
+    v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "toptags_nomass",
+                TopJetId(CMSTopTag(50.f, 0.f, 99999.f))
                 ));
 
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags_boost", "min_dr_higgs", "one_top", 1.5, 1));
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags_boost", "dummy_dr", "two_top", -999., 2));
 
     // Other CutProducers
     v_pre_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
@@ -167,7 +182,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     // v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
 
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
-    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
+    v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags_boost", "smallest_pt_toptags", -1));
 
     v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
     v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
@@ -188,8 +203,11 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     unsigned insert_sel = 12;
 
     // make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
     make_modules_and_selitem("topjets", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("toptags_boost", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("toptags", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("toptags_nomass_boost", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("toptags_nomass", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
     make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
 
 
@@ -236,14 +254,14 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
             out_name+"_med_0b_minvert_noT",
             TopJetId(AndId<TopJet>(
                 HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM), 0),
-                MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
+                MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
             )));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_0b_minvert_noT",
             TopJetId(AndId<TopJet>(
                 HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0),
-                MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
+                MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
             )));
         make_modules_and_selitem(coll_name, ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         make_modules_and_selitem(out_name+"_med_2b", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
@@ -267,7 +285,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2+"_m60",
                 coll_name2+"_m60_noT",
-                TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
+                TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
@@ -277,7 +295,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2+"_minvert",
                 coll_name2+"_minvert_noT",
-                TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
+                TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
                 ));
             make_modules_and_selitem(coll_name2+"_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
             make_modules_and_selitem(coll_name2+"_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
@@ -303,7 +321,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
                 "b_jets",
                 "n_additional_btags",
                 JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_all_loose_2b_m60_noT", 1.0, true),
-                                    MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
+                                    MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", 1.0, true)))
                 ));
 
 
@@ -364,9 +382,9 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     //         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
     //         // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
     //         // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
-    //         // recogen_hits_pre->add_genhistcoll(ctx, "toptags", 0.5);
+    //         // recogen_hits_pre->add_genhistcoll(ctx, "toptags_boost", 0.5);
     //         // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
-    //         // recogen_hits_post->add_genhistcoll(ctx, "toptags", 0.5);
+    //         // recogen_hits_post->add_genhistcoll(ctx, "toptags_boost", 0.5);
     //         // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
     //         // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
     //         // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));

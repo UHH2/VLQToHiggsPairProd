@@ -175,7 +175,7 @@ elif str(sys.argv[1]) == 'tight':
     mod_name='TpTpTightSelectionRunII'
     tc_list.append(
         tptptightselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v2_withPtPlots',
+            version='FilesAndPlots_v3_withToptagPlots',
             count=count,
             allowed_datasets=tptp_datasets_tight
         ),
