@@ -86,7 +86,7 @@ private:
 TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
 
     const float MIN_HIGGS_MASS = 60.f;
-    const float MAX_HIGGS_MASS = 99999.f;
+    const float MAX_HIGGS_MASS = 150.f;
 
 
     // If needed, access the configuration of the module here, e.g.:
@@ -222,45 +222,45 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_2b",
-            TopJetId(HiggsTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+            TopJetId(HiggsTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_ex1b",
-            TopJetId(AntiHiggsBVetoTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+            TopJetId(AntiHiggsBVetoTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_ex1b",
-            TopJetId(AntiHiggsBVetoTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+            TopJetId(AntiHiggsBVetoTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE)))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_med_min1b",
-            TopJetId(HiggsXBTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM), 1))
+            TopJetId(HiggsXBTag(0., 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 1))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_min1b",
-            TopJetId(HiggsXBTag(0., MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 1))
+            TopJetId(HiggsXBTag(0., 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 1))
             ));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
-            out_name+"_med_0b_minvert_noT",
+            out_name+"_med_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_MEDIUM), 0),
+                HiggsXBTag(MAX_HIGGS_MASS, 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
             )));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
-            out_name+"_loose_0b_minvert_noT",
+            out_name+"_loose_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0),
+                HiggsXBTag(MAX_HIGGS_MASS, 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
             )));
         make_modules_and_selitem(coll_name, ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
@@ -270,8 +270,8 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
         make_modules_and_selitem(out_name+"_loose_ex1b", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         make_modules_and_selitem(out_name+"_med_min1b", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         make_modules_and_selitem(out_name+"_loose_min1b", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-        make_modules_and_selitem(out_name+"_med_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-        make_modules_and_selitem(out_name+"_loose_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+        make_modules_and_selitem(out_name+"_med_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+        make_modules_and_selitem(out_name+"_loose_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         for (string coll_name2 : {
             out_name+"_med_2b", out_name+"_loose_2b",
             out_name+"_med_ex1b", out_name+"_loose_ex1b",
@@ -279,38 +279,38 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
             }) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
-                coll_name2+"_m60",
+                coll_name2+"_m60-150",
                 TopJetId(HiggsXBTag(MIN_HIGGS_MASS, MAX_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                coll_name2+"_m60",
-                coll_name2+"_m60_noT",
+                coll_name2+"_m60-150",
+                coll_name2+"_m60-150_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
-                coll_name2+"_minvert",
+                coll_name2+"_m150",
                 TopJetId(HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                coll_name2+"_minvert",
-                coll_name2+"_minvert_noT",
+                coll_name2+"_m150",
+                coll_name2+"_m150_noT",
                 TopJetId(MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", "min_dr_higgs"))
                 ));
-            make_modules_and_selitem(coll_name2+"_m60", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-            make_modules_and_selitem(coll_name2+"_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-            make_modules_and_selitem(coll_name2+"_minvert", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
-            make_modules_and_selitem(coll_name2+"_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m150", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
+            make_modules_and_selitem(coll_name2+"_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel);
         }
 
     }
 
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
-    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60", "min_deltaR_top_higgs_ak8_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150_noT", "min_deltaR_top_higgs_ak8_noT_twotop"));
+    v_pre_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "ak8_boost_loose_2b_m60-150", "min_deltaR_top_higgs_ak8_twotop"));
 
 
         // } else if (cat == "BVetoLdJetBoost") {
@@ -320,7 +320,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     v_pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
                 "b_jets",
                 "n_additional_btags",
-                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_all_loose_2b_m60_noT", 1.0, true),
+                JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "ak8_all_loose_2b_m60-150_noT", 1.0, true),
                                     MinMaxDeltaRId<TopJet>(ctx, "toptags_boost", 1.0, true)))
                 ));
 
@@ -338,14 +338,14 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
 
     // produce more plots for the collections you cut on
-    make_modules_and_selitem("ak8_boost_loose_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_loose_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_loose_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_loose_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_2b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_ex1b_m60_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_min1b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
-    make_modules_and_selitem("ak8_boost_med_0b_minvert_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_ex1b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_min1b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_loose_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_ex1b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_min1b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
+    make_modules_and_selitem("ak8_boost_med_0b_m150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
  
 
     SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_final, ctx);

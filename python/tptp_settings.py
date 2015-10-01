@@ -13,11 +13,11 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
 # from vlq_settings
 # settings.colors = {
-#     'TTbar': 632,
-#     'WJets': 902,
-#     'ZJets': 840,
-#     'SingleT': 434,
-#     'QCD': 870,
+#     'TTbar': 632, # Red
+#     'WJets': 902, # Pinkish
+#     'ZJets': 840, # Blue
+#     'SingleT': 434, # Orange
+#     'QCD': 870,   # Light blue
 # }
 
 settings.colors.update({
@@ -27,11 +27,11 @@ settings.colors.update({
     # 'ZJets': 596,
     'TpTp_M-800_thX' : 800,
     'TpTp_M-800_other' : 616,
-    'TpTp_M-1600_thX' : 400,
-    'TpTp_M-1600_other' : 797,
+    'TpTp_M-1600_thX' : 797,
+    'TpTp_M-1600_other' : 593,
     # 'TpTp_M800': 416,
     # 'TpTp_M1000_thth': 800,
-    # 'TpTp_M1000_thtz': 400,
+    # 'TpTp_M1000_thtz': 400,   # Yellow
     # 'TpTp_M1000_thbw': 616,
     # 'TpTp_M1000_tztz': 797,
     # 'TpTp_M1000_tzbw': 902,

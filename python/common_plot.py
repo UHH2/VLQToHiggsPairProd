@@ -10,7 +10,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 src_dir_rel = '../SFrame'
 
 normfactors = {
-    'TpTp' : 5.,
+    # 'TpTp' : 5.,
     '_thX' : 1./0.56,
     '_other' : 1./0.44,
     'TpTp_M-700' : 1./0.455,
@@ -29,7 +29,7 @@ normfactors = {
 
 signal_indicators = ['TpTp']
 
-datasets_to_plot = [
+common_datasets_to_plot = [
     'Run2015B',
     # 'TpTp_M-700',
     'TpTp_M-800',
@@ -56,17 +56,19 @@ datasets_to_plot = [
 
 #====SELECT_FILES FUNCTIONS====
 
-def file_selected_unsplit():
+def file_selected_unsplit(datasets_to_plot=common_datasets_to_plot):
     src_dir = varial.analysis.cwd+src_dir_rel
     file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-        (f.endswith('.root') and any(g in f for g in datasets_to_plot)
+        (f.endswith('.root') and '.sframe' not in f
+            and any(g in f for g in datasets_to_plot)
         )]
     return file_list
 
-def file_selected_split():
+def file_selected_split(datasets_to_plot=common_datasets_to_plot):
     src_dir = varial.analysis.cwd+src_dir_rel
     file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-        (f.endswith('.root') and any(g in f for g in datasets_to_plot)
+        (f.endswith('.root') and '.sframe' not in f
+            and any(g in f for g in datasets_to_plot)
             and not ('TpTp' in f and f.endswith('00.root'))
         )]
     return file_list
@@ -74,35 +76,39 @@ def file_selected_split():
 def file_stack_all_unsplit():
 	src_dir = varial.analysis.cwd+src_dir_rel
 	file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-		(f.endswith('.root')
-		)]
+		(f.endswith('.root') and '.sframe' not in f
+        		)]
 	return file_list
 
 def file_stack_all_split():
 	src_dir = varial.analysis.cwd+src_dir_rel
 	file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-		(f.endswith('.root') and not ('TpTp' in f and f.endswith('00.root'))
+		(f.endswith('.root') and '.sframe' not in f
+            and not ('TpTp' in f and f.endswith('00.root'))
 		)]
 	return file_list
 
 def file_no_signals():
 	src_dir = varial.analysis.cwd+src_dir_rel
 	file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-		(f.endswith('.root') and 'TpTp' not in f
+		(f.endswith('.root') and '.sframe' not in f
+            and 'TpTp' not in f
 		)]
 	return file_list
 
 def file_split_signals():
 	src_dir = varial.analysis.cwd+src_dir_rel
 	file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-		(f.endswith('.root') and ('TpTp' in f and not f.endswith('00.root'))
+		(f.endswith('.root') and '.sframe' not in f
+            and ('TpTp' in f and not f.endswith('00.root'))
 		)]
 	return file_list
 
 def file_stack_less_signal_split():
     src_dir = varial.analysis.cwd+src_dir_rel
     file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
-        (f.endswith('.root') and not ('TpTp' in f and f.endswith('00.root'))\
+        (f.endswith('.root') and '.sframe' not in f
+            and not ('TpTp' in f and f.endswith('00.root'))\
             and not any(g in f for g in ['TpTp_M-900', 'TpTp_M-1000', 'TpTp_M-1100', 'TpTp_M-1300'])
         )]
     return file_list
@@ -113,9 +119,9 @@ def file_stack_less_signal_split():
 
 def merge_samples(wrps):
     wrps = vlq_common.merge_decay_channels(wrps, (
-        # '_Pt15to30',
-        # '_Pt30to50',
-        # '_Pt50to80',
+        '_Pt15to30',
+        '_Pt30to50',
+        '_Pt50to80',
         '_Pt80to120',
         '_Pt120to170',
         '_Pt170to300',

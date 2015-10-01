@@ -12,8 +12,21 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 import common_plot
 # import tptp_settings
 
-#====FOR STACKPLOTS====
+def norm_to_bkg(grps):
+    for g in grps:
+        bkg = g.wrps[0]
+        if not (bkg.is_signal or bkg.is_data):
+            max_bkg = bkg.histo.GetMaximum()
+            for w in g.wrps:
+                if w.is_signal:
+                    max_sig = w.histo.GetMaximum()
+                    fct_val = (max_bkg/max_sig)*0.2
+                    w.histo.Scale(fct_val)
+                    w.legend +=' x%.1f' % fct_val
+        yield g
 
+
+#====FOR STACKPLOTS====
 
 def loader_hook_norm_smpl(wrps, smpl_fct=None):
     wrps = common_plot.loader_hook(wrps)
@@ -22,10 +35,16 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None):
     wrps = gen.gen_make_th2_projections(wrps)
     return wrps
 
+def stack_setup_norm_sig(grps):
+    grps = gen.mc_stack_n_data_sum(grps)
+    grps = norm_to_bkg(grps)
+    return grps
+
 def plotter_factory_stack(smpl_fct=None, **kws):
     # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
     kws['hook_loaded_histos'] = lambda w: loader_hook_norm_smpl(w, smpl_fct)
-    kws['plot_setup'] = gen.mc_stack_n_data_sum
+    kws['plot_setup'] = stack_setup_norm_sig
+    kws['stack_setup'] = stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
     return varial.tools.Plotter(**kws)

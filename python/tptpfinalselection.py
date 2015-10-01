@@ -22,6 +22,26 @@ import common_sframe
 
 #====PLOTTING====
 
+normfactors = common_plot.normfactors
+normfactors.update({'TpTp' : 1.})
+
+datasets_to_plot = common_datasets_to_plot = [
+    # 'Run2015B',
+    'TpTp_M-800_thth',
+    'TpTp_M-800_thtz',
+    'TpTp_M-800_thbw',
+    'TpTp_M-1600_thth',
+    'TpTp_M-1600_thtz',
+    'TpTp_M-1600_thbw',
+    'QCD',
+    'TTbar',
+    'WJets',
+    'ZJets',
+    'SingleT',
+]
+
+
+
 def mk_cutflow_chain_cr(category, loader_hook):
     cutflow_histos = varial.tools.HistoLoader(
         name='CutflowHistos',
@@ -63,9 +83,9 @@ def mk_tools_cats(categories=None):
         plot_chain = [
             
             varial.tools.mk_rootfile_plotter(
-                pattern=common_plot.file_selected_split(),
+                pattern=common_plot.file_selected_split(datasets_to_plot),
                 name='StackedAll',
-                plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
+                plotter_factory=lambda **w: final_plotting.plotter_factory_stack(normfactors, **w),
                 combine_files=True,
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
@@ -139,7 +159,7 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots',
+        'Plots_sig_norm',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
         # lazy_eval_tools_func=mk_tools
     )
@@ -153,8 +173,8 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
                 lazy_eval_tools_func=compare_crs.mk_tc(
                     srs=signal_regions, crs=control_regions)
                 ))
-    elif analysis_module == 'TpTpFinalSelectionRunII':
-        tc_list.append(sensitivity.mk_tc())
+    # elif analysis_module == 'TpTpFinalSelectionRunII':
+    #     tc_list.append(sensitivity.mk_tc())
 
     tc_list.append(varial.tools.WebCreator(no_tool_check=True))
 

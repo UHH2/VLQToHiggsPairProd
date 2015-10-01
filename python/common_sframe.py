@@ -6,9 +6,9 @@ from varial.extensions.sframe import SFrame
 # sframe_cfg_test = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TestNewFormat.xml'
 
 final_states_to_split_into = [
-    'thth',
-    'thtz',
-    'thbw',
+    'wH_thth',
+    'wH_thtz',
+    'wH_thbw',
     'noH_tztz',
     'noH_tzbw',
     'noH_bwbw',
