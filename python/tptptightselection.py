@@ -20,13 +20,29 @@ import final_plotting
 import sensitivity
 import common_sframe
 
+
 #====PLOTTING====
+
+datasets_to_plot = common_datasets_to_plot = [
+    'Run2015B',
+    'TpTp_M-800_thth',
+    'TpTp_M-800_thtz',
+    'TpTp_M-800_thbw',
+    'TpTp_M-1600_thth',
+    'TpTp_M-1600_thtz',
+    'TpTp_M-1600_thbw',
+    'QCD',
+    'TTbar',
+    'WJets',
+    'ZJets',
+    'SingleT',
+]
 
 def mk_tools():
 
     return [
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_selected_split(),
+            pattern=common_plot.file_selected_split(datasets_to_plot),
             name='StackedAll',
             plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
             combine_files=True,
@@ -64,7 +80,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots',
+        'Plots_for_fsp',
         # lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
         lazy_eval_tools_func=mk_tools
     )

@@ -59,7 +59,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
         xml_tree_callback=common_sframe.set_eventnumber_datasets_and_split(count=count, allowed_datasets=allowed_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_more_signals',
+        'Plots_for_fsp',
         lazy_eval_tools_func=mk_tools
     )
     tc = varial.tools.ToolChain(

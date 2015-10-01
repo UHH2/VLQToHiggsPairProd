@@ -22,8 +22,8 @@ import common_sframe
 
 #====PLOTTING====
 
-normfactors = common_plot.normfactors
-normfactors.update({'TpTp' : 1.})
+# normfactors = common_plot.normfactors
+# normfactors.update({'TpTp' : 1.})
 
 datasets_to_plot = common_datasets_to_plot = [
     # 'Run2015B',

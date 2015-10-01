@@ -6,6 +6,7 @@ import time
 import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
+import varial.rendering
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
@@ -17,12 +18,14 @@ def norm_to_bkg(grps):
         bkg = g.wrps[0]
         if not (bkg.is_signal or bkg.is_data):
             max_bkg = bkg.histo.GetMaximum()
+            max_sig = 0.
             for w in g.wrps:
                 if w.is_signal:
-                    max_sig = w.histo.GetMaximum()
-                    fct_val = (max_bkg/max_sig)*0.2
+                    if not max_sig:
+                        max_sig = w.histo.GetMaximum()
+                        fct_val = (max_bkg/max_sig)*0.2
                     w.histo.Scale(fct_val)
-                    w.legend +=' x%.1f' % fct_val
+                    w.legend +=' (x%.2g)' % fct_val
         yield g
 
 
@@ -47,6 +50,7 @@ def plotter_factory_stack(smpl_fct=None, **kws):
     kws['stack_setup'] = stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
+    # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)
 
 #====FOR NORMPLOTS====

@@ -10,24 +10,27 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 # settings.defaults_Legend['label_height'] = 0.04
 # settings.debug_mode = True
 # settings.box_text_size = 0.03
+# settings.defaults_Legend['opt'] = 'f'
+# settings.defaults_Legend['opt_data'] = 'p'
+# settings.defaults_Legend['reverse'] = True
 
 # from vlq_settings
-# settings.colors = {
-#     'TTbar': 632, # Red
-#     'WJets': 902, # Pinkish
-#     'ZJets': 840, # Blue
-#     'SingleT': 434, # Orange
-#     'QCD': 870,   # Light blue
-# }
+settings.colors = {
+    'TTbar': 632, # Red
+    'WJets': 902, # Pinkish
+    'ZJets': 840, # Blue
+    'SingleT': 434, # Orange
+    'QCD': 870,   # Light blue
+}
 
 settings.colors.update({
     # 'QCD' : 867,
     # 'TTbar': 632,
     # 'WJets': 878,
     # 'ZJets': 596,
-    'TpTp_M-800_thX' : 800,
+    'TpTp_M-800_thX' : 800, # Yellow
     'TpTp_M-800_other' : 616,
-    'TpTp_M-1600_thX' : 797,
+    'TpTp_M-1600_thX' : 797, # Orange
     'TpTp_M-1600_other' : 593,
     # 'TpTp_M800': 416,
     # 'TpTp_M1000_thth': 800,
