@@ -85,7 +85,7 @@ def mk_tools_cats(categories=None):
             varial.tools.mk_rootfile_plotter(
                 pattern=common_plot.file_selected_split(datasets_to_plot),
                 name='StackedAll',
-                plotter_factory=lambda **w: final_plotting.plotter_factory_stack(normfactors, **w),
+                plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
                 combine_files=True,
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
@@ -115,33 +115,6 @@ def mk_tools_cats(categories=None):
         return plot_chain
     return create
 
-# def mk_tools():
-
-#     return [
-#         varial.tools.mk_rootfile_plotter(
-#             pattern=common_plot.file_stack_all_unsplit(),
-#             name='StackedAll',
-#             plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
-#             combine_files=True,
-#             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-#             ),
-#         varial.tools.mk_rootfile_plotter(
-#             pattern=common_plot.file_no_signals(),
-#             name='NormedNoSignals',
-#             plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-#             combine_files=True,
-#             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-#             ),
-#         varial.tools.mk_rootfile_plotter(
-#             pattern=common_plot.file_split_signals(),
-#             name='NormedSignals',
-#             plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-#             combine_files=True,
-#             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-#             ),
-#         cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_unsplit(), common_plot.loader_hook)
-#         ]
-
 
 #====SFRAME====
 
@@ -159,22 +132,22 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_sig_norm',
+        'Plots_for_fsp',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
         # lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,
-        plots
+        # plots
     ]
     if analysis_module == 'TpTpControlRegion':
         tc_list.append(varial.tools.ToolChain(
-                'CompareControlRegion',
+                'CompareControlRegion2',
                 lazy_eval_tools_func=compare_crs.mk_tc(
                     srs=signal_regions, crs=control_regions)
                 ))
-    # elif analysis_module == 'TpTpFinalSelectionRunII':
-    #     tc_list.append(sensitivity.mk_tc())
+    elif analysis_module == 'TpTpFinalSelectionRunII':
+        tc_list.append(sensitivity.mk_tc())
 
     tc_list.append(varial.tools.WebCreator(no_tool_check=True))
 

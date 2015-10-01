@@ -10,6 +10,8 @@ import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
 import varial.wrappers as wrappers
+import varial.plotter
+import varial.rendering
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
@@ -17,6 +19,7 @@ from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
 import common_sensitivity
 import common_plot
 import model_vlqpair
+import limit_plots
 
 # varial.settings.use_parallel_chains = False
 
@@ -126,18 +129,42 @@ def add_draw_option(wrps, draw_option=''):
             wrp.draw_option = draw_option
         yield wrp
 
-def plot_setup(wrps):
-    wrps = (add_draw_option(ws, 'colz text') for ws in wrps)
-    wrps = (gen.apply_markercolor(ws, colors=[1]) for ws in wrps)
-    # print wrps.wrps[0].type
-    return wrps
+def plot_setup_triangle(grps):
+    grps = (add_draw_option(ws, 'colz text') for ws in grps)
+    grps = (gen.apply_markercolor(ws, colors=[1]) for ws in grps)
+    # print grps.grps[0].type
+    return grps
+
+def plot_setup_graphs(grps, th_x=None, th_y=None):
+    grps = varial.plotter.default_plot_colorizer(grps)
+    grps = limit_plots.add_th_curve(grps, th_x, th_y)
+    # print list(grps)
+    return grps
+
+
 
 def mk_tc():
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(),
+        # varial.tools.ToolChain('LimitTriangle',[
+        #     TriangleLimitPlots(
+        #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
+        #         ),
+        #     # # varial.tools.HistoLoader(
+        #     # #     # name='HistoLoaderSplit'+str(ind),
+        #     # #     pattern=dir_limit+'/TriangleLimitPlots/*.root',
+        #     # #     # filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
+        #     # #     # hook_loaded_histos=loader_hook
+        #     # #     ),
+        #     varial.plotter.Plotter(
+        #         input_result_path='../TriangleLimitPlots',
+        #         plot_setup=plot_setup_triangle,
+        #         save_name_func=lambda w: 'M-'+str(w.mass)
+        #         ),
+        #     ])
         varial.tools.ToolChain('LimitTriangle',[
-            TriangleLimitPlots(
+            limit_plots.LimitGraphs(
                 limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
                 ),
             # # varial.tools.HistoLoader(
@@ -147,9 +174,13 @@ def mk_tc():
             # #     # hook_loaded_histos=loader_hook
             # #     ),
             varial.plotter.Plotter(
-                input_result_path='../TriangleLimitPlots',
-                plot_setup=plot_setup,
-                save_name_func=lambda w: 'M-'+str(w.mass)
+                input_result_path='../LimitGraphs',
+                # plot_setup=plot_setup,
+                # plot_grouper=lambda w: varial.plotter.plot_grouper_by_number_of_plots(w, 5),
+                # save_name_func=varial.plotter.save_by_name_with_hash
+                save_name_func=lambda w: w.save_name,
+                plot_setup=lambda w: plot_setup_graphs(w, th_x=[0., 1.], th_y=[1., 0.]),
+                canvas_decorators=[varial.rendering.Legend]
                 ),
             ])
         # varial.tools.WebCreator()

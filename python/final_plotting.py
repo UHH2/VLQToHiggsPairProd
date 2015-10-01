@@ -7,11 +7,31 @@ import varial.generators as gen
 import varial.rendering as rnd
 import varial.tools
 import varial.rendering
+import varial.history as history
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 import common_plot
 # import tptp_settings
+
+@history.track_history
+def scale_signal(wrp, fct=1.):
+    if fct >= 5:
+        fct = int(fct)
+        if fct % 5 > 2:
+            fct += fct % 5
+        else: fct -= fct % 5
+    elif fct >= 1.:
+        fct = int(fct)
+    elif fct >= 0.2:
+        fct = 1
+    else:
+        fct *= 5
+    w.histo.Scale(fct_val)
+    if fct > 1:
+        w.legend +=' (x%.2g)' % fct_val
+    elif fct < 1:
+        w.legend +=' (x%.1g)' % fct_val
 
 def norm_to_bkg(grps):
     for g in grps:
@@ -24,8 +44,8 @@ def norm_to_bkg(grps):
                     if not max_sig:
                         max_sig = w.histo.GetMaximum()
                         fct_val = (max_bkg/max_sig)*0.2
-                    w.histo.Scale(fct_val)
-                    w.legend +=' (x%.2g)' % fct_val
+                    scale_signal(w, fct_val)
+                    
         yield g
 
 
