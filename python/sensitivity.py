@@ -136,7 +136,7 @@ def plot_setup_triangle(grps):
     return grps
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
-    grps = varial.plotter.default_plot_colorizer(grps)
+    # grps = varial.plotter.default_plot_colorizer(grps)
     grps = limit_plots.add_th_curve(grps, th_x, th_y)
     # print list(grps)
     return grps
@@ -179,11 +179,14 @@ def mk_tc():
                 # plot_grouper=lambda w: varial.plotter.plot_grouper_by_number_of_plots(w, 5),
                 # save_name_func=varial.plotter.save_by_name_with_hash
                 save_name_func=lambda w: w.save_name,
-                plot_setup=lambda w: plot_setup_graphs(w, th_x=[0., 1.], th_y=[1., 0.]),
-                canvas_decorators=[varial.rendering.Legend]
+                plot_setup=lambda w: plot_setup_graphs(w,
+                    th_x=common_sensitivity.theory_masses,
+                    th_y=common_sensitivity.theory_cs),
+                canvas_decorators=[varial.rendering.Legend],
+                save_lin_log_scale=True
                 ),
-            ])
-        # varial.tools.WebCreator()
+            ]),
+        varial.tools.WebCreator()
         # varial.tools.CopyTool()
         ])
 

@@ -7,6 +7,10 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 import common_plot
 
+theory_masses = [700., 800., 900., 1000., 1100., 1200., 1300., 1400., 1500.]
+theory_cs = [0.455, 0.196, 0.090, 0.044, 0.022, 0.012, 0.006, 0.003, 0.002]
+
+
 dict_factors_original = {
     'bwbw' : 0.111,
     'thth' : 0.111,
