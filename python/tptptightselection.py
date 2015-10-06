@@ -80,8 +80,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp',
-        # lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
+        'Plots_for_fsp2',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [
