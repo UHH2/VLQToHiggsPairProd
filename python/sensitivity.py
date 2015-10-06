@@ -117,8 +117,6 @@ def mk_limit_list():
 
 # tool_list.append(TriangleLimitPlots())
 
-dir_limit = 'Limits3fb'
-
 def mk_limit_chain():
     return varial.tools.ToolChainParallel(
         'Ind_Limits', lazy_eval_tools_func=mk_limit_list
@@ -144,7 +142,7 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
 
 
 
-def mk_tc():
+def mk_tc(dir_limit):
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(),

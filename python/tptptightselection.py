@@ -4,6 +4,8 @@ import os
 import sys
 import time
 
+from ROOT import TH1F
+
 import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
@@ -41,8 +43,25 @@ datasets_to_plot = common_datasets_to_plot = [
 
 def resize_n_hists(wrps):
     for w in wrps:
-        if w.variable.startswith('n_toptags'):
-            w.histo.GetXaxis().SetRange(0, 5)
+        if 'n_toptags' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            histo = TH1F(w.histo.GetName(), w.histo.GetTitle(), 5, -.5, 4.5)
+            for i in range(0, 5):
+                histo.SetBinContent(i, w.histo.GetBinContent(i))
+            w.histo = histo
+        yield w
+
+def nice_axis_labels(wrps):
+    for w in wrps:
+        if 'n_toptags' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('N(top-tags)')
+        elif 'n_ak8' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('N(Ak8 jets)')
+        elif 'mass_sj_ld_ak8_boost_loose_2b' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('M(Higgs candidate)')
         yield w
 
 
@@ -55,8 +74,9 @@ def mod_legend(wrps):
 
 
 def loader_hook_tight(wrps, smpl_fct=None):
-    wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
     wrps = resize_n_hists(wrps)
+    wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
+    wrps = nice_axis_labels(wrps)
     wrps = mod_legend(wrps)
     return wrps
 
@@ -71,7 +91,7 @@ def plotter_factory_tight(smpl_fct=None, **kws):
     return varial.tools.Plotter(**kws)
 
 
-def filter_h_mass_plot(w):
+def filter_for_fsp(w):
     if (('DATA' not in w.file_path and w.in_file_path.endswith('mass_sj_ld_ak8_boost_loose_2b'))
         or (w.in_file_path.endswith('ST'))
         or ('n_toptags_boost' in w.in_file_path)
@@ -89,7 +109,7 @@ def mk_tools():
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_selected_split(datasets_to_plot),
             name='StackedAll',
-            filter_keyfunc=filter_h_mass_plot,
+            filter_keyfunc=filter_for_fsp,
             plotter_factory=lambda **w: plotter_factory_tight(common_plot.normfactors, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
@@ -108,7 +128,7 @@ def mk_tools():
         #     combine_files=True,
         #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
         #     ),
-        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
+        # cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
         ]
 
 
@@ -126,13 +146,13 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp3',
+        'Plots_for_fsp4',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,
         plots,
-        varial.tools.WebCreator(no_tool_check=True)
+        # varial.tools.WebCreator(no_tool_check=True)
     ]
 
     tc = varial.tools.ToolChain(version, tc_list)

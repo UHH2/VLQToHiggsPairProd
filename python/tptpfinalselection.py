@@ -78,6 +78,45 @@ def mk_cutflow_chain_cr(category, loader_hook):
         cutflow_tables.CutflowTableTex(None, True),
     ])
 
+def rebin_st_hists(wrps):
+    for w in wrps:
+        if w.variable == 'ST':
+            w.histo.Rebin(2)
+        yield w
+
+
+def mod_legend(wrps):
+    for w in wrps:
+        for m in ['800', '1600']:
+            if m in w.legend:
+                w.legend = "T'T' M"+m
+        yield w
+
+
+def loader_hook_final(wrps, smpl_fct=None):
+    wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
+    wrps = rebin_st_hists(wrps)
+    wrps = mod_legend(wrps)
+    return wrps
+
+def plotter_factory_final(smpl_fct=None, **kws):
+    # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
+    kws['hook_loaded_histos'] = lambda w: loader_hook_final(w, smpl_fct)
+    kws['plot_setup'] = final_plotting.stack_setup_norm_sig
+    kws['stack_setup'] = final_plotting.stack_setup_norm_sig
+    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+    kws['save_lin_log_scale'] = True
+    # kws['canvas_decorators'] = [varial.rendering.Legend]
+    return varial.tools.Plotter(**kws)
+
+def filter_for_fsp(w):
+    if (('DATA' not in w.file_path and w.in_file_path.endswith('ST'))
+        )\
+        and ('PostSelection' in w.in_file_path):
+        return True
+    else:
+        return False
+
 def mk_tools_cats(categories=None):
     def create():
         plot_chain = [
@@ -85,24 +124,25 @@ def mk_tools_cats(categories=None):
             varial.tools.mk_rootfile_plotter(
                 pattern=common_plot.file_selected_split(datasets_to_plot),
                 name='StackedAll',
-                plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
+                filter_keyfunc=filter_for_fsp,
+                plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 combine_files=True,
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
-            varial.tools.mk_rootfile_plotter(
-                pattern=common_plot.file_no_signals(),
-                name='NormedNoSignals',
-                plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-                combine_files=True,
-                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                ),
-            varial.tools.mk_rootfile_plotter(
-                pattern=common_plot.file_split_signals(),
-                name='NormedSignals',
-                plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-                combine_files=True,
-                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                ),
+            # varial.tools.mk_rootfile_plotter(
+            #     pattern=common_plot.file_no_signals(),
+            #     name='NormedNoSignals',
+            #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
+            #     combine_files=True,
+            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            #     ),
+            # varial.tools.mk_rootfile_plotter(
+            #     pattern=common_plot.file_split_signals(),
+            #     name='NormedSignals',
+            #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
+            #     combine_files=True,
+            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            #     ),
             
             ]
         cutflow_cat = []
@@ -118,6 +158,8 @@ def mk_tools_cats(categories=None):
 
 #====SFRAME====
 
+dir_limit = 'Limits3fb_2'
+
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelection.xml'
 
 def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
@@ -132,7 +174,7 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp',
+        'Plots_for_fsp2',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
     )
     tc_list = [
@@ -146,7 +188,7 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
                     srs=signal_regions, crs=control_regions)
                 ))
     elif analysis_module == 'TpTpFinalSelectionRunII':
-        tc_list.append(sensitivity.mk_tc())
+        tc_list.append(sensitivity.mk_tc(dir_limit))
 
     tc_list.append(varial.tools.WebCreator(no_tool_check=True))
 
