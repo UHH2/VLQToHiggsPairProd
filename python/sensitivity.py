@@ -147,32 +147,20 @@ def mk_tc():
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(),
-        # varial.tools.ToolChain('LimitTriangle',[
-        #     TriangleLimitPlots(
-        #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
-        #         ),
-        #     # # varial.tools.HistoLoader(
-        #     # #     # name='HistoLoaderSplit'+str(ind),
-        #     # #     pattern=dir_limit+'/TriangleLimitPlots/*.root',
-        #     # #     # filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
-        #     # #     # hook_loaded_histos=loader_hook
-        #     # #     ),
-        #     varial.plotter.Plotter(
-        #         input_result_path='../TriangleLimitPlots',
-        #         plot_setup=plot_setup_triangle,
-        #         save_name_func=lambda w: 'M-'+str(w.mass)
-        #         ),
-        #     ])
+        varial.tools.ToolChain('LimitTriangle',[
+            TriangleLimitPlots(
+                limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
+                ),
+            varial.plotter.Plotter(
+                input_result_path='../TriangleLimitPlots',
+                plot_setup=plot_setup_triangle,
+                save_name_func=lambda w: 'M-'+str(w.mass)
+                ),
+            ]),
         varial.tools.ToolChain('LimitTriangle',[
             limit_plots.LimitGraphs(
                 limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
                 ),
-            # # varial.tools.HistoLoader(
-            # #     # name='HistoLoaderSplit'+str(ind),
-            # #     pattern=dir_limit+'/TriangleLimitPlots/*.root',
-            # #     # filter_keyfunc=lambda w: w.in_file_path == 'EventHistsPost/EventHists/ST',
-            # #     # hook_loaded_histos=loader_hook
-            # #     ),
             varial.plotter.Plotter(
                 input_result_path='../LimitGraphs',
                 # plot_setup=plot_setup,
@@ -186,7 +174,7 @@ def mk_tc():
                 save_lin_log_scale=True
                 ),
             ]),
-        varial.tools.WebCreator()
+        # varial.tools.WebCreator()
         # varial.tools.CopyTool()
         ])
 

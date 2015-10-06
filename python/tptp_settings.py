@@ -15,13 +15,13 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 # settings.defaults_Legend['reverse'] = True
 
 # from vlq_settings
-settings.colors = {
-    'TTbar': 632, # Red
-    'WJets': 902, # Pinkish
-    'ZJets': 840, # Blue
-    'SingleT': 434, # Orange
-    'QCD': 870,   # Light blue
-}
+# settings.colors = {
+#     'TTbar': 632, # Red
+#     'WJets': 902, # Pinkish
+#     'ZJets': 840, # Blue
+#     'SingleT': 434, # Orange
+#     'QCD': 870,   # Light blue
+# }
 
 settings.colors.update({
     # 'QCD' : 867,

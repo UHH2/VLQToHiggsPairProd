@@ -20,11 +20,26 @@ import common_sframe
 
 #====PLOTTING====
 
+datasets_to_plot = common_datasets_to_plot = [
+    'Run2015B',
+    'TpTp_M-800_thth',
+    'TpTp_M-800_thtz',
+    'TpTp_M-800_thbw',
+    'TpTp_M-1600_thth',
+    'TpTp_M-1600_thtz',
+    'TpTp_M-1600_thbw',
+    'QCD',
+    'TTbar',
+    'WJets',
+    'ZJets',
+    'SingleT',
+]
+
 def mk_tools():
 
     return [
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_stack_less_signal_split(),
+            pattern=common_plot.file_selected_split(datasets_to_plot),
             name='StackedAll',
             plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
             combine_files=True,
@@ -56,7 +71,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=common_sframe.set_eventnumber_datasets_and_split(count=count, allowed_datasets=allowed_datasets), # 
+        xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots_for_fsp',
@@ -65,7 +80,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
     tc = varial.tools.ToolChain(
         version,
         [
-            # sframe,
+            sframe,
             plots,
             varial.tools.WebCreator(no_tool_check=True)
         ]

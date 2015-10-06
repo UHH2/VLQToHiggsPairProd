@@ -14,7 +14,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 import common_plot
 # import tptp_settings
 
-@history.track_history
+# @history.track_history
 def scale_signal(wrp, fct=1.):
     if fct >= 5:
         fct = int(fct)
@@ -27,11 +27,11 @@ def scale_signal(wrp, fct=1.):
         fct = 1
     else:
         fct *= 5
-    w.histo.Scale(fct_val)
+    wrp.histo.Scale(fct)
     if fct > 1:
-        w.legend +=' (x%.2g)' % fct_val
+        wrp.legend +=' (x%.2g)' % fct
     elif fct < 1:
-        w.legend +=' (x%.1g)' % fct_val
+        wrp.legend +=' (x%.1g)' % fct
 
 def norm_to_bkg(grps):
     for g in grps:
