@@ -46,9 +46,18 @@ def resize_n_hists(wrps):
         yield w
 
 
+def mod_legend(wrps):
+    for w in wrps:
+        for m in ['800', '1600']:
+            if m in w.legend:
+                w.legend = "T'T' M"+m
+        yield w
+
+
 def loader_hook_tight(wrps, smpl_fct=None):
-    wrps = final_plotting.loader_hook(wrps, smpl_fct)
+    wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
     wrps = resize_n_hists(wrps)
+    wrps = mod_legend(wrps)
     return wrps
 
 def plotter_factory_tight(smpl_fct=None, **kws):
@@ -63,11 +72,15 @@ def plotter_factory_tight(smpl_fct=None, **kws):
 
 
 def filter_h_mass_plot(w):
-    if ('DATA' in w.file_path
-        and 'mass_sj_ld_ak8_boost_loose_2b_lin' in w.in_file_path):
-        return False
-    else:
+    if (('DATA' not in w.file_path and w.in_file_path.endswith('mass_sj_ld_ak8_boost_loose_2b'))
+        or (w.in_file_path.endswith('ST'))
+        or ('n_toptags_boost' in w.in_file_path)
+        or ('n_ak8_all' in w.in_file_path)
+        )\
+        and ('OnlySTCut' in w.in_file_path):
         return True
+    else:
+        return False
 
 
 def mk_tools():
@@ -81,20 +94,20 @@ def mk_tools():
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
-        varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_no_signals(),
-            name='NormedNoSignals',
-            plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-            combine_files=True,
-            # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-            ),
-        varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_split_signals(),
-            name='NormedSignals',
-            plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-            combine_files=True,
-            # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-            ),
+        # varial.tools.mk_rootfile_plotter(
+        #     pattern=common_plot.file_no_signals(),
+        #     name='NormedNoSignals',
+        #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
+        #     combine_files=True,
+        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+        #     ),
+        # varial.tools.mk_rootfile_plotter(
+        #     pattern=common_plot.file_split_signals(),
+        #     name='NormedSignals',
+        #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
+        #     combine_files=True,
+        #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+        #     ),
         cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
         ]
 

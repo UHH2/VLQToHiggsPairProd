@@ -28,8 +28,8 @@ settings.colors.update({
     # 'TTbar': 632,
     # 'WJets': 878,
     # 'ZJets': 596,
-    'TpTp_M-800_thX' : 800, # Yellow
-    # 'TpTp_M-800_thX' : 634,
+    # 'TpTp_M-800_thX' : 800, # Yellow
+    'TpTp_M-800_thX' : 634,
     'TpTp_M-800_other' : 616,
     # 'TpTp_M-1600_thX' : 797, # Orange
     'TpTp_M-1600_thX' : 418, # Green
