@@ -29,8 +29,10 @@ settings.colors.update({
     # 'WJets': 878,
     # 'ZJets': 596,
     'TpTp_M-800_thX' : 800, # Yellow
+    # 'TpTp_M-800_thX' : 634,
     'TpTp_M-800_other' : 616,
-    'TpTp_M-1600_thX' : 797, # Orange
+    # 'TpTp_M-1600_thX' : 797, # Orange
+    'TpTp_M-1600_thX' : 418, # Green
     'TpTp_M-1600_other' : 593,
     # 'TpTp_M800': 416,
     # 'TpTp_M1000_thth': 800,

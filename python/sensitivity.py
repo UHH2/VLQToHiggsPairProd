@@ -103,6 +103,7 @@ def mk_limit_list():
                     # asymptotic= False,
                     brs=brs_,
                     model_func= lambda w: model_vlqpair.get_model(w, [
+                        'TpTp_M-700',
                         'TpTp_M-800',
                         'TpTp_M-900',
                         'TpTp_M-1000',
@@ -157,7 +158,7 @@ def mk_tc():
                 save_name_func=lambda w: 'M-'+str(w.mass)
                 ),
             ]),
-        varial.tools.ToolChain('LimitTriangle',[
+        varial.tools.ToolChain('LimitGraphs',[
             limit_plots.LimitGraphs(
                 limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
                 ),

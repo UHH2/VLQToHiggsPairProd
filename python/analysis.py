@@ -79,7 +79,7 @@ tptp_datasets_final = [
     # 'Run2015B_Ele',
     'Run2015B_Mu',
     # 'Run2015B_Had',
-    # 'TpTp_M-700',
+    'TpTp_M-700',
     'TpTp_M-800',
     'TpTp_M-900',
     'TpTp_M-1000',
@@ -189,7 +189,7 @@ elif str(sys.argv[1]) == 'final':
     tc_list.append(
         tptpfinalselection.mk_sframe_and_plot_tools(
             analysis_module='TpTpFinalSelectionRunII',
-            version='FilesAndPlots_v3_higgsUpperM150',
+            version='FilesAndPlots_v4_nHiggsSTRebin',
             count=count,
             allowed_datasets=tptp_datasets_final,
             signal_regions=signal_regions_final,

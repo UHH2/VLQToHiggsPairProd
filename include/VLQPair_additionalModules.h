@@ -354,7 +354,7 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
     }
     if (produce_all) {
         sel_items.insert(sel_items.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_"+out_name, "N_"+out_name, 11, -.5, 10.5)));
+            shared_ptr<SelectionItem>(new SelDatI("n_"+out_name, "N_"+out_name, 5, -.5, 4.5)));
         sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+out_name, "Mass_leading_"+out_name, 60, 0., 300.)));
         sel_items.insert(sel_items.begin()+pos_insert, 

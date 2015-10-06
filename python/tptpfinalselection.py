@@ -134,11 +134,10 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
     plots = varial.tools.ToolChainParallel(
         'Plots_for_fsp',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
-        # lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,
-        # plots
+        plots
     ]
     if analysis_module == 'TpTpControlRegion':
         tc_list.append(varial.tools.ToolChain(

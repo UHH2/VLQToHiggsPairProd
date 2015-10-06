@@ -38,13 +38,46 @@ datasets_to_plot = common_datasets_to_plot = [
     'SingleT',
 ]
 
+
+def resize_n_hists(wrps):
+    for w in wrps:
+        if w.variable.startswith('n_toptags'):
+            w.histo.GetXaxis().SetRange(0, 5)
+        yield w
+
+
+def loader_hook_tight(wrps, smpl_fct=None):
+    wrps = final_plotting.loader_hook(wrps, smpl_fct)
+    wrps = resize_n_hists(wrps)
+    return wrps
+
+def plotter_factory_tight(smpl_fct=None, **kws):
+    # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
+    kws['hook_loaded_histos'] = lambda w: loader_hook_tight(w, smpl_fct)
+    kws['plot_setup'] = final_plotting.stack_setup_norm_sig
+    kws['stack_setup'] = final_plotting.stack_setup_norm_sig
+    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+    kws['save_lin_log_scale'] = True
+    # kws['canvas_decorators'] = [varial.rendering.Legend]
+    return varial.tools.Plotter(**kws)
+
+
+def filter_h_mass_plot(w):
+    if ('DATA' in w.file_path
+        and 'mass_sj_ld_ak8_boost_loose_2b_lin' in w.in_file_path):
+        return False
+    else:
+        return True
+
+
 def mk_tools():
 
     return [
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_selected_split(datasets_to_plot),
             name='StackedAll',
-            plotter_factory=lambda **w: final_plotting.plotter_factory_stack(common_plot.normfactors, **w),
+            filter_keyfunc=filter_h_mass_plot,
+            plotter_factory=lambda **w: plotter_factory_tight(common_plot.normfactors, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             ),
@@ -80,7 +113,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp2',
+        'Plots_for_fsp3',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [

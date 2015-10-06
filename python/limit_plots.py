@@ -32,7 +32,7 @@ class LimitGraphs(varial.tools.Tool):
             lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
             lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
             list_graphs.append(wrappers.GraphWrapper(lim_graph,
-                legend='Exp 95%% CL',
+                legend='Exp 95% CL',
                 save_name='tH%.0ftZ%.0fbW%.0f' % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100),
                 draw_option='L'
                 ))

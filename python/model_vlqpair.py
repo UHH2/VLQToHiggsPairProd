@@ -14,6 +14,7 @@ def get_model(hist_dir, final_states):
     model.add_lognormal_uncertainty('qcd_rate', math.log(1.30), 'QCD')
     model.add_lognormal_uncertainty('wjets_rate', math.log(1.25), 'WJets')
     model.add_lognormal_uncertainty('zjets_rate', math.log(1.50), 'ZJets')
+    model.add_lognormal_uncertainty('tptp700_rate', math.log(1.15), 'TpTp_M-700')
     model.add_lognormal_uncertainty('tptp800_rate', math.log(1.15), 'TpTp_M-800')
     model.add_lognormal_uncertainty('tptp900_rate', math.log(1.15), 'TpTp_M-900')
     model.add_lognormal_uncertainty('tptp1000_rate', math.log(1.15), 'TpTp_M-1000')

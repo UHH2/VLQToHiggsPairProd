@@ -173,6 +173,10 @@ def loader_hook(wrps):
     wrps = gen.sort(wrps)
     wrps = merge_samples(wrps)
     wrps = vlq_common.merge_decay_channels(wrps,
+        ('_wH_thth', '_wH_thtz', '_wH_thbw'),
+        '_thX', print_warning=False
+    )
+    wrps = vlq_common.merge_decay_channels(wrps,
         ('_thth', '_thtz', '_thbw'),
         '_thX', print_warning=False
     )
