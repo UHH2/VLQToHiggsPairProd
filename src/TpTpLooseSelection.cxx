@@ -122,68 +122,15 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     for(auto & kv : ctx.get_all()){
         cout << " " << kv.first << " = " << kv.second << endl;
     }
-    
-    // 1. setup modules to prepare the event.
 
     // EventWeightOutputHandle only needed for TMVA studies
     // v_modules.emplace_back(new EventWeightOutputHandle(ctx));
 
 
-    // =====DISABLED FOR RUN II=====:
-    // don't do stuff like mclumiweight manually, instead run an instance of
-    // CommonModules which is regularly maintained and takes care of data as well
-    // 
-    // bool mclumiweight = true;
-    // bool mcpileupreweight = true;
-
-    // if(mclumiweight)  v_modules.emplace_back(new MCLumiWeight(ctx));
-    // if(mcpileupreweight) v_modules.emplace_back(new MCPileupReweight(ctx));
-    // v_modules.emplace_back(new ElectronCleaner(PtEtaCut(105.0, 2.4)));
-    // v_modules.emplace_back(new MuonCleaner(PtEtaCut(50.0, 2.1))); // TODO: put the eta cut to 2.1???
-    // v_modules.emplace_back(new JetCleaner(PtEtaCut(30.0, 2.4))); // get rid of fwd jets from preselection
-    // v_modules.emplace_back(new PtSorter<Jet>(ctx, "jets"));
-    // v_modules.emplace_back(new PtSorter<Muon>(ctx, "muons"));
-    // v_modules.emplace_back(new PtSorter<Electron>(ctx, "electrons"));
-
-    // =====ADDED FOR RUN II======:
-    // what CommonModules now does:
-    // * remove forward jets (eta > 2.4) and sort jets again
-    // * apply MC pileupreweight and lumiweight
-    // * apply JEC and JER smearing (if not already done, should throw warning if that's the case)
-    // * does LumiSelection, so only allows good events
-
-    // std::string trigger_name, trigger_data_name;
-    // bool set_trigger = false;
-
-    // if (category == "EleNonIso") {
-    //     trigger_name = "HLT_Ele105_CaloIdVT_GsfTrkIdT_v*";
-    //     trigger_data_name = "HLT_Ele105_CaloIdVT_GsfTrkIdT_v";
-    //     set_trigger = true;
-    //     // v_pre_modules.emplace_back(ElectronCleaner(ElectronID_Spring15_50ns_medium_noIso));
-    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 9999.)); 
-    // } else if (category == "EleIso") {
-    //     trigger_name = "HLT_Ele32_eta2p1_WP75_Gsf_v*";
-    //     trigger_data_name = "HLT_Ele32_eta2p1_WPLoose_Gsf_v";
-    //     set_trigger = true;
-    //     v_pre_modules.emplace_back(ElectronCleaner(ElectronID_Spring15_50ns_medium));
-    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 40., 9999.)); 
-    // } else if (category == "MuonNonIso") {
-    //     trigger_name = "HLT_Mu45_eta2p1_v*";
-    //     trigger_data_name = "HLT_Mu45_eta2p1_v";
-    //     set_trigger = true;
-    //     // v_pre_modules.emplace_back(MuonCleaner(MuonIso()));
-    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999., 55.)); 
-    // } else if (category == "MuonIso") {
-    //     trigger_name = "HLT_IsoMu24_eta2p1_v*";
-    //     trigger_data_name = "HLT_IsoMu24_eta2p1_v";
-    //     set_trigger = true;
-    //     v_pre_modules.emplace_back(MuonCleaner(MuonIso()));
-    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999., 35.)); 
-    // } else if (category == "AllTriggers") {
-    //     v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 55.));
-    // } else {
-    //     assert(false);  // a category must be given
-    // }
+    /* +++++
+     * CommonModules from UHH2/common, does stuff like jet-lepton-cleaning, applying JECs etc.
+     * +++++
+     */
 
     CommonModules* commonObjectCleaning = new CommonModules();
     commonObjectCleaning->set_jet_id(PtEtaCut(30.0,2.4));
@@ -195,7 +142,20 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     commonObjectCleaning->init(ctx);
     v_modules.emplace_back(commonObjectCleaning);
 
-    // v_modules.emplace_back(new BJetsProducer(ctx, CSVBTag::WP_MEDIUM, "b_jets"));
+
+    /* +++++
+     * Several modules that usually take the name of a standard collection (e.g. "jets", "electrons") or self-produced collection
+     * (e.g. "toptags", "b_jets") and produce a handle on either a simple type or a newly produced collection.
+     * 
+     * Example: - STCalculator (below) produces a handle on a float with handle name "ST"
+     *          - CollectionProducer<TYPE> takes a collection of TYPE as input (e.g. "jets") and produces a new collection of the
+     *            same type filtering out certain elements based on an ID (e.g. JetId)
+     *          - CollectionSizeProducer<TYPE> does the same as CollectionProducer but instead of producing a handle to a new
+     *            collection it just produces a handle to an int with the number of elements from the input collection that passed
+     *            the ID criterion (this can later be used to make a cut on)
+     * +++++
+     */
+
     v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
     v_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_modules.emplace_back(new STCalculator(ctx, "ST"));
@@ -249,15 +209,12 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 ));
 
     // check if, in case there is only one top, the dR to the closest higgs is really 1.5
+    // ---> THIS IS JUST FOR TESTING PURPOSES AND NOT NECESSARY FOR THE ACTUAL ANALYSIS!
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop"));
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "one_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8"));
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15_notop", "min_deltaR_top_higgsak8notop_twotop"));
     v_modules.emplace_back(new MinDeltaRProducer<TopJet, TopJet>(ctx, "two_top", "higgs_tags_ca15", "min_deltaR_top_higgsak8_twotop"));
     
-    // gen_printer.reset(new GenParticlesPrinter(ctx));
-
-
-
     
 
     // additional b-tags
@@ -267,6 +224,40 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 JetId(AndId<Jet>(MinMaxDeltaRId<TopJet>(ctx, "higgs_tags_ak8_notop", 1.0, true),
                                     MinMaxDeltaRId<TopJet>(ctx, "toptags", 1.0, true)))
                 ));
+
+    // Other CutProducers
+    v_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
+    v_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
+
+    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "leading_jet_pt", 1));
+    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "subleading_jet_pt", 2));
+
+    // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
+    // ---> THIS IS JUST FOR TESTING PURPOSES AND NOT NECESSARY FOR THE ACTUAL ANALYSIS!
+    v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
+
+    v_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+
+    // produces handles on the values relevant for the 2D-cut i.e. dR(lep, closest jet), pt_rel(lep, closest jet)
+    v_modules.emplace_back(new TwoDCutProducer(ctx));
+
+    // produces a handle with 0/1 corresponding to whether event passed trigger requirements (see VLQ_triggerPaths.h) or not
+    if (version == "Run2015B_Mu") {
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
+    } else if (version == "Run2015B_Ele") {
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
+    } else if (version == "Run2015B_Had") {
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
+    } else {
+        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
+    }
+
+    /* +++++
+     * make_modules_and_selitem (from VLQToHiggsPairProd/include/VLQPair_additionalModules.h) makes CollectionProducers,
+     * CollectionSizeProducers and puts a corresponding SelItem into the SelItem vector, here SEL_ITEMS_VLQPair_loose
+     * (see VLQPair_selectionItems.h)
+     * +++++
+     */
 
     SEL_ITEMS_VLQPair_loose = SEL_ITEMS_VLQPair_loose_base;
     
@@ -280,55 +271,19 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     make_modules_and_selitem("patJetsCa15CHSJetsFilteredPacked_daughters", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
     make_modules_and_selitem("patJetsAk8CHSJetsSoftDropPacked_daughters", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
     make_modules_and_selitem("topjets", ctx, v_modules, SEL_ITEMS_VLQPair_loose, insert_sel);
-
-
-    // Other CutProducers
-    v_modules.emplace_back(new NLeptonsProducer(ctx, "n_leptons"));
-    v_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx, "jets", "n_jets"));
-
-    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "leading_jet_pt", 1));
-    v_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "subleading_jet_pt", 2));
-    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "leading_topjet_pt", 1));
-    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "leading_ak8jet_pt", 1));
-    // v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsCa15CHSJetsFilteredPacked_daughters", "leading_ca15jet_pt", 1));
-
-    // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
-    v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
-
-    v_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
-    v_modules.emplace_back(new TwoDCutProducer(ctx));
-    if (version == "Run2015B_Mu") {
-        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
-    } else if (version == "Run2015B_Ele") {
-        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
-    } else if (version == "Run2015B_Had") {
-        v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
-    } else {
-        v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));
-    }
-
-    // v_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
-    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
-    // v_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
-    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
-    // v_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
-
-    // N Gen Leptons Producer
-
-    // v_modules.emplace_back(new CollectionSizeProducer<GenParticle>(ctx, "genparticles", "n_genleptons",
-    //             GenParticleId(GenParticlePdgIdId({-11, 11, -13, 13}))));
-    // v_modules.emplace_back(new GenParticlesPrinter(ctx));
-
     
-    // Selection Producer
+    /* +++++
+     * Set up the SelItemsHelper which takes as input the SelItems vector (SEL_ITEMS_VLQPair_loose) and is needed by several
+     * other modules to make selection and histogram producers
+     * +++++
+     */
+
     SelItemsHelper sel_helper(SEL_ITEMS_VLQPair_loose, ctx);
     sel_helper.declare_items_for_output();
     sel_module.reset(new SelectionProducer(ctx, sel_helper));
 
 
-    // 3. Set up Hists classes:
-
-    // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
+    // Set up Hists classes:
 
     sel_helper.fill_hists_vector(v_hists, "NoSelection");
     auto nm1_hists = new Nm1SelHists(ctx, "Nm1Selection", sel_helper);
@@ -359,39 +314,20 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     v_hists.insert(v_hists.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "NoSelection"))));
     v_hists_after_sel.insert(v_hists_after_sel.begin() + pos_2d_cut, move(unique_ptr<Hists>(new TwoDCutHist(ctx, "PostSelection"))));
 
-    // h_ngenleps = ctx.get_handle<int>("n_genleptons");
-
-    //=====FOR RUN II=====:
-    // implement:
-    // * 2d-cut hists
-    // * trigger efficiency hists (?)
-
-    // v_modules.emplace_back(new TriggerAcceptProducer(ctx,
-    //                 PRESEL_TRIGGER_PATHS,
-    //                 "trigger_accept"));
-    // v_modules.emplace_back(new NeutrinoParticleProducer(ctx, NeutrinoReconstruction, "neutrino_part_vec", "PrimaryLepton"));
-    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, LorentzVector>(ctx, "PrimaryLepton", "neutrino_part_vec", "min_deltaR_lep_nu"));
-    // v_modules.emplace_back(new TwoParticleCollectionProducer<Jet>(ctx, "b_jets", "leading_b_jets"));
-    // v_modules.emplace_back(new MinDeltaRProducer<FlavorParticle, Jet>(ctx, "PrimaryLepton", "leading_b_jets", "min_deltaR_lep_bjets"));
-    // v_modules.emplace_back(new DeltaRTwoLeadingParticleProducer<Jet>(ctx, "leading_b_jets", "deltaR_leading_bjets"));
-
 
 }
 
 
 bool TpTpLooseSelection::process(Event & event) {
-
-    // cout << "TpTpLooseSelection: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
-
-    // TEST STUFF HERE
-
-    // if (version.substr(version.size() - 3, 100) == "_th") {
-    //     std::cout << "found _th sample!\n";
-    // }
-    // else if (version.substr(version.size() - 5, 100) == "_noth") {
-    //     std::cout << "found _noth sample!\n";
-    // }
  
+    /* +++++
+     * Check the final state i.e. the decay mode of the T' pair; in order to split up your sample according to the final state,
+     * you have to specify (for each mass point) six InputData items in your xml config file, each with a different version according
+     * to the possible final states. Then, using the code below, the event is only processed further (and written out) if it
+     * corresponds to the version given in the InputData element.
+     * +++++
+     */
+
     if (version.substr(version.size() - 5, 100) == "_thth") {
         if (!checkDecayMode(event, ParticleID::TopID, ParticleID::HiggsID,
                     ParticleID::TopID, ParticleID::HiggsID)) {
@@ -434,11 +370,6 @@ bool TpTpLooseSelection::process(Event & event) {
         mod->process(event);
     }
 
-    // if (TpTpLooseSelection::event_count < 100) {
-    //     event_count++;
-    //     // gen_printer->process(event);
-    // }
-
     // run selection
     bool all_accepted = sel_module->process(event);
 
@@ -447,11 +378,6 @@ bool TpTpLooseSelection::process(Event & event) {
         for (auto & hist : v_hists_after_sel) {
             hist->fill(event);
         }
-
-        // for TMVA stuff
-        // if (writer_module.get()) {
-        //     writer_module->process(event);
-        // }
     }
 
     // all hists
