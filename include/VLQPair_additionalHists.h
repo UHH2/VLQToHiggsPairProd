@@ -3,7 +3,7 @@
 #include "UHH2/core/include/Hists.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/GenParticle.h"
-#include "UHH2/common/include/PrintingModules.h"
+// #include "UHH2/common/include/PrintingModules.h"
 
 using namespace uhh2;
 using namespace std;
@@ -73,7 +73,7 @@ private:
 
                 h_n_matched_genparticles = book<TH1F>("matched_genparticles", "number matched genparticles", 10, 0., 10.);
 
-                genp_printer.reset(new GenParticlesPrinter(ctx));
+                // genp_printer.reset(new GenParticlesPrinter(ctx));
             }
 
         void fill(const uhh2::Event & event) {
@@ -81,7 +81,7 @@ private:
             if (event.is_valid(hndl_in_)) {
                 vector<T> const & coll = event.get(hndl_in_);
                 if (coll.size()) {
-                    genp_printer->process(event);
+                    // genp_printer->process(event);
 
                     T const & ld_part = coll[0];
 
@@ -307,7 +307,7 @@ private:
         TH1F *h_categories;
         TH1F *h_n_matched_genparticles;
         // boost::optional<GenParticleId> genp_id;
-        unique_ptr<GenParticlesPrinter> genp_printer;
+        // unique_ptr<GenParticlesPrinter> genp_printer;
     };
 
     string dirname_;

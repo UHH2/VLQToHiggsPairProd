@@ -28,8 +28,6 @@
 #include "UHH2/VLQSemiLepPreSel/include/SelectionHists.h"
 #include "UHH2/VLQSemiLepPreSel/include/SelectionItem.h"
 #include "UHH2/VLQSemiLepPreSel/include/VLQSLPS_selectionItems.h"
-#include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdSelections.h"
-// // #include "UHH2/VLQToHiggsPairProd/include/VLQToHiggsPairProdHists.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
@@ -45,8 +43,8 @@ enum ParticleID {
     BottomID = 5,
     TopID = 6,
     TprimeID = 8000001,
-    ElectronID = 11,
-    MuonID = 13,
+    ElID = 11,
+    MuID = 13,
     ZID = 23,
     WID = 24,
     HiggsID = 25
