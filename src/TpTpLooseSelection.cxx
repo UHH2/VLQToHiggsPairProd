@@ -154,7 +154,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
      * +++++
      */
 
-    v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 115., 50.)); 
+    v_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 99999., 50.)); 
     v_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_modules.emplace_back(new STCalculator(ctx, "ST"));
     v_modules.emplace_back(new CollectionProducer<Jet>(ctx,
@@ -167,7 +167,6 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
                 "n_btags",
                 JetId(CSVBTag(CSVBTag::WP_MEDIUM))
                 ));
-
     // cms top tags
     v_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",

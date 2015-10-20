@@ -6,248 +6,290 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="5000." > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="42.477" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="6" OutputDirectory="./tptppresel_output/" PostFix="" TargetLumi="10000" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="552.67" > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="8" OutputDirectory="./" PostFix="" TargetLumi="552.67" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms05.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="./" PostFix="" TargetLumi="552.67" > -->
         
-        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Ele" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015B_Ele.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015D_Ele" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015D_Ele.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Mu" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015B_Mu.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015D_Mu" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015D_Mu.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015B_Had" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015B_Had.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="100" Type="DATA" Version="Run2015D_Had" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.DATA.Run2015D_Had.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="1755165" NEventsMax="100" Type="MC" Version="TpTp_M-700" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-700.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="4193878" NEventsMax="100" Type="MC" Version="TpTp_M-800" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-800.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="9222591" NEventsMax="100" Type="MC" Version="TpTp_M-900" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-900.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-900.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="18700000" NEventsMax="100" Type="MC" Version="TpTp_M-1000" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1000.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="36678571" NEventsMax="100" Type="MC" Version="TpTp_M-1100" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1100.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <!-- <InputData Lumi="832800" NEventsMax="100" Type="MC" Version="TpTp_M-1200" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1200.root" Lumi="0.0"/>
+        <InputData Lumi="70576271" NEventsMax="100" Type="MC" Version="TpTp_M-1200" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1200.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-        </InputData> -->
+        </InputData>
 
         <InputData Lumi="129953051" NEventsMax="100" Type="MC" Version="TpTp_M-1300" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1300.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1300.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="235254237" NEventsMax="100" Type="MC" Version="TpTp_M-1400" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1400.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="406100000" NEventsMax="100" Type="MC" Version="TpTp_M-1500" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1500.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="804000000" NEventsMax="100" Type="MC" Version="TpTp_M-1600" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1600.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="1664800000" NEventsMax="100" Type="MC" Version="TpTp_M-1700" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="3331200000" NEventsMax="100" Type="MC" Version="TpTp_M-1800" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TpTp_M-1800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <!-- <InputData Lumi="0.00268666002688567" NEventsMax="100" Type="MC" Version="QCD_Pt15to30" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to30.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt15to30.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="0.0347632262367667" NEventsMax="100" Type="MC" Version="QCD_Pt30to50" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt30to50.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="0.258639471368391" NEventsMax="100" Type="MC" Version="QCD_Pt50to80" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt50to80.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt50to80.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData> -->
 
         <InputData Lumi="1.25429262306654" NEventsMax="100" Type="MC" Version="QCD_Pt80to120" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt80to120.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt80to120.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="7.31523455741881" NEventsMax="100" Type="MC" Version="QCD_Pt120to170" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt120to170.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt120to170.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="29.3160237388724" NEventsMax="100" Type="MC" Version="QCD_Pt170to300" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt170to300.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt170to300.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="374.61050747795" NEventsMax="100" Type="MC" Version="QCD_Pt300to470" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt300to470.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt300to470.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="2991.71397716754" NEventsMax="100" Type="MC" Version="QCD_Pt470to600" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt470to600.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt470to600.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="10113.7292669877" NEventsMax="100" Type="MC" Version="QCD_Pt600to800" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt600to800.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt600to800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="59186.0774780912" NEventsMax="100" Type="MC" Version="QCD_Pt800to1000" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt800to1000.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt800to1000.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="155146.470169776" NEventsMax="100" Type="MC" Version="QCD_Pt1000to1400" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt1000to1400.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt1000to1400.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="234924.345813802" NEventsMax="100" Type="MC" Version="QCD_Pt1400to1800" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt1400to1800.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt1400to1800.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="1695831.84708943" NEventsMax="100" Type="MC" Version="QCD_Pt1800to2400" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt1800to2400.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt1800to2400.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="29046635.2651099" NEventsMax="100" Type="MC" Version="QCD_Pt2400to3200" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt2400to3200.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt2400to3200.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="1140536129.83167" NEventsMax="100" Type="MC" Version="QCD_Pt3200toInf" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.QCD_Pt3200toInf.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt3200toInf.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <!-- <InputData Lumi="24100.7" NEventsMax="100" Type="MC" Version="TTbar" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
+        <InputData Lumi="113811.0" NEventsMax="100" Type="MC" Version="TTbar" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
-        </InputData> -->
+        </InputData>
 
-        <InputData Lumi="23941.8" NEventsMax="100" Type="MC" Version="TTbar_Mtt0to700" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar_inc_0to700.root" Lumi="0.0"/>
+        <!-- <InputData Lumi="23941.8" NEventsMax="100" Type="MC" Version="TTbar_Mtt0to700" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar_inc_0to700.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="76941.6" NEventsMax="100" Type="MC" Version="TTbar_Mtt700to1000" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar_inc_700to1000.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar_exc_700to1000.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar_inc_700to1000.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar_exc_700to1000.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="140364.4" NEventsMax="100" Type="MC" Version="TTbar_Mtt1000toInf" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar_inc_1000toInf.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.TTbar_exc_1000toInf.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar_inc_1000toInf.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_TTbar_exc_1000toInf.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData> -->
+
+        <!-- <InputData Lumi="60492481.7" NEventsMax="100" Type="MC" Version="WJets" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData> -->
+
+        <InputData Lumi="6099.987" NEventsMax="100" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT100To200.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="60492481.7" NEventsMax="100" Type="MC" Version="WJets" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.WJets.root" Lumi="0.0"/>
+        <InputData Lumi="12010.68" NEventsMax="100" Type="MC" Version="WJets_LNu_HT200To400" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT200To400.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="32087.73" NEventsMax="100" Type="MC" Version="WJets_LNu_HT400To600" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT400To600.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="257120.9" NEventsMax="100" Type="MC" Version="WJets_LNu_HT600To800" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT600To800.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="247357.8" NEventsMax="100" Type="MC" Version="WJets_LNu_HT800To1200" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT800To1200.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="158373.4" NEventsMax="100" Type="MC" Version="WJets_LNu_HT1200To2500" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT1200To2500.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="6769850." NEventsMax="100" Type="MC" Version="WJets_LNu_HT2500ToInf" Cacheable="True">
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_WJets_LNu_HT2500ToInf.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="24012027.4" NEventsMax="100" Type="MC" Version="ZJetsM10to50" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.ZJetsM10to50.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_ZJetsM10to50.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="51947416.4" NEventsMax="100" Type="MC" Version="ZJetsM50toInf" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.ZJetsM50toInf.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_ZJetsM50toInf.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="3799299.8" NEventsMax="100" Type="MC" Version="SingleT_tChannel" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.SingleT_tChannel.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_SingleT_tChannel.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="28089.89" NEventsMax="100" Type="MC" Version="SingleT_WAntitop" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.SingleT_WAntitop.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_SingleT_WAntitop.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
 
         <InputData Lumi="28044.9" NEventsMax="100" Type="MC" Version="SingleT_WTop" Cacheable="True">
-            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.SingleT_WTop.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/uhh2.AnalysisModuleRunner.MC.MC_SingleT_WTop.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
             <OutputTree Name="AnalysisTree" />
         </InputData>
@@ -300,13 +342,13 @@
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
-            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
+            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_25ns_v1/Lumifile_Cert_246908-258159_13TeV_PromptReco_Collisions15_25ns_JSON_v3.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
             <Item Name="use_sframe_weight" Value="false" />
 
-            <Item Name="pileup_directory_data" Value="/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_3/src/UHH2/VLQToTopAndLepton/config/PU_reweighting/uhh2.AnalysisModuleRunner.Data.Data.root"/>
-            <Item Name="pileup_directory_50ns" Value="/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_3/src/UHH2/VLQToTopAndLepton/config/PU_reweighting/uhh2.AnalysisModuleRunner.MC.TTbar.root"/>
+            <Item Name="pileup_directory_data" Value="/nfs/dust/cms/user/marchesi/PUData/MyDataPileupHistogram.root"/>
+            <Item Name="pileup_directory_50ns" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_25ns_v1/Pileup.MC.TTbar.root"/>
             
             <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
             <Item Name="TestKey" Value="TestKeyValue" />

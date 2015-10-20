@@ -150,6 +150,15 @@ def merge_samples(wrps):
         '_Mtt1000toInf',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
+        '_LNu_HT100To200',
+        '_LNu_HT200To400',
+        '_LNu_HT400To600',
+        '_LNu_HT600To800',
+        '_LNu_HT800To1200',
+        '_LNu_HT1200To2500',
+        '_LNu_HT2500ToInf',        
+    ))
+    wrps = vlq_common.merge_decay_channels(wrps, (
         '_Ele',
         '_Mu',
         '_Had'

@@ -21,7 +21,7 @@ import common_sframe
 #====PLOTTING====
 
 datasets_to_plot = common_datasets_to_plot = [
-    'Run2015B',
+    'Run2015D',
     'TpTp_M-800_thth',
     'TpTp_M-800_thtz',
     'TpTp_M-800_thbw',
@@ -65,7 +65,7 @@ def mk_tools():
 
 #====SFRAME====
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpLooseSelection.xml'
+sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/config/TpTpLooseSelection.xml'
 
 def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=None):
     """Makes a toolchain for one category with sframe and plots."""
@@ -74,7 +74,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
         xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp',
+        'Plots',
         lazy_eval_tools_func=mk_tools
     )
     tc = varial.tools.ToolChain(
