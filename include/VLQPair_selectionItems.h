@@ -30,7 +30,7 @@ static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_loose_base {
 static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_final_base {
     shared_ptr<SelectionItem>(new SelDatI("trigger_accept",         "trigger accept",                          2, -.5, 1.5,             1   )),
     shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt",      "primary lepton p_{T}",                   90,   0,  900            ,50. )),
-    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     30,  0, 3000             ,700.)),
+    shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     20,  500, 4500             ,700.)),
 
     shared_ptr<SelectionItem>(new SelDatI("n_jets",                 "N_{jet}",                                21, -.5, 20.5                 )),
     shared_ptr<SelectionItem>(new SelDatF("met",                    "MET",                                    50,   0, 1000                 )),

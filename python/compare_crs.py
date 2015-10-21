@@ -26,9 +26,9 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
         # if 'TH2' in self.renderers[0].type:
         #     return False
 
-        if n_hists != 2:
-            raise RuntimeError('ERROR BottomPlots can only be created '
-                               'with exactly two histograms!')
+        # if n_hists != 2:
+        #     raise RuntimeError('ERROR BottomPlots can only be created '
+        #                        'with exactly two histograms!')
         return n_hists == 2
 
     def define_bottom_hist(self):
@@ -82,7 +82,10 @@ def select_files(wrp):
             or wrp.in_file_path.endswith('PostSelection/n_jets')
             or wrp.in_file_path.endswith('PostSelection/n_ak8_all')
             )
-            and 'MC.TTbar' in wrp.file_path
+            and (
+            'MC.TTbar' in wrp.file_path
+            or 'MC.WJets' in wrp.file_path
+            )
             # and '1HiggsLooseTagSignalRegion' not in wrp.file_path
         ):
         return True
@@ -114,13 +117,18 @@ def overlay_setup(grps, sig_reg=''):
         signal = filter(lambda w: sig_reg == w.legend, selected_smpls)
         others = filter(lambda w: sig_reg != w.legend, selected_smpls)
         if not signal:
+            print 'NO SIGNAL!'
+            set_linewidth_others(others)
+            if dat:
+                dat = [op.norm_to_integral(varial.op.merge(dat))]
             yield others + dat
-        colorize_signal_region(signal[0])
-        set_linewidth_others(others)
-        signal = [op.stack(signal)]
-        if dat:
-            dat = [op.norm_to_integral(varial.op.merge(dat))]
-        yield signal + others + dat
+        else:
+            colorize_signal_region(signal[0])
+            set_linewidth_others(others)
+            signal = [op.stack(signal)]
+            if dat:
+                dat = [op.norm_to_integral(varial.op.merge(dat))]
+            yield signal + others + dat
 
 
 def plot_colorizer(grps, colors=cat_colors):
@@ -130,6 +138,12 @@ def plot_colorizer(grps, colors=cat_colors):
 
 def plot_setup(sig_reg=''):
     def setup(grps):
+        # if sig_reg == 'SignalRegionHMedBoost':
+        #     grps = list(grps)
+        #     for g in grps:
+        #         print 'group:'
+        #         for w in g:
+        #             print ' ', w.sample, w.variable, w.category
         grps = plot_colorizer(grps)
         grps = overlay_setup(grps, sig_reg)
         return grps
@@ -143,7 +157,13 @@ def loader_hook(wrps):
         # variable=lambda w: w.in_file_path.split('/')[-1]
         )
     wrps = gen.sort(wrps, key_list=['category'])
+    wrps = list(wrps)
+    for w in wrps:
+        print w.sample, w.variable, w.category
     wrps = common_plot.merge_samples(wrps)
+    wrps = list(wrps)
+    for w in wrps:
+        print w.sample, w.variable, w.category
     wrps = gen.sort(wrps, key_list=['sample', 'variable'])
     wrps = gen.gen_add_wrp_info(
         wrps, legend=lambda w: w.category,
@@ -155,9 +175,10 @@ def loader_hook(wrps):
 
 def filter_category(sig_cats=None, sig_cat='', cr_cat=''):
     def do_filtering(wrp):
+        # if sig_cat == 'SignalRegionHMedBoost':
+        #     print wrp.sample, wrp.variable, wrp.category
         if (cr_cat and (wrp.category == cr_cat or wrp.category == sig_cat))\
             or (not cr_cat and (wrp.category == sig_cat or wrp.category not in sig_cats)):
-            # print wrp.category
             return True
         else: return False
     return do_filtering

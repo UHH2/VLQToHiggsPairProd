@@ -26,7 +26,7 @@ import common_sframe
 # normfactors.update({'TpTp' : 1.})
 
 datasets_to_plot = common_datasets_to_plot = [
-    # 'Run2015B',
+    'Run2015D',
     'TpTp_M-800_thth',
     'TpTp_M-800_thtz',
     'TpTp_M-800_thbw',
@@ -95,7 +95,7 @@ def mod_legend(wrps):
 
 def loader_hook_final(wrps, smpl_fct=None):
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
-    wrps = rebin_st_hists(wrps)
+    # wrps = rebin_st_hists(wrps)
     wrps = mod_legend(wrps)
     return wrps
 
@@ -124,7 +124,7 @@ def mk_tools_cats(categories=None):
             varial.tools.mk_rootfile_plotter(
                 pattern=common_plot.file_selected_split(datasets_to_plot),
                 name='StackedAll',
-                filter_keyfunc=filter_for_fsp,
+                # filter_keyfunc=filter_for_fsp,
                 plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 combine_files=True,
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
@@ -158,7 +158,7 @@ def mk_tools_cats(categories=None):
 
 #====SFRAME====
 
-dir_limit = 'Limits3fb_2'
+dir_limit = 'Limits3fb'
 
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelection.xml'
 
@@ -174,7 +174,7 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp2',
+        'Plots',
         lazy_eval_tools_func=mk_tools_cats(signal_regions+control_regions)
     )
     tc_list = [
@@ -183,7 +183,7 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
     ]
     if analysis_module == 'TpTpControlRegion':
         tc_list.append(varial.tools.ToolChain(
-                'CompareControlRegion2',
+                'CompareControlRegion',
                 lazy_eval_tools_func=compare_crs.mk_tc(
                     srs=signal_regions, crs=control_regions)
                 ))

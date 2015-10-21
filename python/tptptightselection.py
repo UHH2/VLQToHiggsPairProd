@@ -77,7 +77,7 @@ def loader_hook_tight(wrps, smpl_fct=None):
     # wrps = resize_n_hists(wrps)
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
     # wrps = nice_axis_labels(wrps)
-    # wrps = mod_legend(wrps)
+    wrps = mod_legend(wrps)
     return wrps
 
 def plotter_factory_tight(smpl_fct=None, **kws):
