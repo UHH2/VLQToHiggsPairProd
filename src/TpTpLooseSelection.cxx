@@ -239,11 +239,11 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     v_modules.emplace_back(new TwoDCutProducer(ctx));
 
     // produces a handle with 0/1 corresponding to whether event passed trigger requirements (see VLQ_triggerPaths.h) or not
-    if (version == "Run2015B_Mu") {
+    if (version == "Run2015D_Mu") {
         v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
-    } else if (version == "Run2015B_Ele") {
+    } else if (version == "Run2015D_Ele") {
         v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
-    } else if (version == "Run2015B_Had") {
+    } else if (version == "Run2015D_Had") {
         v_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
     } else {
         v_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));

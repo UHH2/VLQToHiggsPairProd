@@ -26,7 +26,7 @@ import common_sframe
 #====PLOTTING====
 
 datasets_to_plot = common_datasets_to_plot = [
-    'Run2015B',
+    'Run2015D',
     'TpTp_M-800_thth',
     'TpTp_M-800_thtz',
     'TpTp_M-800_thbw',
@@ -74,10 +74,10 @@ def mod_legend(wrps):
 
 
 def loader_hook_tight(wrps, smpl_fct=None):
-    wrps = resize_n_hists(wrps)
+    # wrps = resize_n_hists(wrps)
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
-    wrps = nice_axis_labels(wrps)
-    wrps = mod_legend(wrps)
+    # wrps = nice_axis_labels(wrps)
+    # wrps = mod_legend(wrps)
     return wrps
 
 def plotter_factory_tight(smpl_fct=None, **kws):
@@ -109,7 +109,7 @@ def mk_tools():
         varial.tools.mk_rootfile_plotter(
             pattern=common_plot.file_selected_split(datasets_to_plot),
             name='StackedAll',
-            filter_keyfunc=filter_for_fsp,
+            # filter_keyfunc=filter_for_fsp,
             plotter_factory=lambda **w: plotter_factory_tight(common_plot.normfactors, **w),
             combine_files=True,
             # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
@@ -134,7 +134,7 @@ def mk_tools():
 
 #====SFRAME====
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelectionRunII.xml'
+sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/config/TpTpTightSelectionRunII.xml'
 
 def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
                 allowed_datasets = []):
@@ -146,13 +146,13 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_for_fsp4',
+        'Plots',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [
         sframe,
         plots,
-        # varial.tools.WebCreator(no_tool_check=True)
+        varial.tools.WebCreator(no_tool_check=True)
     ]
 
     tc = varial.tools.ToolChain(version, tc_list)

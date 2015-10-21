@@ -185,11 +185,11 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
 
     v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
     v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
-    if (version == "Run2015B_Mu") {
+    if (version == "Run2015D_Mu") {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
-    } else if (version == "Run2015B_Ele") {
+    } else if (version == "Run2015D_Ele") {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
-    } else if (version == "Run2015B_Had") {
+    } else if (version == "Run2015D_Had") {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, {}, "trigger_accept"));
     } else {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS, "trigger_accept"));

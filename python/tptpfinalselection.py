@@ -160,7 +160,7 @@ def mk_tools_cats(categories=None):
 
 dir_limit = 'Limits3fb_2'
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelection.xml'
+sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelection.xml'
 
 def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
                 allowed_datasets = [], signal_regions=[], control_regions=[]):

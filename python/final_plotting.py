@@ -44,8 +44,7 @@ def norm_to_bkg(grps):
                     if not max_sig:
                         max_sig = w.histo.GetMaximum()
                         fct_val = (max_bkg/max_sig)*0.2
-                    scale_signal(w, fct_val)
-                    
+                    scale_signal(w, fct_val)            
         yield g
 
 
