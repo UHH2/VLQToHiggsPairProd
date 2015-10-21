@@ -157,13 +157,7 @@ def loader_hook(wrps):
         # variable=lambda w: w.in_file_path.split('/')[-1]
         )
     wrps = gen.sort(wrps, key_list=['category'])
-    wrps = list(wrps)
-    for w in wrps:
-        print w.sample, w.variable, w.category
     wrps = common_plot.merge_samples(wrps)
-    wrps = list(wrps)
-    for w in wrps:
-        print w.sample, w.variable, w.category
     wrps = gen.sort(wrps, key_list=['sample', 'variable'])
     wrps = gen.gen_add_wrp_info(
         wrps, legend=lambda w: w.category,

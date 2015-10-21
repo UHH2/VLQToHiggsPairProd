@@ -4,6 +4,8 @@ import os
 import sys
 import time
 
+from ROOT import TH1F
+
 import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
@@ -78,6 +80,16 @@ def mk_cutflow_chain_cr(category, loader_hook):
         cutflow_tables.CutflowTableTex(None, True),
     ])
 
+def resize_n_hists(wrps):
+    for w in wrps:
+        if 'n_toptags' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            histo = TH1F(w.histo.GetName(), w.histo.GetTitle(), 5, -.5, 4.5)
+            for i in range(0, 5):
+                histo.SetBinContent(i, w.histo.GetBinContent(i))
+            w.histo = histo
+        yield w
+
 def rebin_st_hists(wrps):
     for w in wrps:
         if w.variable == 'ST':
@@ -92,10 +104,25 @@ def mod_legend(wrps):
                 w.legend = "T'T' M"+m
         yield w
 
+def nice_axis_labels(wrps):
+    for w in wrps:
+        if 'n_toptags' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('N(top-tags)')
+        elif 'n_ak8' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('N(Ak8 jets)')
+        elif 'mass_sj_ld_ak8_boost_loose_2b' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('M(Higgs candidate)')
+        yield w
+
 
 def loader_hook_final(wrps, smpl_fct=None):
+    wrps = resize_n_hists(wrps)
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
     # wrps = rebin_st_hists(wrps)
+    wrps = nice_axis_labels(wrps)
     wrps = mod_legend(wrps)
     return wrps
 

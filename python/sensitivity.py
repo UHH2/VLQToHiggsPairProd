@@ -69,7 +69,7 @@ def loader_hook_func(brs):
                 'TpTp_M-1700' : 1./0.0005,
                 'TpTp_M-1800' : 1./0.00025,
             },
-            norm_all=(3000./42.477))
+            norm_all=(3000./552.67))
         return wrps
     return temp
 
@@ -103,7 +103,7 @@ def mk_limit_list():
                     # asymptotic= False,
                     brs=brs_,
                     model_func= lambda w: model_vlqpair.get_model(w, [
-                        'TpTp_M-700',
+                        # 'TpTp_M-700',
                         'TpTp_M-800',
                         'TpTp_M-900',
                         'TpTp_M-1000',

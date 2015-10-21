@@ -119,30 +119,26 @@ def file_stack_less_signal_split():
 
 def merge_samples(wrps):
     wrps = vlq_common.merge_decay_channels(wrps, (
-        '_Pt15to30',
-        '_Pt30to50',
-        '_Pt50to80',
-        '_Pt80to120',
-        '_Pt120to170',
-        '_Pt170to300',
-        '_Pt300to470',
-        '_Pt470to600',
-        '_Pt600to800',
-        '_Pt800to1000',
-        '_Pt1000to1400',
-        '_Pt1400to1800',
-        '_Pt1800to2400',
-        '_Pt2400to3200',
-        '_Pt3200toInf',
+        '_Pt80to120_MuEnr',
+        '_Pt120to170_MuEnr',
+        '_Pt170to300_MuEnr',
+        '_Pt300to470_MuEnr',
+        '_Pt470to600_MuEnr',
+        '_Pt600to800_MuEnr',
+        '_Pt800to1000_MuEnr',
+        '_Pt1000toInf_MuEnr',
     ), print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, (
-        'M10to50',
-        'M50toInf',
+        'ToLL_HT100to200',
+        'ToLL_HT200to400',
+        'ToLL_HT400to600',
+        'ToLL_HT600toInf',
     ), print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, (
         '_tChannel',
         '_WAntitop',
         '_WTop',
+        '_sChannel',
     ))
     wrps = vlq_common.merge_decay_channels(wrps, (
         '_Mtt0to700',
