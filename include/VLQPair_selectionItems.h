@@ -11,9 +11,9 @@ typedef SelectionItemData<double>   SelDatD;
 
 static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_loose_base {
     shared_ptr<SelectionItem>(new SelDatI("trigger_accept",         "trigger accept",                          2, -.5, 1.5          ,1      )),
+    shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt",      "primary lepton p_{T}",                   90,   0, 900          ,25.    )),
     shared_ptr<SelectionItem>(new SelDatD("ST",                     "ST",                                     20,  500, 4500        ,700    )),
     shared_ptr<SelectionItem>(new SelDatI("n_btags",                "N_{b-tag}",                              11, -.5, 10.5         ,1      )),
-    shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt",      "primary lepton p_{T}",                   90,   0, 900          ,25.    )),
     shared_ptr<SelectionItem>(new SelDatF("leading_jet_pt",         "leading jet p_{T}",                      50,   0, 1500                 )),
     
     shared_ptr<SelectionItem>(new SelDatI("n_leptons",              "N_{lepton}",                             11, -.5, 10.5                 )),

@@ -23,17 +23,28 @@ import common_sframe
 
 file_path = '/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/'
 
-def file_pattern(allowed_datasets=None):
-    file_list = list(file_path+'uhh2.AnalysisModuleRunner.'+g+'.root' for g in allowed_datasets)
-    print file_list
-    return file_list
+datasets_to_plot = common_datasets_to_plot = [
+    'Run2015D',
+    'TpTp_M-800',
+    'TpTp_M-1600',
+    'QCD',
+    'TTbar',
+    'WJets',
+    'ZJets',
+    'SingleT',
+]
 
-def mk_tools(allowed_datasets=None):
+# def file_pattern(allowed_datasets=None):
+#     file_list = list(file_path+'uhh2.AnalysisModuleRunner.'+g+'.root' for g in allowed_datasets)
+#     print file_list
+#     return file_list
+
+def mk_tools(datasets_to_plot=None):
     def create():
 
         return [
             varial.tools.mk_rootfile_plotter(
-                pattern=file_pattern(allowed_datasets),
+                pattern=common_plot.file_selected_unsplit(datasets_to_plot, file_path),
                 name='StackedAll',
                 plotter_factory=lambda **w: final_plotting.plotter_factory_stack({'TpTp' : 10.}, **w),
                 combine_files=True,
@@ -53,7 +64,7 @@ def mk_tools(allowed_datasets=None):
             #     combine_files=True,
             #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
             #     ),
-            # cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
+            cutflow_tables.mk_cutflow_chain(common_plot.file_selected_unsplit(datasets_to_plot, file_path), common_plot.loader_hook)
             ]
     return create
 
@@ -61,7 +72,7 @@ def mk_tools(allowed_datasets=None):
 
 # sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_7/src/UHH2/VLQToHiggsPairProd/config/TpTpLooseSelection.xml'
 
-def mk_sframe_and_plot_tools(version='TestLoose', allowed_datasets=None):
+def mk_sframe_and_plot_tools(version='TestPre', allowed_datasets=None):
     """Makes a toolchain for one category with sframe and plots."""
     # sframe = SFrame(
     #     cfg_filename=sframe_cfg,

@@ -56,16 +56,22 @@ common_datasets_to_plot = [
 
 #====SELECT_FILES FUNCTIONS====
 
-def file_selected_unsplit(datasets_to_plot=common_datasets_to_plot):
-    src_dir = varial.analysis.cwd+src_dir_rel
+def file_selected_unsplit(datasets_to_plot=common_datasets_to_plot, src=''):
+    if src:
+        src_dir = src
+    else:
+        src_dir = varial.analysis.cwd+src_dir_rel
     file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
         (f.endswith('.root') and '.sframe' not in f
             and any(g in f for g in datasets_to_plot)
         )]
     return file_list
 
-def file_selected_split(datasets_to_plot=common_datasets_to_plot):
-    src_dir = varial.analysis.cwd+src_dir_rel
+def file_selected_split(datasets_to_plot=common_datasets_to_plot, src=''):
+    if src:
+        src_dir = src
+    else:
+        src_dir = varial.analysis.cwd+src_dir_rel
     file_list = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if
         (f.endswith('.root') and '.sframe' not in f
             and any(g in f for g in datasets_to_plot)
