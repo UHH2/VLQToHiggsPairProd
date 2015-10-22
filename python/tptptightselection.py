@@ -36,7 +36,7 @@ datasets_to_plot = common_datasets_to_plot = [
     'QCD',
     'TTbar',
     'WJets',
-    'ZJets',
+    'DYJets',
     'SingleT',
 ]
 
@@ -128,7 +128,7 @@ def mk_tools():
         #     combine_files=True,
         #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
         #     ),
-        # cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
+        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
         ]
 
 
@@ -146,7 +146,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots',
+        'Plots_more_backgrounds',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [
