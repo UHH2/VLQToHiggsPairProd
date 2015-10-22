@@ -27,7 +27,7 @@ import common_sframe
 # normfactors = common_plot.normfactors
 # normfactors.update({'TpTp' : 1.})
 
-datasets_to_plot = common_datasets_to_plot = [
+datasets_to_plot = [
     'Run2015D',
     'TpTp_M-800_thth',
     'TpTp_M-800_thtz',
@@ -38,7 +38,7 @@ datasets_to_plot = common_datasets_to_plot = [
     'QCD',
     'TTbar',
     'WJets',
-    'ZJets',
+    'DYJets',
     'SingleT',
 ]
 

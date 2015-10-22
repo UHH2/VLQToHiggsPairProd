@@ -11,6 +11,7 @@ import varial.generators as gen
 import varial.analysis as analysis
 from varial.sample import Sample
 from varial.extensions.sframe import SFrame
+import varial.rendering as rnd
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 
@@ -25,7 +26,7 @@ import common_sframe
 
 #====PLOTTING====
 
-datasets_to_plot = common_datasets_to_plot = [
+datasets_to_plot = [
     'Run2015D',
     'TpTp_M-800_thth',
     'TpTp_M-800_thtz',
@@ -85,7 +86,7 @@ def plotter_factory_tight(smpl_fct=None, **kws):
     kws['hook_loaded_histos'] = lambda w: loader_hook_tight(w, smpl_fct)
     kws['plot_setup'] = final_plotting.stack_setup_norm_sig
     kws['stack_setup'] = final_plotting.stack_setup_norm_sig
-    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+    kws['canvas_decorators'] += [rnd.TitleBox(text='552.67 fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
     # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)
@@ -107,7 +108,7 @@ def mk_tools():
 
     return [
         varial.tools.mk_rootfile_plotter(
-            pattern=common_plot.file_selected_split(datasets_to_plot),
+            pattern=common_plot.file_selected_unsplit(datasets_to_plot),
             name='StackedAll',
             # filter_keyfunc=filter_for_fsp,
             plotter_factory=lambda **w: plotter_factory_tight(common_plot.normfactors, **w),
@@ -128,7 +129,7 @@ def mk_tools():
         #     combine_files=True,
         #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
         #     ),
-        cutflow_tables.mk_cutflow_chain(common_plot.file_stack_all_split(), common_plot.loader_hook)
+        cutflow_tables.mk_cutflow_chain(common_plot.file_selected_unsplit(datasets_to_plot), common_plot.loader_hook)
         ]
 
 
@@ -146,7 +147,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_more_backgrounds',
+        'Plots_with_title',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [

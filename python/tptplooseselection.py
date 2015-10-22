@@ -31,7 +31,7 @@ datasets_to_plot = common_datasets_to_plot = [
     'QCD',
     'TTbar',
     'WJets',
-    'ZJets',
+    'DYJets',
     'SingleT',
 ]
 

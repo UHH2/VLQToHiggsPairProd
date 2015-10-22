@@ -234,14 +234,14 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
             coll_name,
             out_name+"_med_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 0),
+                HiggsXBTag(MAX_HIGGS_MASS, 99999.f, CSVBTag(CSVBTag::WP_MEDIUM), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
             )));
         v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
             coll_name,
             out_name+"_loose_0b_m150_noT",
             TopJetId(AndId<TopJet>(
-                HiggsXBTag(0.f, 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 0),
+                HiggsXBTag(MAX_HIGGS_MASS, 99999.f, CSVBTag(CSVBTag::WP_LOOSE), 0),
                 MinMaxDeltaRId<TopJet>(ctx, "toptags", "min_dr_higgs"))
             )));
         make_modules_and_selitem(coll_name, ctx, v_pre_modules, SEL_ITEMS_VLQPair_control, insert_sel);

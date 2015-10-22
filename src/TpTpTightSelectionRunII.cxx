@@ -290,7 +290,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2,
                 coll_name2+"_m150",
-                TopJetId(HiggsXBTag(0.f, MIN_HIGGS_MASS, CSVBTag(CSVBTag::WP_LOOSE), 0))
+                TopJetId(HiggsXBTag(MAX_HIGGS_MASS, 999999.f, CSVBTag(CSVBTag::WP_LOOSE), 0))
                 ));
             v_pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 coll_name2+"_m150",

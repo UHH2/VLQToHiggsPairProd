@@ -23,7 +23,7 @@ import common_sframe
 
 file_path = '/nfs/dust/cms/user/tholenhe/VLQSemiLepPreSel/Run2-ntuple/'
 
-datasets_to_plot = common_datasets_to_plot = [
+datasets_to_plot = [
     'Run2015D',
     'TpTp_M-800',
     'TpTp_M-1600',

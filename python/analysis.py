@@ -76,18 +76,18 @@ tptp_datasets_loose = [
 
 tptp_datasets_tight = [
     # 'Run2015D_Ele',
-    # 'Run2015D_Mu',
+    'Run2015D_Mu',
     # 'Run2015D_Had',
     # 'TpTp_M-700',
-    # 'TpTp_M-800',
-    # 'TpTp_M-900',
-    # 'TpTp_M-1000',
-    # 'TpTp_M-1100',
+    'TpTp_M-800',
+    'TpTp_M-900',
+    'TpTp_M-1000',
+    'TpTp_M-1100',
     # 'TpTp_M-1200',
-    # 'TpTp_M-1300',
+    'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
-    # 'TpTp_M-1600',
+    'TpTp_M-1600',
     # 'TpTp_M-1700',
     # 'TpTp_M-1800',
     'QCD_Pt80to120_MuEnr',
@@ -98,7 +98,7 @@ tptp_datasets_tight = [
     'QCD_Pt600to800_MuEnr',
     'QCD_Pt800to1000_MuEnr',
     'QCD_Pt1000toInf_MuEnr',
-    # 'TTbar',
+    'TTbar',
     # 'TTbar_Mtt0to700',
     # 'TTbar_Mtt700to1000',
     # 'TTbar_Mtt1000toInf',
@@ -107,13 +107,13 @@ tptp_datasets_tight = [
     'DYJetsToLL_HT200to400',
     'DYJetsToLL_HT400to600',
     'DYJetsToLL_HT600toInf',
-    # 'WJets_LNu_HT100To200',
-    # 'WJets_LNu_HT200To400',
-    # 'WJets_LNu_HT400To600',
-    # 'WJets_LNu_HT600To800',
-    # 'WJets_LNu_HT800To1200',
-    # 'WJets_LNu_HT1200To2500',
-    # 'WJets_LNu_HT2500ToInf',
+    'WJets_LNu_HT100To200',
+    'WJets_LNu_HT200To400',
+    'WJets_LNu_HT400To600',
+    'WJets_LNu_HT600To800',
+    'WJets_LNu_HT800To1200',
+    'WJets_LNu_HT1200To2500',
+    'WJets_LNu_HT2500ToInf',
     'SingleT_tChannel',
     'SingleT_WAntitop',
     'SingleT_WTop',
@@ -231,7 +231,7 @@ elif str(sys.argv[1]) == 'tight':
     mod_name='TpTpTightSelectionRunII'
     tc_list.append(
         tptptightselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v4',
+            version='FilesAndPlots_v5',
             count=count,
             allowed_datasets=tptp_datasets_tight
         ),
@@ -259,6 +259,9 @@ elif str(sys.argv[1]) == 'control':
             control_regions=control_regions
         ),
     )
+else:
+    print "Wrong argment!"
+    raise(RuntimeError)
 
 tc_list.append(
     # git.GitAdder(),
