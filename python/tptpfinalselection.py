@@ -11,6 +11,7 @@ import varial.generators as gen
 import varial.analysis as analysis
 from varial.sample import Sample
 from varial.extensions.sframe import SFrame
+import varial.rendering as rnd
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 
@@ -131,7 +132,7 @@ def plotter_factory_final(smpl_fct=None, **kws):
     kws['hook_loaded_histos'] = lambda w: loader_hook_final(w, smpl_fct)
     kws['plot_setup'] = final_plotting.stack_setup_norm_sig
     kws['stack_setup'] = final_plotting.stack_setup_norm_sig
-    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+    # kws['canvas_decorators'] += [rnd.TitleBox(text='552.67 fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
     # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)

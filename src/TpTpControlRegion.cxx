@@ -152,7 +152,7 @@ TpTpControlRegion::TpTpControlRegion(Context & ctx) {
 
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 0.6, 1));
     v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
 
     // Other CutProducers

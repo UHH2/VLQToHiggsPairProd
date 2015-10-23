@@ -248,7 +248,7 @@ elif str(sys.argv[1]) == 'control':
     tc_list.append(
         tptpfinalselection.mk_sframe_and_plot_tools(
             analysis_module='TpTpControlRegion',
-            version='FilesAndPlots_v19',
+            version='FilesAndPlots_v20',
             count=count,
             allowed_datasets=tptp_datasets_final,
             signal_regions=signal_regions_control,
