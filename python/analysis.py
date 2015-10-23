@@ -63,15 +63,15 @@ tptp_datasets_loose = [
     # 'DYJetsToLL_HT600toInf',
     # 'WJets_LNu_HT100To200',
     # 'WJets_LNu_HT200To400',
-    # 'WJets_LNu_HT400To600',
-    # 'WJets_LNu_HT600To800',
-    # 'WJets_LNu_HT800To1200',
-    # 'WJets_LNu_HT1200To2500',
-    # 'WJets_LNu_HT2500ToInf',
-    # 'SingleT_tChannel',
+    'WJets_LNu_HT400To600',
+    'WJets_LNu_HT600To800',
+    'WJets_LNu_HT800To1200',
+    'WJets_LNu_HT1200To2500',
+    'WJets_LNu_HT2500ToInf',
+    'SingleT_tChannel',
     'SingleT_WAntitop',
-    # 'SingleT_WTop',
-    # 'SingleT_sChannel',
+    'SingleT_WTop',
+    'SingleT_sChannel',
 ]
 
 tptp_datasets_tight = [
@@ -214,7 +214,7 @@ if str(sys.argv[1]) == 'loose':
     mod_name='TpTpLooseSelection'
     tc_list.append(
         tptplooseselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v4',
+            version='FilesAndPlots_v5_muonId',
             count=count,
             allowed_datasets=tptp_datasets_loose
         ),
@@ -231,7 +231,7 @@ elif str(sys.argv[1]) == 'tight':
     mod_name='TpTpTightSelectionRunII'
     tc_list.append(
         tptptightselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v5',
+            version='FilesAndPlots_v6',
             count=count,
             allowed_datasets=tptp_datasets_tight
         ),
@@ -241,7 +241,7 @@ elif str(sys.argv[1]) == 'final':
     tc_list.append(
         tptpfinalselection.mk_sframe_and_plot_tools(
             analysis_module='TpTpFinalSelectionRunII',
-            version='FilesAndPlots_v5',
+            version='FilesAndPlots_v6',
             count=count,
             allowed_datasets=tptp_datasets_final,
             signal_regions=signal_regions_final,

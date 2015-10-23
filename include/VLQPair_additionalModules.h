@@ -392,7 +392,7 @@ inline void make_modules_and_selitem(const string & name, Context & ctx, vector<
         sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+out_name, "Mass leading "+out_name, 60, 0., 300.)));
         sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("eta_ld_"+out_name, "Eta leading "+out_name, 60, 0., 300.)));
+            shared_ptr<SelectionItem>(new SelDatF("eta_ld_"+out_name, "Eta leading "+out_name, 100,-3,3)));
         sel_items.insert(sel_items.begin()+pos_insert, 
             shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+out_name, "Tau21 leading "+out_name, 50, 0., 1.)));
         sel_items.insert(sel_items.begin()+pos_insert, 

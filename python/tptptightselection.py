@@ -41,6 +41,12 @@ datasets_to_plot = [
     'SingleT',
 ]
 
+def rebin_hists(wrps, hist_name='', factor=2):
+    for w in wrps:
+        if w.variable == hist_name:
+            w.histo.Rebin(factor)
+        yield w
+
 
 def resize_n_hists(wrps):
     for w in wrps:
@@ -77,7 +83,8 @@ def mod_legend(wrps):
 def loader_hook_tight(wrps, smpl_fct=None):
     # wrps = resize_n_hists(wrps)
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
-    # wrps = nice_axis_labels(wrps)
+    # wrps = rebin_hists(wrps, 'primary_lepton_pt', 2)
+    wrps = nice_axis_labels(wrps)
     wrps = mod_legend(wrps)
     return wrps
 

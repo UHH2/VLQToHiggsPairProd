@@ -74,7 +74,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
         xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_more_backgrounds',
+        'Plots',
         lazy_eval_tools_func=mk_tools
     )
     tc = varial.tools.ToolChain(

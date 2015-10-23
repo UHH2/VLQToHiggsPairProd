@@ -124,7 +124,6 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // EventWeightOutputHandle only needed for TMVA studies
     // v_modules.emplace_back(new EventWeightOutputHandle(ctx));
 
-
     /* +++++
      * CommonModules from UHH2/common, does stuff like jet-lepton-cleaning, applying JECs etc.
      * +++++
@@ -132,14 +131,12 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
 
     CommonModules* commonObjectCleaning = new CommonModules();
     commonObjectCleaning->set_jet_id(PtEtaCut(30.0,2.4));
+    commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1)));
+    commonObjectCleaning->switch_jetlepcleaner(true);
     commonObjectCleaning->disable_jersmear();
-    // commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_PHYS14_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
-    // commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.4)));
-    // commonObjectCleaning->switch_jetlepcleaner(true);
     commonObjectCleaning->switch_jetPtSorter(true);
     commonObjectCleaning->init(ctx);
     v_modules.emplace_back(commonObjectCleaning);
-
 
     /* +++++
      * Several modules that usually take the name of a standard collection (e.g. "jets", "electrons") or self-produced collection
