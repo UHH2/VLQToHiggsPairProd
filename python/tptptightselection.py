@@ -63,7 +63,13 @@ def nice_axis_labels(wrps):
         if 'n_toptags' in w.in_file_path:
             # w.histo.SetAxisRange(-0.5, 4.5, "X")
             w.histo.GetXaxis().SetTitle('N(top-tags)')
-        elif 'n_ak8' in w.in_file_path:
+        elif 'n_ak8_boost_loose_2b_m60-150_noT' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('N(higgs-tags)')
+        elif 'pt_ld_ak8_all_loose_2b_m60-150_noT' in w.in_file_path:
+            # w.histo.SetAxisRange(-0.5, 4.5, "X")
+            w.histo.GetXaxis().SetTitle('p_{T}(Higgs candidate)')
+        elif 'n_ak8_all' in w.in_file_path:
             # w.histo.SetAxisRange(-0.5, 4.5, "X")
             w.histo.GetXaxis().SetTitle('N(Ak8 jets)')
         elif 'mass_sj_ld_ak8_boost_loose_2b' in w.in_file_path:
@@ -81,7 +87,7 @@ def mod_legend(wrps):
 
 
 def loader_hook_tight(wrps, smpl_fct=None):
-    # wrps = resize_n_hists(wrps)
+    wrps = resize_n_hists(wrps)
     wrps = final_plotting.loader_hook_norm_smpl(wrps, smpl_fct)
     # wrps = rebin_hists(wrps, 'primary_lepton_pt', 2)
     wrps = nice_axis_labels(wrps)
@@ -154,11 +160,11 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
         ), # 
     )
     plots = varial.tools.ToolChainParallel(
-        'Plots_with_title',
+        'Plots',
         lazy_eval_tools_func=mk_tools
     )
     tc_list = [
-        sframe,
+        # sframe,
         plots,
         varial.tools.WebCreator(no_tool_check=True)
     ]

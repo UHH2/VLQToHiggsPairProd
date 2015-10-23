@@ -118,7 +118,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     v_pre_modules.emplace_back(commonObjectCleaning);
 
 
-    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 50.f)); 
+    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 99999., 50.)); 
     v_pre_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_pre_modules.emplace_back(new STCalculator(ctx, "ST"));
     v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,
@@ -335,7 +335,7 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
 
     swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatF("leading_jet_pt", "leading jet p_{T}", 15, 0, 1500, 200.), insert_cut++);
     swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_ak8_all", "N_ak8_all", 11, -.5, 10.5, 3), insert_cut++);
-    swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags", "N_toptags", 11, -.5, 10.5, 1), insert_cut++);
+    swap_selitems(SEL_ITEMS_VLQPair_final, new SelDatI("n_toptags_boost", "N toptags (boost)", 11, -.5, 10.5, 1), insert_cut++);
 
     // produce more plots for the collections you cut on
     make_modules_and_selitem("ak8_boost_loose_2b_m60-150_noT", ctx, v_pre_modules, SEL_ITEMS_VLQPair_final, insert_sel, -1, true);
@@ -377,21 +377,21 @@ TpTpTightSelectionRunII::TpTpTightSelectionRunII(Context & ctx) {
     sel_helper.fill_hists_vector(v_hists_after_sel, "PostSelection");
 
 
-    // if (type == "MC") {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
-    //         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-    //         // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
-    //         // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
-    //         // recogen_hits_pre->add_genhistcoll(ctx, "toptags_boost", 0.5);
-    //         // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
-    //         // recogen_hits_post->add_genhistcoll(ctx, "toptags_boost", 0.5);
-    //         // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
-    //         // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
-    //         // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
-    // } else {
-    //     v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
-    //         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
-    // }
+    if (type == "MC") {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre"));
+            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
+            // auto recogen_hits_pre = new RecoGenHists<TopJet>(ctx, "EventHistsPre");
+            // auto recogen_hits_post = new RecoGenHists<TopJet>(ctx, "EventHistsPost");
+            // recogen_hits_pre->add_genhistcoll(ctx, "toptags_boost", 0.5);
+            // recogen_hits_pre->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
+            // recogen_hits_post->add_genhistcoll(ctx, "toptags_boost", 0.5);
+            // recogen_hits_post->add_genhistcoll(ctx, "higgs_tags_ca15_noT", 0.5);
+            // v_hists.push_back(std::move(unique_ptr<Hists>(recogen_hits_pre)));
+            // v_hists_after_sel.push_back(std::move(unique_ptr<Hists>(recogen_hits_post)));
+    } else {
+        v_hists.emplace_back(new HistCollector(ctx, "EventHistsPre", false));
+            // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost", false));
+    }
 
 
 }

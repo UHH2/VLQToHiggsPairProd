@@ -118,7 +118,7 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
     v_pre_modules.emplace_back(commonObjectCleaning);
 
 
-    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 50.f)); 
+    v_pre_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999., 50.)); 
     v_pre_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
     v_pre_modules.emplace_back(new STCalculator(ctx, "ST"));
     v_pre_modules.emplace_back(new CollectionProducer<Jet>(ctx,
@@ -151,7 +151,7 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
 
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
-    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 1.5, 1));
+    v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "min_dr_higgs", "one_top", 0.6, 1));
     v_pre_modules.emplace_back(new XTopTagProducer(ctx, "toptags", "dummy_dr", "two_top", -999., 2));
 
     // Other CutProducers

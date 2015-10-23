@@ -210,21 +210,21 @@ if len(sys.argv) < 2:
 
     
 
-if str(sys.argv[1]) == 'loose':
+if str(sys.argv[1]) == 'pre':
+    mod_name='TpTpPreSelection'
+    tc_list.append(
+        tptppreselection.mk_sframe_and_plot_tools(
+            version='FilesAndPlots_v0',
+            allowed_datasets=tptp_datasets_tight
+        ),
+    )
+elif str(sys.argv[1]) == 'loose':
     mod_name='TpTpLooseSelection'
     tc_list.append(
         tptplooseselection.mk_sframe_and_plot_tools(
             version='FilesAndPlots_v5_muonId',
             count=count,
             allowed_datasets=tptp_datasets_loose
-        ),
-    )
-elif str(sys.argv[1]) == 'pre':
-    mod_name='TpTpPreSelection'
-    tc_list.append(
-        tptppreselection.mk_sframe_and_plot_tools(
-            version='FilesAndPlots_v0',
-            allowed_datasets=tptp_datasets_tight
         ),
     )
 elif str(sys.argv[1]) == 'tight':
