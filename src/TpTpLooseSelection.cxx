@@ -230,7 +230,7 @@ TpTpLooseSelection::TpTpLooseSelection(Context & ctx) {
     // ---> THIS IS JUST FOR TESTING PURPOSES AND NOT NECESSARY FOR THE ACTUAL ANALYSIS!
     v_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
-    v_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    v_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
 
     // produces handles on the values relevant for the 2D-cut i.e. dR(lep, closest jet), pt_rel(lep, closest jet)
     v_modules.emplace_back(new TwoDCutProducer(ctx));

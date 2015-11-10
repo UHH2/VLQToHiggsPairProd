@@ -28,6 +28,8 @@ public:
 
 
         modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 10.f)); 
+        modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_iso", MuonId(MuonIso())));
+        modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
         modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
         modules.emplace_back(new STCalculator(ctx, "ST"));
         modules.emplace_back(new CollectionProducer<Jet>(ctx,
@@ -64,8 +66,9 @@ public:
         // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
         modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
-        modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
-
+        modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+        modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_iso", "primary_muon_pt_iso", "primary_muon_eta_iso", "primary_muon_charge_iso"));
+        modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
     }
 
     virtual bool process(Event & event) override {

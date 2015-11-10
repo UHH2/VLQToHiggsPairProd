@@ -339,7 +339,7 @@ public:
             for (string const & var : variables) {
                 if (var == "n") hists_[var] = book<TH1F>("n_"+h_in, "n", 10, -.5, 9.5);
                 if (var == "n_subjets") hists_[var] = book<TH1F>("n_subjets_"+h_in, "n_subjets", 10, -.5, 9.5);
-                if (var == "pt") hists_[var] = book<TH1F>("pt_"+h_in, "pt", 15, 0., 1500.);
+                if (var == "pt") hists_[var] = book<TH1F>("pt_"+h_in, "pt", 60, 0., 1500.);
                 if (var == "eta") hists_[var] = book<TH1F>("eta_"+h_in, "eta", 50, -3., 3.);
                 if (var == "phi") hists_[var] = book<TH1F>("phi_"+h_in, "phi", 50, -3.14, 3.14);
                 if (var == "mass") hists_[var] = book<TH1F>("mass_"+h_in, "mass", 60, 0., 300.);
@@ -511,6 +511,11 @@ public:
         return sub_levels_[ind];
     }
 
+    NParticleMultiHistProducerHelper<T> & back() {
+        unsigned ind = sub_levels_.size()-1;
+        return sub_levels_[ind];
+    }
+
     // vector<NParticleMultiHistProducerHelper<T>> const & get_sublevels() const {
     //     return sub_levels_;
     // }
@@ -530,17 +535,17 @@ private:
 
 class OwnHistCollector : public uhh2::Hists {
 public:
-    OwnHistCollector(Context & ctx, const string & dirname, bool gen_plots = false) :
+    OwnHistCollector(Context & ctx, const string & dirname, bool gen_plots = false, JetId const & btag_id = CSVBTag(CSVBTag::WP_LOOSE)) :
     Hists(ctx, dirname),
     lumi_hist(new LuminosityHists(ctx, dirname+"/LuminosityHists")),
-    el_hists(new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
+    // el_hists(new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
     mu_hists(new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots)),
     // tau_hists(new TauHists(ctx, dirname+"/TauHists")),
     ev_hists(new ExtendedEventHists(ctx, dirname+"/EventHists", "n_btags_medium")),
-    jet_hists(new ExtendedJetHists(ctx, dirname+"/JetHists"))
+    jet_hists(new ExtendedJetHists(ctx, dirname+"/JetHists", 3)),
     // cmstopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CMSTopJetHists", btag_id, 4)),
     // heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 4, "patJetsHepTopTagCHSPacked_daughters")),
-    // ca8prunedtopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 4, "patJetsAk8CHSJetsSoftDropPacked_daughters")),
+    ak8softdroptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters"))
     // ca15filteredtopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CA15FilteredTopJetHists", btag_id, 4, "patJetsCa15CHSJetsFilteredPacked_daughters")),
     // gen_hists(gen_plots ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
@@ -569,42 +574,42 @@ public:
 
     virtual void fill(const Event & event) {
         lumi_hist->fill(event);
-        el_hists->fill(event);
+        // el_hists->fill(event);
         mu_hists->fill(event);
     // tau_hists->fill(event);
         ev_hists->fill(event);
         jet_hists->fill(event);
     // cmstopjet_hists->fill(event);
     // heptopjet_hists->fill(event);
-    // ca8prunedtopjet_hists->fill(event);
+    ak8softdroptopjet_hists->fill(event);
     // ca15filteredtopjet_hists->fill(event);
     // if (gen_hists) gen_hists->fill(event);
     }
 
     ~OwnHistCollector(){
         delete lumi_hist;
-        delete el_hists;
+        // delete el_hists;
         delete mu_hists;
     // delete tau_hists;
         delete ev_hists;
         delete jet_hists;
     // delete cmstopjet_hists;
     // delete heptopjet_hists;
-    // delete ca8prunedtopjet_hists;
+    delete ak8softdroptopjet_hists;
     // delete ca15filteredtopjet_hists;
     // delete gen_hists;
     }
 
 private:
     LuminosityHists * lumi_hist;
-    ExtendedElectronHists * el_hists;
+    // ExtendedElectronHists * el_hists;
     ExtendedMuonHists * mu_hists;
     // TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     ExtendedJetHists * jet_hists;
     // ExtendedTopJetHists * cmstopjet_hists;
     // ExtendedTopJetHists * heptopjet_hists;
-    // ExtendedTopJetHists * ca8prunedtopjet_hists;
+    ExtendedTopJetHists * ak8softdroptopjet_hists;
     // ExtendedTopJetHists * ca15filteredtopjet_hists;
     // CustomizableGenHists * gen_hists;
 };

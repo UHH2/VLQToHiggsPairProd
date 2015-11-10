@@ -169,7 +169,7 @@ TpTpFinalSelectionRunII::TpTpFinalSelectionRunII(Context & ctx) {
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
     v_pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
-    v_pre_modules.emplace_back(new LeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    v_pre_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
     v_pre_modules.emplace_back(new TwoDCutProducer(ctx));
     if (version == "Run2015D_Mu") {
         v_pre_modules.emplace_back(new TriggerAcceptProducer(ctx, QCDTEST_MUON_TRIGGER_PATHS_DATA, "trigger_accept"));
