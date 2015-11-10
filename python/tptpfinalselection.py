@@ -6,6 +6,7 @@ import time
 
 from ROOT import TH1F
 
+import varial.plotter
 import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
@@ -43,15 +44,23 @@ datasets_to_plot = [
     'SingleT',
 ]
 
+test_list = [
+            'uhh2.AnalysisModuleRunner.MC.QCD_Pt1000toInf_MuEnr.root',
+            'uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.root',
+            'uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.root',
+            'uhh2.AnalysisModuleRunner.MC.TpTp_M-800.root'
+            ]
+
 
 
 def mk_cutflow_chain_cr(category, loader_hook):
     cutflow_histos = varial.tools.HistoLoader(
         name='CutflowHistos',
-        # pattern=input_pat,
+        pattern=test_list,
         filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
                        category == w.in_file_path.split('/')[0],
-        hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
+        # hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
+        hook_loaded_histos=lambda w: loader_hook(w)
     )
 
     cutflow_stack_plots = varial.tools.Plotter(
@@ -62,20 +71,21 @@ def mk_cutflow_chain_cr(category, loader_hook):
         canvas_decorators=[varial.rendering.Legend]
     )
 
-    # cutflow_normed_plots = varial.tools.Plotter(
-    #     'CutflowNormed',
-    #     stack=False,
-    #     plot_grouper=varial.plotter.plot_grouper_by_in_file_path,
-    #     hook_loaded_histos=gen.gen_norm_to_max_val,
-    #     input_result_path='../CutflowHistos',
-    #     save_log_scale=True,
-    #     canvas_decorators=[varial.rendering.Legend]
-    # )
+    cutflow_normed_plots = varial.tools.Plotter(
+        'CutflowNormed',
+        # stack=False,
+        plot_grouper=varial.plotter.plot_grouper_by_in_file_path,
+        hook_loaded_histos=gen.gen_norm_to_max_val,
+        input_result_path='../CutflowHistos',
+        # plot_setup=varial.plotter.default_plot_colorizer,
+        save_lin_log_scale=True,
+        canvas_decorators=[varial.rendering.Legend]
+    )
 
     return varial.tools.ToolChain(category, [
         cutflow_histos,
+        cutflow_normed_plots,
         cutflow_stack_plots,
-        # cutflow_normed_plots,
         cutflow_tables.CutflowTableContent(),
         cutflow_tables.CutflowTableTxt(),
         cutflow_tables.CutflowTableTex(None, True),
@@ -150,10 +160,12 @@ def mk_tools_cats(categories=None):
         plot_chain = [
             
             varial.tools.mk_rootfile_plotter(
-                pattern=common_plot.file_selected_split(datasets_to_plot),
+                # pattern=common_plot.file_selected_split(datasets_to_plot),
+                pattern=test_list,
                 name='StackedAll',
                 # filter_keyfunc=filter_for_fsp,
-                plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+                plotter_factory=lambda **w: plotter_factory_final(**w),
                 combine_files=True,
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
@@ -222,3 +234,24 @@ def mk_sframe_and_plot_tools(analysis_module='', version='TestFinal', count=-1,
 
     tc = varial.tools.ToolChain(version, tc_list)
     return tc
+
+import sys
+
+categories = ["NoT-IsoMuo24", "OneT-IsoMuo24", "NoT-Mu45", "OneT-Mu45", "NoT-Mu15_PFHT600", "OneT-Mu15_PFHT600", "NoT-PFHT800", "OneT-PFHT800"]
+
+
+if __name__ == '__main__':
+    time.sleep(1)
+    final_dir = sys.argv[1]
+    all_tools = mk_tools_cats(categories)()
+    # tc = varial.tools.ToolChainParallel(
+    tc = varial.tools.ToolChain(
+        final_dir, all_tools)
+    varial.tools.Runner(tc)
+    varial.tools.WebCreator(no_tool_check=True).run()   
+    # for itool in all_tools:
+    #     dir_name = os.path.join('./'+final_dir, itool.name)
+    #     print dir_name
+    #     varial.tools.WebCreator(working_dir=dir_name).run()
+    # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
+    #     src=final_dir, use_rsync=True).run()

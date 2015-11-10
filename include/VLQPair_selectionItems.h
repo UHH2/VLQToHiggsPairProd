@@ -19,11 +19,6 @@ static const vector<shared_ptr<SelectionItem>> SEL_ITEMS_VLQPair_loose_base {
     shared_ptr<SelectionItem>(new SelDatI("n_leptons",              "N_{lepton}",                             11, -.5, 10.5                 )),
     shared_ptr<SelectionItem>(new SelDatI("n_jets",                 "N_{jet}",                                21, -.5, 20.5                 )),
     shared_ptr<SelectionItem>(new SelDatF("subleading_jet_pt",      "sub-leading jet p_{T}",                  15,   0, 1500                 )),
-    // shared_ptr<SelectionItem>(new SelDatF("smallest_pt_toptags",    "smallest pt of toptags",                 15,   0, 1500                 )),
-    // shared_ptr<SelectionItem>(new SelDatF("min_deltaR_top_higgsak8","min deltaR(top, higgs)",                 20,   0, 5.                   )),
-    // shared_ptr<SelectionItem>(new SelDatF("min_deltaR_top_higgsak8notop","min deltaR(top, higgs(separated))", 20,   0, 5.                   )),
-    // shared_ptr<SelectionItem>(new SelDatF("min_deltaR_top_higgsak8_twotop","min deltaR(top, higgs, two tops)",                 20,   0, 5.  )),
-    // shared_ptr<SelectionItem>(new SelDatF("min_deltaR_top_higgsak8notop_twotop","min deltaR(top, higgs(separated), two tops)", 20,   0, 5.  )),
 
 };
 

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <boost/type_traits.hpp>
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
@@ -307,6 +308,97 @@ public:
 private:
     Event::Handle<vector<T>> h_in_;
     Event::Handle<float> h_out_;
+};
+
+
+class HiggsFlexBTag {
+public:
+    explicit HiggsFlexBTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), 
+                               JetId const & id1 = CSVBTag(CSVBTag::WP_ZERO),
+                               JetId const & id2 = CSVBTag(CSVBTag::WP_ZERO),
+                               bool require_id2_all = false) :
+        minmass_(minmass), maxmass_(maxmass), btagid_1_(id1), btagid_2_(id2), require_id2_all_(require_id2_all) {}
+
+    bool operator()(TopJet const & topjet, uhh2::Event const & event) const {
+        auto const & subjets = topjet.subjets();
+        if(subjets.size() < 2) return false;
+        bool pass_sj_btag = false;
+        // unsigned n_sj_btagvetos = 0;
+        for (unsigned i = 0; i < subjets.size(); ++i) {
+            if (btagid_1_(subjets[i], event)) {
+                for (unsigned ii = 0; ii < subjets.size(); ++ii) {
+                    if (ii == i)
+                        continue;
+                    if (!require_id2_all_ && btagid_2_(subjets[ii], event)) {
+                        pass_sj_btag = true;
+                        break;
+                    } 
+                    else if (require_id2_all_ && !btagid_2_(subjets[ii], event)) {
+                        pass_sj_btag = false;
+                        break;
+                    }
+                }
+                if (require_id2_all_) pass_sj_btag = true;
+            }
+        }
+
+        if (!pass_sj_btag)
+            return false;
+
+        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+        if(!firsttwosubjets.isTimelike()) {
+            return false;
+        }
+        auto mjet = firsttwosubjets.M();
+        if(mjet < minmass_) return false;
+        if(mjet > maxmass_) return false;
+        return true;
+    }
+
+private:
+    float minmass_, maxmass_;
+    JetId btagid_1_, btagid_2_;
+    bool require_id2_all_;
+
+};
+
+template <typename T>
+class PrimaryLeptonOwn: public uhh2::AnalysisModule {
+public:
+    typedef std::function<bool (const T &, const uhh2::Event &)> TYPE_ID;
+
+    explicit PrimaryLeptonOwn(uhh2::Context & ctx, 
+                           const std::string & h_in,
+                           const std::string & h_out="PrimaryLepton",
+                           boost::optional<TYPE_ID> const & id = boost::none) :
+            h_in_(ctx.get_handle<vector<T>>(h_in)),
+            h_out_(ctx.get_handle<FlavorParticle>(h_out)),
+            id_(id) {}
+
+    virtual bool process(uhh2::Event & event) override {
+        if (!event.is_valid(h_in_))
+            return false;
+        FlavorParticle prim_part;
+        vector<T> const & coll = event.get(h_in_);
+        if (id_) {
+            for (auto const & part : coll) {
+                if ((*id_)(part, event)) {
+                    prim_part = part;
+                }
+            }
+        }
+        else {
+            if (coll.size())
+                prim_part = coll[0];
+        }
+        event.set(h_out_, move(prim_part));
+        return true;
+    }
+
+private:
+    uhh2::Event::Handle<vector<T>> h_in_;
+    uhh2::Event::Handle<FlavorParticle> h_out_;
+    boost::optional<TYPE_ID> id_; 
 };
 
 
