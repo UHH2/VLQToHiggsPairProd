@@ -13,6 +13,13 @@
 using namespace std;
 using namespace uhh2;
 
+template <typename T>
+class TrueId {
+public:
+    static bool is_true(const T & obj, const Event & ev) {
+        return true;
+    }
+};
 
 class NeutrinoParticleProducer: public AnalysisModule {
 public:
@@ -314,8 +321,8 @@ private:
 class HiggsFlexBTag {
 public:
     explicit HiggsFlexBTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), 
-                               JetId const & id1 = CSVBTag(CSVBTag::WP_ZERO),
-                               JetId const & id2 = CSVBTag(CSVBTag::WP_ZERO),
+                               JetId const & id1 = TrueId<Jet>::is_true,
+                               JetId const & id2 = TrueId<Jet>::is_true,
                                bool require_id2_all = false) :
         minmass_(minmass), maxmass_(maxmass), btagid_1_(id1), btagid_2_(id2), require_id2_all_(require_id2_all) {}
 
