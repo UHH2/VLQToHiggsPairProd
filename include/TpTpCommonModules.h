@@ -13,18 +13,20 @@ using namespace uhh2;
 using namespace std;
 
 
+
 class TpTpCommonModules : public AnalysisModule {
 public:
     TpTpCommonModules(Context & ctx) {
         CommonModules* commonObjectCleaning = new CommonModules();
         commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,7.0)));
         commonObjectCleaning->disable_jersmear();
+        // commonObjectCleaning->disable_mcpileupreweight();
         commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
         commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1)));
         commonObjectCleaning->switch_jetlepcleaner(true);
         commonObjectCleaning->switch_jetPtSorter(true);
         commonObjectCleaning->init(ctx);
-        modules.emplace_back(commonObjectCleaning);
+        common_module.reset(commonObjectCleaning);
 
 
         modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 10.f)); 
@@ -72,6 +74,8 @@ public:
     }
 
     virtual bool process(Event & event) override {
+        if (!common_module->process(event))
+            return false;
         for (auto & mod : modules)
             mod->process(event);
         return true;
@@ -79,5 +83,6 @@ public:
 
 private:
     vector<unique_ptr<AnalysisModule>> modules;
+    unique_ptr<AnalysisModule> common_module;
 
 };

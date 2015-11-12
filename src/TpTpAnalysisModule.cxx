@@ -187,7 +187,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 
     
     // vector<string> categories = split(ctx.get("category", ""));
-    std::vector<string> categories = {"NoSelection", "IsoMuo24", "Mu45", "Mu15_PFHT600", "PFHT800"};
+    std::vector<string> categories = {"IsoMuo24", "Mu45", "Mu15_PFHT600", "PFHT800"}; // "NoSelection"
 
     for (auto const & cat : categories) {
 
@@ -250,15 +250,15 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         v_hists.emplace_back(vector<unique_ptr<Hists>>());
         v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
 
-        if (cat == "NoSelection") {
-            sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
-            v_hists_nosel.emplace_back(new TwoDCutHist(ctx, "NoSelection", "TwoDcut_Dr_iso", "TwoDcut_Dpt_iso", "twod_cut_hist_iso"));
-            v_hists_nosel.emplace_back(new TwoDCutHist(ctx, "NoSelection", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"));
-            for (auto const & hist_helper : fatjet_hists)
-                v_hists_nosel.emplace_back(hist_helper.book_histograms(ctx, "NoSelection"));
-            v_hists_nosel.emplace_back(new OwnHistCollector(ctx, "NoSelection", type == "MC"));
-            continue;
-        }
+        // if (cat == "NoSelection") {
+        //     sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
+        //     v_hists_nosel.emplace_back(new TwoDCutHist(ctx, "NoSelection", "TwoDcut_Dr_iso", "TwoDcut_Dpt_iso", "twod_cut_hist_iso"));
+        //     v_hists_nosel.emplace_back(new TwoDCutHist(ctx, "NoSelection", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"));
+        //     for (auto const & hist_helper : fatjet_hists)
+        //         v_hists_nosel.emplace_back(hist_helper.book_histograms(ctx, "NoSelection"));
+        //     v_hists_nosel.emplace_back(new OwnHistCollector(ctx, "NoSelection", type == "MC"));
+        //     continue;
+        // }
 
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
@@ -266,17 +266,17 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         string suffix = (cat == "IsoMuo24") ? "iso" : "noIso";
         map<string, SelectedSelHists*> selected_sel_hists;
         selected_sel_hists["NoSTCut"] = new SelectedSelHists(ctx, cat+"/NoSTCut", *sel_helpers.back(), {}, {"ST"});
-        selected_sel_hists["NoTriggerCut"] = new SelectedSelHists(ctx, cat+"/NoTriggerCut", *sel_helpers.back(), {}, {"trigger_accept_"+cat});
-        selected_sel_hists["NoLeptonCut"] = new SelectedSelHists(ctx, cat+"/NoLeptonCut", *sel_helpers.back(), {}, {"primary_muon_pt_"+suffix});
-        selected_sel_hists["No2DCut"] = new SelectedSelHists(ctx, cat+"/No2DCut", *sel_helpers.back(), {}, {"twoD_cut"});
+        // selected_sel_hists["NoTriggerCut"] = new SelectedSelHists(ctx, cat+"/NoTriggerCut", *sel_helpers.back(), {}, {"trigger_accept_"+cat});
+        // selected_sel_hists["NoLeptonCut"] = new SelectedSelHists(ctx, cat+"/NoLeptonCut", *sel_helpers.back(), {}, {"primary_muon_pt_"+suffix});
+        // selected_sel_hists["No2DCut"] = new SelectedSelHists(ctx, cat+"/No2DCut", *sel_helpers.back(), {}, {"twoD_cut"});
         // selected_sel_hists["NoTopTagCut"] = new SelectedSelHists(ctx, cat+"/NoTopTagCut", *sel_helpers.back(), {}, {"n_cmsToptags"});
         selected_sel_hists["NoHiggsTagCut"] = new SelectedSelHists(ctx, cat+"/NoHiggsTagCut", *sel_helpers.back(), {}, {"n_higgs_tags"});
-        selected_sel_hists["OnlySTCut"] = new SelectedSelHists(ctx, cat+"/OnlySTCut", *sel_helpers.back(), {"ST"});
-        selected_sel_hists["OnlyTriggerCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerCut", *sel_helpers.back(), {"trigger_accept_"+cat});
-        selected_sel_hists["OnlyLeptonCut"] = new SelectedSelHists(ctx, cat+"/OnlyLeptonCut", *sel_helpers.back(), {"primary_muon_pt_"+suffix});
-        selected_sel_hists["Only2DCut"] = new SelectedSelHists(ctx, cat+"/Only2DCut", *sel_helpers.back(), {"twoD_cut"});
+        // selected_sel_hists["OnlySTCut"] = new SelectedSelHists(ctx, cat+"/OnlySTCut", *sel_helpers.back(), {"ST"});
+        selected_sel_hists["OnlyTriggerAndLeptonCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerAndLeptonCut", *sel_helpers.back(), {"trigger_accept_"+cat, "primary_muon_pt_"+suffix});
+        // selected_sel_hists["OnlyLeptonCut"] = new SelectedSelHists(ctx, cat+"/OnlyLeptonCut", *sel_helpers.back(), {"primary_muon_pt_"+suffix});
+        selected_sel_hists["OnlyTriggerLeptonAnd2DCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerLeptonAnd2DCut", *sel_helpers.back(), {"trigger_accept_"+cat, "primary_muon_pt_"+suffix, "twoD_cut"});
         // selected_sel_hists["OnlyTopTagCut"] = new SelectedSelHists(ctx, cat+"/OnlyTopTagCut", *sel_helpers.back(), {"n_cmsToptags"});
-        selected_sel_hists["OnlyHiggsTagCut"] = new SelectedSelHists(ctx, cat+"/OnlyHiggsTagCut", *sel_helpers.back(), {"n_higgs_tags"});
+        // selected_sel_hists["OnlyHiggsTagCut"] = new SelectedSelHists(ctx, cat+"/OnlyHiggsTagCut", *sel_helpers.back(), {"n_higgs_tags"});
 
 
 
@@ -299,7 +299,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
             // for (auto const & hist_helper : fatjet_hists) {
             //     hist.second->insert_additional_hist(hist_helper.book_histograms(ctx, cat+"/"+hist.first));
             // }
-            v_hists.back().emplace_back(new OwnHistCollector(ctx, cat+"/"+hist.first, type == "MC"));
+            hist.second->insert_additional_hist(new OwnHistCollector(ctx, cat+"/"+hist.first, type == "MC"));
             v_hists.back().emplace_back(hist.second);
         }
 
@@ -308,8 +308,10 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
         v_hists_after_sel.back().emplace_back(new TwoDCutHist(ctx, cat+"/PostSelection", "TwoDcut_Dr_iso", "TwoDcut_Dpt_iso", "twod_cut_hist_iso"));
         v_hists_after_sel.back().emplace_back(new TwoDCutHist(ctx, cat+"/PostSelection", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"));
-        for (auto const & hist_helper : fatjet_hists)
+        for (auto const & hist_helper : fatjet_hists) {
             v_hists_after_sel.back().emplace_back(hist_helper.book_histograms(ctx, cat+"/PostSelection"));
+            selected_sel_hists["NoHiggsTagCut"]->insert_additional_hist(hist_helper.book_histograms(ctx, cat+"/NoHiggsTagCut"));
+        }
         v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelection", type == "MC"));
 
         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
@@ -330,7 +332,8 @@ bool TpTpAnalysisModule::process(Event & event) {
 
     // run all modules
 
-    tptp_commonModules->process(event);
+    if (!tptp_commonModules->process(event))
+        return false;
 
     for (auto & mod : other_modules) {
         mod->process(event);
