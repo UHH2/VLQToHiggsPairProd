@@ -110,7 +110,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // cout << "TestKey in the configuration was: " << testvalue << endl;
     version = ctx.get("dataset_version", "");
     type = ctx.get("dataset_type", "");
-    type = ctx.get("cycle_type", "PreSelection");
+    // type = ctx.get("cycle_type", "PreSelection");
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are

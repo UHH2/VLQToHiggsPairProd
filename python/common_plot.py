@@ -161,11 +161,19 @@ def norm_to_bkg(grps):
                     scale_signal(w, fct_val)            
         yield g
 
+
+def mod_legend(wrps):
+    for w in wrps:
+        if w.legend.startswith('MC_'):
+            w.legend = w.legend[3:]
+        yield w
+
 #====LOADER HOOKS====
 
 def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators)
     wrps = gen.sort(wrps)
+    wrps = mod_legend(wrps)
     # wrps = merge_samples(wrps)
     wrps = vlq_common.merge_decay_channels(wrps,
         ('_thth', '_thtz', '_thbw'),

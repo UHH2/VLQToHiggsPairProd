@@ -29,6 +29,8 @@ datasets_to_plot = [
     'Run2015D',
     'TpTp_M-800',
     'TpTp_M-1000',
+    'TpTp_M-1200',
+    'TpTp_M-1400',
     'TpTp_M-1600',
     'QCD',
     'TTbar',
@@ -85,7 +87,7 @@ def mk_cutflow_chain_cat(category, loader_hook):
 def plotter_factory_loose(**kws):
     # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
     # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
-    kws['hook_loaded_histos'] = lambda w: common_plot.loader_hook_norm_smpl(w)
+    kws['hook_loaded_histos'] = lambda w: common_plot.loader_hook_norm_smpl(w, common_plot.normfactors)
     kws['plot_setup'] = common_plot.stack_setup_norm_sig
     kws['stack_setup'] = common_plot.stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
