@@ -81,8 +81,9 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v1/" PostFix="" TargetLumi="1984.1" > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v1/" PostFix="" TargetLumi="1984.1" >
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v2/" PostFix="" TargetLumi="1984.1" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTDIR;/TestProduction/" PostFix="" TargetLumi="1984.1" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v2/" PostFix="" TargetLumi="1984.1" > -->
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="60" OutputDirectory="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/TpTpPreSelection-v4/" PostFix="" TargetLumi="1984.1" > -->
         
     <!--
@@ -309,25 +310,25 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="15302.42" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT100to200" Cacheable="True">
+    <!-- <InputData Lumi="15896.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT100to200" Cacheable="True">
         &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="18167.30" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT200to400" Cacheable="True">
+    <InputData Lumi="18522.07" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT200to400" Cacheable="True">
         &MC_DYJetsToLL_M50_HT0200to0400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="154894.59" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT400to600" Cacheable="True">
+    <InputData Lumi="157921.76" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT400to600" Cacheable="True">
         &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="363191.59" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT600toInf" Cacheable="True">
+    <InputData Lumi="367476.73" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_HT600toInf" Cacheable="True">
         &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -339,13 +340,13 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="6146790.4" NEventsMax="&NEVT;" Type="MC" Version="SingleT_tChannel" Cacheable="True">
+    <InputData Lumi="18895860.4" NEventsMax="&NEVT;" Type="MC" Version="SingleT_tChannel" Cacheable="True">
         &MC_TtChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="27831.2" NEventsMax="&NEVT;" Type="MC" Version="SingleT_WAntitop" Cacheable="True">
+    <!-- <InputData Lumi="27831.2" NEventsMax="&NEVT;" Type="MC" Version="SingleT_WAntitop" Cacheable="True">
         &MC_TWAntitop;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -369,7 +370,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-   <!--  <InputData Lumi="6238.42" NEventsMax="&NEVT;" Type="MC" Version="MC_WJets_LNu_HT100To200" Cacheable="True">
+    <InputData Lumi="6238.42" NEventsMax="&NEVT;" Type="MC" Version="MC_WJets_LNu_HT100To200" Cacheable="True">
         &MC_WJets_LNu_HT100To200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -409,7 +410,7 @@
         &MC_WJets_LNu_HT2500ToInf;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -417,11 +418,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="MC_TTbar" Cacheable="True">
+    <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="MC_TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
@@ -432,9 +433,9 @@
             <Item Name="JetCollection" Value="slimmedJets" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <Item Name="TopJetCollection" Value="slimmedJetsAK8_SoftDrop" />
-            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="METName" Value="slimmedMETsNoHF" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
-            <Item Name="additionalBranches" Value="slimmedMETsNoHF triggerNames triggerResults patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsSoftDropPacked_daughters patJetsHepTopTagCHSPacked_daughters" />
+            <Item Name="additionalBranches" Value="slimmedMETs triggerNames triggerResults patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsSoftDropPacked_daughters patJetsHepTopTagCHSPacked_daughters" />
 
 
             <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:
@@ -463,7 +464,7 @@
             -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="TpTpAnalysisModule" />
+            <Item Name="AnalysisModule" Value="TpTpPreselectionV2" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->

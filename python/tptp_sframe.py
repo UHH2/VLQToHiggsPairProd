@@ -130,3 +130,13 @@ def set_datasets_eventnumber_and_split_loose(count='-1', allowed_datasets=None, 
     return tmp_func
 
 # sframe_and_plot_version = 'EventLoopAndPlots_v0'
+
+
+if __name__ == '__main__':
+    time.sleep(1)
+    src_dir = sys.argv[1]
+    final_dir = sys.argv[2]
+    all_tools = hadd_and_plot(version=final_dir, src=src_dir, categories=categories)
+    varial.tools.Runner(all_tools, default_reuse=True)
+    # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
+    #     src=final_dir, use_rsync=True).run()

@@ -21,7 +21,7 @@ import compare_crs
 import tptp_settings
 import final_plotting
 import sensitivity
-import common_sframe
+import tptp_sframe
 
 
 #====PLOTTING====
@@ -155,7 +155,7 @@ def mk_sframe_and_plot_tools(version='TestFinal', count=-1,
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split(
+        xml_tree_callback=tptp_sframe.set_datasets_eventnumber_and_split(
             count=count, allowed_datasets=allowed_datasets,
         ), # 
     )

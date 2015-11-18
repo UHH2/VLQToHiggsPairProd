@@ -537,16 +537,15 @@ class OwnHistCollector : public uhh2::Hists {
 public:
     OwnHistCollector(Context & ctx, const string & dirname, bool gen_plots = false, JetId const & btag_id = CSVBTag(CSVBTag::WP_LOOSE)) :
     Hists(ctx, dirname),
-    lumi_hist(new LuminosityHists(ctx, dirname+"/LuminosityHists")),
     // el_hists(new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
     mu_hists(new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots)),
     // tau_hists(new TauHists(ctx, dirname+"/TauHists")),
     ev_hists(new ExtendedEventHists(ctx, dirname+"/EventHists", "n_btags_medium")),
     jet_hists(new ExtendedJetHists(ctx, dirname+"/JetHists", 3)),
-    // cmstopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CMSTopJetHists", btag_id, 4)),
-    // heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 4, "patJetsHepTopTagCHSPacked_daughters")),
-    ak8softdroptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters"))
-    // ca15filteredtopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/CA15FilteredTopJetHists", btag_id, 4, "patJetsCa15CHSJetsFilteredPacked_daughters")),
+    cmstopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8Jets", btag_id, 3)),
+    heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 3, "patJetsHepTopTagCHSPacked_daughters")),
+    ak8softdroptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters")),
+    lumi_hist((ctx.get("dataset_type", "") != "MC") ? new LuminosityHists(ctx, dirname+"/LuminosityHists") : NULL)
     // gen_hists(gen_plots ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
         // if (gen_hists)
@@ -573,15 +572,15 @@ public:
     } 
 
     virtual void fill(const Event & event) {
-        lumi_hist->fill(event);
+        if (lumi_hist) lumi_hist->fill(event);
         // el_hists->fill(event);
         mu_hists->fill(event);
     // tau_hists->fill(event);
         ev_hists->fill(event);
         jet_hists->fill(event);
-    // cmstopjet_hists->fill(event);
-    // heptopjet_hists->fill(event);
-    ak8softdroptopjet_hists->fill(event);
+        cmstopjet_hists->fill(event);
+        heptopjet_hists->fill(event);
+        ak8softdroptopjet_hists->fill(event);
     // ca15filteredtopjet_hists->fill(event);
     // if (gen_hists) gen_hists->fill(event);
     }
@@ -593,23 +592,23 @@ public:
     // delete tau_hists;
         delete ev_hists;
         delete jet_hists;
-    // delete cmstopjet_hists;
-    // delete heptopjet_hists;
-    delete ak8softdroptopjet_hists;
+        delete cmstopjet_hists;
+        delete heptopjet_hists;
+        delete ak8softdroptopjet_hists;
     // delete ca15filteredtopjet_hists;
     // delete gen_hists;
     }
 
 private:
-    LuminosityHists * lumi_hist;
     // ExtendedElectronHists * el_hists;
     ExtendedMuonHists * mu_hists;
     // TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     ExtendedJetHists * jet_hists;
-    // ExtendedTopJetHists * cmstopjet_hists;
-    // ExtendedTopJetHists * heptopjet_hists;
+    ExtendedTopJetHists * cmstopjet_hists;
+    ExtendedTopJetHists * heptopjet_hists;
     ExtendedTopJetHists * ak8softdroptopjet_hists;
+    LuminosityHists * lumi_hist;
     // ExtendedTopJetHists * ca15filteredtopjet_hists;
     // CustomizableGenHists * gen_hists;
 };

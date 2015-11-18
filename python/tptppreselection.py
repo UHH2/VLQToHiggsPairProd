@@ -16,7 +16,7 @@ import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 import tptp_settings
 import final_plotting
 import common_plot
-import common_sframe
+import tptp_sframe
 # import analysis
 
 #====PLOTTING====
@@ -76,7 +76,7 @@ def mk_sframe_and_plot_tools(version='TestPre', allowed_datasets=None):
     """Makes a toolchain for one category with sframe and plots."""
     # sframe = SFrame(
     #     cfg_filename=sframe_cfg,
-    #     xml_tree_callback=common_sframe.set_eventnumber_datasets_and_split(count=count, allowed_datasets=allowed_datasets), # 
+    #     xml_tree_callback=tptp_sframe.set_eventnumber_datasets_and_split(count=count, allowed_datasets=allowed_datasets), # 
     # )
     plots = varial.tools.ToolChainParallel(
         'Plots',

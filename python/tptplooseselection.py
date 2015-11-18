@@ -18,7 +18,7 @@ import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 import tptp_settings
 import final_plotting
 import common_plot
-import common_sframe 
+import tptp_sframe 
 
 # varial.settings.use_parallel_chains = False
 
@@ -128,7 +128,7 @@ def mk_tools_cats(src='', categories=None):
         for cat in categories:
             cutflow_cat.append(mk_cutflow_chain_cat(
                 cat,
-                common_plot.loader_hook))
+                lambda w: common_plot.loader_hook_norm_smpl(w, common_plot.normfactors)))
         plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
 
         return plot_chain
@@ -143,7 +143,7 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
     """Makes a toolchain for one category with sframe and plots."""
     sframe = SFrame(
         cfg_filename=sframe_cfg,
-        xml_tree_callback=common_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
+        xml_tree_callback=tptp_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
@@ -190,10 +190,5 @@ if __name__ == '__main__':
     final_dir = sys.argv[2]
     all_tools = hadd_and_plot(version=final_dir, src=src_dir, categories=categories)
     varial.tools.Runner(all_tools, default_reuse=True)
-    # varial.tools.WebCreator(no_tool_check=True).run()   
-    # for itool in all_tools:
-    #     dir_name = os.path.join('./'+final_dir, itool.name)
-    #     print dir_name
-    #     varial.tools.WebCreator(working_dir=dir_name).run()
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/PrimaryLepton.h"
