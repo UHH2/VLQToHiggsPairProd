@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "-1">
+<!ENTITY NEVT "1000000">
 <!ENTITY OUTPUTDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../../common/datasets/RunII_25ns_v2/MC_QCD_Pt-15to20_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../../common/datasets/RunII_25ns_v2/MC_QCD_Pt-20to30_MuEnrichedPt5.xml">
@@ -74,7 +74,7 @@
 
 <!--
    <ConfigParse NEventsBreak="0" FileSplit="8" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+   <ConfigSGE RAM ="2" DISK ="2" Mail="heiner@cern.de" Notification="as" Workdir="workdir"/>
 -->
 
 
@@ -82,8 +82,8 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v3/" PostFix="" TargetLumi="2460" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v3/" PostFix="" TargetLumi="2460" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTDIR;/TestProduction/" PostFix="" TargetLumi="1984.1" > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&OUTPUTDIR;/TestProduction/" PostFix="" TargetLumi="1984.1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="60" OutputDirectory="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/TpTpPreSelection-v4/" PostFix="" TargetLumi="1984.1" > -->
         
     <!--
@@ -104,12 +104,12 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="Run2015D_Mu" Cacheable="True">
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="Run2015D_Mu" Cacheable="True">
         &Data_SingleMuPD-v1;
         &Data_SingleMuPD-v4;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
     <!--
@@ -167,7 +167,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="MC_TpTp_M-800" Cacheable="True">
+    <!-- <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="MC_TpTp_M-800" Cacheable="True">
         &MC_TpTp_M-800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -195,7 +195,7 @@
         &MC_TpTp_M-1600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
 
@@ -423,8 +423,8 @@
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
-
+    </InputData>
+ -->
     <!-- <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="MC_TTbar_incl_Mtt0000to0700" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />

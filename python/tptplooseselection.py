@@ -182,7 +182,7 @@ def hadd_and_plot(version='Test', src='', categories=None):
 
 import sys
 
-categories = ["IsoMuo24", "Mu45", "Mu15_PFHT600", "PFHT800"]
+categories = ["IsoMuo24-clean", "Mu45-clean", "Mu15_PFHT600-clean", "PFHT800-clean"]
 
 if __name__ == '__main__':
     time.sleep(1)

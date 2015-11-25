@@ -545,6 +545,7 @@ public:
     cmstopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8Jets", btag_id, 3)),
     heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 3, "patJetsHepTopTagCHSPacked_daughters")),
     ak8softdroptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters")),
+    // ak8softdroptopjet_cleaned_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists_cleaned", btag_id, 3, "ak8jets_uncleaned")),
     lumi_hist((ctx.get("dataset_type", "") != "MC") ? new LuminosityHists(ctx, dirname+"/LuminosityHists") : NULL)
     // gen_hists(gen_plots ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
@@ -581,6 +582,7 @@ public:
         cmstopjet_hists->fill(event);
         heptopjet_hists->fill(event);
         ak8softdroptopjet_hists->fill(event);
+        // ak8softdroptopjet_cleaned_hists->fill(event);
     // ca15filteredtopjet_hists->fill(event);
     // if (gen_hists) gen_hists->fill(event);
     }
@@ -595,6 +597,7 @@ public:
         delete cmstopjet_hists;
         delete heptopjet_hists;
         delete ak8softdroptopjet_hists;
+        // delete ak8softdroptopjet_cleaned_hists;
     // delete ca15filteredtopjet_hists;
     // delete gen_hists;
     }
@@ -608,6 +611,7 @@ private:
     ExtendedTopJetHists * cmstopjet_hists;
     ExtendedTopJetHists * heptopjet_hists;
     ExtendedTopJetHists * ak8softdroptopjet_hists;
+    // ExtendedTopJetHists * ak8softdroptopjet_cleaned_hists;
     LuminosityHists * lumi_hist;
     // ExtendedTopJetHists * ca15filteredtopjet_hists;
     // CustomizableGenHists * gen_hists;
