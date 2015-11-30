@@ -333,6 +333,7 @@ public:
                         const vector<string> & variables = {"n", "pt", "eta", "phi"},
                         unsigned part_ind = 1) :
         Hists(ctx, dirname),
+        h_name_(h_in),
         h_in_(ctx.get_handle<vector<T>>(h_in)),
         part_ind_(part_ind)
         {
@@ -357,7 +358,7 @@ public:
         double w = event.weight;
         // double w = 1.;
         if (!event.is_valid(h_in_)) {
-            cout << "WARNING: handle in NParticleMultiHistProducer not valid!\n";
+            cout << "WARNING: handle " << h_name_ <<" in NParticleMultiHistProducer not valid!\n";
             return;
         }
         vector<T> const & coll = event.get(h_in_);
@@ -464,6 +465,7 @@ public:
 
 
 private:
+    string h_name_;
     Event::Handle<vector<T>> h_in_;
     unsigned part_ind_;
     map<string, TH1F*> hists_;
@@ -535,19 +537,19 @@ private:
 
 class OwnHistCollector : public uhh2::Hists {
 public:
-    OwnHistCollector(Context & ctx, const string & dirname, bool gen_plots = false, JetId const & btag_id = CSVBTag(CSVBTag::WP_LOOSE)) :
+    OwnHistCollector(Context & ctx, const string & dirname, bool gen_plots = false, JetId const & btag_id = CSVBTag(CSVBTag::WP_LOOSE),
+        set<string> const & hists = {"ev", "mu", "jet", "lumi", "cmstopjet", "heptopjet", "ak8softdroptopjet"}) :
     Hists(ctx, dirname),
-    // el_hists(new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots)),
-    mu_hists(new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots)),
-    // tau_hists(new TauHists(ctx, dirname+"/TauHists")),
-    ev_hists(new ExtendedEventHists(ctx, dirname+"/EventHists", "n_btags_medium")),
-    jet_hists(new ExtendedJetHists(ctx, dirname+"/JetHists", 3)),
-    cmstopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8Jets", btag_id, 3)),
-    heptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 3, "patJetsHepTopTagCHSPacked_daughters")),
-    ak8softdroptopjet_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters")),
-    // ak8softdroptopjet_cleaned_hists(new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists_cleaned", btag_id, 3, "ak8jets_uncleaned")),
-    lumi_hist((ctx.get("dataset_type", "") != "MC") ? new LuminosityHists(ctx, dirname+"/LuminosityHists") : NULL)
-    // gen_hists(gen_plots ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
+    el_hists(hists.find("el") != hists.end() ? new ExtendedElectronHists(ctx, dirname+"/ElectronHists", gen_plots) : NULL),
+    mu_hists(hists.find("mu") != hists.end() ? new ExtendedMuonHists(ctx, dirname+"/MuonHists", gen_plots) : NULL),
+    tau_hists(hists.find("tau") != hists.end() ? new TauHists(ctx, dirname+"/TauHists") : NULL),
+    ev_hists(hists.find("ev") != hists.end() ? new ExtendedEventHists(ctx, dirname+"/EventHists", "n_btags_loose", "n_btags_medium", "n_btags_tight") : NULL),
+    jet_hists(hists.find("jet") != hists.end() ? new ExtendedJetHists(ctx, dirname+"/JetHists", 3) : NULL),
+    cmstopjet_hists(hists.find("cmstopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8Jets", btag_id, 3) : NULL),
+    heptopjet_hists(hists.find("heptopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 3, "patJetsHepTopTagCHSPacked_daughters") : NULL),
+    ak8softdroptopjet_hists(hists.find("ak8softdroptopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters") : NULL),
+    lumi_hist((ctx.get("dataset_type", "") != "MC") && hists.find("lumi") != hists.end()? new LuminosityHists(ctx, dirname+"/LuminosityHists") : NULL),
+    gen_hists(gen_plots && hists.find("gen") != hists.end() ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
         // if (gen_hists)
         // {
@@ -574,45 +576,42 @@ public:
 
     virtual void fill(const Event & event) {
         if (lumi_hist) lumi_hist->fill(event);
-        // el_hists->fill(event);
-        mu_hists->fill(event);
-    // tau_hists->fill(event);
-        ev_hists->fill(event);
-        jet_hists->fill(event);
-        cmstopjet_hists->fill(event);
-        heptopjet_hists->fill(event);
-        ak8softdroptopjet_hists->fill(event);
-        // ak8softdroptopjet_cleaned_hists->fill(event);
-    // ca15filteredtopjet_hists->fill(event);
-    // if (gen_hists) gen_hists->fill(event);
+        if (el_hists) el_hists->fill(event);
+        if (mu_hists) mu_hists->fill(event);
+        if (tau_hists) tau_hists->fill(event);
+        if (ev_hists) ev_hists->fill(event);
+        if (jet_hists) jet_hists->fill(event);
+        if (cmstopjet_hists) cmstopjet_hists->fill(event);
+        if (heptopjet_hists) heptopjet_hists->fill(event);
+        if (ak8softdroptopjet_hists) ak8softdroptopjet_hists->fill(event);
+        // ca15filteredtopjet_hists->fill(event);
+        if (gen_hists) gen_hists->fill(event);
     }
 
     ~OwnHistCollector(){
         delete lumi_hist;
-        // delete el_hists;
+        delete el_hists;
         delete mu_hists;
-    // delete tau_hists;
+        delete tau_hists;
         delete ev_hists;
         delete jet_hists;
         delete cmstopjet_hists;
         delete heptopjet_hists;
         delete ak8softdroptopjet_hists;
-        // delete ak8softdroptopjet_cleaned_hists;
-    // delete ca15filteredtopjet_hists;
-    // delete gen_hists;
+        // delete ca15filteredtopjet_hists;
+        delete gen_hists;
     }
 
 private:
-    // ExtendedElectronHists * el_hists;
+    ExtendedElectronHists * el_hists;
     ExtendedMuonHists * mu_hists;
-    // TauHists * tau_hists;
+    TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     ExtendedJetHists * jet_hists;
     ExtendedTopJetHists * cmstopjet_hists;
     ExtendedTopJetHists * heptopjet_hists;
     ExtendedTopJetHists * ak8softdroptopjet_hists;
-    // ExtendedTopJetHists * ak8softdroptopjet_cleaned_hists;
     LuminosityHists * lumi_hist;
     // ExtendedTopJetHists * ca15filteredtopjet_hists;
-    // CustomizableGenHists * gen_hists;
+    CustomizableGenHists * gen_hists;
 };

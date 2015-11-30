@@ -341,8 +341,7 @@ public:
                         break;
                     } 
                     else if (require_id2_all_ && !btagid_2_(subjets[ii], event)) {
-                        pass_sj_btag = false;
-                        break;
+                        return false;
                     }
                 }
                 if (require_id2_all_) pass_sj_btag = true;

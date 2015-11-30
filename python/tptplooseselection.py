@@ -26,7 +26,7 @@ import tptp_sframe
 #====PLOTTING====
 
 datasets_to_plot = [
-    'Run2015D',
+    'SingleMuon',
     'TpTp_M-800',
     'TpTp_M-1000',
     'TpTp_M-1200',
@@ -36,7 +36,7 @@ datasets_to_plot = [
     'TTbar',
     'WJets',
     'DYJets',
-    'SingleT',
+    'ST',
 ]
 
 test_list = [
@@ -162,10 +162,11 @@ def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=Non
 def hadd_and_plot(version='Test', src='', categories=None):
     hadd = Hadd(
         src_glob_path='../../'+src,
-        basenames=list('uhh2.AnalysisModuleRunner.MC.'+f for f in ['QCD', 'MC_WJets', 'DYJetsToLL', 'SingleT']), 
+        basenames=list('uhh2.AnalysisModuleRunner.'+f for f in ['DATA.SingleMuon_Run2015D', 'MC.MC_QCD', 'MC.MC_WJets', 'MC.MC_DYJetsToLL', 'MC.MC_ST', 'MC.MC_TTbar',
+            'MC.MC_TpTp_M-800', 'MC.MC_TpTp_M-1000', 'MC.MC_TpTp_M-1200', 'MC.MC_TpTp_M-1400', 'MC.MC_TpTp_M-1600']), 
         )
     plots = varial.tools.ToolChainParallel(
-        'Plots',
+        'Plots_w_ST',
         lazy_eval_tools_func=mk_tools_cats(categories=categories)
     )
     tc = varial.tools.ToolChain(
@@ -182,7 +183,8 @@ def hadd_and_plot(version='Test', src='', categories=None):
 
 import sys
 
-categories = ["IsoMuo24-clean", "Mu45-clean", "Mu15_PFHT600-clean", "PFHT800-clean"]
+# categories = ["HiggsTag1b", "HiggsTag2b"]
+categories = ["IsoMuo24", "Mu45", "Mu15_PFHT600", "PFHT800"]
 
 if __name__ == '__main__':
     time.sleep(1)

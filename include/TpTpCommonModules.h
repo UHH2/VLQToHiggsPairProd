@@ -31,10 +31,10 @@ public:
         commonObjectCleaning->init(ctx);
         common_module.reset(commonObjectCleaning);
 
-        modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-            "topjets",
-            "ak8jets_uncleaned"
-            ));
+        // modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+        //     "topjets",
+        //     "ak8jets_uncleaned"
+        //     ));
         if (ctx.get("dataset_type", "") == "MC") {
             modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "topjets"));
             modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
@@ -70,7 +70,6 @@ public:
         // if(ctx.) modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
         // else modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
         modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLepton", 9999.f, 10.f)); 
-        modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_iso", MuonId(MuonIso())));
         modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
         // modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_dRak8", MuonId(MinMaxDeltaRId<TopJet>(ctx, "topjets", 0.1))));
         modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
@@ -110,7 +109,6 @@ public:
         // modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
         modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
-        modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_iso", "primary_muon_pt_iso", "primary_muon_eta_iso", "primary_muon_charge_iso"));
         modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
         // modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_dRak8", "primary_muon_pt_dRak8", "primary_muon_eta_dRak8", "primary_muon_charge_dRak8"));
     }
