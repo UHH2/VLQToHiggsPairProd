@@ -80,6 +80,12 @@ def set_analysis_module(element_tree, analysis_module=''):
                 item.set('Value', analysis_module)
                 break
 
+def set_output_dir(element_tree, outputdir=''):
+    if outputdir:
+        sframe_cycle = element_tree.getroot().find('Cycle')
+        sframe_cycle.set('OutputDirectory', outputdir)
+
+
 
 
 
@@ -121,8 +127,9 @@ def set_eventnumber_and_datasets(count='-1', allowed_datasets=None, analysis_mod
         do_set_eventnumber(element_tree, count)
     return tmp_func
 
-def set_datasets_eventnumber_and_split_loose(count='-1', allowed_datasets=None, analysis_module=''):
+def set_datasets_eventnumber_and_split_loose(outputdir='', count='-1', allowed_datasets=None, analysis_module=''):
     def tmp_func(element_tree):
+        set_output_dir(element_tree, outputdir)
         set_analysis_module(element_tree, analysis_module)
         clean_input_data(element_tree, allowed_datasets)
         make_higgs_split_item(element_tree, final_states_to_split_into)
@@ -132,11 +139,27 @@ def set_datasets_eventnumber_and_split_loose(count='-1', allowed_datasets=None, 
 # sframe_and_plot_version = 'EventLoopAndPlots_v0'
 
 
+
+
+def setup_for_ind_run(analysis_module = '', allowed_datasets = None, count = '-1'):
+    def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
+        clean_input_data(element_tree, allowed_datasets)
+        do_set_eventnumber(element_tree, count)
+    return tmp_func
+
+sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpAnalysisModule.xml'
+
 if __name__ == '__main__':
     time.sleep(1)
     src_dir = sys.argv[1]
     final_dir = sys.argv[2]
-    all_tools = hadd_and_plot(version=final_dir, src=src_dir, categories=categories)
+    sframe = SFrame(
+        cfg_filename=sframe_cfg,
+        xml_tree_callback=setup_for_ind_run(
+            count=count, allowed_datasets=allowed_datasets,
+        ), # 
+    )
     varial.tools.Runner(all_tools, default_reuse=True)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()

@@ -349,6 +349,7 @@ public:
                 if (var == "tau32") hists_[var] = book<TH1F>("tau32_"+h_in, "tau32", 50, 0., 1.);
                 if (var == "csv_first_sj") hists_[var] = book<TH1F>("csv_first_sj_"+h_in, "csv_first_sj", 50, 0., 1.);
                 if (var == "csv_second_sj") hists_[var] = book<TH1F>("csv_second_sj_"+h_in, "csv_second_sj", 50, 0., 1.);
+                if (var == "csv_max_sj") hists_[var] = book<TH1F>("csv_max_sj_"+h_in, "csv_max_sj", 50, 0., 1.);
                 if (split(var, "-")[0] == "n_sjbtags") hists_[var] = book<TH1F>("n_sjbtags_"+h_in+"_"+split(var, "-")[1], "N sjbtags "+split(var, "-")[1], 5, -.5, 4.5);
             }  
         }
@@ -410,6 +411,15 @@ public:
                     } else {
                         it->second->Fill(-1., w);
                     }
+                }
+                if (it->first == "csv_max_sj") {
+                    assert(is_topjet);
+                    double csv_max = -1.;
+                    for (Jet const & subjet : particle.subjets()){
+                        if (subjet.btag_combinedSecondaryVertex() > csv_max)
+                            csv_max = subjet.btag_combinedSecondaryVertex();
+                    }
+                    it->second->Fill(csv_max, w);
                 }
                 if (split(it->first, "-")[0] == "n_sjbtags") {
                     CSVBTag::wp wp_;
@@ -509,6 +519,11 @@ public:
     }
 
     NParticleMultiHistProducerHelper<T> & operator[](const string & rel_dirname) {
+        unsigned ind = indizes_[rel_dirname];
+        return sub_levels_[ind];
+    }
+
+    NParticleMultiHistProducerHelper<T> & at(const string & rel_dirname) {
         unsigned ind = indizes_[rel_dirname];
         return sub_levels_[ind];
     }
