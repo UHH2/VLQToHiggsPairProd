@@ -51,7 +51,7 @@ def final_state_scaling(wrps, brs):
     dict_factors = make_finalstate_factors(make_factors_new(brs))
     for w in wrps:
         for final_state, factor in dict_factors.iteritems():
-            if w.sample.endswith(final_state):
+            if w.finalstate == final_state:
                 w = scale_histo(w, factor)
         yield w
 
@@ -63,10 +63,19 @@ def set_category(wrps):
 
 def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps)
+    wrps = gen.gen_add_wrp_info(
+        wrps,
+        finalstate = lambda w: w.in_file_path.split('/')[0],
+        # variable=lambda w: w.in_file_path.split('/')[-1]
+        )
+    wrps = gen.gen_add_wrp_info(
+        wrps,
+        in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
+        # variable=lambda w: w.in_file_path.split('/')[-1]
+        )
     wrps = varial.generators.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0])
-    wrps = gen.sort(wrps, key_list=["category"])
-    wrps = common_plot.merge_samples(wrps)
+    # wrps = common_plot.merge_samples(wrps)
     wrps = vlq_common.label_axes(wrps)
     # wrps = final_state_scaling(wrps, dict_factors)
     return wrps
@@ -77,15 +86,18 @@ def loader_hook_scale(wrps, brs=None):
         return None
     wrps = loader_hook(wrps)
     wrps = final_state_scaling(wrps, brs)
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_thbw',
-        '_thth',
-        '_thtz',
-        '_noH_bwbw',
-        '_noH_tzbw',
-        '_noH_tztz'
-        ))
-    # wrps = list(wrps)
-    # for w in wrps:
-    #     print w.sample
+    wrps = gen.sort(wrps, key_list=['category', 'sample'])
+    wrps = list(wrps)
+    for w in wrps:
+        print w.category, w.sample, w.finalstate
+    wrps = common_plot.merge_finalstates_channels(wrps, [
+        'thbw',
+        'thth',
+        'thtz',
+        'noH_bwbw',
+        'noH_tzbw',
+        'noH_tztz'
+        ], print_warning=True
+        )
+    wrps = gen.sort(wrps, key_list=["category"])
     return wrps

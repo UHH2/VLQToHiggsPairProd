@@ -7,6 +7,9 @@ import varial.tools
 import varial.wrappers as wrappers
 import varial.util as util
 
+colors = { "loose" : 2,
+           "med" : 3}
+
 class LimitGraphs(varial.tools.Tool):
     def __init__(self,
         name=None,
@@ -27,13 +30,30 @@ class LimitGraphs(varial.tools.Tool):
             x_arr = array('f', w.res_exp_x)
             y_arr = array('f', w.res_exp_y)
             lim_graph = TGraph(len(x_arr), x_arr, y_arr)
-            lim_graph.SetLineColor(2)
+            lim_graph.SetLineColor(colors[w.higgstag_cat])
             lim_graph.SetLineWidth(2)
             lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
             lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
             list_graphs.append(wrappers.GraphWrapper(lim_graph,
-                legend='Exp 95% CL',
+                legend='Exp 95% CL '+w.higgstag_cat,
                 save_name='tH%.0ftZ%.0fbW%.0f' % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100),
+                higgstag_cat=w.higgstag_cat,
+                lim_type='exp',
+                draw_option='L'
+                ))
+            x_arr = array('f', w.res_obs_x)
+            y_arr = array('f', w.res_obs_y)
+            lim_graph = TGraph(len(x_arr), x_arr, y_arr)
+            lim_graph.SetLineStyle(8)
+            lim_graph.SetLineColor(colors[w.higgstag_cat])
+            lim_graph.SetLineWidth(2)
+            lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
+            lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
+            list_graphs.append(wrappers.GraphWrapper(lim_graph,
+                legend='Obs 95% CL '+w.higgstag_cat,
+                save_name='tH%.0ftZ%.0fbW%.0f' % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100),
+                higgstag_cat=w.higgstag_cat,
+                lim_type='obs',
                 draw_option='L'
                 ))
         # tri_hist.Write()

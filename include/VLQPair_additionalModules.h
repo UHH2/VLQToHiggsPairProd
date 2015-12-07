@@ -10,8 +10,21 @@
 #include "UHH2/common/include/TTbarReconstruction.h"
 #include "UHH2/common/include/Utils.h"
 
+#include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
+
 using namespace std;
 using namespace uhh2;
+
+enum ParticleID {
+    BottomID = 5,
+    TopID = 6,
+    TprimeID = 8000001,
+    ElID = 11,
+    MuID = 13,
+    ZID = 23,
+    WID = 24,
+    HiggsID = 25
+};
 
 template <typename T>
 class TrueId {
@@ -408,6 +421,90 @@ private:
 };
 
 
+
+// static bool checkDecayMode(const Event & event, int id_tp1d1,
+//             int id_tp1d2, int id_tp2d1, int id_tp2d2) {
+//     GenParticleDaughterId tp1d(ParticleID::TprimeID, id_tp1d1, id_tp1d2);
+//     GenParticleDaughterId tp2d(ParticleID::TprimeID, id_tp2d1, id_tp2d2);
+
+//     for (vector<GenParticle>::const_iterator gp1 = event.genparticles->begin();
+//             gp1 != event.genparticles->end(); ++gp1) {
+//         if (tp1d(*gp1, event)) {
+//             for (vector<GenParticle>::const_iterator gp2 = gp1+1;
+//                     gp2 != event.genparticles->end(); ++gp2) {
+//                 if (tp2d(*gp2, event)) {
+//                     return true;
+//                 }
+//             }
+//             return false;
+//         }
+//         else if (tp2d(*gp1, event)) {
+//             for (vector<GenParticle>::const_iterator gp2 = gp1+1;
+//                     gp2 != event.genparticles->end(); ++gp2) {
+//                 if (tp1d(*gp2, event)) {
+//                     return true;
+//                 }
+//             }
+//             return false;
+//         }
+//     }
+//     return false;
+// }
+
+class GenSelectionAcceptProducer : public AnalysisModule {
+public:
+    explicit GenSelectionAcceptProducer(Context & ctx,
+            string const & h_accept = "gendecay_accept",
+            GenParticleId const & tp1d = TrueId<GenParticle>::is_true,
+            GenParticleId const & tp2d = TrueId<GenParticle>::is_true) :
+    h_accept_(ctx.get_handle<int>(h_accept)),
+    tp1d_(tp1d),
+    tp2d_(tp2d) {}
+
+    virtual bool process(Event & event) override {
+        if (event.isRealData) {
+            event.set(h_accept_, 1);
+            return true;
+        }
+
+        assert(event.genparticles);
+        for (vector<GenParticle>::const_iterator gp1 = event.genparticles->begin();
+            gp1 != event.genparticles->end(); ++gp1) {
+            if (tp1d_(*gp1, event)) {
+                for (vector<GenParticle>::const_iterator gp2 = gp1+1;
+                    gp2 != event.genparticles->end(); ++gp2) {
+                    if (tp2d_(*gp2, event)) {
+                        event.set(h_accept_, 1);
+                        return true;
+                    }
+                }
+                event.set(h_accept_, 0);
+                return false;
+            }
+            else if (tp2d_(*gp1, event)) {
+                for (vector<GenParticle>::const_iterator gp2 = gp1+1;
+                    gp2 != event.genparticles->end(); ++gp2) {
+                    if (tp1d_(*gp2, event)) {
+                        event.set(h_accept_, 1);
+                        return true;
+                    }
+                }
+                event.set(h_accept_, 0);
+                return false;
+            }
+        }
+
+        event.set(h_accept_, 0);
+        return false;
+    }
+
+private:
+    Event::Handle<int> h_accept_;
+    GenParticleId tp1d_, tp2d_;
+};  // GenSelectionAcceptProducer
+
+
+// DEPRECATED
 namespace vlqToHiggsPair {
 
 inline std::string  switch_names(const string & coll_name) {

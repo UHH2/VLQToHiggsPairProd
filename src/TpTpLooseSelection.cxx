@@ -39,17 +39,6 @@ using namespace uhh2;
 
 using namespace vlqToHiggsPair;
 
-enum ParticleID {
-    BottomID = 5,
-    TopID = 6,
-    TprimeID = 8000001,
-    ElID = 11,
-    MuID = 13,
-    ZID = 23,
-    WID = 24,
-    HiggsID = 25
-};
-
 static bool checkDecayMode(const Event & event, int id_tp1d1,
             int id_tp1d2, int id_tp2d1, int id_tp2d2) {
     GenParticleDaughterId tp1d(ParticleID::TprimeID, id_tp1d1, id_tp1d2);

@@ -30,10 +30,13 @@ src_dir_rel = '../../../../../EventLoopAndPlots'
 br_list = []
 
 # only br_th = 100% for now
-
-for th_br in [i/10. for i in range(0, 12, 2)]:
-    for tz_br in [ii/10. for ii in range(0, int(12-th_br*10), 2)]:
-        bw_br = 1-th_br-tz_br
+# bw_max = 1
+bw_max = 0
+for bw_br in [i/10. for i in range(0, (bw_max*10)+2, 2)]:
+    # tz_max = 1.0-bw_br
+    tz_max = 0
+    for tz_br in [ii/10. for ii in range(0, int(tz_max*10)+2, 2)]:
+        th_br = 1-bw_br-tz_br
         # print bw_br, th_br, tz_br
         br_list.append({
             'bw' : bw_br,
@@ -41,15 +44,19 @@ for th_br in [i/10. for i in range(0, 12, 2)]:
             'tz' : tz_br
         })
 
-def select_files(wrp):
-    file_path = wrp.file_path
-    in_file_path = wrp.in_file_path
-    # print "before selecting: "+wrp.file_path
-    # print file_path
-    if file_path.endswith('.root')\
-        and 'DATA' not in file_path\
-        and in_file_path.endswith('PostSelection/ST'):
-        return True
+def select_files(categories=None):
+    def tmp(wrp):
+        file_path = wrp.file_path
+        in_file_path = wrp.in_file_path
+        # print "before selecting: "+wrp.file_path
+        # print file_path
+        if (file_path.endswith('.root')
+                # and 'DATA' not in file_path\
+                and in_file_path.endswith('PostSelection/ST')
+                and (wrp.in_file_path.split('/')[1] in categories if categories else True)) :
+            # print wrp
+            return True
+    return tmp
 
 def loader_hook_func(brs):
     def temp(wrps):
@@ -69,7 +76,8 @@ def loader_hook_func(brs):
                 'TpTp_M-1700' : 1./0.0005,
                 'TpTp_M-1800' : 1./0.00025,
             },
-            norm_all=(3000./552.67))
+            # norm_all=(3000./552.67)
+            )
         return wrps
     return temp
 
@@ -84,32 +92,68 @@ def mk_limit_list():
         limit_list.append(
             varial.tools.ToolChain('Limit'+str(ind),[
                 varial.tools.HistoLoader(
-                    # name='HistoLoaderSplit'+str(ind),
+                    name='HistoLoaderLoose',
                     # pattern=file_stack_split(),
-                    filter_keyfunc=select_files,
+                    filter_keyfunc=select_files(['HiggsTag2bLoose']),
                     hook_loaded_histos=loader_hook_func(brs_)
                 ),
                 varial.tools.Plotter(
-                    input_result_path='../HistoLoader',
+                    name='PlotterLoose',
+                    input_result_path='../HistoLoaderLoose',
                     plot_grouper=lambda ws: varial.gen.group(
                         ws, key_func=lambda w: w.category),
                     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
                     save_name_func=lambda w: w.category
                 ),
                 TpTpThetaLimits(
-                    input_path= '../HistoLoader',
+                    name='TpTpThetaLimitsLoose',
+                    input_path= '../HistoLoaderLoose',
                     cat_key=lambda w: w.category,
                     # name= 'ThetaLimitsSplit'+str(ind),
                     # asymptotic= False,
                     brs=brs_,
+                    higgstag_cat='loose',
                     model_func= lambda w: model_vlqpair.get_model(w, [
                         # 'TpTp_M-700',
-                        'TpTp_M-800',
-                        'TpTp_M-900',
-                        'TpTp_M-1000',
-                        'TpTp_M-1100',
-                        'TpTp_M-1300',
-                        'TpTp_M-1600'])
+                        'MC_TpTp_M-800',
+                        # 'TpTp_M-900',
+                        'MC_TpTp_M-1000',
+                        # 'TpTp_M-1100',
+                        'MC_TpTp_M-1200',
+                        'MC_TpTp_M-1400',
+                        'MC_TpTp_M-1600'])
+                ),
+                varial.tools.HistoLoader(
+                    name='HistoLoaderMedium',
+                    # pattern=file_stack_split(),
+                    filter_keyfunc=select_files(['HiggsTag1bMed', 'HiggsTag2bMed']),
+                    hook_loaded_histos=loader_hook_func(brs_)
+                ),
+                varial.tools.Plotter(
+                    name='PlotterMedium',
+                    input_result_path='../HistoLoaderMedium',
+                    plot_grouper=lambda ws: varial.gen.group(
+                        ws, key_func=lambda w: w.category),
+                    plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+                    save_name_func=lambda w: w.category
+                ),
+                TpTpThetaLimits(
+                    name='TpTpThetaLimitsMedium',
+                    input_path= '../HistoLoaderMedium',
+                    cat_key=lambda w: w.category,
+                    # name= 'ThetaLimitsSplit'+str(ind),
+                    # asymptotic= False,
+                    brs=brs_,
+                    higgstag_cat='med',
+                    model_func= lambda w: model_vlqpair.get_model(w, [
+                        # 'TpTp_M-700',
+                        'MC_TpTp_M-800',
+                        # 'TpTp_M-900',
+                        'MC_TpTp_M-1000',
+                        # 'TpTp_M-1100',
+                        'MC_TpTp_M-1200',
+                        'MC_TpTp_M-1400',
+                        'MC_TpTp_M-1600'])
                 )
             ]))
     return limit_list
@@ -146,24 +190,26 @@ def mk_tc(dir_limit):
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(),
-        varial.tools.ToolChain('LimitTriangle',[
-            TriangleLimitPlots(
-                limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
-                ),
-            varial.plotter.Plotter(
-                input_result_path='../TriangleLimitPlots',
-                plot_setup=plot_setup_triangle,
-                save_name_func=lambda w: 'M-'+str(w.mass)
-                ),
-            ]),
+        # varial.tools.ToolChain('LimitTriangle',[
+        #     TriangleLimitPlots(
+        #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
+        #         ),
+        #     varial.plotter.Plotter(
+        #         input_result_path='../TriangleLimitPlots',
+        #         plot_setup=plot_setup_triangle,
+        #         save_name_func=lambda w: 'M-'+str(w.mass)
+        #         ),
+        #     ]),
         varial.tools.ToolChain('LimitGraphs',[
             limit_plots.LimitGraphs(
-                limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
+                limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits*'
                 ),
             varial.plotter.Plotter(
                 input_result_path='../LimitGraphs',
                 # plot_setup=plot_setup,
-                # plot_grouper=lambda w: varial.plotter.plot_grouper_by_number_of_plots(w, 5),
+                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+                plot_grouper=lambda ws: varial.gen.group(
+                        ws, key_func=lambda w: w.save_name),
                 # save_name_func=varial.plotter.save_by_name_with_hash
                 save_name_func=lambda w: w.save_name,
                 plot_setup=lambda w: plot_setup_graphs(w,

@@ -19,7 +19,7 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 #     'TTbar': 632, # Red
 #     'WJets': 902, # Pinkish
 #     'ZJets': 840, # Blue
-#     'SingleT': 434, # Orange
+#     'ST': 434, # Orange
 #     'QCD': 870,   # Light blue
 # }
 
@@ -51,33 +51,33 @@ smpls = list()
 
 
 smpls.append(Sample(
-    name='QCD',
-    legend='QCD'
+    name='MC_QCD',
+    legend='MC_QCD'
 ))
 
 smpls.append(Sample(
-    name='TTbar',
-    legend='TTbar'
+    name='MC_TTbar',
+    legend='MC_TTbar'
 ))
 
 smpls.append(Sample(
-    name='WJets',
-    legend='WJets'
+    name='MC_WJets',
+    legend='MC_WJets'
 ))
 
 smpls.append(Sample(
-    name='ZJets',
-    legend='ZJets'
+    name='MC_ZJets',
+    legend='MC_ZJets'
 ))
 
 smpls.append(Sample(
-    name='SingleT',
-    legend='SingleT'
+    name='MC_ST',
+    legend='MC_ST'
 ))
 
 analysis.all_samples = dict((s.name, s) for s in smpls)
 
-settings.stacking_order = ['ZJets', 'WJets', 'SingleTop', 'TTBar', 'QCD']
+settings.stacking_order = ['MC_ZJets', 'MC_WJets', 'MC_ST', 'MC_TTBar', 'MC_QCD']
 
 # default_colors = [632, 814, 596, 870, 434, 840, 902, 797, 800, 891, 401, 800,
 #                   838, 420, 403, 893, 881, 804, 599, 615, 831, 403, 593, 872]

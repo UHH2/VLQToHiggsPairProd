@@ -62,6 +62,8 @@ public:
     virtual bool process(Event & event) override;
 
 private:
+    unique_ptr<AnalysisModule> common_module;
+    vector<unique_ptr<AnalysisModule>> pre_modules;
     vector<NParticleMultiHistProducerHelper<TopJet>> fatjet_hists;
 
 };
@@ -71,6 +73,50 @@ private:
 
 TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) {
     
+    CommonModules* commonObjectCleaning = new CommonModules();
+    commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4)));
+    commonObjectCleaning->disable_jersmear();
+        // commonObjectCleaning->disable_mcpileupreweight();
+    commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
+    commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1)));
+    commonObjectCleaning->switch_jetlepcleaner(true);
+    commonObjectCleaning->switch_jetPtSorter(true);
+        // commonObjectCleaning->disable_lumisel();
+    commonObjectCleaning->init(ctx);
+    common_module.reset(commonObjectCleaning);
+
+        // modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+        //     "topjets",
+        //     "ak8jets_uncleaned"
+        //     ));
+    if (ctx.get("dataset_type", "") == "MC") {
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "topjets"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "topjets"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "topjets"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "topjets"));
+            // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsHepTopTagCHSPacked_daughters"));
+    }
+    else {
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "topjets"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "topjets"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "topjets"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(125., 2.4), "topjets"));
+            // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsHepTopTagCHSPacked_daughters"));
+    }
     
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
@@ -241,8 +287,16 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
 
 bool TpTpPreselectionV2::process(Event & event) {
 
-    if(!TpTpAnalysisModule::process(event))
+    if (!common_module->process(event))
         return false;
+
+    for (auto const & mod : pre_modules)
+        mod->process(event);
+
+    assert(event.topjets);
+    sort_by_pt(*event.topjets);
+
+    TpTpAnalysisModule::process(event);
 
     // run all modules
 
