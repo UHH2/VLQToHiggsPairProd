@@ -20,6 +20,7 @@ import final_plotting
 import common_plot
 import tptp_sframe 
 import sensitivity
+import compare_crs
 
 # varial.settings.max_num_processes = 1
 
@@ -30,6 +31,7 @@ datasets_to_plot = [
     'SingleMuon',
     # 'TpTp_M-800_thX',
     # 'TpTp_M-1000_thX',
+    'TpTp_M-800',
     'TpTp_M-1200',
     # 'TpTp_M-1200_other',
     # 'TpTp_M-1400_thX',
@@ -83,7 +85,7 @@ def mk_cutflow_chain_cat(category, loader_hook):
         cutflow_stack_plots,
         cutflow_tables.CutflowTableContent(),
         cutflow_tables.CutflowTableTxt(),
-        cutflow_tables.CutflowTableTex(None, True),
+        # cutflow_tables.CutflowTableTex(None, True),
     ])
 
 def loader_hook_loader(wrps):
@@ -120,13 +122,14 @@ def mk_tools_cats(src='', categories=None):
     def create():
         plot_chain = [
             
-            varial.tools.mk_rootfile_plotter(
-                pattern='../HistoLoader',
+            varial.plotter.RootFilePlotter(
+                pattern=None,
+                input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot),
+                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'other' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory,
-                combine_files=True,
+                # combine_files=True,
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
@@ -146,12 +149,13 @@ def mk_tools_cats(src='', categories=None):
             #     ),
             
             ]
-        cutflow_cat = []
-        for cat in categories:
-            cutflow_cat.append(mk_cutflow_chain_cat(
-                cat,
-                None))
-        plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
+        if categories:
+            cutflow_cat = []
+            for cat in categories:
+                cutflow_cat.append(mk_cutflow_chain_cat(
+                    cat,
+                    None))
+            plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
 
         return plot_chain
     return create
@@ -215,6 +219,11 @@ def hadd_and_plot(version='Test', src='', categories=None):
             histo_loader,
             plots,
             sensitivity.mk_tc('Limits'),
+            varial.tools.ToolChainParallel(
+                'CompareControlRegions',
+                lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
+                        crs=list(c for c in categories if 'Control' in c))
+                ),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )
@@ -225,9 +234,10 @@ def hadd_and_plot(version='Test', src='', categories=None):
 import sys
 
 # categories = ["HiggsTag1b", "HiggsTag2b"]
-categories = ["NoSelection", "HiggsTag0",
-        "HiggsTag1bMed", "HiggsTag2bMed", "HiggsTag2bLoose",
-        # "HiggsTag1bMed-1Top", "HiggsTag2bMed-1Top", "HiggsTag2bLoose-1Top"
+categories = ["NoSelection",
+        "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
+        "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
+        "HiggsTag2bMed-Signal", 
         ]
 
 if __name__ == '__main__':

@@ -75,16 +75,16 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
 
 def select_files(wrp):
     if ((wrp.in_file_path.endswith('PostSelection/ST')
-            or wrp.in_file_path.endswith('PostSelection/leading_jet_pt')
-            or wrp.in_file_path.endswith('PostSelection/met')
-            or wrp.in_file_path.endswith('PostSelection/primary_lepton_pt')
-            or wrp.in_file_path.endswith('PostSelection/pt_ld_ak8_all')
-            or wrp.in_file_path.endswith('PostSelection/n_jets')
-            or wrp.in_file_path.endswith('PostSelection/n_ak8_all')
+            # or wrp.in_file_path.endswith('PostSelection/leading_jet_pt')
+            or wrp.in_file_path.endswith('PostSelection/EventHists/met_own')
+            or wrp.in_file_path.endswith('PostSelection/primary_muon_pt_noIso')
+            or wrp.in_file_path.endswith('PostSelection/pt_ld_ak8_jet')
+            # or wrp.in_file_path.endswith('PostSelection/n_jets')
+            or wrp.in_file_path.endswith('PostSelection/n_ak8')
             )
             and (
-            'MC.TTbar' in wrp.file_path
-            or 'MC.WJets' in wrp.file_path
+            'MC.MC_TTbar' in wrp.file_path
+            or 'MC.MC_WJets' in wrp.file_path
             )
             # and '1HiggsLooseTagSignalRegion' not in wrp.file_path
         ):
@@ -114,6 +114,8 @@ def overlay_setup(grps, sig_reg=''):
             selected_smpls = bkg
         else:
             selected_smpls = sig
+        # print 'sig_reg: '+sig_reg
+        # for s in selected_smpls: print s.sample, s.legend, s.category, s.lumi, s.variable
         signal = filter(lambda w: sig_reg == w.legend, selected_smpls)
         others = filter(lambda w: sig_reg != w.legend, selected_smpls)
         if not signal:
@@ -138,13 +140,8 @@ def plot_colorizer(grps, colors=cat_colors):
 
 def plot_setup(sig_reg=''):
     def setup(grps):
-        # if sig_reg == 'SignalRegionHMedBoost':
-        #     grps = list(grps)
-        #     for g in grps:
-        #         print 'group:'
-        #         for w in g:
-        #             print ' ', w.sample, w.variable, w.category
         grps = plot_colorizer(grps)
+        grps = list(grps)
         grps = overlay_setup(grps, sig_reg)
         return grps
     return setup
@@ -153,18 +150,28 @@ def plot_setup(sig_reg=''):
 def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps)
     wrps = gen.gen_add_wrp_info(
+        wrps,
+        finalstate = lambda w: w.in_file_path.split('/')[0],
+        # variable=lambda w: w.in_file_path.split('/')[-1]
+        )
+    wrps = gen.gen_add_wrp_info(
+        wrps,
+        in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
+        # variable=lambda w: w.in_file_path.split('/')[-1]
+        )
+    wrps = gen.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0],
         # variable=lambda w: w.in_file_path.split('/')[-1]
         )
-    wrps = gen.sort(wrps, key_list=['category'])
-    wrps = common_plot.merge_samples(wrps)
-    wrps = gen.sort(wrps, key_list=['sample', 'variable'])
     wrps = gen.gen_add_wrp_info(
         wrps, legend=lambda w: w.category,
         draw_option=lambda w: 'hist' if not w.is_data else 'E1X0')
+    wrps = gen.sort(wrps, key_list=['variable', 'sample'])
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = vlq_common.label_axes(wrps)
     wrps = gen.gen_norm_to_integral(wrps)
+    wrps = list(wrps)
+    # for w in wrps: print w.sample, w.variable, w.category
     return wrps
 
 def filter_category(sig_cats=None, sig_cat='', cr_cat=''):
@@ -202,7 +209,7 @@ def mk_tc(srs=None, crs=None):
                 # combine_files=True,
                 filter_keyfunc=filter_category(srs, sig),
                 plot_grouper=lambda ws: gen.group(
-                    ws, key_func=lambda w: w.sample and w.variable),
+                    ws, key_func=lambda w: w.sample or w.variable),
                 plot_setup=plot_setup(sig),
                 save_name_func=lambda w: w.sample+'_'+w.name,
                 canvas_decorators=[varial.rendering.Legend]
@@ -214,7 +221,7 @@ def mk_tc(srs=None, crs=None):
                     input_result_path='../HistoLoader',
                     filter_keyfunc=filter_category(srs, sig, cr),
                     plot_grouper=lambda ws: gen.group(
-                        ws, key_func=lambda w: w.sample and w.variable),
+                        ws, key_func=lambda w: w.sample or w.variable),
                     plot_setup=plot_setup(sig),
                     save_name_func=lambda w: w.sample+'_'+w.name,
                     save_lin_log_scale=True,

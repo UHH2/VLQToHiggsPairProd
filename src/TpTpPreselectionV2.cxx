@@ -28,11 +28,11 @@
 #include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
 #include "UHH2/VLQSemiLepPreSel/include/SelectionHists.h"
 #include "UHH2/VLQSemiLepPreSel/include/SelectionItem.h"
-#include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
+// #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalHists.h"
-#include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
-#include "UHH2/VLQToHiggsPairProd/include/TpTpCommonModules.h"
+// #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
+// #include "UHH2/VLQToHiggsPairProd/include/TpTpCommonModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/TpTpAnalysisModule.h"
 
 using namespace std;

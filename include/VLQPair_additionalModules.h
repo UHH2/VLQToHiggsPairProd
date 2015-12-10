@@ -11,9 +11,14 @@
 #include "UHH2/common/include/Utils.h"
 
 #include "UHH2/VLQSemiLepPreSel/include/VLQCommonModules.h"
+#include "UHH2/VLQSemiLepPreSel/include/SelectionItem.h"
 
 using namespace std;
 using namespace uhh2;
+
+typedef SelectionItemData<int>      SelDatI;
+typedef SelectionItemData<float>    SelDatF;
+typedef SelectionItemData<double>   SelDatD;
 
 enum ParticleID {
     BottomID = 5,

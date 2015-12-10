@@ -88,8 +88,8 @@ def loader_hook_scale(wrps, brs=None):
     wrps = final_state_scaling(wrps, brs)
     wrps = gen.sort(wrps, key_list=['category', 'sample'])
     wrps = list(wrps)
-    for w in wrps:
-        print w.category, w.sample, w.finalstate
+    # for w in wrps:
+    #     print w.category, w.sample, w.finalstate
     wrps = common_plot.merge_finalstates_channels(wrps, [
         'thbw',
         'thth',

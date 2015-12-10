@@ -85,77 +85,54 @@ def loader_hook_func(brs):
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
 # input_path='..')
 
+def mk_limit_tc(brs, filter_keyfunc, name=''):
+    return [
+    varial.tools.HistoLoader(
+        name='HistoLoader'+name,
+        # pattern=file_stack_split(),
+        filter_keyfunc=filter_keyfunc,
+        hook_loaded_histos=loader_hook_func(brs)
+    ),
+    varial.tools.Plotter(
+        name='Plotter'+name,
+        input_result_path='../HistoLoader'+name,
+        plot_grouper=lambda ws: varial.gen.group(
+            ws, key_func=lambda w: w.category),
+        plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+        save_name_func=lambda w: w.category
+    ),
+    TpTpThetaLimits(
+        name='TpTpThetaLimits'+name,
+        input_path= '../HistoLoader'+name,
+        cat_key=lambda w: w.category,
+        # name= 'ThetaLimitsSplit'+str(ind),
+        # asymptotic= False,
+        brs=brs,
+        sig_cat=name,
+        model_func= lambda w: model_vlqpair.get_model(w, [
+            # 'TpTp_M-700',
+            'MC_TpTp_M-800',
+            # 'TpTp_M-900',
+            'MC_TpTp_M-1000',
+            # 'TpTp_M-1100',
+            'MC_TpTp_M-1200',
+            'MC_TpTp_M-1400',
+            'MC_TpTp_M-1600'])
+    )
+    ]
+
+
 def mk_limit_list():
     limit_list = []
     for ind, brs_ in enumerate(br_list):
         # if ind > 2: break
+        tc = []
+        tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal", "HiggsTag2bMed-Signal"]), 'MedNoCat'))
+        tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB",
+                    "HiggsTag1bMed-Signal-3addB", "HiggsTag2bMed-Signal"]),
+                    'MedCat'))
         limit_list.append(
-            varial.tools.ToolChain('Limit'+str(ind),[
-                varial.tools.HistoLoader(
-                    name='HistoLoaderLoose',
-                    # pattern=file_stack_split(),
-                    filter_keyfunc=select_files(['HiggsTag2bLoose']),
-                    hook_loaded_histos=loader_hook_func(brs_)
-                ),
-                varial.tools.Plotter(
-                    name='PlotterLoose',
-                    input_result_path='../HistoLoaderLoose',
-                    plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.category),
-                    plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-                    save_name_func=lambda w: w.category
-                ),
-                TpTpThetaLimits(
-                    name='TpTpThetaLimitsLoose',
-                    input_path= '../HistoLoaderLoose',
-                    cat_key=lambda w: w.category,
-                    # name= 'ThetaLimitsSplit'+str(ind),
-                    # asymptotic= False,
-                    brs=brs_,
-                    higgstag_cat='loose',
-                    model_func= lambda w: model_vlqpair.get_model(w, [
-                        # 'TpTp_M-700',
-                        'MC_TpTp_M-800',
-                        # 'TpTp_M-900',
-                        'MC_TpTp_M-1000',
-                        # 'TpTp_M-1100',
-                        'MC_TpTp_M-1200',
-                        'MC_TpTp_M-1400',
-                        'MC_TpTp_M-1600'])
-                ),
-                varial.tools.HistoLoader(
-                    name='HistoLoaderMedium',
-                    # pattern=file_stack_split(),
-                    filter_keyfunc=select_files(['HiggsTag1bMed', 'HiggsTag2bMed']),
-                    hook_loaded_histos=loader_hook_func(brs_)
-                ),
-                varial.tools.Plotter(
-                    name='PlotterMedium',
-                    input_result_path='../HistoLoaderMedium',
-                    plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.category),
-                    plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-                    save_name_func=lambda w: w.category
-                ),
-                TpTpThetaLimits(
-                    name='TpTpThetaLimitsMedium',
-                    input_path= '../HistoLoaderMedium',
-                    cat_key=lambda w: w.category,
-                    # name= 'ThetaLimitsSplit'+str(ind),
-                    # asymptotic= False,
-                    brs=brs_,
-                    higgstag_cat='med',
-                    model_func= lambda w: model_vlqpair.get_model(w, [
-                        # 'TpTp_M-700',
-                        'MC_TpTp_M-800',
-                        # 'TpTp_M-900',
-                        'MC_TpTp_M-1000',
-                        # 'TpTp_M-1100',
-                        'MC_TpTp_M-1200',
-                        'MC_TpTp_M-1400',
-                        'MC_TpTp_M-1600'])
-                )
-            ]))
+            varial.tools.ToolChain('Limit'+str(ind),tc))
     return limit_list
 
 
