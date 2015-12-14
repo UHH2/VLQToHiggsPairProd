@@ -34,6 +34,7 @@
 // #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
 // #include "UHH2/VLQToHiggsPairProd/include/TpTpCommonModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/TpTpAnalysisModule.h"
+#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
 
 using namespace std;
 using namespace uhh2;
@@ -474,7 +475,7 @@ TpTpFinalSelectionV2::TpTpFinalSelectionV2(Context & ctx) : TpTpAnalysisModule(c
                 // v_hists_after_sel.back().emplace_back(ak8jet_hists->book_histograms(ctx, directory+"/PostSelection"));
                 // selected_sel_hists["NoHiggsTagCut"]->insert_additional_hist(hist_helper.book_histograms(ctx, directory+"/NoHiggsTagCut"));
             }
-            v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, directory+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev"}));
+            v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, directory+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "jet"}));
 
             // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 

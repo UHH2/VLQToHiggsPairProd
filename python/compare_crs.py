@@ -76,7 +76,7 @@ class BottomPlotControlSignalRatio(varial.rendering.BottomPlotRatio):
 def select_files(wrp):
     if ((wrp.in_file_path.endswith('PostSelection/ST')
             # or wrp.in_file_path.endswith('PostSelection/leading_jet_pt')
-            or wrp.in_file_path.endswith('PostSelection/EventHists/met_own')
+            or wrp.in_file_path.endswith('PostSelection/EventHists/MET_own')
             or wrp.in_file_path.endswith('PostSelection/primary_muon_pt_noIso')
             or wrp.in_file_path.endswith('PostSelection/pt_ld_ak8_jet')
             # or wrp.in_file_path.endswith('PostSelection/n_jets')

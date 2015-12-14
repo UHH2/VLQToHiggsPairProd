@@ -218,12 +218,12 @@ def hadd_and_plot(version='Test', src='', categories=None):
             hadd,
             histo_loader,
             plots,
-            sensitivity.mk_tc('Limits'),
             varial.tools.ToolChainParallel(
                 'CompareControlRegions',
                 lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
                         crs=list(c for c in categories if 'Control' in c))
                 ),
+            sensitivity.mk_tc('Limits'),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )

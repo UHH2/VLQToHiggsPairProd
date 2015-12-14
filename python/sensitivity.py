@@ -192,7 +192,7 @@ def mk_tc(dir_limit):
                 plot_setup=lambda w: plot_setup_graphs(w,
                     th_x=common_sensitivity.theory_masses,
                     th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend],
+                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
                 save_lin_log_scale=True
                 ),
             ]),
