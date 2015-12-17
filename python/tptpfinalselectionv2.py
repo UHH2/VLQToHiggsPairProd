@@ -13,6 +13,7 @@ from varial.extensions.sframe import SFrame
 from varial.extensions.hadd import Hadd
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
+import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 # import common_vlq
 import tptp_settings
@@ -88,7 +89,7 @@ def mk_cutflow_chain_cat(category, loader_hook):
         # cutflow_tables.CutflowTableTex(None, True),
     ])
 
-def loader_hook_loader(wrps):
+def loader_hook_finalstates_incl(wrps):
     wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_add_wrp_info(
         wrps,
@@ -102,9 +103,18 @@ def loader_hook_loader(wrps):
         )
     wrps = gen.sort(wrps, ['sample', 'in_file_path'])
     # wrps = list(wrps)
-    # for w in wrps: print w.sample, w.finalstate, w.in_file_path 
-    wrps = common_plot.merge_finalstates_channels(wrps, ['thth', 'thtz', 'thbw'], '_thX', True)
-    wrps = common_plot.merge_finalstates_channels(wrps, ['noH_tztz', 'noH_tzbw', 'noH_bwbw'], '_other', True)
+    # for w in wrps: print w.sample, w.in_file_path 
+    wrps = common_plot.merge_finalstates_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
+    wrps = common_plot.merge_finalstates_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
+    return wrps
+
+def loader_hook_finalstates_excl(wrps):
+    wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
+    wrps = gen.sort(wrps, ['in_file_path', 'sample'])
+    # wrps = list(wrps)
+    # for w in wrps: print w.sample, w.in_file_path 
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
     return wrps
 
 def plotter_factory(**kws):
@@ -185,8 +195,18 @@ def mk_tools_cats(src='', categories=None):
 #     )
 #     return tc
 
-basenames = list('uhh2.AnalysisModuleRunner.'+f for f in ['DATA.SingleMuon_Run2015D', 'MC.MC_QCD', 'MC.MC_WJets', 'MC.MC_DYJetsToLL', 'MC.MC_ST', 'MC.MC_TTbar',
-            'MC.MC_TpTp_M-800', 'MC.MC_TpTp_M-1000', 'MC.MC_TpTp_M-1200', 'MC.MC_TpTp_M-1400', 'MC.MC_TpTp_M-1600'])
+basenames = list('uhh2.AnalysisModuleRunner.'+f for f in ['DATA.SingleMuon_Run2015D',
+    'MC.MC_QCD',
+    'MC.MC_WJets',
+    'MC.MC_DYJetsToLL',
+    'MC.MC_ST',
+    'MC.MC_TTbar',
+    'MC.MC_TpTp_M-800_thth', 'MC.MC_TpTp_M-800_thtz', 'MC.MC_TpTp_M-800_thbw', 'MC.MC_TpTp_M-800_noH_tztz', 'MC.MC_TpTp_M-800_noH_tzbw', 'MC.MC_TpTp_M-800_noH_bwbw',
+    'MC.MC_TpTp_M-1000_thth', 'MC.MC_TpTp_M-1000_thtz', 'MC.MC_TpTp_M-1000_thbw', 'MC.MC_TpTp_M-1000_noH_tztz', 'MC.MC_TpTp_M-1000_noH_tzbw', 'MC.MC_TpTp_M-1000_noH_bwbw',
+    'MC.MC_TpTp_M-1200_thth', 'MC.MC_TpTp_M-1200_thtz', 'MC.MC_TpTp_M-1200_thbw', 'MC.MC_TpTp_M-1200_noH_tztz', 'MC.MC_TpTp_M-1200_noH_tzbw', 'MC.MC_TpTp_M-1200_noH_bwbw',
+    'MC.MC_TpTp_M-1400_thth', 'MC.MC_TpTp_M-1400_thtz', 'MC.MC_TpTp_M-1400_thbw', 'MC.MC_TpTp_M-1400_noH_tztz', 'MC.MC_TpTp_M-1400_noH_tzbw', 'MC.MC_TpTp_M-1400_noH_bwbw',
+    'MC.MC_TpTp_M-1600_thth', 'MC.MC_TpTp_M-1600_thtz', 'MC.MC_TpTp_M-1600_thbw', 'MC.MC_TpTp_M-1600_noH_tztz', 'MC.MC_TpTp_M-1600_noH_tzbw', 'MC.MC_TpTp_M-1600_noH_bwbw',
+    ])
 
 def hadd_and_plot(version='Test', src='', categories=None):
     hadd = Hadd(
@@ -206,7 +226,7 @@ def hadd_and_plot(version='Test', src='', categories=None):
         # filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
         #                category == w.in_file_path.split('/')[1],
         # hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
-        hook_loaded_histos=loader_hook_loader
+        hook_loaded_histos=loader_hook_finalstates_excl
     )
     plots = varial.tools.ToolChainParallel(
         'Plots',
@@ -218,12 +238,12 @@ def hadd_and_plot(version='Test', src='', categories=None):
             hadd,
             histo_loader,
             plots,
-            varial.tools.ToolChainParallel(
-                'CompareControlRegions',
-                lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
-                        crs=list(c for c in categories if 'Control' in c))
-                ),
-            sensitivity.mk_tc('Limits'),
+            # varial.tools.ToolChainParallel(
+            #     'CompareControlRegions',
+            #     lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
+            #             crs=list(c for c in categories if 'Control' in c))
+            #     ),
+            # sensitivity.mk_tc('Limits'),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )
@@ -234,7 +254,7 @@ def hadd_and_plot(version='Test', src='', categories=None):
 import sys
 
 # categories = ["HiggsTag1b", "HiggsTag2b"]
-categories = ["NoSelection",
+categories = [
         "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
         "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
         "HiggsTag2bMed-Signal", 

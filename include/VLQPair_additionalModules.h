@@ -509,6 +509,128 @@ private:
 };  // GenSelectionAcceptProducer
 
 
+
+class BTagSFJetCollectionProducer: public AnalysisModule {
+public:
+
+    explicit BTagSFJetCollectionProducer(Context & ctx,
+                                std::string const & in_tj_name,
+                                std::string const & in_jet_name,
+                                std::string const & out_name):
+        in_tj_hndl(ctx.get_handle<vector<TopJet>>(in_tj_name)),
+        in_jet_hndl(ctx.get_handle<vector<Jet>>(in_jet_name)),
+        out_hndl(ctx.get_handle<vector<TopJet>>(out_name)) {}
+
+    bool process(Event & event) override {
+        if (!event.is_valid(in_tj_hndl) || !event.is_valid(in_jet_hndl))
+            return false;
+        vector<TopJet> out_coll = event.get(in_tj_hndl);
+        TopJet temp_tj;
+        temp_tj.set_subjets(event.get(in_jet_hndl));
+        out_coll.push_back(temp_tj);
+        event.set(out_hndl, out_coll);
+        return true;
+    }
+
+private:
+    Event::Handle<vector<TopJet>> in_tj_hndl;
+    Event::Handle<vector<Jet>> in_jet_hndl;
+    Event::Handle<vector<TopJet>> out_hndl;
+};
+
+
+class MaxNSubjetBtagProducer: public AnalysisModule {
+public:
+
+    explicit MaxNSubjetBtagProducer(Context & ctx,
+                                std::string const & in_name,
+                                std::string const & out_n_name,
+                                std::string const & out_coll_name,
+                                JetId const & jet_id = CSVBTag(CSVBTag::WP_MEDIUM)):
+        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+        out_n_hndl(ctx.get_handle<int>(out_n_name)),
+        out_coll_hndl(ctx.get_handle<vector<TopJet>>(out_coll_name)),
+        jet_id_(jet_id) {}
+
+    bool process(Event & event) override {
+        assert(event.is_valid(in_hndl));
+        vector<TopJet> const & coll = event.get(in_hndl);
+        int max_n_sj_btags = 0;
+        for (TopJet const & tj : coll) {
+            int n_sj_btags = 0;
+            for (Jet const & j : tj.subjets()) {
+                if (jet_id_(j, event)) 
+                    n_sj_btags++;
+            }
+            if (n_sj_btags > max_n_sj_btags)
+                max_n_sj_btags = n_sj_btags;
+        }
+        event.set(out_n_hndl, max_n_sj_btags);
+        vector<TopJet> out_coll;
+        for (TopJet const & tj : coll) {
+            int n_sj_btags = 0;
+            for (Jet const & j : tj.subjets()) {
+                if (jet_id_(j, event)) 
+                    n_sj_btags++;
+            }
+            if (n_sj_btags == max_n_sj_btags)
+                out_coll.push_back(tj);
+        }
+        event.set(out_coll_hndl, out_coll);
+        return true;
+    }
+
+private:
+    Event::Handle<vector<TopJet>> in_hndl;
+    Event::Handle<int> out_n_hndl;
+    Event::Handle<vector<TopJet>> out_coll_hndl;
+    JetId jet_id_;
+};
+
+
+class LdMassSjProducer: public AnalysisModule {
+public:
+
+    explicit LdMassSjProducer(Context & ctx,
+                                std::string const & in_name,
+                                std::string const & out_name):
+        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+        out_hndl(ctx.get_handle<float>(out_name)) {}
+
+    bool process(Event & event) override {
+        assert(event.is_valid(in_hndl));
+        vector<TopJet> const & coll = event.get(in_hndl);
+        float mass_sj = 0.;
+        for (TopJet const & tj : coll) {
+            if (tj.subjets().size() < 2)
+                continue;
+            LorentzVector sj_v4;
+            for (Jet const & j : tj.subjets()) {
+                sj_v4 += j.v4();
+            }
+            if (!sj_v4.isTimelike())
+                continue;
+            mass_sj = sj_v4.M();
+            break;
+        }
+        event.set(out_hndl, mass_sj);
+        return true;
+    }
+
+private:
+    Event::Handle<vector<TopJet>> in_hndl;
+    Event::Handle<float> out_hndl;
+};
+
+
+
+
+
+
+
+
+
+
 // DEPRECATED
 namespace vlqToHiggsPair {
 

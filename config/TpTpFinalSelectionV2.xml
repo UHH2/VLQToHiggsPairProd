@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "-1">
+<!ENTITY NEVT "1000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
-<!ENTITY OUTPUTDIR "Samples-25ns-v2/TpTpFinalSelection-v8/">
+<!ENTITY OUTPUTDIR "Samples-25ns-v2/TestTreeOutput/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v5/Xml-files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt15to20_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v5/Xml-files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt20to30_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v5/Xml-files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt30to50_MuEnrichedPt5.xml">
@@ -484,7 +484,7 @@
             -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="TpTpFinalSelectionV2" />
+            <Item Name="AnalysisModule" Value="TpTpFinalSelectionTreeOutput" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->
@@ -492,8 +492,19 @@
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
+            <Item Name="data_dir_path" Value="&SOURCEDIR;../common/data/" />
             <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Latest_2015_Silver_JSON.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+
+            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;Samples-25ns-v2/TpTpFinalSelectionTreeOutput-NoBTagSF/BTagMCEfficiencyHists.root" />
+            <Item Name="BTagCalibration" Value="&SOURCEDIR;../common/data/CSVv2.csv" />
+
+            <!-- specific to analysis -->
+            <!-- "jecsmear_direction": either "nominal", "up", or "down" -->
+            <!-- "jersmear_direction": either "nominal", "up", or "down" -->
+            <Item Name="jecsmear_direction" Value="nominal" /> 
+            <Item Name="jersmear_direction" Value="nominal" /> 
+            <Item Name="jersmear_smear_met" Value="true" />
 
             <Item Name="use_sframe_weight" Value="false" />
 

@@ -12,15 +12,11 @@
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/TopJetIds.h"
 #include "UHH2/common/include/NSelections.h"
-#include "UHH2/common/include/GenTools.h"
-#include "UHH2/common/include/PartonHT.h"
 #include "UHH2/common/include/JetCorrections.h"
 #include "UHH2/common/include/MCWeight.h"
-#include "UHH2/common/include/TTbarReconstruction.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/AdditionalSelections.h"
 #include "UHH2/common/include/CollectionProducer.h"
-#include "UHH2/common/include/PrintingModules.h"
 
 
 #include "UHH2/VLQSemiLepPreSel/include/EventHists.h"
@@ -34,7 +30,6 @@
 // #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
 // #include "UHH2/VLQToHiggsPairProd/include/TpTpCommonModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/TpTpAnalysisModule.h"
-#include "UHH2/VLQToHiggsPairProd/include/AdditionalModules.h"
 
 using namespace std;
 using namespace uhh2;
@@ -86,7 +81,7 @@ TpTpFinalSelectionV2::TpTpFinalSelectionV2(Context & ctx) : TpTpAnalysisModule(c
     
     // check if there is exactly 1 Top Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
-    other_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept"));other_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
+    other_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept"));
     other_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
     other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 "topjets",
