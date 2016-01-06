@@ -7,7 +7,6 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
 #include "UHH2/common/include/CleaningModules.h"
-#include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/ElectronIds.h"
 #include "UHH2/common/include/MuonIds.h"
 #include "UHH2/common/include/EventVariables.h"
@@ -119,6 +118,10 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 bool TpTpAnalysisModule::process(Event & event) {
 
     // run all modules
+
+    for (auto & mod : pre_modules) {
+        mod->process(event);
+    }
 
     for (auto & mod : common_modules) {
         mod->process(event);

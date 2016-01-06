@@ -7,13 +7,6 @@ from varial.extensions.sframe import SFrame
 
 # DEPRECATED
 
-def do_set_cat(element_tree, catname):
-    user_config = element_tree.getroot().find('Cycle').find('UserConfig')
-    for item in user_config:
-        if item.get('Name') == 'category':
-            item.set('Value', catname)
-            break
-
 def split_item_and_set_filename(element_tree, datasets=None, final_states=None):
     tree_cycle = element_tree.getroot().find('Cycle')
     for ind, item in enumerate(tree_cycle.findall('InputData')):
@@ -28,8 +21,6 @@ def split_item_and_set_filename(element_tree, datasets=None, final_states=None):
                 in_item.set('FileName', filename)
                 tree_cycle.insert(ind, split_smpl)
             tree_cycle.remove(item)
-
-
 
 
 

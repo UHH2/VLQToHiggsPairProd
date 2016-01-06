@@ -9,7 +9,7 @@ import varial.tools
 import varial.generators as gen
 import varial.analysis as analysis
 from varial.sample import Sample
-from varial.extensions.sframe import SFrame
+# from varial.extensions.sframe import SFrame
 from varial.extensions.hadd import Hadd
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
@@ -19,7 +19,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 import tptp_settings
 import final_plotting
 import common_plot
-import tptp_sframe 
+# import tptp_sframe 
 import sensitivity
 import compare_crs
 
@@ -29,7 +29,7 @@ import compare_crs
 #====PLOTTING====
 
 datasets_to_plot = [
-    'SingleMuon',
+    'Run2015D',
     # 'TpTp_M-800_thX',
     # 'TpTp_M-1000_thX',
     'TpTp_M-800',
@@ -115,12 +115,13 @@ def loader_hook_finalstates_excl(wrps):
     # for w in wrps: print w.sample, w.in_file_path 
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
+    wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
 def plotter_factory(**kws):
     # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
     # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-    kws['hook_loaded_histos'] = lambda w: gen.sort(w, ['in_file_path'])
+    kws['hook_loaded_histos'] = loader_hook_finalstates_excl
     kws['plot_setup'] = common_plot.stack_setup_norm_sig
     kws['stack_setup'] = common_plot.stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
@@ -128,35 +129,21 @@ def plotter_factory(**kws):
     # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)
 
-def mk_tools_cats(src='', categories=None):
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None):
     def create():
         plot_chain = [
             
             varial.plotter.RootFilePlotter(
-                pattern=None,
-                input_result_path='../HistoLoader',
+                pattern=src,
+                # input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'other' not in w.sample,
+                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory,
                 # combine_files=True,
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
-            # varial.tools.mk_rootfile_plotter(
-            #     pattern=common_plot.file_no_signals(),
-            #     name='NormedNoSignals',
-            #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-            #     combine_files=True,
-            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-            #     ),
-            # varial.tools.mk_rootfile_plotter(
-            #     pattern=common_plot.file_split_signals(),
-            #     name='NormedSignals',
-            #     plotter_factory=lambda **w: final_plotting.plotter_factory_norm(**w),
-            #     combine_files=True,
-            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-            #     ),
             
             ]
         if categories:
@@ -170,73 +157,36 @@ def mk_tools_cats(src='', categories=None):
         return plot_chain
     return create
 
-
-#====SFRAME====
-
-# sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/config/TpTpLooseSelection.xml'
-
-# def mk_sframe_and_plot_tools(version='TestLoose', count=-1, allowed_datasets=None):
-#     """Makes a toolchain for one category with sframe and plots."""
-#     sframe = SFrame(
-#         cfg_filename=sframe_cfg,
-#         xml_tree_callback=tptp_sframe.set_datasets_eventnumber_and_split_loose(count=count, allowed_datasets=allowed_datasets), # 
-#     )
-#     plots = varial.tools.ToolChainParallel(
-#         'Plots',
-#         lazy_eval_tools_func=mk_tools
-#     )
-#     tc = varial.tools.ToolChain(
-#         version,
-#         [
-#             sframe,
-#             plots,
-#             varial.tools.WebCreator(no_tool_check=True)
-#         ]
-#     )
-#     return tc
-
-basenames = list('uhh2.AnalysisModuleRunner.'+f for f in ['DATA.SingleMuon_Run2015D',
-    'MC.MC_QCD',
-    'MC.MC_WJets',
-    'MC.MC_DYJetsToLL',
-    'MC.MC_ST',
-    'MC.MC_TTbar',
-    'MC.MC_TpTp_M-800_thth', 'MC.MC_TpTp_M-800_thtz', 'MC.MC_TpTp_M-800_thbw', 'MC.MC_TpTp_M-800_noH_tztz', 'MC.MC_TpTp_M-800_noH_tzbw', 'MC.MC_TpTp_M-800_noH_bwbw',
-    'MC.MC_TpTp_M-1000_thth', 'MC.MC_TpTp_M-1000_thtz', 'MC.MC_TpTp_M-1000_thbw', 'MC.MC_TpTp_M-1000_noH_tztz', 'MC.MC_TpTp_M-1000_noH_tzbw', 'MC.MC_TpTp_M-1000_noH_bwbw',
-    'MC.MC_TpTp_M-1200_thth', 'MC.MC_TpTp_M-1200_thtz', 'MC.MC_TpTp_M-1200_thbw', 'MC.MC_TpTp_M-1200_noH_tztz', 'MC.MC_TpTp_M-1200_noH_tzbw', 'MC.MC_TpTp_M-1200_noH_bwbw',
-    'MC.MC_TpTp_M-1400_thth', 'MC.MC_TpTp_M-1400_thtz', 'MC.MC_TpTp_M-1400_thbw', 'MC.MC_TpTp_M-1400_noH_tztz', 'MC.MC_TpTp_M-1400_noH_tzbw', 'MC.MC_TpTp_M-1400_noH_bwbw',
-    'MC.MC_TpTp_M-1600_thth', 'MC.MC_TpTp_M-1600_thtz', 'MC.MC_TpTp_M-1600_thbw', 'MC.MC_TpTp_M-1600_noH_tztz', 'MC.MC_TpTp_M-1600_noH_tzbw', 'MC.MC_TpTp_M-1600_noH_bwbw',
-    ])
+def mk_toolchain(name='', src='', categories=None):
+    return varial.tools.ToolChainParallel(
+        name,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
+        )
 
 def hadd_and_plot(version='Test', src='', categories=None):
     hadd = Hadd(
         src_glob_path='../../'+src,
-        basenames=basenames, 
+        basenames=common_plot.basenames, 
         )
-    # histo_tc = varial.tools.ToolChain(
-    #     'HistoLoader',
-    #     [
-    #         varial.tools.ToolChainParallel
-    #     ])
-    histo_loader = varial.tools.HistoLoader(
-        # name='CutflowHistos',
-        pattern='../Hadd/*.root',
-        filter_keyfunc=lambda w: w.type.startswith('TH1')\
-         and any(f in w.sample for f in datasets_to_plot),
-        # filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
-        #                category == w.in_file_path.split('/')[1],
-        # hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
-        hook_loaded_histos=loader_hook_finalstates_excl
-    )
+    # histo_loader = varial.tools.HistoLoader(
+    #     # name='CutflowHistos',
+    #     pattern='../Hadd/*.root',
+    #     filter_keyfunc=lambda w: w.type.startswith('TH1')\
+    #      and any(f in w.sample for f in datasets_to_plot),
+    #     # filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
+    #     #                category == w.in_file_path.split('/')[1],
+    #     # hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))
+    #     hook_loaded_histos=loader_hook_finalstates_excl
+    # )
     plots = varial.tools.ToolChainParallel(
         'Plots',
-        lazy_eval_tools_func=mk_tools_cats(categories=categories)
+        lazy_eval_tools_func=mk_plots_and_cf(categories=categories)
     )
     tc = varial.tools.ToolChain(
         version,
         [
             hadd,
-            histo_loader,
+            # histo_loader,
             plots,
             # varial.tools.ToolChainParallel(
             #     'CompareControlRegions',
@@ -244,7 +194,7 @@ def hadd_and_plot(version='Test', src='', categories=None):
             #             crs=list(c for c in categories if 'Control' in c))
             #     ),
             # sensitivity.mk_tc('Limits'),
-            varial.tools.WebCreator(no_tool_check=True)
+            # varial.tools.WebCreator(no_tool_check=True)
         ]
     )
     return tc
@@ -252,19 +202,13 @@ def hadd_and_plot(version='Test', src='', categories=None):
 # sframe_tools = mk_sframe_and_plot_tools()
 
 import sys
-
-# categories = ["HiggsTag1b", "HiggsTag2b"]
-categories = [
-        "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
-        "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
-        "HiggsTag2bMed-Signal", 
-        ]
+import tptpsframe_runner as sframe
 
 if __name__ == '__main__':
     time.sleep(1)
     src_dir = sys.argv[1]
     final_dir = sys.argv[2]
-    all_tools = hadd_and_plot(version=final_dir, src=src_dir, categories=categories)
+    all_tools = hadd_and_plot(version=final_dir, src=src_dir, categories=sframe.categories)
     varial.tools.Runner(all_tools, default_reuse=True)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()

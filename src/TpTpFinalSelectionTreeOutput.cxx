@@ -52,6 +52,8 @@ public:
         // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs Tags, 2 b)", 8, -.5, 7.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8_higgs_cand", "N(Higgs Candidates)", 8, -.5, 7.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_jets_no_overlap", "N(non-overlapping Ak4 jets)", 12, -.5, 11.5)),
+        shared_ptr<SelectionItem>(new SelDatI("max_n_subjet_btags", "max N(medium sj b-tags)", 4, -.5, 3.5)),
+        shared_ptr<SelectionItem>(new SelDatF("mass_higgs_cands_max_btag", "N(non-overlapping Ak4 jets)", 30, 0., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet_cleaned", "Pt leading Ak8 Jet", 60, 0., 1500.)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_T", 90, 0., 900.))
@@ -84,6 +86,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     CommonModules* commonObjectCleaning = new CommonModules();
     // commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4)));
     commonObjectCleaning->disable_jersmear();
+    commonObjectCleaning->disable_jec();
     // commonObjectCleaning->disable_mcpileupreweight();
     // commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
     // commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1)));
@@ -98,12 +101,17 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                                        : JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
         auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK8PFchs_MC 
                                        : JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
-        other_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
             ak8_corr, "topjets"));
-        other_modules.emplace_back(new GenericSubJetCorrector(ctx,
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
             ak4_corr, "topjets"));
-        other_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
+        pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
     }
+
+    if (type == "MC") {
+        pre_modules.emplace_back(new JetResolutionSmearer(ctx));    
+    }
+
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
         data_dir_path + "MuonID_Z_RunD_Reco74X_Nov20.root", 
         "NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id"));
@@ -221,12 +229,12 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // else
     //     final_states = {"All"};
         
-    // // vector<string> categories = split(ctx.get("category", ""));
-    std::vector<string> categories = {"NoSelection",
-        "HiggsTag0Med-Control", //"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
-        "HiggsTag1bMed-Signal", //"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
-        "HiggsTag2bMed-Signal", 
-        }; // "NoSelection", "HiggsTag2bLoose-Signal", "AntiHiggsTagLoose-Control", "AntiHiggsTagMed-Control", "HiggsTag0Loose-Control", 
+    vector<string> categories = split(ctx.get("category", ""));
+    // std::vector<string> categories = {"NoSelection",
+    //     "HiggsTag0Med-Control", //"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
+    //     "HiggsTag1bMed-Signal", //"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
+    //     "HiggsTag2bMed-Signal", 
+    //     }; // "NoSelection", "HiggsTag2bLoose-Signal", "AntiHiggsTagLoose-Control", "AntiHiggsTagMed-Control", "HiggsTag0Loose-Control", 
 
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
@@ -382,7 +390,58 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
 
     common_module->process(event);
 
-    TpTpAnalysisModule::process(event);
+    for (auto & mod : pre_modules) {
+        mod->process(event);
+    }
+
+    for (auto & mod : common_modules) {
+        mod->process(event);
+    }
+
+    for (auto & mod : other_modules) {
+        mod->process(event);
+    }
+
+    sel_modules_passed.clear();
+
+    for (unsigned i = 0; i < sel_modules.size(); ++i) {
+    
+        bool all_accepted = sel_modules[i]->process(event);
+        sel_modules_passed.push_back(all_accepted);
+
+    }
+
+    // all hists
+    for (auto & hist_vec : v_hists) {
+        for (auto & hist : hist_vec) {
+            hist->fill(event);
+        }
+    }
+
+    // fill histograms without selection
+    for (auto & hist : v_hists_nosel) {
+        hist->fill(event);
+    }
+
+    if (sel_modules_passed[2] || sel_modules_passed[3]) {
+        btag_sf_sr->process(event);
+        event.set(use_sr_sf_hndl, 1);
+    }
+    else {
+        btag_sf_cr->process(event);
+        event.set(use_sr_sf_hndl, 0);
+    }
+
+    for (unsigned i = 0; i < sel_modules.size(); ++i) {
+    
+        bool all_accepted = sel_modules_passed[i];
+        if (all_accepted) {
+            for (auto & hist : v_hists_after_sel[i]) {
+                hist->fill(event);
+            }
+        }
+
+    }
 
     if (sel_modules_passed[2] || sel_modules_passed[3]) {
         btag_sf_sr->process(event);

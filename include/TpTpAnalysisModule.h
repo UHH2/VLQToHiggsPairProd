@@ -61,7 +61,7 @@ protected:
 
     string version, type;
     // modules for setting up collections and cleaning
-    vector<unique_ptr<AnalysisModule>> other_modules, common_modules;
+    vector<unique_ptr<AnalysisModule>> pre_modules, other_modules, common_modules;
     vector<unique_ptr<SelectionProducer>> sel_modules;
     vector<bool> sel_modules_passed;
     vector<unique_ptr<SelItemsHelper>> sel_helpers;

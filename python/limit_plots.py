@@ -7,10 +7,11 @@ import varial.tools
 import varial.wrappers as wrappers
 import varial.util as util
 
-colors = { "loose" : 2,
-           "med" : 3,
-           "MedNoCat" : 3,
-           "MedCat" : 4}
+colors = {  "" : 2,
+            "loose" : 2,
+            "med" : 3,
+            "MedNoCat" : 3,
+            "MedCat" : 4}
 
 class LimitGraphs(varial.tools.Tool):
     def __init__(self,

@@ -52,15 +52,17 @@ def select_files(categories=None):
         # print file_path
         if (file_path.endswith('.root')
                 # and 'DATA' not in file_path\
-                and in_file_path.endswith('PostSelection/ST')
-                and (wrp.in_file_path.split('/')[1] in categories if categories else True)) :
+                # and in_file_path.endswith('PostSelection/ST')
+                and in_file_path.endswith('ST')
+                # and (wrp.in_file_path.split('/')[1] in categories if categories else True)) :
+                and (wrp.in_file_path.split('/')[0] in categories if categories else True)) :
             # print wrp
             return True
     return tmp
 
-def loader_hook_func(brs):
+def loader_hook(brs):
     def temp(wrps):
-        wrps = common_sensitivity.loader_hook_scale(wrps, brs)
+        wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct={
                 'TpTp_M-700' : 1./0.455,
@@ -81,66 +83,97 @@ def loader_hook_func(brs):
         return wrps
     return temp
 
+def loader_hook_sys(brs):
+    def temp(wrps):
+        hook = loader_hook(brs)
+        wrps = hook(wrps)
+        wrps = varial.gen.gen_add_wrp_info(
+            wrps,
+            sys_type=lambda w: w.file_path.split('/')[-2],
+        )
+        return wrps
+    return temp
+
 # maybe pack this up into a list of individual tool chains so that HistoLoader is the first
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
 # input_path='..')
 
-def mk_limit_tc(brs, filter_keyfunc, name=''):
-    return [
-    varial.tools.HistoLoader(
-        name='HistoLoader'+name,
+def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
+    loader = varial.tools.HistoLoader(
+        name='HistoLoader',
         # pattern=file_stack_split(),
+        # pattern=,
         filter_keyfunc=filter_keyfunc,
-        hook_loaded_histos=loader_hook_func(brs)
-    ),
-    varial.tools.Plotter(
-        name='Plotter'+name,
-        input_result_path='../HistoLoader'+name,
+        hook_loaded_histos=loader_hook(brs)
+    )
+    plotter = varial.tools.Plotter(
+        name='Plotter',
+        input_result_path='../HistoLoader',
         plot_grouper=lambda ws: varial.gen.group(
             ws, key_func=lambda w: w.category),
         plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
         save_name_func=lambda w: w.category
-    ),
-    TpTpThetaLimits(
-        name='TpTpThetaLimits'+name,
-        input_path= '../HistoLoader'+name,
+    )
+    limits = TpTpThetaLimits(
+        name='TpTpThetaLimits',
+        # input_path= '../HistoLoader',
         cat_key=lambda w: w.category,
+        sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
         # asymptotic= False,
         brs=brs,
         sig_cat=name,
         model_func= lambda w: model_vlqpair.get_model(w, [
             # 'TpTp_M-700',
-            'MC_TpTp_M-800',
+            'TpTp_M-800',
             # 'TpTp_M-900',
-            'MC_TpTp_M-1000',
+            'TpTp_M-1000',
             # 'TpTp_M-1100',
-            'MC_TpTp_M-1200',
-            'MC_TpTp_M-1400',
-            'MC_TpTp_M-1600'])
+            'TpTp_M-1200',
+            'TpTp_M-1400',
+            'TpTp_M-1600'])
     )
-    ]
+    if sys_pat:
+        sys_loader = varial.tools.HistoLoader(
+            name='HistoLoaderSys',
+            filter_keyfunc=filter_keyfunc,
+            pattern=sys_pat,
+            hook_loaded_histos=loader_hook_sys(brs)
+        )
+        return [loader, sys_loader, plotter, limits]
+    else:
+        return [loader, plotter, limits]
 
 
-def mk_limit_list():
-    limit_list = []
-    for ind, brs_ in enumerate(br_list):
-        # if ind > 2: break
-        tc = []
-        tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal", "HiggsTag2bMed-Signal"]), 'MedNoCat'))
-        tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB",
-                    "HiggsTag1bMed-Signal-3addB", "HiggsTag2bMed-Signal"]),
-                    'MedCat'))
-        limit_list.append(
-            varial.tools.ToolChain('Limit'+str(ind),tc))
-    return limit_list
+def mk_limit_list(sys_pat=''):
+    def temp():
+        limit_list = []
+        for ind, brs_ in enumerate(br_list):
+            # if ind > 2: break
+            tc = []
+            tc.append(varial.tools.ToolChain(
+                'WithSB',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b", "SidebandRegion"]), name='WithSB', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'NoSB',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b"]), name='NoSB', sys_pat=sys_pat))
+            )
+            # tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal", "HiggsTag2bMed-Signal"]), 'MedNoCat'))
+            # tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB",
+            #             "HiggsTag1bMed-Signal-3addB", "HiggsTag2bMed-Signal"]),
+            #             'MedCat'))
+            limit_list.append(
+                varial.tools.ToolChainParallel('Limit'+str(ind),tc))
+        return limit_list
+    return temp
 
 
 # tool_list.append(TriangleLimitPlots())
 
-def mk_limit_chain():
+def mk_limit_chain(name='Ind_Limits', sys_pat=''):
     return varial.tools.ToolChainParallel(
-        'Ind_Limits', lazy_eval_tools_func=mk_limit_list
+        name, lazy_eval_tools_func=mk_limit_list(sys_pat)
         )
 
 def add_draw_option(wrps, draw_option=''):
