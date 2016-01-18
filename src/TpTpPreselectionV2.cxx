@@ -65,6 +65,7 @@ private:
     unique_ptr<AnalysisModule> common_module;
     vector<unique_ptr<AnalysisModule>> pre_modules;
     vector<NParticleMultiHistProducerHelper<TopJet>> fatjet_hists;
+    vector<unique_ptr<Hists>> v_hists_nosel;
 
 };
 
@@ -300,6 +301,11 @@ bool TpTpPreselectionV2::process(Event & event) {
 
     TpTpAnalysisModule::process(event);
 
+    // fill histograms without selection
+    for (auto & hist : v_hists_nosel) {
+        hist->fill(event);
+    }
+    
     // run all modules
 
     // for (bool pass_sel : sel_modules_passed) {

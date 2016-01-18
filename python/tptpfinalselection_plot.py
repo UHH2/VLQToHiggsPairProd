@@ -54,7 +54,7 @@ def mk_cutflow_chain_cat(category, loader_hook):
     cutflow_histos = varial.tools.HistoLoader(
         name='CutflowHistos',
         # pattern=common_plot.file_select(datasets_to_plot),
-        input_result_path='../../../../HistoLoader',
+        # input_result_path='../../../../HistoLoader',
         filter_keyfunc=lambda w: 'cutflow' == w.in_file_path.split('/')[-1] and\
                        category == w.in_file_path.split('/')[0],
         # hook_loaded_histos=lambda w: cutflow_tables.gen_rebin_cutflow(loader_hook(w))

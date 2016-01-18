@@ -69,11 +69,12 @@ protected:
 
     // store the Hists collection
     unique_ptr<Hists> gen_hists;
-    vector<unique_ptr<Hists>> v_hists_nosel;
     vector<vector<unique_ptr<Hists>>> v_hists;
     vector<vector<unique_ptr<Hists>>> v_hists_after_sel;
 
     vector<vector<shared_ptr<SelectionItem>>> SEL_ITEMS_FULL_SEL;
+
+    Event::Handle<std::vector<TopJet>> patjets_;
 
     // check category
     // unique_ptr<Selection> cat_check_module;

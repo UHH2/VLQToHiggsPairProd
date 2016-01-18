@@ -4,15 +4,16 @@
 
 sys_uncerts = {
     # 'name' : {'item name': 'item value', ...},
-    'jec_up'        : {'jecsmear_direction':'up'},
-    'jec_down'      : {'jecsmear_direction':'down'},
-    'jer_up'        : {'jersmear_direction':'up'},
-    'jer_down'      : {'jersmear_direction':'down'},
-    # 'nominal'       : {'jecsmear_direction':'nominal'}
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
+    'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
 }
 start_all_parallel = True
+
 
 ############################################################### script code ###
 import varial
@@ -20,11 +21,14 @@ import sys
 import os
 import copy
 
+from varial.extensions import git
+
+# varial.settings.max_num_processes = 1
 
 categories = ["NoSelection",
-        "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
-        "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
-        "HiggsTag2bMed-Signal", 
+        # "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
+        # "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
+        # "HiggsTag2bMed-Signal", 
         ]
 
 datasets_to_plot = [
@@ -179,7 +183,7 @@ class MySFrameBatch(SFrame):
 
 sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelectionV2.xml'
 
-import tptpfinalselectionv2 as final_plotting
+import tptpfinalselection_plot as final_plotting
 
 def mk_sframe_tools_and_plot(name='All_Files'):
     tc = ToolChain('Files_and_Plots',
@@ -189,15 +193,15 @@ def mk_sframe_tools_and_plot(name='All_Files'):
                 MySFrameBatch(
                     cfg_filename=sframe_cfg,
                     # xml_tree_callback=set_uncert_func(uncert),
-                    xml_tree_callback=setup_for_ind_run(outputdir='./', count='1000', analysis_module='TpTpFinalSelectionTreeOutput',
+                    xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module='TpTpFinalSelectionTreeOutput',
                         uncert_name=uncert),
                     name='SFrame',
                     # name='SFrame_' + uncert,
                     halt_on_exception=False,
                     ),
                 final_plotting.hadd_and_plot(version='Plots',
-                    src='SFrame/'+uncert+'/workdir/uhh2.AnalysisModuleRunner.*.root',
-                    categories=final_plotting.categories)
+                    src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+                    categories=categories)
                 ]
                 )
             for uncert in sys_uncerts
@@ -206,7 +210,12 @@ def mk_sframe_tools_and_plot(name='All_Files'):
 
     return varial.tools.ToolChain(
         name,
-        [tc, varial.tools.WebCreator(no_tool_check=False)]
+        [
+            git.GitAdder(),
+            tc,
+            varial.tools.WebCreator(no_tool_check=False),
+            git.GitTagger()
+            ]
     )
 
 

@@ -507,6 +507,7 @@
             <Item Name="jersmear_smear_met" Value="true" />
 
             <Item Name="use_sframe_weight" Value="false" />
+            <Item Name="category" Value="NoSelection" />
 
             <Item Name="pileup_directory_data" Value="/nfs/dust/cms/user/marchesi/PUData/25ns_v2/MyDataPileupHistogram.root"/>
             <Item Name="pileup_directory_25ns" Value="/nfs/dust/cms/user/nowatsd/PUHistogram-25ns-v2/Pileup.MC.TTbar.root"/>
