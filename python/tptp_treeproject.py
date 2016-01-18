@@ -1,27 +1,45 @@
 #!/usr/bin/env python
 
-from varial_ext.treeprojector import TreeProjector, SGETreeProjector
+from varial_ext.treeprojector import TreeProjector #, SGETreeProjector
 from os.path import join
 import varial.tools
 import glob
 
 
 histo_names_args = {
-    'gendecay_accept' :            ('GenDecay Accept',                  2, -.5, 1.5),
-    'n_ak8' :                      ('N(Ak8 Jets)',                      8, -.5, 7.5),
-    'ST' :                         ('ST',                               45, 0, 4500),
-    'pt_ld_ak8_jet' :              ('Pt leading Ak8 Jet',               60, 0., 1500.),
-    'primary_muon_pt_noIso' :      ('Primary Muon p_T',                 90, 0., 900.),
-    'n_higgs_tags_1b_med' :        ('N(Higgs Tags, 1 b)',               8, -.5, 7.5),
-    'n_higgs_tags_2b_med' :        ('N(Higgs Tags, 2 b)',               8, -.5, 7.5),
-    'n_ak8_higgs_cand' :           ('N(Higgs Candidates)',              8, -.5, 7.5),
-    'n_jets_no_overlap' :          ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),
-    'max_n_subjet_btags' :         ('max N(medium sj b-tags)',          4, -.5, 3.5),
-    'mass_higgs_cands_max_btag' :  ('Mass(Higgs cand max btag)',        30, 0., 300.),
-    'n_higgs_tags_1b_med'  :       ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
-    'n_higgs_tags_2b_med'  :       ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'gendecay_accept'            : ('GenDecay Accept',                  2, -.5, 1.5),
+    'ST'                         : ('ST',                               45, 0, 4500),
+    'ST_cleaned'                 : ('ST cleaned',                       45, 0, 4500),
     'n_additional_btags_medium'  : ('N(non-overlapping medium b-tags)', 8, -.5, 7.5),
-    'use_sr_sf' :                  ('Use SR SF',                        2, -.5, 1.5),
+    'n_ak4'                      : ('N(Ak4 Jets)',                      14, -.5, 13.5),
+    'n_ak4_pt_cleaned'           : ('N(Ak4 Jets, cleaned)',             14, -.5, 13.5),
+    'n_ak8'                      : ('N(Ak8 Jets)',                      8, -.5, 7.5),
+    'n_ak8_pt_cleaned'           : ('N(Ak8 Jets, cleaned)',             8, -.5, 7.5),
+    'n_ak8_higgs_cand'           : ('N(Higgs Candidates)',              8, -.5, 7.5),
+    'n_higgs_tags_1b_med'        : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med'        : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'n_jets_no_overlap'          : ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),
+    'primary_muon_pt_noIso'      : ('Primary Muon p_T',                 90, 0., 900.),
+    'pt_ld_ak4_jet'              : ('Pt leading Ak4 Jet',               60, 0., 1500.),
+    'pt_ld_ak4_jet_cleaned'      : ('Pt leading Ak4 Jet, cleaned',      60, 0., 1500.),
+    'pt_ld_ak8_jet'              : ('Pt leading Ak8 Jet',               60, 0., 1500.),
+    'pt_ld_ak8_jet_cleaned'      : ('Pt leading Ak8 Jet, cleaned',      60, 0., 1500.),
+    'topjetdRak4_1'              : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    'topjetdRak4_2'              : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    'topjetdRak8_1'              : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    'topjetdRak8_2'              : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    'topjetdRlep_1'              : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
+    'topjetdRlep_2'              : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
+    'topjeteta_1'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
+    'topjeteta_2'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
+    'topjetmass_1'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
+    'topjetmass_2'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
+    'topjetnsjbtags_1'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
+    'topjetnsjbtags_2'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
+    'topjetpt_1'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
+    'topjetpt_2'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
+    'trigger_accept'             : ('Trigger Accepted',                 2, -.5, 1.5),
+    'use_sr_sf'                  : ('Use SR SF',                        2, -.5, 1.5),
 }
 params = {
     'histos': histo_names_args,
@@ -89,24 +107,24 @@ sec_sel_weight = [
 
 
 def mk_tp(input_pat):
-    all_files = glob.glob(input_pat)
+    all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
     filenames = dict(
         (sample, list(f for f in all_files if sample in f))
         for sample in samples
     )
 
     return TreeProjector(
-        samples, filenames, params, sec_sel_weight, 
+        filenames, params, sec_sel_weight, 
         # suppress_job_submission=True, 
         name='TreeProjector',
     )
 
 
-def mk_sys_tps():
+def mk_sys_tps(base_path):
     # some defs
-    base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/'\
-        'CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/Samples-25ns-v2/'\
-        'TpTpFinalSelectionTreeOutput-v0wBTagSF/Files_and_Plots/'
+    # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/'\
+    #     'CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/Samples-25ns-v2/'\
+    #     'TpTpFinalSelectionTreeOutput-v0wBTagSF/Files_and_Plots/'
     sys_params = {
         'histos': {'ST': histo_names_args['ST']},
         'treename': 'AnalysisTree',
@@ -116,7 +134,7 @@ def mk_sys_tps():
     jercs = list(
         (
             name.replace('_down', '__minus').replace('_up', '__plus'), 
-            base_path + 'Files_and_Plots_' + name + '/SFrame/' + name + '/workdir/uhh2*.root'
+            join(base_path, 'Files_and_Plots_' + name + '/SFrame/workdir/uhh2*.root')
         ) 
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
@@ -141,7 +159,7 @@ def mk_sys_tps():
     )
 
     # next put together nominal samples with with weight uncerts.
-    nominal_files = base_path + 'Files_and_Plots_nominal/SFrame/nominal/workdir/uhh2*.root' 
+    nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
         (sample, list(f for f in glob.glob(nominal_files) if sample in f))
         for sample in samples
@@ -165,7 +183,6 @@ def mk_sys_tps():
     )
     sys_tps += list(
         TreeProjector(
-            samples, 
             filenames, 
             sys_params, 
             ssw,

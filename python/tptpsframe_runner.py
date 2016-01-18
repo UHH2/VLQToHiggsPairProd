@@ -213,9 +213,9 @@ def mk_sframe_tools_and_plot(name='All_Files'):
         [
             git.GitAdder(),
             tc,
-            varial.tools.WebCreator(no_tool_check=False),
             git.GitTagger()
-            ]
+            # varial.tools.WebCreator(no_tool_check=False),
+        ]
     )
 
 

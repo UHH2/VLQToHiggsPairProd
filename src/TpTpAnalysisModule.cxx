@@ -231,20 +231,20 @@ bool TpTpAnalysisModule::process(Event & event) {
 
     // run all modules
 
-    sort_by_pt(*event.jets);
-    sort_by_pt(*event.topjets);
-    sort_by_pt(event.get(patjets_));
+    // sort_by_pt(*event.jets);
+    // sort_by_pt(*event.topjets);
+    // sort_by_pt(event.get(patjets_));
 
-    std::cout << "AFTER lepton cleaning:\n";
-    std::cout << "  Ak4 jets:";
-    for (auto const & jet : *event.jets) {std::cout << " " << jet.pt();}
-    std::cout << std::endl;
-    std::cout << "  Slimmed Ak8 jets:";
-    for (auto const & jet : *event.topjets) {std::cout << " " << jet.pt();}
-    std::cout << std::endl;
-    std::cout << "  Packed Ak8 jets:";
-    for (auto const & jet : event.get(patjets_)) {std::cout << " " << jet.pt();}
-    std::cout << std::endl;
+    // std::cout << "AFTER lepton cleaning:\n";
+    // std::cout << "  Ak4 jets:";
+    // for (auto const & jet : *event.jets) {std::cout << " " << jet.pt();}
+    // std::cout << std::endl;
+    // std::cout << "  Slimmed Ak8 jets:";
+    // for (auto const & jet : *event.topjets) {std::cout << " " << jet.pt();}
+    // std::cout << std::endl;
+    // std::cout << "  Packed Ak8 jets:";
+    // for (auto const & jet : event.get(patjets_)) {std::cout << " " << jet.pt();}
+    // std::cout << std::endl;
 
     for (auto & mod : common_modules) {
         mod->process(event);
