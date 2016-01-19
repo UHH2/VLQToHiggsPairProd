@@ -14,7 +14,7 @@ import tptpsframe_runner as sframe
 from varial.extensions import git
 
 
-varial.settings.max_num_processes = 24
+varial.settings.max_num_processes = 1
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -81,7 +81,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 'Histograms',
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None),
-                    # sensitivity.mk_limit_chain('Ind_Limits', output_dir+'/Inputs/SysTreeProjectors/*/*.root'), # 
+                    sensitivity.mk_tc('Limits'), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),
@@ -90,7 +90,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 #     # sensitivity.tc,
                 # ]
             ),
-            git.GitTagger(),
+            git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
 
             # varial.tools.PrintToolTree(),
             varial.tools.WebCreator(),
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 3:
         print 'Provide input_dir and output_dir!'
         exit(-1)
-    varial.tools.Runner(run_treeproject_and_plot(sys.argv[1], sys.argv[2]))
+    varial.tools.Runner(run_treeproject_and_plot(sys.argv[1], sys.argv[2]), True)
 
 # varial.settings.rootfile_postfixes += ['.pdf']
 # varial.tools.Runner(tc, True)

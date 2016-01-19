@@ -3,24 +3,62 @@ from array import array
 import glob
 import os
 
+import varial.settings
 import varial.tools
 import varial.wrappers as wrappers
 import varial.util as util
 
-colors = {  "" : 2,
-            "loose" : 2,
-            "med" : 3,
-            "MedNoCat" : 3,
-            "MedCat" : 4}
+from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits
+
+# colors = {  "" : 2,
+#             "loose" : 2,
+#             "med" : 3,
+#             "MedNoCat" : 3,
+#             "MedCat" : 4}
+
+# class TpTpLimitsWithProperties(TpTpThetaLimits):
+#     def __init__(self, selection, color, *args ,**kws):
+#         super(TpTpLimitsWithProperties, self).__init__(*args, **kws)
+#         self.selection = selection
+#         self.color = color
+
+#     def run(self):
+#         super(TpTpLimitsWithProperties, self).run()
+#         self.result
 
 class LimitGraphs(varial.tools.Tool):
     def __init__(self,
         name=None,
-        limit_rel_path=''
+        limit_rel_path='',
+        plot_obs=False
     ):
         super(LimitGraphs, self).__init__(name)
         self.limit_rel_path = limit_rel_path
+        self.plot_obs = plot_obs
 
+    def make_graph(self, wrp, obs=False):
+        x_arr = array('f', wrp.res_exp_x)
+        y_arr = array('f', wrp.res_exp_y)
+        lim_graph = TGraph(len(x_arr), x_arr, y_arr)
+        if obs:
+            lim_graph.SetLineStyle(8)
+            lim_type='Obs'
+        else:
+            lim_type='Exp'
+        selection = varial.settings.pretty_names[wrp.name]
+        color = varial.settings.colors[wrp.name]
+        lim_graph.SetLineColor(color)
+        lim_graph.SetLineWidth(2)
+        lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
+        lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
+        lim_wrapper = wrappers.GraphWrapper(lim_graph,
+            legend=lim_type+' 95% CL '+selection,
+            save_name='tH%.0ftZ%.0fbW%.0f' % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100),
+            # selection=wrp.selection,
+            # lim_type='exp',
+            draw_option='L'
+            )
+        return lim_wrapper
 
     def run(self):
         # parents = os.listdir(self.cwd+'/..')
@@ -30,35 +68,9 @@ class LimitGraphs(varial.tools.Tool):
         # f.cd()
         list_graphs=[]
         for w in wrps:
-            x_arr = array('f', w.res_exp_x)
-            y_arr = array('f', w.res_exp_y)
-            lim_graph = TGraph(len(x_arr), x_arr, y_arr)
-            lim_graph.SetLineColor(colors[w.sig_cat])
-            lim_graph.SetLineWidth(2)
-            lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
-            lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
-            list_graphs.append(wrappers.GraphWrapper(lim_graph,
-                legend='Exp 95% CL '+w.sig_cat,
-                save_name='tH%.0ftZ%.0fbW%.0f' % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100),
-                sig_cat=w.sig_cat,
-                lim_type='exp',
-                draw_option='L'
-                ))
-            x_arr = array('f', w.res_obs_x)
-            y_arr = array('f', w.res_obs_y)
-            lim_graph = TGraph(len(x_arr), x_arr, y_arr)
-            lim_graph.SetLineStyle(8)
-            lim_graph.SetLineColor(colors[w.sig_cat])
-            lim_graph.SetLineWidth(2)
-            lim_graph.GetXaxis().SetTitle("m_{T'} [GeV]")
-            lim_graph.GetYaxis().SetTitle("#sigma x BR [pb]")
-            list_graphs.append(wrappers.GraphWrapper(lim_graph,
-                legend='Obs 95% CL '+w.sig_cat,
-                save_name='tH%.0ftZ%.0fbW%.0f' % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100),
-                sig_cat=w.sig_cat,
-                lim_type='obs',
-                draw_option='L'
-                ))
+            list_graphs.append(self.make_graph(w))
+            if self.plot_obs:
+                list_graphs.append(self.make_graph(w, True))
         # tri_hist.Write()
         self.result = list_graphs
         # f.Close()

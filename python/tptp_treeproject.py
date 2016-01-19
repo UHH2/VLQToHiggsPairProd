@@ -79,30 +79,23 @@ samples = [
     'Run2015D',
 ] +  reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals))
 
-baseline_selection = [
-    'gendecay_accept        == 1',
-    'n_ak8                  > 2'
-]
 
-sr2b_selection = baseline_selection + [
-    'n_higgs_tags_2b_med    >= 1',
-]
-sr1b_selection = baseline_selection + [
-    'n_higgs_tags_2b_med    == 0',
-    'n_higgs_tags_1b_med    >= 1',
-]
-
-sb_selection = baseline_selection + [
-    'n_higgs_tags_1b_med        == 0',
-    'n_additional_btags_medium  >= 1',
-]
-
+import tptp_selections_treeproject as sel
 
 sec_sel_weight = [
-    ('BaseLineSelection', baseline_selection, 'weight'),
-    ('SignalRegion2b', sr2b_selection, 'weight'),
-    ('SignalRegion1b', sr1b_selection, 'weight'),
-    ('SidebandRegion', sb_selection, 'weight'),
+    ('BaseLineSelection', sel.baseline_selection, 'weight'),
+    ('SignalRegion2b_0addB_3ak8', sel.sr2b_selection_0b_3ak8, 'weight'),
+    ('SignalRegion1b_0addB_3ak8', sel.sr1b_selection_0b_3ak8, 'weight'),
+    ('SidebandRegion_0addB_3ak8', sel.sb_selection_0b_3ak8, 'weight'),
+    ('SignalRegion2b_0addB_2ak8', sel.sr2b_selection_0b_2ak8, 'weight'),
+    ('SignalRegion1b_0addB_2ak8', sel.sr1b_selection_0b_2ak8, 'weight'),
+    ('SidebandRegion_0addB_2ak8', sel.sb_selection_0b_2ak8, 'weight'),
+    ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
+    ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
+    ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
+    ('SignalRegion2b_1addB_2ak8', sel.sr2b_selection_1b_2ak8, 'weight'),
+    ('SignalRegion1b_1addB_2ak8', sel.sr1b_selection_1b_2ak8, 'weight'),
+    ('SidebandRegion_1addB_2ak8', sel.sb_selection_1b_2ak8, 'weight'),
 ]
 
 

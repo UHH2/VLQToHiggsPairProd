@@ -12,6 +12,7 @@ import varial.analysis as analysis
 import varial.wrappers as wrappers
 import varial.plotter
 import varial.rendering
+import varial.settings
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
@@ -32,7 +33,7 @@ br_list = []
 # only br_th = 100% for now
 # bw_max = 1
 bw_max = 0
-for bw_br in [i/10. for i in range(0, (bw_max*10)+2, 2)]:
+for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
     # tz_max = 1.0-bw_br
     tz_max = 0
     for tz_br in [ii/10. for ii in range(0, int(tz_max*10)+2, 2)]:
@@ -44,7 +45,7 @@ for bw_br in [i/10. for i in range(0, (bw_max*10)+2, 2)]:
             'tz' : tz_br
         })
 
-def select_files(categories=None):
+def select_files(categories=None, var=''):
     def tmp(wrp):
         file_path = wrp.file_path
         in_file_path = wrp.in_file_path
@@ -53,7 +54,7 @@ def select_files(categories=None):
         if (file_path.endswith('.root')
                 # and 'DATA' not in file_path\
                 # and in_file_path.endswith('PostSelection/ST')
-                and in_file_path.endswith('ST')
+                and in_file_path.endswith(var)
                 # and (wrp.in_file_path.split('/')[1] in categories if categories else True)) :
                 and (wrp.in_file_path.split('/')[0] in categories if categories else True)) :
             # print wrp
@@ -115,14 +116,13 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         save_name_func=lambda w: w.category
     )
     limits = TpTpThetaLimits(
-        name='TpTpThetaLimits',
+        name='Limit'+name,
         # input_path= '../HistoLoader',
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
         # asymptotic= False,
         brs=brs,
-        sig_cat=name,
         model_func= lambda w: model_vlqpair.get_model(w, [
             # 'TpTp_M-700',
             'TpTp_M-800',
@@ -152,17 +152,41 @@ def mk_limit_list(sys_pat=''):
             # if ind > 2: break
             tc = []
             tc.append(varial.tools.ToolChain(
-                'WithSB',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b", "SidebandRegion"]), name='WithSB', sys_pat=sys_pat))
+                'UncleanedNobtag3Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST'), name='UncleanedNobtag3Ak8', sys_pat=sys_pat))
             )
             tc.append(varial.tools.ToolChain(
-                'NoSB',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b"]), name='NoSB', sys_pat=sys_pat))
+                'CleanedNobtag3Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST_cleaned'), name='CleanedNobtag3Ak8', sys_pat=sys_pat))
             )
-            # tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal", "HiggsTag2bMed-Signal"]), 'MedNoCat'))
-            # tc.extend(mk_limit_tc(brs_, select_files(["HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB",
-            #             "HiggsTag1bMed-Signal-3addB", "HiggsTag2bMed-Signal"]),
-            #             'MedCat'))
+            tc.append(varial.tools.ToolChain(
+                'UncleanedWbtag3Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST'), name='UncleanedWbtag3Ak8', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'CleanedWbtag3Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST_cleaned'), name='CleanedWbtag3Ak8', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'UncleanedNobtag2Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST'), name='UncleanedNobtag2Ak8', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'CleanedNobtag2Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST_cleaned'), name='CleanedNobtag2Ak8', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'UncleanedWbtag2Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST'), name='UncleanedWbtag2Ak8', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'CleanedWbtag2Ak8',
+                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST_cleaned'), name='CleanedWbtag2Ak8', sys_pat=sys_pat))
+            )
+            # tc.append(varial.tools.ToolChain(
+            #     'NoSB',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b"]), name='NoSB', sys_pat=sys_pat))
+            # )
             limit_list.append(
                 varial.tools.ToolChainParallel('Limit'+str(ind),tc))
         return limit_list
@@ -172,7 +196,7 @@ def mk_limit_list(sys_pat=''):
 # tool_list.append(TriangleLimitPlots())
 
 def mk_limit_chain(name='Ind_Limits', sys_pat=''):
-    return varial.tools.ToolChainParallel(
+    return varial.tools.ToolChain(
         name, lazy_eval_tools_func=mk_limit_list(sys_pat)
         )
 
@@ -194,12 +218,32 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     # print list(grps)
     return grps
 
+varial.settings.pretty_names = {
+    'LimitUncleanedNobtag3Ak8' : 'UncleanedNobtag3Ak8',
+    'LimitCleanedNobtag3Ak8' : 'CleanedNobtag3Ak8',
+    'LimitUncleanedWbtag3Ak8' : 'UncleanedWbtag3Ak8',
+    'LimitCleanedWbtag3Ak8' : 'CleanedWbtag3Ak8',
+    'LimitUncleanedNobtag2Ak8' : 'UncleanedNobtag2Ak8',
+    'LimitCleanedNobtag2Ak8' : 'CleanedNobtag2Ak8',
+    'LimitUncleanedWbtag2Ak8' : 'UncleanedWbtag2Ak8',
+    'LimitCleanedWbtag2Ak8' : 'CleanedWbtag2Ak8',
+}
 
+varial.settings.colors = {
+    'LimitCleanedNobtag3Ak8' : 2,
+    'LimitCleanedWbtag3Ak8' : 3,
+    'LimitCleanedNobtag2Ak8' : 4,
+    'LimitCleanedWbtag2Ak8' : 5,
+    'LimitUncleanedNobtag3Ak8' : 2,
+    'LimitUncleanedWbtag3Ak8' : 3,
+    'LimitUncleanedNobtag2Ak8' : 4,
+    'LimitUncleanedWbtag2Ak8' : 5,
+}
 
-def mk_tc(dir_limit):
+def mk_tc(dir_limit='Limits', sys_pat=''):
     return varial.tools.ToolChain(dir_limit, 
         [
-        mk_limit_chain(),
+        mk_limit_chain(sys_pat=sys_pat),
         # varial.tools.ToolChain('LimitTriangle',[
         #     TriangleLimitPlots(
         #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
@@ -210,12 +254,30 @@ def mk_tc(dir_limit):
         #         save_name_func=lambda w: 'M-'+str(w.mass)
         #         ),
         #     ]),
-        varial.tools.ToolChain('LimitGraphs',[
+        varial.tools.ToolChain('LimitsWithGraphs',[
             limit_plots.LimitGraphs(
-                limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits*'
+                limit_rel_path='../Ind_Limits/Limit*/*/Limit*'
                 ),
             varial.plotter.Plotter(
+                name='Uncleaned',
                 input_result_path='../LimitGraphs',
+                filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                # plot_setup=plot_setup,
+                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+                plot_grouper=lambda ws: varial.gen.group(
+                        ws, key_func=lambda w: w.save_name),
+                # save_name_func=varial.plotter.save_by_name_with_hash
+                save_name_func=lambda w: w.save_name,
+                plot_setup=lambda w: plot_setup_graphs(w,
+                    th_x=common_sensitivity.theory_masses,
+                    th_y=common_sensitivity.theory_cs),
+                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+                save_lin_log_scale=True
+                ),
+            varial.plotter.Plotter(
+                name='Cleaned',
+                input_result_path='../LimitGraphs',
+                filter_keyfunc=lambda w: 'Cleaned' in w.legend,
                 # plot_setup=plot_setup,
                 hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
                 plot_grouper=lambda ws: varial.gen.group(

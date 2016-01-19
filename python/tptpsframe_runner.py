@@ -213,7 +213,7 @@ def mk_sframe_tools_and_plot(name='All_Files'):
         [
             git.GitAdder(),
             tc,
-            git.GitTagger()
+            git.GitTagger(commit_prefix='In {0}'.format(name))
             # varial.tools.WebCreator(no_tool_check=False),
         ]
     )
