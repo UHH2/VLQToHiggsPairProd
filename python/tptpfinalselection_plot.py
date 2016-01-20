@@ -41,7 +41,7 @@ datasets_to_plot = [
     'TTbar',
     'WJets',
     'DYJets',
-    'ST',
+    'SingleTop',
 ]
 
 def add_fs_info(wrps):
@@ -52,6 +52,7 @@ def add_fs_info(wrps):
 
 def mk_cutflow_chain_cat(category, loader_hook):
     cutflow_histos = varial.tools.HistoLoader(
+        pattern='../../../../Hadd/*.root',
         name='CutflowHistos',
         # pattern=common_plot.file_select(datasets_to_plot),
         # input_result_path='../../../../HistoLoader',
@@ -89,27 +90,27 @@ def mk_cutflow_chain_cat(category, loader_hook):
         # cutflow_tables.CutflowTableTex(None, True),
     ])
 
-def loader_hook_finalstates_incl(wrps):
-    wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        finalstate = lambda w: w.in_file_path.split('/')[0],
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
-    wrps = gen.sort(wrps, ['sample', 'in_file_path'])
-    # wrps = list(wrps)
-    # for w in wrps: print w.sample, w.in_file_path 
-    wrps = common_plot.merge_finalstates_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
-    wrps = common_plot.merge_finalstates_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
-    return wrps
+# def loader_hook_finalstates_incl(wrps):
+#     wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
+#     wrps = gen.gen_add_wrp_info(
+#         wrps,
+#         finalstate = lambda w: w.in_file_path.split('/')[0],
+#         # variable=lambda w: w.in_file_path.split('/')[-1]
+#         )
+#     wrps = gen.gen_add_wrp_info(
+#         wrps,
+#         in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
+#         # variable=lambda w: w.in_file_path.split('/')[-1]
+#         )
+#     wrps = gen.sort(wrps, ['sample', 'in_file_path'])
+#     # wrps = list(wrps)
+#     # for w in wrps: print w.sample, w.in_file_path 
+#     wrps = common_plot.merge_finalstates_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
+#     wrps = common_plot.merge_finalstates_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
+#     return wrps
 
 def loader_hook_finalstates_excl(wrps):
-    wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
+    wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors, rebin_max_bins=60)
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
@@ -137,7 +138,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None):
                 pattern=src,
                 # input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
+                filter_keyfunc=lambda w: any(f in w.file_path for f in datasets_to_plot),# and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory,
                 # combine_files=True,
@@ -185,7 +186,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     tc = varial.tools.ToolChain(
         version,
         [
-            hadd,
+            # hadd,
             # histo_loader,
             plots,
             # varial.tools.ToolChainParallel(

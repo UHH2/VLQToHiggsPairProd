@@ -16,7 +16,9 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.MC_DYJetsToLL',
     'MC.MC_ST',
     'MC.MC_TTbar',
+    'MC.MC_TpTp_M-700_thth', 'MC.MC_TpTp_M-700_thtz', 'MC.MC_TpTp_M-700_thbw', 'MC.MC_TpTp_M-700_noH_tztz', 'MC.MC_TpTp_M-700_noH_tzbw', 'MC.MC_TpTp_M-700_noH_bwbw',
     'MC.MC_TpTp_M-800_thth', 'MC.MC_TpTp_M-800_thtz', 'MC.MC_TpTp_M-800_thbw', 'MC.MC_TpTp_M-800_noH_tztz', 'MC.MC_TpTp_M-800_noH_tzbw', 'MC.MC_TpTp_M-800_noH_bwbw',
+    'MC.MC_TpTp_M-900_thth', 'MC.MC_TpTp_M-900_thtz', 'MC.MC_TpTp_M-900_thbw', 'MC.MC_TpTp_M-900_noH_tztz', 'MC.MC_TpTp_M-900_noH_tzbw', 'MC.MC_TpTp_M-900_noH_bwbw',
     'MC.MC_TpTp_M-1000_thth', 'MC.MC_TpTp_M-1000_thtz', 'MC.MC_TpTp_M-1000_thbw', 'MC.MC_TpTp_M-1000_noH_tztz', 'MC.MC_TpTp_M-1000_noH_tzbw', 'MC.MC_TpTp_M-1000_noH_bwbw',
     'MC.MC_TpTp_M-1200_thth', 'MC.MC_TpTp_M-1200_thtz', 'MC.MC_TpTp_M-1200_thbw', 'MC.MC_TpTp_M-1200_noH_tztz', 'MC.MC_TpTp_M-1200_noH_tzbw', 'MC.MC_TpTp_M-1200_noH_bwbw',
     'MC.MC_TpTp_M-1400_thth', 'MC.MC_TpTp_M-1400_thtz', 'MC.MC_TpTp_M-1400_thbw', 'MC.MC_TpTp_M-1400_noH_tztz', 'MC.MC_TpTp_M-1400_noH_tzbw', 'MC.MC_TpTp_M-1400_noH_bwbw',
@@ -31,7 +33,9 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.DYJetsToLL',
     'MC.SingleTop',
     'MC.TTbar',
+    'MC.TpTp_M-700',
     'MC.TpTp_M-800',
+    'MC.TpTp_M-900',
     'MC.TpTp_M-1000',
     'MC.TpTp_M-1200',
     'MC.TpTp_M-1400',
@@ -101,83 +105,83 @@ def file_select(datasets_to_plot=common_datasets_to_plot, src=''):
 
 #====GENERAL FUNCTIONS====
 
-def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=True):
-    """histos must be sorted!!"""
+# def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=True):
+#     """histos must be sorted!!"""
 
-    @varial.history.track_history
-    def merge_decay_channel(w):
-        return w
+#     @varial.history.track_history
+#     def merge_decay_channel(w):
+#         return w
 
-    def do_merging(buf):
-        res = varial.operations.merge(buf)
-        res.sample = res.sample+suffix
-        res.legend = res.legend+suffix
-        # res.in_file_path = buf[0].in_file_path[1:]
-        del buf[:]
-        return merge_decay_channel(res)
+#     def do_merging(buf):
+#         res = varial.operations.merge(buf)
+#         res.sample = res.sample+suffix
+#         res.legend = res.legend+suffix
+#         # res.in_file_path = buf[0].in_file_path[1:]
+#         del buf[:]
+#         return merge_decay_channel(res)
 
-    buf = []
-    for w in wrps:
-        if any(w.finalstate == p for p in finalstates):
-            buf.append(w)
-            if len(buf) == len(finalstates):
-                yield do_merging(buf)
-        else:
-            if buf:
-                if print_warning:
-                    print 'WARNING In merge_decay_channels: buffer not empty.\n' \
-                          'finalstates:\n' + str(finalstates) + '\n' \
-                          'Flushing remaining items:\n' + '\n'.join(
-                        '%s, %s' % (w.sample, w.in_file_path) for w in buf
-                    )
-                yield do_merging(buf)
-            yield w
-    if buf:
-        yield do_merging(buf)
+#     buf = []
+#     for w in wrps:
+#         if any(w.finalstate == p for p in finalstates):
+#             buf.append(w)
+#             if len(buf) == len(finalstates):
+#                 yield do_merging(buf)
+#         else:
+#             if buf:
+#                 if print_warning:
+#                     print 'WARNING In merge_decay_channels: buffer not empty.\n' \
+#                           'finalstates:\n' + str(finalstates) + '\n' \
+#                           'Flushing remaining items:\n' + '\n'.join(
+#                         '%s, %s' % (w.sample, w.in_file_path) for w in buf
+#                     )
+#                 yield do_merging(buf)
+#             yield w
+#     if buf:
+#         yield do_merging(buf)
 
-def merge_samples(wrps):
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_Pt80to120_MuEnr',
-        '_Pt120to170_MuEnr',
-        '_Pt170to300_MuEnr',
-        '_Pt300to470_MuEnr',
-        '_Pt470to600_MuEnr',
-        '_Pt600to800_MuEnr',
-        '_Pt800to1000_MuEnr',
-        '_Pt1000toInf_MuEnr',
-    ), print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        'ToLL_HT100to200',
-        'ToLL_HT200to400',
-        'ToLL_HT400to600',
-        'ToLL_HT600toInf',
-    ), print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_tChannel',
-        '_WAntitop',
-        '_WTop',
-        '_sChannel',
-    ))
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_Mtt0to700',
-        '_Mtt700to1000',
-        '_Mtt1000toInf',
-    ))
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_LNu_HT100To200',
-        '_LNu_HT200To400',
-        '_LNu_HT400To600',
-        '_LNu_HT600To800',
-        '_LNu_HT800To1200',
-        '_LNu_HT1200To2500',
-        '_LNu_HT2500ToInf',        
-    ), print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, (
-        '_Ele',
-        '_Mu',
-        '_Had'
-    ), print_warning=False)
-    return wrps
+# def merge_samples(wrps):
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         '_Pt80to120_MuEnr',
+#         '_Pt120to170_MuEnr',
+#         '_Pt170to300_MuEnr',
+#         '_Pt300to470_MuEnr',
+#         '_Pt470to600_MuEnr',
+#         '_Pt600to800_MuEnr',
+#         '_Pt800to1000_MuEnr',
+#         '_Pt1000toInf_MuEnr',
+#     ), print_warning=False)
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         'ToLL_HT100to200',
+#         'ToLL_HT200to400',
+#         'ToLL_HT400to600',
+#         'ToLL_HT600toInf',
+#     ), print_warning=False)
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         '_tChannel',
+#         '_WAntitop',
+#         '_WTop',
+#         '_sChannel',
+#     ))
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         '_Mtt0to700',
+#         '_Mtt700to1000',
+#         '_Mtt1000toInf',
+#     ))
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         '_LNu_HT100To200',
+#         '_LNu_HT200To400',
+#         '_LNu_HT400To600',
+#         '_LNu_HT600To800',
+#         '_LNu_HT800To1200',
+#         '_LNu_HT1200To2500',
+#         '_LNu_HT2500ToInf',        
+#     ), print_warning=False)
+#     wrps = vlq_common.merge_decay_channels(wrps, (
+#         '_Ele',
+#         '_Mu',
+#         '_Had'
+#     ), print_warning=False)
+#     return wrps
 
 def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
     for w in wrps:
@@ -229,12 +233,14 @@ def mod_legend(wrps):
     for w in wrps:
         if w.legend.startswith('MC_'):
             w.legend = w.legend[3:]
+        if w.is_data:
+            w.legend = 'data'
         yield w
 
 #====LOADER HOOKS====
 
 def loader_hook(wrps):
-    wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators)
+    wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators, use_hadd_sample=False)
     # wrps = gen.sort(wrps)
     wrps = mod_legend(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
@@ -247,7 +253,9 @@ def loader_hook(wrps):
 
 #====FOR STACKPLOTS====
 
-def loader_hook_norm_smpl(wrps, smpl_fct=None):
+def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
+    if rebin_max_bins:
+        wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, rebin_max_bins)
     wrps = loader_hook(wrps)
     # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
     wrps = norm_smpl(wrps, smpl_fct)

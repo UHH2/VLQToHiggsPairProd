@@ -47,37 +47,37 @@ settings.colors.update({
 # settings.max_num_processes = 20
 
 # sample definitions
-smpls = list()
+# smpls = list()
 
 
-smpls.append(Sample(
-    name='MC_QCD',
-    legend='MC_QCD'
-))
+# smpls.append(Sample(
+#     name='QCD',
+#     legend='QCD'
+# ))
 
-smpls.append(Sample(
-    name='MC_TTbar',
-    legend='MC_TTbar'
-))
+# smpls.append(Sample(
+#     name='TTbar',
+#     legend='TTbar'
+# ))
 
-smpls.append(Sample(
-    name='MC_WJets',
-    legend='MC_WJets'
-))
+# smpls.append(Sample(
+#     name='WJets',
+#     legend='WJets'
+# ))
 
-smpls.append(Sample(
-    name='MC_ZJets',
-    legend='MC_ZJets'
-))
+# smpls.append(Sample(
+#     name='DYJetsToLL',
+#     legend='DYJetsToLL'
+# ))
 
-smpls.append(Sample(
-    name='MC_ST',
-    legend='MC_ST'
-))
+# smpls.append(Sample(
+#     name='SingleTop',
+#     legend='SingleTop'
+# ))
 
-analysis.all_samples = dict((s.name, s) for s in smpls)
+# analysis.all_samples = dict((s.name, s) for s in smpls)
 
-settings.stacking_order = ['MC_ZJets', 'MC_WJets', 'MC_ST', 'MC_TTBar', 'MC_QCD']
+settings.stacking_order = ['TTBar', 'WJets', 'DYJetsToLL', 'SingleTop', 'QCD']
 
 # default_colors = [632, 814, 596, 870, 434, 840, 902, 797, 800, 891, 401, 800,
 #                   838, 420, 403, 893, 881, 804, 599, 615, 831, 403, 593, 872]

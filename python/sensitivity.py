@@ -218,7 +218,7 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     # print list(grps)
     return grps
 
-varial.settings.pretty_names = {
+varial.settings.pretty_names.update({
     'LimitUncleanedNobtag3Ak8' : 'UncleanedNobtag3Ak8',
     'LimitCleanedNobtag3Ak8' : 'CleanedNobtag3Ak8',
     'LimitUncleanedWbtag3Ak8' : 'UncleanedWbtag3Ak8',
@@ -227,9 +227,9 @@ varial.settings.pretty_names = {
     'LimitCleanedNobtag2Ak8' : 'CleanedNobtag2Ak8',
     'LimitUncleanedWbtag2Ak8' : 'UncleanedWbtag2Ak8',
     'LimitCleanedWbtag2Ak8' : 'CleanedWbtag2Ak8',
-}
+})
 
-varial.settings.colors = {
+varial.settings.colors.update({
     'LimitCleanedNobtag3Ak8' : 2,
     'LimitCleanedWbtag3Ak8' : 3,
     'LimitCleanedNobtag2Ak8' : 4,
@@ -238,7 +238,7 @@ varial.settings.colors = {
     'LimitUncleanedWbtag3Ak8' : 3,
     'LimitUncleanedNobtag2Ak8' : 4,
     'LimitUncleanedWbtag2Ak8' : 5,
-}
+})
 
 def mk_tc(dir_limit='Limits', sys_pat=''):
     return varial.tools.ToolChain(dir_limit, 

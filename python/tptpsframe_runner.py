@@ -199,7 +199,7 @@ class MySFrameBatch(SFrame):
         else:
             opt = ' -sl --exitOnQuestion'
 
-        self.exe = 'sframe_batch.py' #+ opt
+        self.exe = 'sframe_batch.py' + opt
 
 
 
@@ -244,35 +244,35 @@ def mk_sframe_tools_and_plot(argv):
         print "Provide correct 'selection' option ('pre' or 'final')!"
         exit(-1)
 
-    tc = ToolChain('Files_and_Plots',
-            list(
-                varial.tools.ToolChain('Files_and_Plots_'+uncert,
-                    [
-                    MySFrameBatch(
-                        cfg_filename=sframe_cfg,
-                        # xml_tree_callback=set_uncert_func(uncert),
-                        xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
-                            uncert_name=uncert, categories=categories),
-                        name='SFrame',
-                        # name='SFrame_' + uncert,
-                        halt_on_exception=False,
-                        ),
-                    final_plotting.hadd_and_plot(version='Plots',
-                        src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-                        categories=categories, basenames=basenames)
-                    ]
-                    )
-                for uncert in sys_uncerts
-            )
-        )
+    print varial.settings.colors
 
     return varial.tools.ToolChain(
         options.outputdir,
         [
             git.GitAdder(),
-            tc,
-            git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+            tools.ToolChain('Files_and_Plots',
+                list(
+                    varial.tools.ToolChain('Files_and_Plots_'+uncert,
+                        [
+                        MySFrameBatch(
+                            cfg_filename=sframe_cfg,
+                            # xml_tree_callback=set_uncert_func(uncert),
+                            xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
+                                uncert_name=uncert, categories=categories),
+                            name='SFrame',
+                            # name='SFrame_' + uncert,
+                            halt_on_exception=False,
+                            ),
+                        final_plotting.hadd_and_plot(version='Plots',
+                            src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+                            categories=categories, basenames=basenames)
+                        ]
+                        )
+                    for uncert in sys_uncerts
+                )
+            ),
             varial.tools.WebCreator(no_tool_check=False),
+            git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
         ]
     )
 
@@ -281,4 +281,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv))
