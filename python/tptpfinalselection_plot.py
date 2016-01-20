@@ -138,7 +138,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None):
                 pattern=src,
                 # input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in datasets_to_plot),# and 'noH' not in w.sample,
+                filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory,
                 # combine_files=True,
@@ -186,7 +186,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     tc = varial.tools.ToolChain(
         version,
         [
-            # hadd,
+            hadd,
             # histo_loader,
             plots,
             # varial.tools.ToolChainParallel(

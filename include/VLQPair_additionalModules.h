@@ -625,6 +625,58 @@ private:
 };
 
 
+class TopJetDeltaRProducer: public AnalysisModule {
+public:
+
+    explicit TopJetDeltaRProducer(Context & ctx,
+                                std::string const & in_name,
+                                unsigned part_ind = 1,
+                                std::string const & h_primlep = "PrimaryLepton"):
+        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+        part_ind_(part_ind),
+        h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)),
+        h_deltaRlep_(ctx.get_handle<float>("deltaRlep_"+in_name+"_"+std::to_string(part_ind))),
+        h_deltaRak4_(ctx.get_handle<float>("deltaRak4_"+in_name+"_"+std::to_string(part_ind))),
+        h_deltaRak8_(ctx.get_handle<float>("deltaRak8_"+in_name+"_"+std::to_string(part_ind))) {}
+
+    bool process(Event & event) override {
+        if (!event.is_valid(in_hndl)) {
+            std::cout << "Error in TopJetDeltaRProducer: input handle not valid!\n";
+            assert(false);
+        }
+        vector<TopJet> const & coll = event.get(in_hndl);
+        float dRlep = -1.f;
+        float dRak4 = -1.f;
+        float dRak8 = -1.f;
+        if (coll.size() >= part_ind_ ) {
+            TopJet const & tj = coll[part_ind_-1];
+            if (event.is_valid(h_primlep_)) {
+                dRlep = deltaR(tj, event.get(h_primlep_));
+            }
+            auto const * closest_ak4 = closestParticle(tj, *event.jets);
+            if (closest_ak4) {
+                dRak4 = deltaR(tj, *closest_ak4);
+            }
+            auto const * closest_ak8 = closestParticle(tj, *event.topjets);
+            if (closest_ak8) {
+                dRak8 = deltaR(tj, *closest_ak8);
+            }
+        }
+        event.set(h_deltaRlep_, dRlep);
+        event.set(h_deltaRak4_, dRak4);
+        event.set(h_deltaRak8_, dRak8);
+        return true;
+
+    }
+
+private:
+    Event::Handle<vector<TopJet>> in_hndl;
+    unsigned part_ind_;
+    Event::Handle<FlavorParticle> h_primlep_;
+    Event::Handle<float> h_deltaRlep_, h_deltaRak4_, h_deltaRak8_;
+};
+
+
 class TopJetVarProducer: public AnalysisModule {
 public:
 
@@ -763,6 +815,169 @@ private:
 
 // };
 
+// template<typename T>
+// class NParticleMultiVarProducer : public AnalysisModule {
+// public:
+
+//     explicit NParticleMultiVarProducer(Context & ctx,
+//                         const string & h_in,
+//                         const vector<string> & variables = {"n", "pt", "eta", "phi"},
+//                         unsigned part_ind = 1,
+//                         const string & h_primlep = "PrimaryLepton") :
+//         h_name_(h_in),
+//         h_in_(ctx.get_handle<vector<T>>(h_in)),
+//         part_ind_(part_ind),
+//         h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep))
+//         {
+//             // === TEST: test if it's possible to make hist names without handle names
+//             for (string const & var : variables) {
+//                 if (var == "n") hists_[var] = book<TH1F>("n", "n", 10, -.5, 9.5);
+//                 if (var == "n_subjets") hists_[var] = book<TH1F>("n_subjets", "n_subjets", 10, -.5, 9.5);
+//                 if (var == "pt") hists_[var] = book<TH1F>("pt", "pt", 60, 0., 1500.);
+//                 if (var == "eta") hists_[var] = book<TH1F>("eta", "eta", 50, -3., 3.);
+//                 if (var == "phi") hists_[var] = book<TH1F>("phi", "phi", 50, -3.14, 3.14);
+//                 if (var == "mass") hists_[var] = book<TH1F>("mass", "mass", 60, 0., 300.);
+//                 if (var == "mass_sj") hists_[var] = book<TH1F>("mass_sj", "mass sj", 60, 0., 300.);
+//                 if (var == "tau21") hists_[var] = book<TH1F>("tau21", "tau21", 50, 0., 1.);
+//                 if (var == "tau32") hists_[var] = book<TH1F>("tau32", "tau32", 50, 0., 1.);
+//                 if (var == "csv_first_sj") hists_[var] = book<TH1F>("csv_first_sj", "csv_first_sj", 50, 0., 1.);
+//                 if (var == "csv_second_sj") hists_[var] = book<TH1F>("csv_second_sj", "csv_second_sj", 50, 0., 1.);
+//                 if (var == "csv_max_sj") hists_[var] = book<TH1F>("csv_max_sj", "csv_max_sj", 50, 0., 1.);
+//                 if (var == "dRlepton") hists_[var] = book<TH1F>("dRlepton", "dR(ak8 jet, lepton)", 50, 0., 5.);
+//                 if (var == "dRak4") hists_[var] = book<TH1F>("dRak4", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.);
+//                 if (var == "dRak8") hists_[var] = book<TH1F>("dRak8", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.);
+//                 if (split(var, "-")[0] == "n_sjbtags") hists_[var] = book<TH1F>("n_sjbtags_"+split(var, "-")[1], "N sjbtags "+split(var, "-")[1], 5, -.5, 4.5);
+//             }  
+//         }
+
+//     bool process(Event & event) override {
+//         bool is_topjet = std::is_same<T, TopJet>::value;
+//         double w = event.weight;
+//         // double w = 1.;
+//         if (!event.is_valid(h_in_)) {
+//             cout << "WARNING: handle " << h_name_ <<" in NParticleMultiHistProducer not valid!\n";
+//             return;
+//         }
+//         vector<T> const & coll = event.get(h_in_);
+//         for (map<string, TH1F*>::const_iterator it = hists_.begin(); it != hists_.end(); ++it) {
+//             if (it->first == "n") it->second->Fill(coll.size(), w);
+//             if (coll.size() >= part_ind_) {
+//                 T const & particle = coll[part_ind_-1];
+//                 if (it->first == "pt") it->second->Fill(particle.pt(), w);
+//                 if (it->first == "eta") it->second->Fill(particle.eta(), w);
+//                 if (it->first == "phi") it->second->Fill(particle.phi(), w);
+//                 if (it->first == "mass") it->second->Fill(particle.v4().M(), w);
+//                 if (it->first == "n_subjets") {
+//                         // assert(false);
+//                     assert(is_topjet);
+//                     it->second->Fill(particle.subjets().size(), w);
+//                 };
+//                 if (it->first == "mass_sj") {
+//                         // assert(false);
+//                     assert(is_topjet);
+//                     if (particle.subjets().size()){
+//                         LorentzVector sum_subjets;
+//                         for (Jet const & subjet : particle.subjets())
+//                             sum_subjets += subjet.v4();
+//                         it->second->Fill(sum_subjets.M(), w);
+//                     } else {
+//                         it->second->Fill(-1., w);
+//                     }
+//                 };
+//                 if (it->first == "tau21") {
+//                     assert(is_topjet);
+//                     it->second->Fill(particle.tau2()/particle.tau1(), w);
+//                 }
+//                 if (it->first == "tau32") {
+//                     assert(is_topjet);
+//                     it->second->Fill(particle.tau3()/particle.tau2(), w);
+//                 }
+//                 if (it->first == "csv_first_sj") {
+//                     assert(is_topjet);
+//                     if (particle.subjets().size() >= 1){
+//                         it->second->Fill(particle.subjets()[0].btag_combinedSecondaryVertex(), w);
+//                     } else {
+//                         it->second->Fill(-1., w);
+//                     }
+//                 }
+//                 if (it->first == "csv_second_sj") {
+//                     assert(is_topjet);
+//                     if (particle.subjets().size() >= 2){
+//                         it->second->Fill(particle.subjets()[1].btag_combinedSecondaryVertex(), w);
+//                     } else {
+//                         it->second->Fill(-1., w);
+//                     }
+//                 }
+//                 if (it->first == "csv_max_sj") {
+//                     assert(is_topjet);
+//                     double csv_max = -1.;
+//                     for (Jet const & subjet : particle.subjets()){
+//                         if (subjet.btag_combinedSecondaryVertex() > csv_max)
+//                             csv_max = subjet.btag_combinedSecondaryVertex();
+//                     }
+//                     it->second->Fill(csv_max, w);
+//                 }
+//                 if (it->first == "dRlepton") {
+//                     if (event.is_valid(h_primlep_)) {
+//                         float dRlep = deltaR(particle, event.get(h_primlep_));
+//                         it->second->Fill(dRlep, w);
+//                     }
+//                     else {it->second->Fill(-1., w);}
+//                 }
+//                 if (it->first == "dRak4") {
+//                     auto const * closest_ak4 = closestParticle(particle, *event.jets);
+//                     if (closest_ak4) {
+//                         float dRak4 = deltaR(particle, *closest_ak4);
+//                         it->second->Fill(dRak4, w);
+//                     }
+//                     else {it->second->Fill(-1., w);}
+//                 }
+//                 if (it->first == "dRak8") {
+//                     auto const * closest_ak8 = closestParticle(particle, *event.topjets);
+//                     if (closest_ak8) {
+//                         float dRak8 = deltaR(particle, *closest_ak8);
+//                         it->second->Fill(dRak8, w);
+//                     }
+//                     else {it->second->Fill(-1., w);}
+//                 }
+//                 if (split(it->first, "-")[0] == "n_sjbtags") {
+//                     CSVBTag::wp wp_;
+//                     if (split(it->first, "-")[1] == "loose")
+//                         wp_ = CSVBTag::WP_LOOSE;
+//                     else if (split(it->first, "-")[1] == "tight")
+//                         wp_ = CSVBTag::WP_TIGHT;
+//                     else
+//                         wp_ = CSVBTag::WP_MEDIUM;
+//                     CSVBTag btag_(wp_);
+//                     int n_sj = 0;
+//                     for (auto const & sj : particle.subjets()) {
+//                         if (btag_(sj, event))
+//                             n_sj++;
+//                     }
+//                     it->second->Fill(n_sj, w);
+//                 }
+//             }
+//         }
+
+//         for (auto sub_hist : sub_hists_)
+//             sub_hist->fill(event);
+//     }
+
+
+//     void set_subhists(Hists * sub_hist) {
+//         sub_hists_.emplace_back(sub_hist);
+//     }
+
+
+// private:
+//     string h_name_;
+//     Event::Handle<vector<T>> h_in_;
+//     unsigned part_ind_;
+//     Event::Handle<FlavorParticle> h_primlep_;
+//     map<string, TH1F*> hists_;
+//     vector<shared_ptr<Hists>> sub_hists_;
+//     vector<Event::Handle>
+// };
 
 
 
@@ -770,101 +985,3 @@ private:
 
 
 
-
-
-// DEPRECATED
-namespace vlqToHiggsPair {
-
-inline std::string  switch_names(const string & coll_name) {
-    if (coll_name == "patJetsAk8CHSJetsSoftDropPacked_daughters")
-        return "ak8_all";
-    else if (coll_name == "patJetsCa15CHSJetsFilteredPacked_daughters")
-        return "ca15_all";
-    else return coll_name;
-}
-
-inline void make_modules_and_selitem(const string & name, Context & ctx, vector<unique_ptr<AnalysisModule>> & modules,
-                              vector<shared_ptr<SelectionItem>> & sel_items, unsigned pos_insert, int pos_cut = -1,
-                              bool produce_all = false) {
-    if (pos_cut < 0)
-        pos_cut = pos_insert;
-    std::string out_name = switch_names(name);
-    bool item_exists = false;
-    for (auto const & sel_it : sel_items) {
-        if (sel_it->name() == "mass_sj_ld_"+out_name) {
-            item_exists = true;
-            break;
-        }
-    }
-    if (!item_exists) {
-        modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-            name,
-            "mass_sj_ld_"+out_name
-            ));
-        if (out_name.find("boost") == std::string::npos) {
-            modules.emplace_back(new PartPtProducer<TopJet>(ctx,
-                name,
-                "pt_ld_"+out_name,
-                1));
-        }
-    }
-    if (produce_all) {
-        modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-            name,
-            "n_"+out_name
-            ));
-        modules.emplace_back(new LeadingPartMassProducer<TopJet>(ctx,
-            name,
-            "mass_ld_"+out_name
-            ));
-        modules.emplace_back(new LeadingPartEtaProducer<TopJet>(ctx,
-            name,
-            "eta_ld_"+out_name
-            ));
-        modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
-            name,
-            "tau21_ld_"+out_name
-            ));
-        modules.emplace_back(new LeadingTopjetNSubjettinessProducer(ctx,
-            name,
-            "tau32_ld_"+out_name,
-            false
-            ));;
-        // modules.emplace_back(new SubjetCSVProducer(ctx,
-        //     name,
-        //     "csv_sj1_ld_"+out_name,
-        //     1));
-        // modules.emplace_back(new SubjetCSVProducer(ctx,
-        //     name,
-        //     "csv_sj2_ld_"+out_name,
-        //     2));
-    }
-
-
-    if (!item_exists) {
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_sj_ld_"+out_name, "Mass_subjets leading "+out_name, 60, 0., 300.)));
-        if (out_name.find("boost") == std::string::npos) {
-            sel_items.insert(sel_items.begin()+pos_insert, 
-                shared_ptr<SelectionItem>(new SelDatF("pt_ld_"+out_name, "Pt leading "+out_name, 15, 0., 1500.)));
-        }
-    }
-    if (produce_all) {
-        sel_items.insert(sel_items.begin()+pos_cut, 
-            shared_ptr<SelectionItem>(new SelDatI("n_"+out_name, "N "+out_name, 5, -.5, 4.5)));
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("mass_ld_"+out_name, "Mass leading "+out_name, 60, 0., 300.)));
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("eta_ld_"+out_name, "Eta leading "+out_name, 100,-3,3)));
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau21_ld_"+out_name, "Tau21 leading "+out_name, 50, 0., 1.)));
-        sel_items.insert(sel_items.begin()+pos_insert, 
-            shared_ptr<SelectionItem>(new SelDatF("tau32_ld_"+out_name, "Tau32 leading "+out_name, 50, 0., 1.)));
-        // sel_items.insert(sel_items.begin()+pos_insert, 
-        //     shared_ptr<SelectionItem>(new SelDatF("csv_sj1_ld_"+out_name, "CSV sj1 leading "+out_name, 50, 0., 1.)));
-        // sel_items.insert(sel_items.begin()+pos_insert, 
-        //     shared_ptr<SelectionItem>(new SelDatF("csv_sj2_ld_"+out_name, "CSV sj2 leading "+out_name, 50, 0., 1.)));
-    }
-}
-
-}

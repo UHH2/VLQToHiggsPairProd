@@ -11,18 +11,19 @@ src_dir_rel = '../Hadd'
 
 basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'DATA.SingleMuon_Run2015D',
-    'MC.MC_QCD',
-    'MC.MC_WJets',
-    'MC.MC_DYJetsToLL',
-    'MC.MC_ST',
-    'MC.MC_TTbar',
-    'MC.MC_TpTp_M-700_thth', 'MC.MC_TpTp_M-700_thtz', 'MC.MC_TpTp_M-700_thbw', 'MC.MC_TpTp_M-700_noH_tztz', 'MC.MC_TpTp_M-700_noH_tzbw', 'MC.MC_TpTp_M-700_noH_bwbw',
-    'MC.MC_TpTp_M-800_thth', 'MC.MC_TpTp_M-800_thtz', 'MC.MC_TpTp_M-800_thbw', 'MC.MC_TpTp_M-800_noH_tztz', 'MC.MC_TpTp_M-800_noH_tzbw', 'MC.MC_TpTp_M-800_noH_bwbw',
-    'MC.MC_TpTp_M-900_thth', 'MC.MC_TpTp_M-900_thtz', 'MC.MC_TpTp_M-900_thbw', 'MC.MC_TpTp_M-900_noH_tztz', 'MC.MC_TpTp_M-900_noH_tzbw', 'MC.MC_TpTp_M-900_noH_bwbw',
-    'MC.MC_TpTp_M-1000_thth', 'MC.MC_TpTp_M-1000_thtz', 'MC.MC_TpTp_M-1000_thbw', 'MC.MC_TpTp_M-1000_noH_tztz', 'MC.MC_TpTp_M-1000_noH_tzbw', 'MC.MC_TpTp_M-1000_noH_bwbw',
-    'MC.MC_TpTp_M-1200_thth', 'MC.MC_TpTp_M-1200_thtz', 'MC.MC_TpTp_M-1200_thbw', 'MC.MC_TpTp_M-1200_noH_tztz', 'MC.MC_TpTp_M-1200_noH_tzbw', 'MC.MC_TpTp_M-1200_noH_bwbw',
-    'MC.MC_TpTp_M-1400_thth', 'MC.MC_TpTp_M-1400_thtz', 'MC.MC_TpTp_M-1400_thbw', 'MC.MC_TpTp_M-1400_noH_tztz', 'MC.MC_TpTp_M-1400_noH_tzbw', 'MC.MC_TpTp_M-1400_noH_bwbw',
-    'MC.MC_TpTp_M-1600_thth', 'MC.MC_TpTp_M-1600_thtz', 'MC.MC_TpTp_M-1600_thbw', 'MC.MC_TpTp_M-1600_noH_tztz', 'MC.MC_TpTp_M-1600_noH_tzbw', 'MC.MC_TpTp_M-1600_noH_bwbw',
+    'DATA.SingleEle_Run2015D',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.SingleTop',
+    'MC.TTbar',
+    'MC.TpTp_M-700_thth', 'MC.TpTp_M-700_thtz', 'MC.TpTp_M-700_thbw', 'MC.TpTp_M-700_noH_tztz', 'MC.TpTp_M-700_noH_tzbw', 'MC.TpTp_M-700_noH_bwbw',
+    'MC.TpTp_M-800_thth', 'MC.TpTp_M-800_thtz', 'MC.TpTp_M-800_thbw', 'MC.TpTp_M-800_noH_tztz', 'MC.TpTp_M-800_noH_tzbw', 'MC.TpTp_M-800_noH_bwbw',
+    'MC.TpTp_M-900_thth', 'MC.TpTp_M-900_thtz', 'MC.TpTp_M-900_thbw', 'MC.TpTp_M-900_noH_tztz', 'MC.TpTp_M-900_noH_tzbw', 'MC.TpTp_M-900_noH_bwbw',
+    'MC.TpTp_M-1000_thth', 'MC.TpTp_M-1000_thtz', 'MC.TpTp_M-1000_thbw', 'MC.TpTp_M-1000_noH_tztz', 'MC.TpTp_M-1000_noH_tzbw', 'MC.TpTp_M-1000_noH_bwbw',
+    'MC.TpTp_M-1200_thth', 'MC.TpTp_M-1200_thtz', 'MC.TpTp_M-1200_thbw', 'MC.TpTp_M-1200_noH_tztz', 'MC.TpTp_M-1200_noH_tzbw', 'MC.TpTp_M-1200_noH_bwbw',
+    'MC.TpTp_M-1400_thth', 'MC.TpTp_M-1400_thtz', 'MC.TpTp_M-1400_thbw', 'MC.TpTp_M-1400_noH_tztz', 'MC.TpTp_M-1400_noH_tzbw', 'MC.TpTp_M-1400_noH_bwbw',
+    'MC.TpTp_M-1600_thth', 'MC.TpTp_M-1600_thtz', 'MC.TpTp_M-1600_thbw', 'MC.TpTp_M-1600_noH_tztz', 'MC.TpTp_M-1600_noH_tzbw', 'MC.TpTp_M-1600_noH_bwbw',
     ])
 
 basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [

@@ -28,23 +28,24 @@ public:
         part_ind_(part_ind),
         h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep))
         {
+            // === TEST: test if it's possible to make hist names without handle names
             for (string const & var : variables) {
-                if (var == "n") hists_[var] = book<TH1F>("n_"+h_in, "n", 10, -.5, 9.5);
-                if (var == "n_subjets") hists_[var] = book<TH1F>("n_subjets_"+h_in, "n_subjets", 10, -.5, 9.5);
-                if (var == "pt") hists_[var] = book<TH1F>("pt_"+h_in, "pt", 60, 0., 1500.);
-                if (var == "eta") hists_[var] = book<TH1F>("eta_"+h_in, "eta", 50, -3., 3.);
-                if (var == "phi") hists_[var] = book<TH1F>("phi_"+h_in, "phi", 50, -3.14, 3.14);
-                if (var == "mass") hists_[var] = book<TH1F>("mass_"+h_in, "mass", 60, 0., 300.);
-                if (var == "mass_sj") hists_[var] = book<TH1F>("mass_sj_"+h_in, "mass sj", 60, 0., 300.);
-                if (var == "tau21") hists_[var] = book<TH1F>("tau21_"+h_in, "tau21", 50, 0., 1.);
-                if (var == "tau32") hists_[var] = book<TH1F>("tau32_"+h_in, "tau32", 50, 0., 1.);
-                if (var == "csv_first_sj") hists_[var] = book<TH1F>("csv_first_sj_"+h_in, "csv_first_sj", 50, 0., 1.);
-                if (var == "csv_second_sj") hists_[var] = book<TH1F>("csv_second_sj_"+h_in, "csv_second_sj", 50, 0., 1.);
-                if (var == "csv_max_sj") hists_[var] = book<TH1F>("csv_max_sj_"+h_in, "csv_max_sj", 50, 0., 1.);
-                if (var == "dRlepton") hists_[var] = book<TH1F>("dRlepton_"+h_in, "dR(ak8 jet, lepton)", 50, 0., 5.);
-                if (var == "dRak4") hists_[var] = book<TH1F>("dRak4_"+h_in, "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.);
-                if (var == "dRak8") hists_[var] = book<TH1F>("dRak8_"+h_in, "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.);
-                if (split(var, "-")[0] == "n_sjbtags") hists_[var] = book<TH1F>("n_sjbtags_"+h_in+"_"+split(var, "-")[1], "N sjbtags "+split(var, "-")[1], 5, -.5, 4.5);
+                if (var == "n") hists_[var] = book<TH1F>("n", "n", 10, -.5, 9.5);
+                if (var == "n_subjets") hists_[var] = book<TH1F>("n_subjets", "n_subjets", 10, -.5, 9.5);
+                if (var == "pt") hists_[var] = book<TH1F>("pt", "pt", 60, 0., 1500.);
+                if (var == "eta") hists_[var] = book<TH1F>("eta", "eta", 50, -3., 3.);
+                if (var == "phi") hists_[var] = book<TH1F>("phi", "phi", 50, -3.14, 3.14);
+                if (var == "mass") hists_[var] = book<TH1F>("mass", "mass", 60, 0., 300.);
+                if (var == "mass_sj") hists_[var] = book<TH1F>("mass_sj", "mass sj", 60, 0., 300.);
+                if (var == "tau21") hists_[var] = book<TH1F>("tau21", "tau21", 50, 0., 1.);
+                if (var == "tau32") hists_[var] = book<TH1F>("tau32", "tau32", 50, 0., 1.);
+                if (var == "csv_first_sj") hists_[var] = book<TH1F>("csv_first_sj", "csv_first_sj", 50, 0., 1.);
+                if (var == "csv_second_sj") hists_[var] = book<TH1F>("csv_second_sj", "csv_second_sj", 50, 0., 1.);
+                if (var == "csv_max_sj") hists_[var] = book<TH1F>("csv_max_sj", "csv_max_sj", 50, 0., 1.);
+                if (var == "dRlepton") hists_[var] = book<TH1F>("dRlepton", "dR(ak8 jet, lepton)", 50, 0., 5.);
+                if (var == "dRak4") hists_[var] = book<TH1F>("dRak4", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.);
+                if (var == "dRak8") hists_[var] = book<TH1F>("dRak8", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.);
+                if (split(var, "-")[0] == "n_sjbtags") hists_[var] = book<TH1F>("n_sjbtags_"+split(var, "-")[1], "N sjbtags "+split(var, "-")[1], 5, -.5, 4.5);
             }  
         }
 
@@ -160,30 +161,6 @@ public:
         for (auto sub_hist : sub_hists_)
             sub_hist->fill(event);
     }
-
-    // template<TYPE> void fill_dr_hist(T const & part, const string & coll, Hists * hist) {
-    //     float min_dr = -1.;
-    //     if (e.is_valid(h_p1_) && e.is_valid(h_p2_)) {
-    //         const T & ref_part = e.get(h_p1_);
-    //         const vector<TYPE> & comp_parts = e.get(h_p2_);
-
-    //         double deltarmin = std::numeric_limits<double>::infinity();
-    //         const TYPE* closest_part=0;
-    //         for(unsigned int i=0; i<comp_parts.size(); ++i) {
-    //             const TYPE & pi = comp_parts[i];
-    //             double dr = uhh2::deltaR(pi, ref_part);
-    //             if(dr < deltarmin) {
-    //                 deltarmin = dr;
-    //                 closest_part = &pi;
-    //             }
-    //         }
-
-    //         if (closest_part) {
-    //             min_dr = uhh2::deltaR(ref_part, *closest_part);
-    //         }
-
-    //     }
-    // }
 
 
     void set_subhists(Hists * sub_hist) {

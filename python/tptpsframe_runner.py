@@ -16,7 +16,7 @@ from varial.extensions import git
 
 # varial.settings.max_num_processes = 1
 
-categories_final = ["NoSelection",
+categories_final = ["WithSelection",
         # "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
         # "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
         # "HiggsTag2bMed-Signal", 
@@ -128,13 +128,14 @@ def set_output_dir(element_tree, outputdir=''):
         sframe_cycle.set('OutputDirectory', outputdir)
 
 def set_uncert(element_tree, uncert_name=''):
-    uncert = sys_uncerts[uncert_name]
-    cycle = element_tree.getroot().find('Cycle')
-    user_config = cycle.find('UserConfig')
-    for name, value in uncert.iteritems():
-        uc_item = list(i for i in user_config if i.get('Name') == name)
-        assert uc_item, 'could not find item with name: %s' % name
-        uc_item[0].set('Value', value)
+    if varial.settings.sys_uncerts:
+        uncert = varial.settings.sys_uncerts[uncert_name]
+        cycle = element_tree.getroot().find('Cycle')
+        user_config = cycle.find('UserConfig')
+        for name, value in uncert.iteritems():
+            uc_item = list(i for i in user_config if i.get('Name') == name)
+            assert uc_item, 'could not find item with name: %s' % name
+            uc_item[0].set('Value', value)
 
 # xml treecallback functions
 
@@ -190,7 +191,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="2" />
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="2" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -209,6 +210,8 @@ sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_1
 import common_plot
 import tptpfinalselection_plot as final_plotting
 from optparse import OptionParser
+
+varial.settings.sys_uncerts = {}
 
 def mk_sframe_tools_and_plot(argv):
     parser = OptionParser()
@@ -231,14 +234,14 @@ def mk_sframe_tools_and_plot(argv):
         setup_for_ind_run = setup_for_presel
         categories = categories_pre
         analysis_module = 'TpTpPreselectionV2'
-        sys_uncerts = no_sys_uncerts
+        varial.settings.sys_uncerts = no_sys_uncerts
         basenames = common_plot.basenames_pre
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
         setup_for_ind_run = setup_for_finalsel
         categories = categories_final
         analysis_module = 'TpTpFinalSelectionTreeOutput'
-        sys_uncerts = sys_uncerts_final
+        varial.settings.sys_uncerts = sys_uncerts_final
         basenames = common_plot.basenames_final
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
@@ -268,7 +271,7 @@ def mk_sframe_tools_and_plot(argv):
                             categories=categories, basenames=basenames)
                         ]
                         )
-                    for uncert in sys_uncerts
+                    for uncert in varial.settings.sys_uncerts
                 )
             ),
             varial.tools.WebCreator(no_tool_check=False),
