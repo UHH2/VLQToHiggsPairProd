@@ -373,6 +373,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
 
+        std::cout << "Category/split: " << cat << " " << split(cat, "-")[0] << std::endl;
+
         SEL_ITEMS_FULL_SEL.push_back(SEL_ITEMS_BASELINE_SEL);
 
         if (version.find("thth") != string::npos) {
