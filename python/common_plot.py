@@ -106,39 +106,39 @@ def file_select(datasets_to_plot=common_datasets_to_plot, src=''):
 
 #====GENERAL FUNCTIONS====
 
-# def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=True):
-#     """histos must be sorted!!"""
+def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=True):
+    """histos must be sorted!!"""
 
-#     @varial.history.track_history
-#     def merge_decay_channel(w):
-#         return w
+    @varial.history.track_history
+    def merge_decay_channel(w):
+        return w
 
-#     def do_merging(buf):
-#         res = varial.operations.merge(buf)
-#         res.sample = res.sample+suffix
-#         res.legend = res.legend+suffix
-#         # res.in_file_path = buf[0].in_file_path[1:]
-#         del buf[:]
-#         return merge_decay_channel(res)
+    def do_merging(buf):
+        res = varial.operations.merge(buf)
+        res.sample = res.sample+suffix
+        res.legend = res.legend+suffix
+        # res.in_file_path = buf[0].in_file_path[1:]
+        del buf[:]
+        return merge_decay_channel(res)
 
-#     buf = []
-#     for w in wrps:
-#         if any(w.finalstate == p for p in finalstates):
-#             buf.append(w)
-#             if len(buf) == len(finalstates):
-#                 yield do_merging(buf)
-#         else:
-#             if buf:
-#                 if print_warning:
-#                     print 'WARNING In merge_decay_channels: buffer not empty.\n' \
-#                           'finalstates:\n' + str(finalstates) + '\n' \
-#                           'Flushing remaining items:\n' + '\n'.join(
-#                         '%s, %s' % (w.sample, w.in_file_path) for w in buf
-#                     )
-#                 yield do_merging(buf)
-#             yield w
-#     if buf:
-#         yield do_merging(buf)
+    buf = []
+    for w in wrps:
+        if any(w.finalstate == p for p in finalstates):
+            buf.append(w)
+            if len(buf) == len(finalstates):
+                yield do_merging(buf)
+        else:
+            if buf:
+                if print_warning:
+                    print 'WARNING In merge_decay_channels: buffer not empty.\n' \
+                          'finalstates:\n' + str(finalstates) + '\n' \
+                          'Flushing remaining items:\n' + '\n'.join(
+                        '%s, %s' % (w.sample, w.in_file_path) for w in buf
+                    )
+                yield do_merging(buf)
+            yield w
+    if buf:
+        yield do_merging(buf)
 
 # def merge_samples(wrps):
 #     wrps = vlq_common.merge_decay_channels(wrps, (

@@ -14,7 +14,7 @@ import tptpsframe_runner as sframe
 from varial.extensions import git
 
 
-varial.settings.max_num_processes = 1
+varial.settings.max_num_processes = 24
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'

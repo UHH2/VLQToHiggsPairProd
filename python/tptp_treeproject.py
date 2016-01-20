@@ -19,7 +19,7 @@ histo_names_args = {
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
     'n_jets_no_overlap'             : ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),
-    'primary_lepton'                : ('Primary Lepton p_T',               90, 0., 900.),
+    'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
     'pt_ld_ak4_jet'                 : ('Pt leading Ak4 Jet',               60, 0., 1500.),
     # 'pt_ld_ak4_jet_cleaned'         : ('Pt leading Ak4 Jet, cleaned',      60, 0., 1500.),
     'pt_ld_ak8_jet'                 : ('Pt leading Ak8 Jet',               60, 0., 1500.),
@@ -90,20 +90,20 @@ samples = [
 
 
 import tptp_selections_treeproject as sel
-sr2b_el_channel
-sr1b_el_channel
-sb_el_channel
-sr2b_el_channel
-sr1b_el_channel
-sb_el_channel
+
+
+
+
+
+
 sec_sel_weight = [
     ('BaseLineSelection', sel.baseline_selection, 'weight*ak4_jetpt_weight'),
-    # ('SignalRegion2b_0addB_3ak8', sel.sr2b_selection_0b_3ak8, 'weight'),
-    # ('SignalRegion1b_0addB_3ak8', sel.sr1b_selection_0b_3ak8, 'weight'),
-    # ('SidebandRegion_0addB_3ak8', sel.sb_selection_0b_3ak8, 'weight'),
-    # ('SignalRegion2b_0addB_2ak8', sel.sr2b_selection_0b_2ak8, 'weight'),
-    # ('SignalRegion1b_0addB_2ak8', sel.sr1b_selection_0b_2ak8, 'weight'),
-    # ('SidebandRegion_0addB_2ak8', sel.sb_selection_0b_2ak8, 'weight'),
+    ('SignalRegion2b_Electron', sel.sr2b_el_channel, 'weight*ak4_jetpt_weight'),
+    ('SignalRegion1b_Electron', sel.sr1b_el_channel, 'weight*ak4_jetpt_weight'),
+    ('SidebandRegion_Electron', sel.sb_el_channel, 'weight*ak4_jetpt_weight'),
+    ('SignalRegion2b_Muon', sel.sr2b_mu_channel, 'weight*ak4_jetpt_weight'),
+    ('SignalRegion1b_Muon', sel.sr1b_mu_channel, 'weight*ak4_jetpt_weight'),
+    ('SidebandRegion_Muon', sel.sb_mu_channel, 'weight*ak4_jetpt_weight'),
     # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
     # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
     # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),

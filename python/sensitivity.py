@@ -26,7 +26,7 @@ import limit_plots
 
 theta_auto.config.theta_dir = "/nfs/dust/cms/user/nowatsd/theta"
 
-src_dir_rel = '../../../../../EventLoopAndPlots'
+# src_dir_rel = '../../../../../EventLoopAndPlots'
 
 br_list = []
 
@@ -124,9 +124,9 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         # asymptotic= False,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
-            # 'TpTp_M-700',
+            'TpTp_M-700',
             'TpTp_M-800',
-            # 'TpTp_M-900',
+            'TpTp_M-900',
             'TpTp_M-1000',
             # 'TpTp_M-1100',
             'TpTp_M-1200',
@@ -152,37 +152,67 @@ def mk_limit_list(sys_pat=''):
             # if ind > 2: break
             tc = []
             tc.append(varial.tools.ToolChain(
-                'UncleanedNobtag3Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST'), name='UncleanedNobtag3Ak8', sys_pat=sys_pat))
+                'ElectronOnly',
+                mk_limit_tc(brs_, select_files([
+                    "SignalRegion2b_Electron",
+                    "SignalRegion1b_Electron",
+                    "SidebandRegion_Electron"],
+                    'ST'),
+                name='ElectronOnly', sys_pat=sys_pat))
             )
             tc.append(varial.tools.ToolChain(
-                'CleanedNobtag3Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST_cleaned'), name='CleanedNobtag3Ak8', sys_pat=sys_pat))
+                'MuonOnly',
+                mk_limit_tc(brs_, select_files([
+                    "SignalRegion2b_Muon",
+                    "SignalRegion1b_Muon",
+                    "SidebandRegion_Muon"],
+                    'ST'),
+                name='MuonOnly', sys_pat=sys_pat))
             )
             tc.append(varial.tools.ToolChain(
-                'UncleanedWbtag3Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST'), name='UncleanedWbtag3Ak8', sys_pat=sys_pat))
+                'CombinedChannels',
+                mk_limit_tc(brs_, select_files([
+                    "SignalRegion2b_Electron",
+                    "SignalRegion1b_Electron",
+                    "SidebandRegion_Electron",
+                    "SignalRegion2b_Muon",
+                    "SignalRegion1b_Muon",
+                    "SidebandRegion_Muon"],
+                    'ST'),
+                name='CombinedChannels', sys_pat=sys_pat))
             )
-            tc.append(varial.tools.ToolChain(
-                'CleanedWbtag3Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST_cleaned'), name='CleanedWbtag3Ak8', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'UncleanedNobtag2Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST'), name='UncleanedNobtag2Ak8', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'CleanedNobtag2Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST_cleaned'), name='CleanedNobtag2Ak8', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'UncleanedWbtag2Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST'), name='UncleanedWbtag2Ak8', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'CleanedWbtag2Ak8',
-                mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST_cleaned'), name='CleanedWbtag2Ak8', sys_pat=sys_pat))
-            )
+            # tc.append(varial.tools.ToolChain(
+            #     'UncleanedNobtag3Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST'), name='UncleanedNobtag3Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'CleanedNobtag3Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_3ak8", "SignalRegion1b_0addB_3ak8", "SidebandRegion_0addB_3ak8"], 'ST_cleaned'), name='CleanedNobtag3Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'UncleanedWbtag3Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST'), name='UncleanedWbtag3Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'CleanedWbtag3Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_3ak8", "SignalRegion1b_1addB_3ak8", "SidebandRegion_1addB_3ak8"], 'ST_cleaned'), name='CleanedWbtag3Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'UncleanedNobtag2Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST'), name='UncleanedNobtag2Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'CleanedNobtag2Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_0addB_2ak8", "SignalRegion1b_0addB_2ak8", "SidebandRegion_0addB_2ak8"], 'ST_cleaned'), name='CleanedNobtag2Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'UncleanedWbtag2Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST'), name='UncleanedWbtag2Ak8', sys_pat=sys_pat))
+            # )
+            # tc.append(varial.tools.ToolChain(
+            #     'CleanedWbtag2Ak8',
+            #     mk_limit_tc(brs_, select_files(["SignalRegion2b_1addB_2ak8", "SignalRegion1b_1addB_2ak8", "SidebandRegion_1addB_2ak8"], 'ST_cleaned'), name='CleanedWbtag2Ak8', sys_pat=sys_pat))
+            # )
             # tc.append(varial.tools.ToolChain(
             #     'NoSB',
             #     mk_limit_tc(brs_, select_files(["SignalRegion2b", "SignalRegion1b"]), name='NoSB', sys_pat=sys_pat))
@@ -227,6 +257,9 @@ varial.settings.pretty_names.update({
     'LimitCleanedNobtag2Ak8' : 'CleanedNobtag2Ak8',
     'LimitUncleanedWbtag2Ak8' : 'UncleanedWbtag2Ak8',
     'LimitCleanedWbtag2Ak8' : 'CleanedWbtag2Ak8',
+    'LimitElectronOnly' : 'ElectronOnly',
+    'LimitMuonOnly' : 'MuonOnly',
+    'LimitCombinedChannels' : 'CombinedChannels',
 })
 
 varial.settings.colors.update({
@@ -238,6 +271,9 @@ varial.settings.colors.update({
     'LimitUncleanedWbtag3Ak8' : 3,
     'LimitUncleanedNobtag2Ak8' : 4,
     'LimitUncleanedWbtag2Ak8' : 5,
+    'LimitElectronOnly' : 2,
+    'LimitMuonOnly' : 3,
+    'LimitCombinedChannels' : 4,
 })
 
 def mk_tc(dir_limit='Limits', sys_pat=''):

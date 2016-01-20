@@ -284,4 +284,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv))
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
