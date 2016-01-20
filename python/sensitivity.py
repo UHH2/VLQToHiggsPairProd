@@ -295,9 +295,9 @@ def mk_tc(dir_limit='Limits', sys_pat=''):
                 limit_rel_path='../Ind_Limits/Limit*/*/Limit*'
                 ),
             varial.plotter.Plotter(
-                name='Uncleaned',
+                name='LimitCurvesCompared',
                 input_result_path='../LimitGraphs',
-                filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
                 # plot_setup=plot_setup,
                 hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
                 plot_grouper=lambda ws: varial.gen.group(
@@ -310,22 +310,22 @@ def mk_tc(dir_limit='Limits', sys_pat=''):
                 canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
                 save_lin_log_scale=True
                 ),
-            varial.plotter.Plotter(
-                name='Cleaned',
-                input_result_path='../LimitGraphs',
-                filter_keyfunc=lambda w: 'Cleaned' in w.legend,
-                # plot_setup=plot_setup,
-                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
-                plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.save_name),
-                # save_name_func=varial.plotter.save_by_name_with_hash
-                save_name_func=lambda w: w.save_name,
-                plot_setup=lambda w: plot_setup_graphs(w,
-                    th_x=common_sensitivity.theory_masses,
-                    th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
-                save_lin_log_scale=True
-                ),
+            # varial.plotter.Plotter(
+            #     name='Cleaned',
+            #     input_result_path='../LimitGraphs',
+            #     filter_keyfunc=lambda w: 'Cleaned' in w.legend,
+            #     # plot_setup=plot_setup,
+            #     hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+            #     plot_grouper=lambda ws: varial.gen.group(
+            #             ws, key_func=lambda w: w.save_name),
+            #     # save_name_func=varial.plotter.save_by_name_with_hash
+            #     save_name_func=lambda w: w.save_name,
+            #     plot_setup=lambda w: plot_setup_graphs(w,
+            #         th_x=common_sensitivity.theory_masses,
+            #         th_y=common_sensitivity.theory_cs),
+            #     canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+            #     save_lin_log_scale=True
+            #     ),
             ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
