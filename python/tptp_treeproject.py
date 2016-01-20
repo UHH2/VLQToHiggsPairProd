@@ -56,9 +56,9 @@ params = {
 }
 
 signals = [
-    # 'TpTp_M-700',
+    'TpTp_M-700',
     'TpTp_M-800',
-    # 'TpTp_M-900',
+    'TpTp_M-900',
     'TpTp_M-1000',
     # 'TpTp_M-1100',
     'TpTp_M-1200',
@@ -81,7 +81,7 @@ final_states = [
 
 samples = [
     'TTbar',
-    'ST',
+    'SingleTop',
     'QCD',
     'DYJets',
     'WJets',
@@ -90,21 +90,26 @@ samples = [
 
 
 import tptp_selections_treeproject as sel
-
+sr2b_el_channel
+sr1b_el_channel
+sb_el_channel
+sr2b_el_channel
+sr1b_el_channel
+sb_el_channel
 sec_sel_weight = [
-    ('BaseLineSelection', sel.baseline_selection, 'weight'),
-    ('SignalRegion2b_0addB_3ak8', sel.sr2b_selection_0b_3ak8, 'weight'),
-    ('SignalRegion1b_0addB_3ak8', sel.sr1b_selection_0b_3ak8, 'weight'),
-    ('SidebandRegion_0addB_3ak8', sel.sb_selection_0b_3ak8, 'weight'),
-    ('SignalRegion2b_0addB_2ak8', sel.sr2b_selection_0b_2ak8, 'weight'),
-    ('SignalRegion1b_0addB_2ak8', sel.sr1b_selection_0b_2ak8, 'weight'),
-    ('SidebandRegion_0addB_2ak8', sel.sb_selection_0b_2ak8, 'weight'),
-    ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
-    ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
-    ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
-    ('SignalRegion2b_1addB_2ak8', sel.sr2b_selection_1b_2ak8, 'weight'),
-    ('SignalRegion1b_1addB_2ak8', sel.sr1b_selection_1b_2ak8, 'weight'),
-    ('SidebandRegion_1addB_2ak8', sel.sb_selection_1b_2ak8, 'weight'),
+    ('BaseLineSelection', sel.baseline_selection, 'weight*ak4_jetpt_weight'),
+    # ('SignalRegion2b_0addB_3ak8', sel.sr2b_selection_0b_3ak8, 'weight'),
+    # ('SignalRegion1b_0addB_3ak8', sel.sr1b_selection_0b_3ak8, 'weight'),
+    # ('SidebandRegion_0addB_3ak8', sel.sb_selection_0b_3ak8, 'weight'),
+    # ('SignalRegion2b_0addB_2ak8', sel.sr2b_selection_0b_2ak8, 'weight'),
+    # ('SignalRegion1b_0addB_2ak8', sel.sr1b_selection_0b_2ak8, 'weight'),
+    # ('SidebandRegion_0addB_2ak8', sel.sb_selection_0b_2ak8, 'weight'),
+    # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
+    # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
+    # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
+    # ('SignalRegion2b_1addB_2ak8', sel.sr2b_selection_1b_2ak8, 'weight'),
+    # ('SignalRegion1b_1addB_2ak8', sel.sr1b_selection_1b_2ak8, 'weight'),
+    # ('SidebandRegion_1addB_2ak8', sel.sb_selection_1b_2ak8, 'weight'),
 ]
 
 

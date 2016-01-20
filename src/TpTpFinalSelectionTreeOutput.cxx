@@ -44,10 +44,13 @@ public:
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
         shared_ptr<SelectionItem>(new SelDatI("gendecay_accept", "GenDecay Accept", 2, -.5, 1.5, 1)),
         shared_ptr<SelectionItem>(new SelDatF("deltaRlep_topjets_1", "dR(Ak8 jet, prim. lepton)", 50, 0., 5., 0.8)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_el40", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_isoMu", "Trigger Accept", 2, -.5, 1.5)),
-        shared_ptr<SelectionItem>(new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5)),
@@ -106,6 +109,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     auto data_dir_path = ctx.get("data_dir_path");
 
     ctx.undeclare_all_event_output();
+    ctx.declare_event_output<float>("ak4_jetpt_weight");
+    ctx.declare_event_output<float>("ak4_jetpt_weight_up");
+    ctx.declare_event_output<float>("ak4_jetpt_weight_down");
+    ctx.declare_event_output<float>("ak8_jetpt_weight");
 
     weight_hndl = ctx.declare_event_output<double>("weight");
     use_sr_sf_hndl = ctx.declare_event_output<int>("use_sr_sf");
@@ -364,11 +371,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     final_states = {"All"};
         
     vector<string> categories = split(ctx.get("category", ""));
-    // std::vector<string> categories = {"WithSelection",
+    // std::vector<string> categories = {"NoSelection",
     //     "HiggsTag0Med-Control", //"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
     //     "HiggsTag1bMed-Signal", //"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
     //     "HiggsTag2bMed-Signal", 
-    //     }; // "WithSelection", "HiggsTag2bLoose-Signal", "AntiHiggsTagLoose-Control", "AntiHiggsTagMed-Control", "HiggsTag0Loose-Control", 
+    //     }; // "NoSelection", "HiggsTag2bLoose-Signal", "AntiHiggsTagLoose-Control", "AntiHiggsTagMed-Control", "HiggsTag0Loose-Control", 
 
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
@@ -418,10 +425,14 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 GenParticleId(TrueId<GenParticle>::is_true), GenParticleId(TrueId<GenParticle>::is_true)));
         }
 
-        if (split(cat, "-")[0] == "WithSelection") {
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+4, new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5));
+        if (split(cat, "-")[0] == "NoSelection") {
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5));
+        }
+        else if (split(cat, "-")[0] == "EleChannel") {
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5, 0, 0));
+        }
+        else if (split(cat, "-")[0] == "MuonChannel") {
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5, 1));
         }
         // else if (split(cat, "-")[0] == "HiggsTag0Med") {
         //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5, 0, 0));
@@ -443,7 +454,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         // gendecay_accept_hndl = ctx.get_handle<int>("gendecay_accept");
 
-        // if (split(cat, "-")[0] == "WithSelection") 
+        // if (split(cat, "-")[0] == "NoSelection") 
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("gendecay_accept_"+fs, "GenDecay Accept", 2, -.5, 1.5));
         // else
         // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("gendecay_accept", "GenDecay Accept", 2, -.5, 1.5, 1));
@@ -506,9 +517,9 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         // v_hists.back().emplace_back(nm1_hists);
         v_hists.back().emplace_back(cf_hists);
-        if (split(cat, "-")[0] == "WithSelection") {
-            // sel_helpers.back()->fill_hists_vector(v_hists.back(), cat+"/WithSelection");
-            // v_hists.back().emplace_back(new OwnHistCollector(ctx, cat+"/WithSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "jet"}));
+        if (split(cat, "-")[0] == "NoSelection") {
+            // sel_helpers.back()->fill_hists_vector(v_hists.back(), cat+"/NoSelection");
+            // v_hists.back().emplace_back(new OwnHistCollector(ctx, cat+"/NoSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "jet"}));
             v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
         }
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");

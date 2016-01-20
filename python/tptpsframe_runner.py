@@ -16,9 +16,9 @@ from varial.extensions import git
 
 # varial.settings.max_num_processes = 1
 
-categories_final = ["WithSelection",
-        # "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
-        # "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
+categories_final = ["NoSelection",
+        "EleChannel", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
+        "MuonChannel", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
         # "HiggsTag2bMed-Signal", 
         ]
 
