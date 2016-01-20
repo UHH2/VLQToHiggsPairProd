@@ -97,13 +97,13 @@ import tptp_selections_treeproject as sel
 
 
 sec_sel_weight = [
-    ('BaseLineSelection', sel.baseline_selection, 'weight*ak4_jetpt_weight'),
-    ('SignalRegion2b_Electron', sel.sr2b_el_channel, 'weight*ak4_jetpt_weight'),
-    ('SignalRegion1b_Electron', sel.sr1b_el_channel, 'weight*ak4_jetpt_weight'),
-    ('SidebandRegion_Electron', sel.sb_el_channel, 'weight*ak4_jetpt_weight'),
-    ('SignalRegion2b_Muon', sel.sr2b_mu_channel, 'weight*ak4_jetpt_weight'),
-    ('SignalRegion1b_Muon', sel.sr1b_mu_channel, 'weight*ak4_jetpt_weight'),
-    ('SidebandRegion_Muon', sel.sb_mu_channel, 'weight*ak4_jetpt_weight'),
+    ('BaseLineSelection', sel.baseline_selection, 'weight'), # *ak4_jetpt_weight
+    ('SignalRegion2b_Electron', sel.sr2b_el_channel, 'weight'), # *ak4_jetpt_weight
+    ('SignalRegion1b_Electron', sel.sr1b_el_channel, 'weight'), # *ak4_jetpt_weight
+    ('SidebandRegion_Electron', sel.sb_el_channel, 'weight'), # *ak4_jetpt_weight
+    ('SignalRegion2b_Muon', sel.sr2b_mu_channel, 'weight'), # *ak4_jetpt_weight
+    ('SignalRegion1b_Muon', sel.sr1b_mu_channel, 'weight'), # *ak4_jetpt_weight
+    ('SidebandRegion_Muon', sel.sb_mu_channel, 'weight'), # *ak4_jetpt_weight
     # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
     # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
     # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
