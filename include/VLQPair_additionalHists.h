@@ -20,11 +20,13 @@ public:
                         const string & dirname,
                         const string & h_in,
                         const vector<string> & variables = {"n", "pt", "eta", "phi"},
-                        unsigned part_ind = 1) :
+                        unsigned part_ind = 1,
+                        const string & h_primlep = "PrimaryLepton") :
         Hists(ctx, dirname),
         h_name_(h_in),
         h_in_(ctx.get_handle<vector<T>>(h_in)),
-        part_ind_(part_ind)
+        part_ind_(part_ind),
+        h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep))
         {
             for (string const & var : variables) {
                 if (var == "n") hists_[var] = book<TH1F>("n_"+h_in, "n", 10, -.5, 9.5);
@@ -39,6 +41,9 @@ public:
                 if (var == "csv_first_sj") hists_[var] = book<TH1F>("csv_first_sj_"+h_in, "csv_first_sj", 50, 0., 1.);
                 if (var == "csv_second_sj") hists_[var] = book<TH1F>("csv_second_sj_"+h_in, "csv_second_sj", 50, 0., 1.);
                 if (var == "csv_max_sj") hists_[var] = book<TH1F>("csv_max_sj_"+h_in, "csv_max_sj", 50, 0., 1.);
+                if (var == "dRlepton") hists_[var] = book<TH1F>("dRlepton_"+h_in, "dR(ak8 jet, lepton)", 50, 0., 5.);
+                if (var == "dRak4") hists_[var] = book<TH1F>("dRak4_"+h_in, "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.);
+                if (var == "dRak8") hists_[var] = book<TH1F>("dRak8_"+h_in, "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.);
                 if (split(var, "-")[0] == "n_sjbtags") hists_[var] = book<TH1F>("n_sjbtags_"+h_in+"_"+split(var, "-")[1], "N sjbtags "+split(var, "-")[1], 5, -.5, 4.5);
             }  
         }
@@ -110,6 +115,29 @@ public:
                     }
                     it->second->Fill(csv_max, w);
                 }
+                if (it->first == "dRlepton") {
+                    if (event.is_valid(h_primlep_)) {
+                        float dRlep = deltaR(particle, event.get(h_primlep_));
+                        it->second->Fill(dRlep, w);
+                    }
+                    else {it->second->Fill(-1., w);}
+                }
+                if (it->first == "dRak4") {
+                    auto const * closest_ak4 = closestParticle(particle, *event.jets);
+                    if (closest_ak4) {
+                        float dRak4 = deltaR(particle, *closest_ak4);
+                        it->second->Fill(dRak4, w);
+                    }
+                    else {it->second->Fill(-1., w);}
+                }
+                if (it->first == "dRak8") {
+                    auto const * closest_ak8 = closestParticle(particle, *event.topjets);
+                    if (closest_ak8) {
+                        float dRak8 = deltaR(particle, *closest_ak8);
+                        it->second->Fill(dRak8, w);
+                    }
+                    else {it->second->Fill(-1., w);}
+                }
                 if (split(it->first, "-")[0] == "n_sjbtags") {
                     CSVBTag::wp wp_;
                     if (split(it->first, "-")[1] == "loose")
@@ -167,6 +195,7 @@ private:
     string h_name_;
     Event::Handle<vector<T>> h_in_;
     unsigned part_ind_;
+    Event::Handle<FlavorParticle> h_primlep_;
     map<string, TH1F*> hists_;
     vector<shared_ptr<Hists>> sub_hists_;
 };
@@ -388,4 +417,51 @@ private:
     Event::Handle<std::vector<TopJet>> hndl;
     string versionname;
     TH1F *hist1, *hist2, *hist3;
+};
+
+
+class JetCleaningControlPlots: public Hists {
+public:
+    explicit JetCleaningControlPlots(Context & ctx,
+                        const string & dirname,
+                        const string & ak4_weight,
+                        const string & ak8_weight):
+        Hists(ctx, dirname),
+        ak4_w_hndl_(ctx.get_handle<float>(ak4_weight)),
+        ak8_w_hndl_(ctx.get_handle<float>(ak8_weight)),
+        pt_ld_ak4_jet_hndl_(ctx.get_handle<float>("pt_ld_ak4_jet")),
+        pt_ld_ak8_jet_hndl_(ctx.get_handle<float>("pt_ld_ak8_jet")),
+        st_hndl_(ctx.get_handle<double>("ST")),
+        n_ak4_hndl_(ctx.get_handle<int>("n_ak4")),
+        n_ak8_hndl_(ctx.get_handle<int>("n_ak8")),
+        st_cleaned(book<TH1F>("ST_cleaned", "ST cleaned", 45, 0, 4500)),
+        pt_ak4_cleaned(book<TH1F>("pt_ak4_cleaned", "Pt(ld Ak4 Jet) cleaned", 60, 0., 1500.)),
+        n_ak4_cleaned(book<TH1F>("n_ak4_cleaned", "N(Ak4 Jet) cleaned", 15, -.5, 14.5)),
+        pt_ak8_cleaned(book<TH1F>("pt_ak8_cleaned", "Pt(ld Ak8 Jet) cleaned", 60, 0., 1500.)),
+        n_ak8_cleaned(book<TH1F>("n_ak8_cleaned", "N(Ak8 Jet) cleaned", 8, -.5, 7.5)) {}
+
+    virtual void fill(const Event & event) override {
+        // if (TpTpAnalysisModule::version.find(versionname) == string::npos)
+        //     return;
+        auto pt_ld_ak4_jet = event.get(pt_ld_ak4_jet_hndl_);
+        auto pt_ld_ak8_jet = event.get(pt_ld_ak8_jet_hndl_);
+        auto st = event.get(st_hndl_);
+        auto n_ak4 = event.get(n_ak4_hndl_);
+        auto n_ak8 = event.get(n_ak8_hndl_);
+        auto ak4_ptreweight = event.get(ak4_w_hndl_);
+        auto ak8_ptreweight = event.get(ak8_w_hndl_);
+
+
+        pt_ak4_cleaned->Fill(pt_ld_ak4_jet, event.weight*ak4_ptreweight);
+        pt_ak8_cleaned->Fill(pt_ld_ak8_jet, event.weight*ak4_ptreweight);
+        st_cleaned->Fill(st, event.weight*ak4_ptreweight);
+        n_ak4_cleaned->Fill(n_ak4, event.weight*ak8_ptreweight);
+        n_ak8_cleaned->Fill(n_ak8, event.weight*ak8_ptreweight);
+    }
+
+private:
+    Event::Handle<float> ak4_w_hndl_, ak8_w_hndl_, pt_ld_ak4_jet_hndl_, pt_ld_ak8_jet_hndl_;
+    Event::Handle<double> st_hndl_;
+    Event::Handle<int> n_ak4_hndl_, n_ak8_hndl_;
+    TH1F *st_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned, *pt_ak8_cleaned, *n_ak8_cleaned;
 };

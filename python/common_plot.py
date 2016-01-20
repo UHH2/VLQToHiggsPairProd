@@ -9,7 +9,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 src_dir_rel = '../Hadd'
 
-basenames = list('uhh2.AnalysisModuleRunner.'+f for f in [
+basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'DATA.SingleMuon_Run2015D',
     'MC.MC_QCD',
     'MC.MC_WJets',
@@ -21,6 +21,21 @@ basenames = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.MC_TpTp_M-1200_thth', 'MC.MC_TpTp_M-1200_thtz', 'MC.MC_TpTp_M-1200_thbw', 'MC.MC_TpTp_M-1200_noH_tztz', 'MC.MC_TpTp_M-1200_noH_tzbw', 'MC.MC_TpTp_M-1200_noH_bwbw',
     'MC.MC_TpTp_M-1400_thth', 'MC.MC_TpTp_M-1400_thtz', 'MC.MC_TpTp_M-1400_thbw', 'MC.MC_TpTp_M-1400_noH_tztz', 'MC.MC_TpTp_M-1400_noH_tzbw', 'MC.MC_TpTp_M-1400_noH_bwbw',
     'MC.MC_TpTp_M-1600_thth', 'MC.MC_TpTp_M-1600_thtz', 'MC.MC_TpTp_M-1600_thbw', 'MC.MC_TpTp_M-1600_noH_tztz', 'MC.MC_TpTp_M-1600_noH_tzbw', 'MC.MC_TpTp_M-1600_noH_bwbw',
+    ])
+
+basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
+    'DATA.SingleMuon_Run2015D',
+    'DATA.SingleEle_Run2015D',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.SingleTop',
+    'MC.TTbar',
+    'MC.TpTp_M-800',
+    'MC.TpTp_M-1000',
+    'MC.TpTp_M-1200',
+    'MC.TpTp_M-1400',
+    'MC.TpTp_M-1600',
     ])
 
 normfactors = {

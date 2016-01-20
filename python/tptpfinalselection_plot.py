@@ -163,10 +163,10 @@ def mk_toolchain(name='', src='', categories=None):
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
         )
 
-def hadd_and_plot(version='Test', src='', categories=None):
+def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     hadd = Hadd(
         src_glob_path='../../'+src,
-        basenames=common_plot.basenames, 
+        basenames=basenames, 
         )
     # histo_loader = varial.tools.HistoLoader(
     #     # name='CutflowHistos',

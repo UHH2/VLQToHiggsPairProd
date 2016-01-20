@@ -2,16 +2,7 @@
 
 ##################################### definition of UserConfig item changes ###
 
-sys_uncerts = {
-    # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
-    'nominal'       : {'jecsmear_direction':'nominal'}
-    # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
-    # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
-}
+
 start_all_parallel = True
 
 
@@ -25,26 +16,46 @@ from varial.extensions import git
 
 # varial.settings.max_num_processes = 1
 
-categories = ["NoSelection",
+categories_final = ["NoSelection",
         # "HiggsTag0Med-Control", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
         # "HiggsTag1bMed-Signal", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
         # "HiggsTag2bMed-Signal", 
         ]
 
-datasets_to_plot = [
-    'Run2015D',
-    'TpTp_M-800_thth',
-    'TpTp_M-800_thtz',
-    'TpTp_M-800_thbw',
-    'TpTp_M-1600_thth',
-    'TpTp_M-1600_thtz',
-    'TpTp_M-1600_thbw',
-    'QCD',
-    'TTbar',
-    'WJets',
-    'DYJets',
-    'SingleT',
-]
+categories_pre = [ #"NoSelection",
+        'IsoMuo24',
+        'Mu45',
+        'El40',
+        ]
+
+sys_uncerts_final = {
+    # 'name' : {'item name': 'item value', ...},
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
+    'nominal'       : {'jecsmear_direction':'nominal'}
+    # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
+    # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
+}
+no_sys_uncerts = {
+    'nominal'       : {'jecsmear_direction':'nominal'}
+}
+
+# datasets_to_plot = [
+#     'Run2015D',
+#     'TpTp_M-800_thth',
+#     'TpTp_M-800_thtz',
+#     'TpTp_M-800_thbw',
+#     'TpTp_M-1600_thth',
+#     'TpTp_M-1600_thtz',
+#     'TpTp_M-1600_thbw',
+#     'QCD',
+#     'TTbar',
+#     'WJets',
+#     'DYJets',
+#     'SingleT',
+# ]
   
 
 final_states_to_split_into = [
@@ -142,7 +153,7 @@ def set_uncert(element_tree, uncert_name=''):
 
 #     return do_set_uncert
 
-def setup_for_ind_run(outputdir = '', allowed_datasets = None, count = '-1', analysis_module='', uncert_name=''):
+def setup_for_finalsel(outputdir = '', allowed_datasets = None, count = '-1', analysis_module='', uncert_name='', categories=None):
     def tmp_func(element_tree):
         set_analysis_module(element_tree, analysis_module)
         set_output_dir(element_tree, outputdir)
@@ -150,6 +161,17 @@ def setup_for_ind_run(outputdir = '', allowed_datasets = None, count = '-1', ana
         make_higgs_split_item(element_tree, final_states_to_split_into)
         do_set_eventnumber(element_tree, count)
         set_uncert(element_tree, uncert_name)
+        do_set_cat(element_tree, " ".join(categories))
+    return tmp_func
+
+def setup_for_presel(outputdir = '', allowed_datasets = None, count = '-1', analysis_module='', uncert_name='', categories=None):
+    def tmp_func(element_tree):
+        set_analysis_module(element_tree, analysis_module)
+        set_output_dir(element_tree, outputdir)
+        clean_input_data(element_tree, allowed_datasets)
+        # make_higgs_split_item(element_tree, final_states_to_split_into)
+        do_set_eventnumber(element_tree, count)
+        # set_uncert(element_tree, uncert_name)
         do_set_cat(element_tree, " ".join(categories))
     return tmp_func
 
@@ -168,7 +190,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="100000" FileSplit="0" AutoResubmit="2" />
+   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="2" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -177,50 +199,86 @@ class MySFrameBatch(SFrame):
         else:
             opt = ' -sl --exitOnQuestion'
 
-        self.exe = 'sframe_batch.py' + opt
+        self.exe = 'sframe_batch.py' #+ opt
 
 
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelectionV2.xml'
+sframe_cfg_final = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelectionV2.xml'
+sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpPreselectionV2.xml'
 
+import common_plot
 import tptpfinalselection_plot as final_plotting
+from optparse import OptionParser
 
-def mk_sframe_tools_and_plot(name='All_Files'):
+def mk_sframe_tools_and_plot(argv):
+    parser = OptionParser()
+
+    parser.add_option('--output', type='string', action='store',
+                      dest='outputdir',
+                      help='Output directory')
+
+    parser.add_option('--sel', type='string', action='store',
+                      dest='selection',
+                      help='Selection type (pre or final)')
+
+    (options, args) = parser.parse_args(argv)
+    argv = []
+
+    count = '-1'
+
+    if options.selection == 'pre':
+        sframe_cfg = sframe_cfg_pre
+        setup_for_ind_run = setup_for_presel
+        categories = categories_pre
+        analysis_module = 'TpTpPreselectionV2'
+        sys_uncerts = no_sys_uncerts
+        basenames = common_plot.basenames_pre
+    elif options.selection == 'final':
+        sframe_cfg = sframe_cfg_final
+        setup_for_ind_run = setup_for_finalsel
+        categories = categories_final
+        analysis_module = 'TpTpFinalSelectionTreeOutput'
+        sys_uncerts = sys_uncerts_final
+        basenames = common_plot.basenames_final
+    else:
+        print "Provide correct 'selection' option ('pre' or 'final')!"
+        exit(-1)
+
     tc = ToolChain('Files_and_Plots',
-        list(
-            varial.tools.ToolChain('Files_and_Plots_'+uncert,
-                [
-                MySFrameBatch(
-                    cfg_filename=sframe_cfg,
-                    # xml_tree_callback=set_uncert_func(uncert),
-                    xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module='TpTpFinalSelectionTreeOutput',
-                        uncert_name=uncert),
-                    name='SFrame',
-                    # name='SFrame_' + uncert,
-                    halt_on_exception=False,
-                    ),
-                final_plotting.hadd_and_plot(version='Plots',
-                    src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-                    categories=categories)
-                ]
-                )
-            for uncert in sys_uncerts
+            list(
+                varial.tools.ToolChain('Files_and_Plots_'+uncert,
+                    [
+                    MySFrameBatch(
+                        cfg_filename=sframe_cfg,
+                        # xml_tree_callback=set_uncert_func(uncert),
+                        xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
+                            uncert_name=uncert, categories=categories),
+                        name='SFrame',
+                        # name='SFrame_' + uncert,
+                        halt_on_exception=False,
+                        ),
+                    final_plotting.hadd_and_plot(version='Plots',
+                        src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+                        categories=categories, basenames=basenames)
+                    ]
+                    )
+                for uncert in sys_uncerts
             )
         )
 
     return varial.tools.ToolChain(
-        name,
+        options.outputdir,
         [
             git.GitAdder(),
             tc,
-            git.GitTagger(commit_prefix='In {0}'.format(name))
-            # varial.tools.WebCreator(no_tool_check=False),
+            git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+            varial.tools.WebCreator(no_tool_check=False),
         ]
     )
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print 'Pls. give me da name of da outputdir! ... dude!'
-        exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv[1]))
+    # if len(sys.argv) != 3:
+    #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
+    #     exit(-1)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

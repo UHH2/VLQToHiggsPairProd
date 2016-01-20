@@ -737,31 +737,31 @@ private:
 };
 
 
-template<typename TYPE>
-class JetPtAndMultFixer {
-public:
-    explicit JetPtAndMultFixer(double offset, double gradient) :
-        offset_(offset), gradient_(gradient) {}
+// template<typename TYPE>
+// class JetPtAndMultFixer {
+// public:
+//     explicit JetPtAndMultFixer(double offset, double gradient) :
+//         offset_(offset), gradient_(gradient) {}
 
-    bool operator()(TYPE const & part, uhh2::Event const &) const {
-        double part_pt = part.pt();
-        double sf = offset_ + part_pt * gradient_;
+//     bool operator()(TYPE const & part, uhh2::Event const &) const {
+//         double part_pt = part.pt();
+//         double sf = offset_ + part_pt * gradient_;
         
-        srand(part.eta());
+//         srand(part.eta());
 
-        double rand_num = rand() % 1000000;
-        rand_num /= 1000000.;
+//         double rand_num = rand() % 1000000;
+//         rand_num /= 1000000.;
 
-        if (rand_num > sf)
-            return false;
+//         if (rand_num > sf)
+//             return false;
 
-        return true;
-    }
+//         return true;
+//     }
 
-private:
-    double offset_, gradient_;
+// private:
+//     double offset_, gradient_;
 
-};
+// };
 
 
 

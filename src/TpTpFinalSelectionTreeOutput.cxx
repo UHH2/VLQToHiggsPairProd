@@ -170,20 +170,20 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 
 
-    // =====CLEAN JETS BASED ON JULIES SCRIPT======
-    other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-                "jets",
-                "jets_pt_cleaned",
-                type == "MC" ? JetId(JetPtAndMultFixer<Jet>(1.09771, -0.000517529)) : JetId(TrueId<Jet>::is_true)
-                ));
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
-                "topjets_pt_cleaned",
-                type == "MC" ? TopJetId(JetPtAndMultFixer<TopJet>(1.10875, -0.000594446)) : TopJetId(TrueId<TopJet>::is_true)
-                ));
-    other_modules.emplace_back(new STCalculator(ctx, "ST_cleaned",
-        type == "MC" ? JetId(JetPtAndMultFixer<Jet>(1.09771, -0.000517529)) : JetId(TrueId<Jet>::is_true)
-        ));
+    // // =====CLEAN JETS BASED ON JULIES SCRIPT======
+    // other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+    //             "jets",
+    //             "jets_pt_cleaned",
+                // type == "MC" ? JetId(JetPtAndMultFixer<Jet>(1.09771, -0.000517529)) : JetId(TrueId<Jet>::is_true)
+    //             ));
+    // other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    //             "topjets",
+    //             "topjets_pt_cleaned",
+                // type == "MC" ? TopJetId(JetPtAndMultFixer<TopJet>(1.10875, -0.000594446)) : TopJetId(TrueId<TopJet>::is_true)
+    //             ));
+    // other_modules.emplace_back(new STCalculator(ctx, "ST_cleaned",
+    //     type == "MC" ? JetId(JetPtAndMultFixer<Jet>(1.09771, -0.000517529)) : JetId(TrueId<Jet>::is_true)
+    //     ));
 
 
     // =====HIGGS TAGS AND STUFF======
