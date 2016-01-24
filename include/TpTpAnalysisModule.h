@@ -75,6 +75,7 @@ protected:
     vector<vector<shared_ptr<SelectionItem>>> SEL_ITEMS_FULL_SEL;
 
     Event::Handle<std::vector<TopJet>> patjets_;
+    unique_ptr<NParticleMultiHistProducerHelper<TopJet>> ak8jet_hists/*, ca15jet_hists*/;
 
     // check category
     // unique_ptr<Selection> cat_check_module;

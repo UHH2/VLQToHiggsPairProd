@@ -17,9 +17,9 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.DYJetsToLL',
     'MC.SingleTop',
     'MC.TTbar',
-    'MC.TpTp_M-700_thth', 'MC.TpTp_M-700_thtz', 'MC.TpTp_M-700_thbw', 'MC.TpTp_M-700_noH_tztz', 'MC.TpTp_M-700_noH_tzbw', 'MC.TpTp_M-700_noH_bwbw',
-    'MC.TpTp_M-800_thth', 'MC.TpTp_M-800_thtz', 'MC.TpTp_M-800_thbw', 'MC.TpTp_M-800_noH_tztz', 'MC.TpTp_M-800_noH_tzbw', 'MC.TpTp_M-800_noH_bwbw',
-    'MC.TpTp_M-900_thth', 'MC.TpTp_M-900_thtz', 'MC.TpTp_M-900_thbw', 'MC.TpTp_M-900_noH_tztz', 'MC.TpTp_M-900_noH_tzbw', 'MC.TpTp_M-900_noH_bwbw',
+    'MC.TpTp_M-0700_thth', 'MC.TpTp_M-0700_thtz', 'MC.TpTp_M-0700_thbw', 'MC.TpTp_M-0700_noH_tztz', 'MC.TpTp_M-0700_noH_tzbw', 'MC.TpTp_M-0700_noH_bwbw',
+    'MC.TpTp_M-0800_thth', 'MC.TpTp_M-0800_thtz', 'MC.TpTp_M-0800_thbw', 'MC.TpTp_M-0800_noH_tztz', 'MC.TpTp_M-0800_noH_tzbw', 'MC.TpTp_M-0800_noH_bwbw',
+    'MC.TpTp_M-0900_thth', 'MC.TpTp_M-0900_thtz', 'MC.TpTp_M-0900_thbw', 'MC.TpTp_M-0900_noH_tztz', 'MC.TpTp_M-0900_noH_tzbw', 'MC.TpTp_M-0900_noH_bwbw',
     'MC.TpTp_M-1000_thth', 'MC.TpTp_M-1000_thtz', 'MC.TpTp_M-1000_thbw', 'MC.TpTp_M-1000_noH_tztz', 'MC.TpTp_M-1000_noH_tzbw', 'MC.TpTp_M-1000_noH_bwbw',
     'MC.TpTp_M-1200_thth', 'MC.TpTp_M-1200_thtz', 'MC.TpTp_M-1200_thbw', 'MC.TpTp_M-1200_noH_tztz', 'MC.TpTp_M-1200_noH_tzbw', 'MC.TpTp_M-1200_noH_bwbw',
     'MC.TpTp_M-1400_thth', 'MC.TpTp_M-1400_thtz', 'MC.TpTp_M-1400_thbw', 'MC.TpTp_M-1400_noH_tztz', 'MC.TpTp_M-1400_noH_tzbw', 'MC.TpTp_M-1400_noH_bwbw',
@@ -34,22 +34,27 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.DYJetsToLL',
     'MC.SingleTop',
     'MC.TTbar',
-    'MC.TpTp_M-700',
-    'MC.TpTp_M-800',
-    'MC.TpTp_M-900',
+    'MC.TpTp_M-0700',
+    'MC.TpTp_M-0800',
+    'MC.TpTp_M-0900',
     'MC.TpTp_M-1000',
+    'MC.TpTp_M-1100',
     'MC.TpTp_M-1200',
+    'MC.TpTp_M-1300',
     'MC.TpTp_M-1400',
+    'MC.TpTp_M-1500',
     'MC.TpTp_M-1600',
+    'MC.TpTp_M-1700',
+    'MC.TpTp_M-1800',
     ])
 
 normfactors = {
     # 'TpTp' : 5.,
     '_thX' : 1./0.56,
     '_other' : 1./0.44,
-    'TpTp_M-700' : 1./0.455,
-    'TpTp_M-800' : 1./0.196,
-    'TpTp_M-900' : 1./0.0903,
+    'TpTp_M-0700' : 1./0.455,
+    'TpTp_M-0800' : 1./0.196,
+    'TpTp_M-0900' : 1./0.0903,
     'TpTp_M-1000' : 1./0.0440,
     'TpTp_M-1100' : 1./0.0224,
     'TpTp_M-1200' : 1./0.0118,
@@ -65,17 +70,17 @@ signal_indicators = ['TpTp']
 
 common_datasets_to_plot = [
     'Run2015D',
-    # 'TpTp_M-700',
-    'TpTp_M-800',
-    # 'TpTp_M-900',
+    'TpTp_M-0700',
+    # 'TpTp_M-0800',
+    # 'TpTp_M-0900',
     # 'TpTp_M-1000',
     # 'TpTp_M-1100',
-    # 'TpTp_M-1200',
+    'TpTp_M-1200',
     # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
-    'TpTp_M-1600',
-    # 'TpTp_M-1700',
+    # 'TpTp_M-1600',
+    'TpTp_M-1700',
     # 'TpTp_M-1800',
     # 'QCD_Pt15to30',
     # 'QCD_Pt30to50',
@@ -85,7 +90,7 @@ common_datasets_to_plot = [
     'TTbar',
     'WJets',
     'ZJets',
-    'SingleT',
+    'SingleTop',
 ]
 
 #====SELECT_FILES FUNCTIONS====
@@ -236,6 +241,8 @@ def mod_legend(wrps):
             w.legend = w.legend[3:]
         if w.is_data:
             w.legend = 'data'
+        if w.legend.startswith('TpTp'):
+            w.legend = 'TT M'+w.legend[7:]
         yield w
 
 #====LOADER HOOKS====

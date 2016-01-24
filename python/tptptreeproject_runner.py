@@ -9,7 +9,7 @@ import os
 import sys
 
 import common_plot
-import tptpfinalselection_plot as plot
+import plot as plot
 import tptpsframe_runner as sframe
 from varial.extensions import git
 
@@ -90,10 +90,10 @@ def run_treeproject_and_plot(base_path, output_dir):
                 #     # sensitivity.tc,
                 # ]
             ),
+            varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
 
             # varial.tools.PrintToolTree(),
-            varial.tools.WebCreator(),
             # tex_content.tc,
             # varial.tools.CopyTool('~/www/auth/VLQ2HT', use_rsync=True),
         ]

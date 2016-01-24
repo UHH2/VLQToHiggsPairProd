@@ -13,7 +13,14 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // cout << "TestKey in the configuration was: " << testvalue << endl;
     version = ctx.get("dataset_version", "");
     type = ctx.get("dataset_type", "");
+    double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
+
+    if (version == "Run2015D_Ele") {
+        ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root");
+    } else if (version == "Run2015D_Mu") {
+        ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Latest_2015_Silver_JSON.root");
+    }
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -22,7 +29,19 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         cout << " " << kv.first << " = " << kv.second << endl;
     }
 
-    common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "PrimaryLepton", 50., 47., "is_muon")); 
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu20"));
+    if (type == "MC")
+        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WP75_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
+        // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu"));
+    else
+        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
+        // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu27_v*"}, "trigger_accept_isoMu"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_mu45"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el45"));
+
+    common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
+    // keep the following module mainly for cross-checks, to see whether e.g. your primary lepton in the muon channel is really a muon
+    common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLepton", 50., 47., "is_muon"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_dRak8", MuonId(MinMaxDeltaRId<TopJet>(ctx, "topjets", 0.1))));
     common_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
@@ -32,33 +51,98 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets", "n_ak8"));
     common_modules.emplace_back(new METProducer(ctx, "met"));
     common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_ld_ak4_jet", 1));
+    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_subld_ak4_jet", 2));
+    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
     common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
     common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
-    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
+    // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "LeadingLepton", "leading_lepton_pt", "leading_lepton_eta", "leading_lepton_charge"));
     // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
 
     // ====APPLY JULIES JET PT REWEIGHTING METHOD=====
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.09771, -0.000517529, "ak4_jetpt_weight"));
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.13617, -0.000418040, "ak4_jetpt_weight_up"));
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "ak4_jetpt_weight_down"));
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<TopJet>(ctx, "topjets", 1.10875, -0.000594446, "ak8_jetpt_weight"));
+    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.09771, -0.000517529, "weight_ak4_jetpt"));
+    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.13617, -0.000418040, "weight_ak4_jetpt_up"));
+    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "weight_ak4_jetpt_down"));
+    common_modules.emplace_back(new JetPtAndMultFixerWeight<TopJet>(ctx, "topjets", 1.10875, -0.000594446, "weight_ak8_jetpt"));
+    
 
-    // common_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-    //     "jets",
-    //     "b_jets_loose",
-    //     JetId(CSVBTag(CSVBTag::WP_LOOSE))
-    //     ));
-    // common_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-    //     "jets",
-    //     "b_jets_medium",
-    //     JetId(CSVBTag(CSVBTag::WP_MEDIUM))
-    //     ));
-    // common_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-    //     "jets",
-    //     "b_jets_tight",
-    //     JetId(CSVBTag(CSVBTag::WP_TIGHT))
-    //     ));
+    if (type == "MC") {
+        common_modules.emplace_back(new TriggerAwareEventWeight(ctx, "trigger_accept_el45", (target_lumi - 86.)/target_lumi));
+    }
+
+    ak8jet_hists.reset(new NParticleMultiHistProducerHelper<TopJet>("FirstAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "n_subjets", "dRlepton", "dRak4", "dRak8"}));
+    ak8jet_hists->add_level("SecondAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "n_subjets", "dRlepton", "dRak4", "dRak8"}, 2);
+
+    // boosted Ak8 jets
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "ak8_boost",
+                TopJetId(PtEtaCut(300., 2.4))
+                ));
+
+    // =====HIGGS TAGS AND STUFF======
+
+    // higgs tags, with mass cuts
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "higgs_tags_1b_med",
+                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "higgs_tags_2b_med",
+                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    ak8jet_hists->add_level("Higgs_tags_1b_med", "higgs_tags_1b_med", vector<string>{"n", "pt", "eta", "mass_sj", "tau21", "n_sjbtags-medium", "dRlepton", "dRak4", "dRak8"}, 1);
+    ak8jet_hists->add_level("Higgs_tags_2b_med", "higgs_tags_2b_med", vector<string>{"n", "pt", "eta", "mass_sj", "tau21", "n_sjbtags-medium", "dRlepton", "dRak4", "dRak8"}, 1);
+
+    // =====HIGGS TAG QUANTITIES======
+
+    // higgs-tags without pt cut
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "noboost_mass_1b",
+                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "noboost_mass_2b",
+                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    ak8jet_hists->add_level("Noboost_mass_1b", "noboost_mass_1b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
+    ak8jet_hists->add_level("Noboost_mass_2b", "noboost_mass_2b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
+
+    // higgs tags without mass cuts
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "nomass_boost_1b",
+                TopJetId(HiggsFlexBTag(0.,999999., CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "nomass_boost_2b",
+                TopJetId(HiggsFlexBTag(0.,999999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    ak8jet_hists->add_level("Nomass_boost_1b", "nomass_boost_1b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
+    ak8jet_hists->add_level("Nomass_boost_2b", "nomass_boost_2b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
+
+    // higgs tags without b-tag cuts
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "nobtag_boost_mass",
+                TopJetId(HiggsFlexBTag(80., 150.))
+                ));
+    ak8jet_hists->add_level("Nobtag_boost_mass", "nobtag_boost_mass", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-loose", "n_sjbtags-medium"}, 1);
+    
+    common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med",
+                "n_higgs_tags_1b_med"
+                ));
+    common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med",
+                "n_higgs_tags_2b_med"
+                ));
+
     common_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
         "jets",
         "n_btags_loose",

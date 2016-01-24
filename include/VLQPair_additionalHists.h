@@ -257,9 +257,9 @@ public:
     jet_hists(hists.find("jet") != hists.end() ? new ExtendedJetHists(ctx, dirname+"/JetHists", 4) : NULL),
     jet_clean_hists(hists.find("jet_clean") != hists.end() ? new ExtendedJetHists(ctx, dirname+"/JetHistsCleaned", 4, "jets_pt_cleaned") : NULL),
     cmstopjet_hists(hists.find("cmstopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8Jets", btag_id, 3) : NULL),
-    cmstopjet_clean_hists(hists.find("cmstopjet_clean") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8JetsCleaned", btag_id, 3, "topjets_pt_cleaned") : NULL),
+    cmstopjet_cleaned_hists(hists.find("cmstopjet_cleaned") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/SlimmedAk8JetsUnCleaned", btag_id, 3, "topjets_uncleaned") : NULL),
     heptopjet_hists(hists.find("heptopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/HEPTopJetHists", btag_id, 3, "patJetsHepTopTagCHSPacked_daughters") : NULL),
-    ak8softdroptopjet_hists(hists.find("ak8softdroptopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/Ak8SoftDropTopJetHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters") : NULL),
+    ak8softdroptopjet_hists(hists.find("ak8softdroptopjet") != hists.end() ? new ExtendedTopJetHists(ctx, dirname+"/PatJetsSoftDropHists", btag_id, 3, "patJetsAk8CHSJetsSoftDropPacked_daughters") : NULL),
     lumi_hist((ctx.get("dataset_type", "") != "MC") && hists.find("lumi") != hists.end()? new LuminosityHists(ctx, dirname+"/LuminosityHists") : NULL),
     gen_hists(gen_plots && hists.find("gen") != hists.end() ? new CustomizableGenHists(ctx, dirname+"/GenHists", "parton_ht") : NULL)
     {
@@ -295,7 +295,7 @@ public:
         if (jet_hists) jet_hists->fill(event);
         if (jet_clean_hists) jet_clean_hists->fill(event);
         if (cmstopjet_hists) cmstopjet_hists->fill(event);
-        if (cmstopjet_clean_hists) cmstopjet_clean_hists->fill(event);
+        if (cmstopjet_cleaned_hists) cmstopjet_cleaned_hists->fill(event);
         if (heptopjet_hists) heptopjet_hists->fill(event);
         if (ak8softdroptopjet_hists) ak8softdroptopjet_hists->fill(event);
         // ca15filteredtopjet_hists->fill(event);
@@ -311,7 +311,7 @@ public:
         delete jet_hists;
         delete jet_clean_hists;
         delete cmstopjet_hists;
-        delete cmstopjet_clean_hists;
+        delete cmstopjet_cleaned_hists;
         delete heptopjet_hists;
         delete ak8softdroptopjet_hists;
         // delete ca15filteredtopjet_hists;
@@ -324,7 +324,7 @@ private:
     TauHists * tau_hists;
     ExtendedEventHists * ev_hists;
     ExtendedJetHists * jet_hists, *jet_clean_hists;
-    ExtendedTopJetHists * cmstopjet_hists, *cmstopjet_clean_hists;
+    ExtendedTopJetHists * cmstopjet_hists, *cmstopjet_cleaned_hists;
     ExtendedTopJetHists * heptopjet_hists;
     ExtendedTopJetHists * ak8softdroptopjet_hists;
     LuminosityHists * lumi_hist;
@@ -412,6 +412,7 @@ public:
         n_ak4_hndl_(ctx.get_handle<int>("n_ak4")),
         n_ak8_hndl_(ctx.get_handle<int>("n_ak8")),
         st_cleaned(book<TH1F>("ST_cleaned", "ST cleaned", 45, 0, 4500)),
+        met_cleaned(book<TH1F>("MET_cleaned","missing E_{T} cleaned", 200,0,1000)),
         pt_ak4_cleaned(book<TH1F>("pt_ak4_cleaned", "Pt(ld Ak4 Jet) cleaned", 60, 0., 1500.)),
         n_ak4_cleaned(book<TH1F>("n_ak4_cleaned", "N(Ak4 Jet) cleaned", 15, -.5, 14.5)),
         pt_ak8_cleaned(book<TH1F>("pt_ak8_cleaned", "Pt(ld Ak8 Jet) cleaned", 60, 0., 1500.)),
@@ -430,9 +431,10 @@ public:
 
 
         pt_ak4_cleaned->Fill(pt_ld_ak4_jet, event.weight*ak4_ptreweight);
-        pt_ak8_cleaned->Fill(pt_ld_ak8_jet, event.weight*ak4_ptreweight);
+        pt_ak8_cleaned->Fill(pt_ld_ak8_jet, event.weight*ak8_ptreweight);
         st_cleaned->Fill(st, event.weight*ak4_ptreweight);
-        n_ak4_cleaned->Fill(n_ak4, event.weight*ak8_ptreweight);
+        met_cleaned->Fill(event.met->pt(), event.weight*ak4_ptreweight);
+        n_ak4_cleaned->Fill(n_ak4, event.weight*ak4_ptreweight);
         n_ak8_cleaned->Fill(n_ak8, event.weight*ak8_ptreweight);
     }
 
@@ -440,5 +442,5 @@ private:
     Event::Handle<float> ak4_w_hndl_, ak8_w_hndl_, pt_ld_ak4_jet_hndl_, pt_ld_ak8_jet_hndl_;
     Event::Handle<double> st_hndl_;
     Event::Handle<int> n_ak4_hndl_, n_ak8_hndl_;
-    TH1F *st_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned, *pt_ak8_cleaned, *n_ak8_cleaned;
+    TH1F *st_cleaned, *met_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned, *pt_ak8_cleaned, *n_ak8_cleaned;
 };

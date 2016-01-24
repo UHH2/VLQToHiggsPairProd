@@ -16,16 +16,17 @@ from varial.extensions import git
 
 # varial.settings.max_num_processes = 1
 
-categories_final = ["NoSelection",
+categories_final = [ #"NoSelection",
         "EleChannel", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
         "MuonChannel", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
         # "HiggsTag2bMed-Signal", 
         ]
 
 categories_pre = [ #"NoSelection",
-        'IsoMuo24',
+        'IsoMuo20',
+        'IsoEle27',
         'Mu45',
-        'El40',
+        'El45',
         ]
 
 sys_uncerts_final = {
@@ -191,7 +192,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="2" />
+   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="2" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -208,7 +209,7 @@ sframe_cfg_final = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4
 sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpPreselectionV2.xml'
 
 import common_plot
-import tptpfinalselection_plot as final_plotting
+import plot as final_plotting
 from optparse import OptionParser
 
 varial.settings.sys_uncerts = {}

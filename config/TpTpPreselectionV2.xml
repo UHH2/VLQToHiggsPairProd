@@ -65,10 +65,6 @@
 ]
 >
 
-<!--
-   <ConfigParse NEventsBreak="0" FileSplit="8" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
--->
 
 
 <JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
@@ -119,82 +115,93 @@
     -->
 
 
-    <!-- 
-
-    <InputData Lumi="36678571" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1100" Cacheable="False">
-        &MC_TpTp_M-1100;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="129953051" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1300" Cacheable="False">
-        &MC_TpTp_M-1300;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="406100000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1500" Cacheable="False">
-        &MC_TpTp_M-1500;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="1664800000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1700" Cacheable="False">
-        &MC_TpTp_M-1700;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="False">
-        &MC_TpTp_M-1800;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData> -->
-
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     selected signal samples
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="1755165" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-700" Cacheable="False">
-        &MC_TpTp_M-700;
+    <InputData Lumi="1755165" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-800" Cacheable="False">
-        &MC_TpTp_M-800;
+    <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0800" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="9222591" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-900" Cacheable="False">
-        &MC_TpTp_M-900;
+    <InputData Lumi="9222591" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0900" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="18700000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1000" Cacheable="False">
-        &MC_TpTp_M-1000;
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-700;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="36678571" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1100" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="70576271" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1200" Cacheable="False">
-        &MC_TpTp_M-1200;
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-900;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="129953051" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1300" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1000;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="235254237" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1400" Cacheable="False">
-        &MC_TpTp_M-1400;
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1100;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="406100000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1500" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="804000000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1600" Cacheable="False">
-        &MC_TpTp_M-1600;
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1300;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="1664800000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1700" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1400;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+
+    <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="False">
+        <!-- %%%%%%% WARNING: REFERRING TO DIFFERENT XML FILE DUE TO YOU SCREW UP IN SIGNAL PRODUCTION %%%%%% -->
+        &MC_TpTp_M-1500;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -316,25 +323,25 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="15896.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
+        <InputData Lumi="18491.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="18522.07" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
+    <InputData Lumi="23760.36" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0200to0400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="157921.76" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
+    <InputData Lumi="188052" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="367476.73" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
+    <InputData Lumi="454464" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />

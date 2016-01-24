@@ -320,26 +320,26 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="15896.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
-        &DYJetsToLL_M50_HT0100to0200;
+    <!-- <InputData Lumi="18491.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="18522.07" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
-        &DYJetsToLL_M50_HT0200to0400;
+    <InputData Lumi="23760.36" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0200to0400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="157921.76" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
-        &DYJetsToLL_M50_HT0400to0600;
+    <InputData Lumi="188052" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="367476.73" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
-        &DYJetsToLL_M50_HT0600toINFT;
+    <InputData Lumi="454464" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
