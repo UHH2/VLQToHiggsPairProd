@@ -14,7 +14,7 @@ import tptpsframe_runner as sframe
 from varial.extensions import git
 
 
-varial.settings.max_num_processes = 24
+varial.settings.max_num_processes = 10
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -56,6 +56,91 @@ import sensitivity
 #     samplename_func=vlq_common.get_samplename
 # )
 
+def mk_limit_list_syst(sys_pat=''):
+    def temp():
+        limit_list = []
+        for ind, brs_ in enumerate(sensitivity.br_list):
+            # if ind > 2: break
+            tc = []
+            tc.append(varial.tools.ToolChain(
+                'El45Only',
+                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                    "SignalRegion2b_El45",
+                    "SignalRegion1b_El45",
+                    "SidebandRegion_El45"],
+                    'ST'),
+                name='El45Only', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'Mu45Only',
+                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                    "SignalRegion2b_Mu45",
+                    "SignalRegion1b_Mu45",
+                    "SidebandRegion_Mu45"],
+                    'ST'),
+                name='Mu45Only', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'CombinedChannels',
+                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                    "SignalRegion2b_El45",
+                    "SignalRegion1b_El45",
+                    "SidebandRegion_El45",
+                    "SignalRegion2b_Mu45",
+                    "SignalRegion1b_Mu45",
+                    "SidebandRegion_Mu45"],
+                    'ST'),
+                name='CombinedChannels', sys_pat=sys_pat))
+            )
+            limit_list.append(
+                varial.tools.ToolChain('Limit'+str(ind),tc))
+        return limit_list
+    return temp
+
+
+def mk_limit_list_check():
+    limit_list = []
+    for ind, brs_ in enumerate(sensitivity.br_list):
+        # if ind > 2: break
+        tc = []
+        tc.append(varial.tools.ToolChain(
+            'NoDRCut',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_Mu45",
+                "SignalRegion1b_Mu45",
+                "SidebandRegion_Mu45"],
+                'ST'),
+            name='NoDRCut', sys_pat=''))
+        )
+        tc.append(varial.tools.ToolChain(
+            'WithDRCut',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_Mu45DRCut",
+                "SignalRegion1b_Mu45DRCut",
+                "SidebandRegion_Mu45DRCut"],
+                'ST'),
+            name='WithDRCut', sys_pat=''))
+        )
+        limit_list.append(
+            varial.tools.ToolChain('Limit'+str(ind),tc))
+    return limit_list
+
+varial.settings.pretty_names.update({
+    'LimitEl45Only' : 'ElectronOnly',
+    'LimitMu45Only' : 'MuonOnly',
+    'LimitNoDRCut' : 'NoDRCut',
+    'LimitWithDRCut' : 'WithDRCut',
+    'LimitCombinedChannels' : 'CombinedChannels',
+})
+
+varial.settings.colors.update({
+    'LimitEl45Only' : 2,
+    'LimitMu45Only' : 3,
+    'LimitCombinedChannels' : 4,
+    'LimitNoDRCut' : 3,
+    'LimitWithDRCut' : 4,
+})
+
 
 def run_treeproject_and_plot(base_path, output_dir):
     tc = varial.tools.ToolChain(
@@ -73,15 +158,16 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Inputs', [
                     tptp_treeproject.mk_tp(base_path),
-                    # tptp_treeproject.mk_sys_tps(base_path),
+                    tptp_treeproject.mk_sys_tps(base_path),
                     # hadd,
                 ]
             ),
-            varial.tools.ToolChainParallel(
+            varial.tools.ToolChain(
                 'Histograms',
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None),
-                    sensitivity.mk_tc('Limits'), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),

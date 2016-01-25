@@ -5,6 +5,7 @@ from os.path import join
 import varial.tools
 import glob
 
+varial.settings.max_num_processes = 24
 
 histo_names_args = {
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
@@ -24,50 +25,60 @@ histo_names_args = {
     # 'pt_ld_ak4_jet_cleaned'         : ('Pt leading Ak4 Jet, cleaned',      60, 0., 1500.),
     'pt_ld_ak8_jet'                 : ('Pt leading Ak8 Jet',               60, 0., 1500.),
     # 'pt_ld_ak8_jet_cleaned'         : ('Pt leading Ak8 Jet, cleaned',      60, 0., 1500.),
-    'deltaRlep_topjets_1'           : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
-    'deltaRak4_topjets_1'           : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
-    'deltaRak8_topjets_1'           : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    'deltaRlep_topjets_2'           : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
-    'deltaRak4_topjets_2'           : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
-    'deltaRak8_topjets_2'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    'deltaRlep_higgs_tags_1b_med_1' : ('dR(H-Tag(1b), primary lepton)',    50, 0., 5.),
-    'deltaRak4_higgs_tags_1b_med_1' : ('dR(H-Tag(1b), nearest Ak4 Jet)',   50, 0., 5.),
-    'deltaRak8_higgs_tags_1b_med_1' : ('dR(H-Tag(1b), nearest Ak8 Jet)',   50, 0., 5.),
-    'deltaRlep_higgs_tags_2b_med_1' : ('dR(H-Tag(2b), primary lepton)',    50, 0., 5.),
-    'deltaRak4_higgs_tags_2b_med_1' : ('dR(H-Tag(2b), nearest Ak4 Jet)',   50, 0., 5.),
-    'deltaRak8_higgs_tags_2b_med_1' : ('dR(H-Tag(2b), nearest Ak8 Jet)',   50, 0., 5.),
-    # 'topjeteta_1'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
-    # 'topjeteta_2'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
-    # 'topjetmass_1'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
-    # 'topjetmass_2'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
-    # 'topjetnsjbtags_1'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
-    # 'topjetnsjbtags_2'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
-    # 'topjetpt_1'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
-    # 'topjetpt_2'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
     'trigger_accept_mu45'           : ('Trigger Accepted Mu45',             2, -.5, 1.5),
-    'trigger_accept_el40'           : ('Trigger Accepted El40',             2, -.5, 1.5),
-    'trigger_accept_isoMu'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
+    'trigger_accept_el45'           : ('Trigger Accepted El40',             2, -.5, 1.5),
+    'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
+    'trigger_accept_isoEl27'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'is_muon'                       : ('Prim. Lep. is Muon',                2, -.5, 1.5),
-    'use_sr_sf'                     : ('Use SR SF',                         2, -.5, 1.5),
+    # 'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
+    'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
+    'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
+    # 'first_ak8jet_pt'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
+    # 'first_ak8jet_dRlep'                : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
+    # 'first_ak8jet_dRak4'               : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    'first_ak8jet_dRak8'           : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    # 'second_ak8jet_eta'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
+    'second_ak8jet_mass'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
+    'second_ak8jet_nsjbtags'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
+    'second_ak8jet_pt'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
+    # 'second_ak8jet_dRlep'                : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
+    # 'second_ak8jet_dRak4'               : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    # 'second_ak8jet_dRak8'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    # 'higgs_tag_1b_eta'                : ('Eta Higgs-Tag(1b)',                  50, -3., 3.),
+    # 'higgs_tag_1b_mass'               : ('Mass Higgs-Tag(1b)',                 60, 0., 300.),
+    # 'higgs_tag_1b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(1b)',     4, -.5, 3.5),
+    # 'higgs_tag_1b_pt'                 : ('Pt Higgs-Tag(1b)',                   60, 0., 1500.),
+    # 'higgs_tag_1b_dRlep'                : ('dR(Higgs-Tag(1b), primary lepton)',   50, 0., 5.),
+    # 'higgs_tag_1b_dRak4'               : ('dR(Higgs-Tag(1b), nearest Ak4 Jet)',  50, 0., 5.),
+    # 'higgs_tag_1b_dRak8'           : ('dR(Higgs-Tag(1b), nearest Ak8 Jet)',  50, 0., 5.),
+    # 'higgs_tag_2b_eta'                : ('Eta Higgs-Tag(2b)',                  50, -3., 3.),
+    # 'higgs_tag_2b_mass'               : ('Mass Higgs-Tag(2b)',                 60, 0., 300.),
+    # 'higgs_tag_2b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(2b)',     4, -.5, 3.5),
+    # 'higgs_tag_2b_pt'                 : ('Pt Higgs-Tag(2b)',                   60, 0., 1500.),
+    # 'higgs_tag_2b_dRlep'                : ('dR(Higgs-Tag(2b), primary lepton)',   50, 0., 5.),
+    # 'higgs_tag_2b_dRak4'               : ('dR(Higgs-Tag(2b), nearest Ak4 Jet)',  50, 0., 5.),
+    # 'higgs_tag_2b_dRak8'           : ('dR(Higgs-Tag(2b), nearest Ak8 Jet)',  50, 0., 5.),
+    # 'use_sr_sf'                     : ('Use SR SF',                         2, -.5, 1.5),
 }
+
 params = {
     'histos': histo_names_args,
     'treename': 'AnalysisTree',
 }
 
 signals = [
-    'TpTp_M-700',
-    'TpTp_M-800',
-    'TpTp_M-900',
+    'TpTp_M-0700',
+    'TpTp_M-0800',
+    'TpTp_M-0900',
     'TpTp_M-1000',
-    # 'TpTp_M-1100',
+    'TpTp_M-1100',
     'TpTp_M-1200',
-    # 'TpTp_M-1300',
+    'TpTp_M-1300',
     'TpTp_M-1400',
-    # 'TpTp_M-1500',
+    'TpTp_M-1500',
     'TpTp_M-1600',
-    # 'TpTp_M-1700',
-    # 'TpTp_M-1800',
+    'TpTp_M-1700',
+    'TpTp_M-1800',
 ]
 
 final_states = [
@@ -97,13 +108,19 @@ import tptp_selections_treeproject as sel
 
 
 sec_sel_weight = [
-    ('BaseLineSelection', sel.baseline_selection, 'weight'), # *ak4_jetpt_weight
-    ('SignalRegion2b_Electron', sel.sr2b_el_channel, 'weight'), # *ak4_jetpt_weight
-    ('SignalRegion1b_Electron', sel.sr1b_el_channel, 'weight'), # *ak4_jetpt_weight
-    ('SidebandRegion_Electron', sel.sb_el_channel, 'weight'), # *ak4_jetpt_weight
-    ('SignalRegion2b_Muon', sel.sr2b_mu_channel, 'weight'), # *ak4_jetpt_weight
-    ('SignalRegion1b_Muon', sel.sr1b_mu_channel, 'weight'), # *ak4_jetpt_weight
-    ('SidebandRegion_Muon', sel.sb_mu_channel, 'weight'), # *ak4_jetpt_weight
+    ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_El45DRCut', sel.sr2b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_El45DRCut', sel.sr1b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion2b_Mu45DRCut', sel.sr2b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion1b_Mu45DRCut', sel.sr1b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
     # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
     # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
@@ -146,13 +163,16 @@ def mk_sys_tps(base_path):
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
     nominal_sec_sel_weight = [
-        ('SignalRegion2b', sr2b_selection, 'weight'),
-        ('SignalRegion1b', sr1b_selection, 'weight'),
-        ('SidebandRegion', sb_selection, 'weight'),
+        ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'),
+        ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'),
+        ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'),
+        ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, 'weight*weight_ak4_jetpt'),
+        ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'),
+        ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'),
+        ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'),
     ]
     sys_tps = list(
         TreeProjector(
-            samples, 
             dict(
                 (sample, list(f for f in glob.glob(pat) if sample in f))
                 for sample in samples
@@ -173,9 +193,13 @@ def mk_sys_tps(base_path):
     )
     sys_sec_sel_weight = list(
         (name, [
-            ('SignalRegion2b', sr2b_selection, 'weight*' + w),
-            ('SignalRegion1b', sr1b_selection, 'weight*' + w),            
-            ('SidebandRegion', sb_selection, 'weight*' + w),
+            ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt*' + w),
+            ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, 'weight*weight_ak4_jetpt*' + w),
+            ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, 'weight*weight_ak4_jetpt*' + w),
+            ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, 'weight*weight_ak4_jetpt*' + w),
+            ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt*' + w),
+            ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt*' + w),
+            ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt*' + w),
         ])
         for name, w in (
             ('btag_bc__minus', 'weight_btag_bc_down/weight_btag'),
@@ -186,11 +210,15 @@ def mk_sys_tps(base_path):
             ('sfmu_id__plus', 'weight_sfmu_id_up/weight_sfmu_id'),
             ('sfmu_trg__minus', 'weight_sfmu_trg_down/weight_sfmu_trg'),
             ('sfmu_trg__plus', 'weight_sfmu_trg_up/weight_sfmu_trg'),
+            # ('pu__minus', 'weight_pu_down/weight_pu'),
+            # ('pu__plus', 'weight_pu_up/weight_pu'),
+            # ('ak4_jetpt__minus', 'weight_ak4_jetpt_down/weight_ak4_jetpt'),
+            # ('ak4_jetpt__plus', 'weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
     sys_tps += list(
         TreeProjector(
-            filenames, 
+            filenames,
             sys_params, 
             ssw,
             add_aliases_to_analysis=False,

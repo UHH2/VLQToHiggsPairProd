@@ -23,7 +23,7 @@ import common_plot
 import sensitivity
 import compare_crs
 
-# varial.settings.max_num_processes = 1
+varial.settings.max_num_processes = 1
 
 
 #====PLOTTING====
@@ -80,11 +80,16 @@ varial.settings.pretty_names.update({
 #                 wrp.histo.GetXaxis().SetBinLabel(i + 1, bin_label)
 #         yield wrp
 
-# def cf_loader_hook(wrps):
-#     wrps = common_plot.loader_hook(wrps)
-#     wrps = cutflow_tables.rebin_cutflow(wrps)
-#     wrps = mod_cf_label(wrps)
-#     return wrps
+def cf_loader_hook(wrps):
+    wrps = common_plot.loader_hook(wrps)
+    wrps = cutflow_tables.rebin_cutflow(wrps)
+    wrps = gen.sort(wrps, ['in_file_path', 'sample'])
+    # wrps = list(wrps)
+    # for w in wrps: print w.sample, w.in_file_path 
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
+    wrps = gen.sort(wrps, ['in_file_path'])
+    return wrps
 
 def mk_cutflow_chain_cat(category, loader_hook):
     cutflow_histos = varial.tools.HistoLoader(
@@ -97,8 +102,8 @@ def mk_cutflow_chain_cat(category, loader_hook):
                        any(f in w.file_path for f in datasets_to_plot) and\
                        (('SingleEle' not in w.file_path and 'Mu' in category) or\
                        ('SingleMuon' not in w.file_path and 'El' in category)),
-        hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
-        # hook_loaded_histos=cf_loader_hook
+        # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
+        hook_loaded_histos=cf_loader_hook
     )
 
     cutflow_stack_plots = varial.tools.Plotter(
@@ -199,19 +204,20 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None):
         if categories:
             cutflow_cat = []
             for cat in categories:
-                cutflow_cat.append(mk_cutflow_chain_cat(
-                    cat,
-                    common_plot.loader_hook))
+                if cat is not 'NoSelection':
+                    cutflow_cat.append(mk_cutflow_chain_cat(
+                        cat,
+                        common_plot.loader_hook))
             plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
 
         return plot_chain
     return create
 
-# def mk_toolchain(name='', src='', categories=None):
-#     return varial.tools.ToolChainParallel(
-#         name,
-#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
-#         )
+def mk_toolchain(name='', src='', categories=None):
+    return varial.tools.ToolChainParallel(
+        name,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
+        )
 
 import tex_content
 
@@ -219,6 +225,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     hadd = Hadd(
         src_glob_path='../../'+src,
         basenames=basenames, 
+        overwrite=False
         )
     plots = varial.tools.ToolChainParallel(
         'Plots',
@@ -227,17 +234,16 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     tc = varial.tools.ToolChain(
         version,
         [
-            # hadd,
+            hadd,
             # histo_loader,
             plots,
-            tex_content.make_tex_content()
             # varial.tools.ToolChainParallel(
             #     'CompareControlRegions',
             #     lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
             #             crs=list(c for c in categories if 'Control' in c))
             #     ),
             # sensitivity.mk_tc('Limits'),
-            # varial.tools.WebCreator(no_tool_check=True)
+            varial.tools.WebCreator(no_tool_check=True)
         ]
     )
     return tc

@@ -11,8 +11,8 @@ p_base = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1
 presel_version = 'v7'
 p_prebase = p_base + 'TpTpPreselection-%s/Files_and_Plots'\
 '/Files_and_Plots_nominal/Plots/Plots/' % presel_version
-post_version = 'v2_withEleCh'
-p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunEleMuLimits/Histograms/' % post_version
+post_version = 'v3'
+p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
 ext = '.pdf'
 target_ext = '.pdf'
 varial.settings.rootfile_postfixes += ['.pdf']
@@ -97,7 +97,7 @@ def getFinalVar(chan, base):
 
 def mk_autoContentSignalControlRegion(base):
     return varial.extensions.tex.TexContent(
-        dict(getFinalVar(muchannel_final, base) + getFinalVar(elchannel_final, base)),
+        dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name='AutoContentSignalControlRegion',
     )

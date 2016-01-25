@@ -3,7 +3,7 @@
 ##################################### definition of UserConfig item changes ###
 
 
-start_all_parallel = True
+start_all_parallel = False
 
 
 ############################################################### script code ###
@@ -14,12 +14,15 @@ import copy
 
 from varial.extensions import git
 
-varial.settings.max_num_processes = 1
+varial.settings.max_num_processes = 24
 
-categories_final = [ #"NoSelection",
-        "EleChannel", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
-        "MuonChannel", #"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
-        # "HiggsTag2bMed-Signal", 
+categories_final = [ "NoSelection",
+        'El45_H2B',
+        'El45_H1B',
+        'El45_Control',
+        'Mu45_H2B',
+        'Mu45_H1B',
+        'Mu45_Control',
         ]
 
 categories_pre = [ #"NoSelection",
@@ -31,10 +34,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
+    'jec_up'        : {'jecsmear_direction':'up'},
+    'jec_down'      : {'jecsmear_direction':'down'},
+    'jer_up'        : {'jersmear_direction':'up'},
+    'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -192,7 +195,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="2" />
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="2" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -211,6 +214,7 @@ sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_1
 import common_plot
 import plot as final_plotting
 from optparse import OptionParser
+import tex_content
 
 varial.settings.sys_uncerts = {}
 
@@ -248,33 +252,39 @@ def mk_sframe_tools_and_plot(argv):
         print "Provide correct 'selection' option ('pre' or 'final')!"
         exit(-1)
 
-    print varial.settings.colors
+    def sf_batch_tc():
+        h_a_pl = final_plotting.hadd_and_plot(version='Plots',
+            src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+            categories=categories, basenames=basenames)
+        tc_list = []
+        for uncert in varial.settings.sys_uncerts:
+            sf_batch = MySFrameBatch(
+                cfg_filename=sframe_cfg,
+                # xml_tree_callback=set_uncert_func(uncert),
+                xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
+                    uncert_name=uncert, categories=categories),
+                name='SFrame',
+                # name='SFrame_' + uncert,
+                halt_on_exception=False,
+                )
+            if uncert == 'nominal':
+                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[sf_batch, h_a_pl]))
+            else:
+                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[sf_batch]))
+
+        return tc_list
+
+                    
+
 
     return varial.tools.ToolChain(
         options.outputdir,
         [
             git.GitAdder(),
-            tools.ToolChain('Files_and_Plots',
-                list(
-                    varial.tools.ToolChain('Files_and_Plots_'+uncert,
-                        [
-                        # MySFrameBatch(
-                        #     cfg_filename=sframe_cfg,
-                        #     # xml_tree_callback=set_uncert_func(uncert),
-                        #     xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
-                        #         uncert_name=uncert, categories=categories),
-                        #     name='SFrame',
-                        #     # name='SFrame_' + uncert,
-                        #     halt_on_exception=False,
-                        #     ),
-                        final_plotting.hadd_and_plot(version='Plots',
-                            src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-                            categories=categories, basenames=basenames)
-                        ]
-                        )
-                    for uncert in varial.settings.sys_uncerts
-                )
+            ToolChain('Files_and_Plots',
+                sf_batch_tc()
             ),
+            tex_content.make_tex_content(),
             varial.tools.WebCreator(no_tool_check=False),
             git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
         ]
@@ -285,4 +295,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)

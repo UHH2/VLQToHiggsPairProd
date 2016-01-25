@@ -2,7 +2,33 @@
 
 baseline_selection = [
     'gendecay_accept        == 1',
-    'deltaRlep_topjets_1    > 0.8',
+]
+
+sr2b_channel = baseline_selection + [
+    'n_higgs_tags_2b_med    >= 1',
+    'n_additional_btags_medium  >= 1',
+]
+
+sr1b_channel = baseline_selection + [
+    'n_higgs_tags_2b_med    == 0',
+    'n_higgs_tags_1b_med    >= 1',
+    'n_additional_btags_medium  >= 1',
+]
+sb_channel = baseline_selection + [
+    'n_higgs_tags_1b_med        == 0',
+    'n_additional_btags_medium  >= 1',
+]
+
+el_channel = [
+    'trigger_accept_el45   >= 1'
+]
+
+mu_channel = [
+    'trigger_accept_mu45   >= 1'
+]
+
+dr_cut = [
+    'first_ak8jet_dRak8    <= 2.8'
 ]
 
 # Electron channel

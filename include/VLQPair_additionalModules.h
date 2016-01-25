@@ -684,108 +684,70 @@ public:
                                 std::string const & in_name,
                                 std::string const & out_name,
                                 std::string const & prim_lep = "PrimaryMuon_noIso",
-                                JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM)):
+                                JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
+                                unsigned ind = 1):
         in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
-        out_hndl_mass_1(ctx.declare_event_output<float>(out_name+"mass_1")),
-        out_hndl_pt_1(ctx.declare_event_output<float>(out_name+"pt_1")),
-        out_hndl_eta_1(ctx.declare_event_output<float>(out_name+"eta_1")),
-        out_hndl_nsjbtags_1(ctx.declare_event_output<float>(out_name+"nsjbtags_1")),
-        out_hndl_dRlep_1(ctx.declare_event_output<float>(out_name+"dRlep_1")),
-        out_hndl_dRak4_1(ctx.declare_event_output<float>(out_name+"dRak4_1")),
-        out_hndl_dRak8_1(ctx.declare_event_output<float>(out_name+"dRak8_1")),
-        out_hndl_mass_2(ctx.declare_event_output<float>(out_name+"mass_2")),
-        out_hndl_pt_2(ctx.declare_event_output<float>(out_name+"pt_2")),
-        out_hndl_eta_2(ctx.declare_event_output<float>(out_name+"eta_2")),
-        out_hndl_nsjbtags_2(ctx.declare_event_output<float>(out_name+"nsjbtags_2")),
-        out_hndl_dRlep_2(ctx.declare_event_output<float>(out_name+"dRlep_2")),
-        out_hndl_dRak4_2(ctx.declare_event_output<float>(out_name+"dRak4_2")),
-        out_hndl_dRak8_2(ctx.declare_event_output<float>(out_name+"dRak8_2")),
+        out_hndl_mass(ctx.declare_event_output<float>(out_name+"_mass")),
+        out_hndl_pt(ctx.declare_event_output<float>(out_name+"_pt")),
+        out_hndl_eta(ctx.declare_event_output<float>(out_name+"_eta")),
+        out_hndl_nsjbtags(ctx.declare_event_output<float>(out_name+"_nsjbtags")),
+        out_hndl_dRlep(ctx.declare_event_output<float>(out_name+"_dRlep")),
+        out_hndl_dRak4(ctx.declare_event_output<float>(out_name+"_dRak4")),
+        out_hndl_dRak8(ctx.declare_event_output<float>(out_name+"_dRak8")),
         h_primlep_(ctx.get_handle<FlavorParticle>(prim_lep)),
-        id_(id) {}
+        id_(id),
+        ind_(ind) {}
         
 
     bool process(Event & event) override {
         assert(event.is_valid(in_hndl));
-        float mass_1 = -1.;
-        float pt_1 = -1.;
-        float eta_1 = -1.;
-        float nsjbtags_1 = -1.;
-        float dRlep_1 = -1.;
-        float dRak4_1 = -1.;
-        float dRak8_1 = -1.;
-        float mass_2 = -1.;
-        float pt_2 = -1.;
-        float eta_2 = -1.;
-        float nsjbtags_2 = -1.;
-        float dRlep_2 = -1.;
-        float dRak4_2 = -1.;
-        float dRak8_2 = -1.;
+        float mass = -1.;
+        float pt = -1.;
+        float eta = -1.;
+        float nsjbtags = -1.;
+        float dRlep = -1.;
+        float dRak4 = -1.;
+        float dRak8 = -1.;
         vector<TopJet> const & coll = event.get(in_hndl);
-        for (unsigned i = 0; i < coll.size(); ++i) {
-            TopJet const & tj = coll[i];
-            if (i == 0) {
-                pt_1 = tj.pt();
-                eta_1 = tj.eta();
-                if (tj.subjets().size() >= 2) {
-                    LorentzVector sj_v4;
-                    nsjbtags_1 = 0.;
-                    for (Jet const & j : tj.subjets()) {
-                        sj_v4 += j.v4();
-                        if (id_(j, event)) nsjbtags_1 += 1.;
-                    }
-                    if (sj_v4.isTimelike()) 
-                        mass_1 = sj_v4.M();
+        if (coll.size() >= ind_) {
+            TopJet const & tj = coll[ind_-1];
+            pt = tj.pt();
+            eta = tj.eta();
+            if (tj.subjets().size() >= 2) {
+                LorentzVector sj_v4;
+                nsjbtags = 0.;
+                for (Jet const & j : tj.subjets()) {
+                    sj_v4 += j.v4();
+                    if (id_(j, event)) nsjbtags += 1.;
                 }
-                dRlep_1 = deltaR(tj, event.get(h_primlep_));
-                auto const * closest_ak4 = closestParticle(tj, *event.jets);
-                auto const * closest_ak8 = closestParticle(tj, *event.topjets);
-                dRak4_1 = deltaR(tj, *closest_ak4);
-                dRak8_1 = deltaR(tj, *closest_ak8);
+                if (sj_v4.isTimelike()) 
+                    mass = sj_v4.M();
             }
-            else if (i == 1) {
-                pt_2 = tj.pt();
-                eta_2 = tj.eta();
-                if (tj.subjets().size() >= 2) {
-                    LorentzVector sj_v4;
-                    nsjbtags_2 = 0.;
-                    for (Jet const & j : tj.subjets()) {
-                        sj_v4 += j.v4();
-                        if (id_(j, event)) nsjbtags_2 += 1.;
-                    }
-                    if (sj_v4.isTimelike()) 
-                        mass_2 = sj_v4.M();
-                }
-                dRlep_2 = deltaR(tj, event.get(h_primlep_));
-                auto const * closest_ak4 = closestParticle(tj, *event.jets);
-                auto const * closest_ak8 = closestParticle(tj, *event.topjets);
-                dRak4_2 = deltaR(tj, *closest_ak4);
-                dRak8_2 = deltaR(tj, *closest_ak8);
-
-            }
+            if (event.is_valid(h_primlep_))
+                dRlep = deltaR(tj, event.get(h_primlep_));
+            auto const * closest_ak4 = closestParticle(tj, *event.jets);
+            auto const * closest_ak8 = closestParticle(tj, *event.topjets);
+            if (closest_ak4)
+                dRak4 = deltaR(tj, *closest_ak4);
+            if (closest_ak8)
+                dRak8 = deltaR(tj, *closest_ak8);
         }
-        event.set(out_hndl_mass_1, mass_1);
-        event.set(out_hndl_pt_1, pt_1);
-        event.set(out_hndl_eta_1, eta_1);
-        event.set(out_hndl_nsjbtags_1, nsjbtags_1);
-        event.set(out_hndl_dRlep_1, dRlep_1);
-        event.set(out_hndl_dRak4_1, dRak4_1);
-        event.set(out_hndl_dRak8_1, dRak8_1);
-        event.set(out_hndl_mass_2, mass_2);
-        event.set(out_hndl_pt_2, pt_2);
-        event.set(out_hndl_eta_2, eta_2);
-        event.set(out_hndl_nsjbtags_2, nsjbtags_2);
-        event.set(out_hndl_dRlep_2, dRlep_2);
-        event.set(out_hndl_dRak4_2, dRak4_2);
-        event.set(out_hndl_dRak8_2, dRak8_2);
+        event.set(out_hndl_mass, mass);
+        event.set(out_hndl_pt, pt);
+        event.set(out_hndl_eta, eta);
+        event.set(out_hndl_nsjbtags, nsjbtags);
+        event.set(out_hndl_dRlep, dRlep);
+        event.set(out_hndl_dRak4, dRak4);
+        event.set(out_hndl_dRak8, dRak8);
         return true;
     }
 
 private:
     Event::Handle<vector<TopJet>> in_hndl;
-    Event::Handle<float> out_hndl_mass_1, out_hndl_pt_1, out_hndl_eta_1, out_hndl_nsjbtags_1, out_hndl_dRlep_1, out_hndl_dRak4_1, out_hndl_dRak8_1;
-    Event::Handle<float> out_hndl_mass_2, out_hndl_pt_2, out_hndl_eta_2, out_hndl_nsjbtags_2, out_hndl_dRlep_2, out_hndl_dRak4_2, out_hndl_dRak8_2;
+    Event::Handle<float> out_hndl_mass, out_hndl_pt, out_hndl_eta, out_hndl_nsjbtags, out_hndl_dRlep, out_hndl_dRak4, out_hndl_dRak8;
     Event::Handle<FlavorParticle> h_primlep_;
     JetId id_;
+    unsigned int ind_;
 };
 
 
