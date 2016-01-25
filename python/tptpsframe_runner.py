@@ -14,7 +14,7 @@ import copy
 
 from varial.extensions import git
 
-# varial.settings.max_num_processes = 1
+varial.settings.max_num_processes = 1
 
 categories_final = [ #"NoSelection",
         "EleChannel", #"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
@@ -258,15 +258,15 @@ def mk_sframe_tools_and_plot(argv):
                 list(
                     varial.tools.ToolChain('Files_and_Plots_'+uncert,
                         [
-                        MySFrameBatch(
-                            cfg_filename=sframe_cfg,
-                            # xml_tree_callback=set_uncert_func(uncert),
-                            xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
-                                uncert_name=uncert, categories=categories),
-                            name='SFrame',
-                            # name='SFrame_' + uncert,
-                            halt_on_exception=False,
-                            ),
+                        # MySFrameBatch(
+                        #     cfg_filename=sframe_cfg,
+                        #     # xml_tree_callback=set_uncert_func(uncert),
+                        #     xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
+                        #         uncert_name=uncert, categories=categories),
+                        #     name='SFrame',
+                        #     # name='SFrame_' + uncert,
+                        #     halt_on_exception=False,
+                        #     ),
                         final_plotting.hadd_and_plot(version='Plots',
                             src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
                             categories=categories, basenames=basenames)

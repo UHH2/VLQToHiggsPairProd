@@ -64,6 +64,10 @@ public:
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_topjets_uncleaned", "N(Ak8 jets, uncleaned)", 7, -.5, 6.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_topjets_cleaned", "N(Ak8 jets, dR-cleaned)", 7, -.5, 6.5)),
+        shared_ptr<SelectionItem>(new SelDatF("leading_mu_pt", "Leading Muon p_T", 90, 0., 900., 40.)),
+        shared_ptr<SelectionItem>(new SelDatF("leading_ele_pt", "Leading Electron p_T", 90, 0., 900., 40.)),
+        shared_ptr<SelectionItem>(new SelDatF("primary_lepton_eta", "Primary Lepton eta", 60, -3., 3.)),
+        // shared_ptr<SelectionItem>(new SelDatI("primary_lepton_charge", "N(Ak8 jets, dR-cleaned)", 7, -.5, 6.5)),
 
 
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
