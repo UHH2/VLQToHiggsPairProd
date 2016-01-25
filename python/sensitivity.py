@@ -45,6 +45,32 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
             'tz' : tz_br
         })
 
+datasets_to_use = [
+    'Run2015D',
+    # 'TpTp_M-800_thX',
+    # 'TpTp_M-1000_thX',
+    'TpTp_M-0700',
+    # 'TpTp_M-0800',
+    # 'TpTp_M-0900',
+    'TpTp_M-1000',
+    # 'TpTp_M-1100',
+    # 'TpTp_M-1200',
+    'TpTp_M-1300',
+    # 'TpTp_M-1400',
+    # 'TpTp_M-1500',
+    'TpTp_M-1600',
+    # 'TpTp_M-1700',
+    # 'TpTp_M-1800',
+    # 'TpTp_M-1200_other',
+    # 'TpTp_M-1400_thX',
+    # 'TpTp_M-1600_thX',
+    'QCD',
+    'TTbar',
+    'WJets',
+    'DYJets',
+    'SingleTop',
+]
+
 def select_files(categories=None, var=''):
     def tmp(wrp):
         file_path = wrp.file_path
@@ -55,7 +81,7 @@ def select_files(categories=None, var=''):
                 # and 'DATA' not in file_path\
                 # and in_file_path.endswith('PostSelection/ST')
                 and in_file_path.endswith(var)
-                # and (wrp.in_file_path.split('/')[1] in categories if categories else True)) :
+                and any(a in wrp.file_path for a in datasets_to_use)
                 and (wrp.in_file_path.split('/')[0] in categories if categories else True)) :
             # print wrp
             return True
@@ -66,9 +92,9 @@ def loader_hook(brs):
         wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct={
-                'TpTp_M-700' : 1./0.455,
-                'TpTp_M-800' : 1./0.196,
-                'TpTp_M-900' : 1./0.0903,
+                'TpTp_M-0700' : 1./0.455,
+                'TpTp_M-0800' : 1./0.196,
+                'TpTp_M-0900' : 1./0.0903,
                 'TpTp_M-1000' : 1./0.0440,
                 'TpTp_M-1100' : 1./0.0224,
                 'TpTp_M-1200' : 1./0.0118,
@@ -121,20 +147,20 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
-        # asymptotic= False,
+        asymptotic= False,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
             'TpTp_M-0700',
             # 'TpTp_M-0800',
-            'TpTp_M-0900',
-            # 'TpTp_M-1000',
-            'TpTp_M-1100',
+            # 'TpTp_M-0900',
+            'TpTp_M-1000',
+            # 'TpTp_M-1100',
             # 'TpTp_M-1200',
             'TpTp_M-1300',
             # 'TpTp_M-1400',
             # 'TpTp_M-1500',
-            # 'TpTp_M-1600',
-            'TpTp_M-1700'])
+            'TpTp_M-1600'])
+            # 'TpTp_M-1700'])
             # 'TpTp_M-1800'])
     )
     if sys_pat:

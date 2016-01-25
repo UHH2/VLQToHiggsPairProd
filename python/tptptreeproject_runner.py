@@ -14,7 +14,7 @@ import tptpsframe_runner as sframe
 from varial.extensions import git
 
 
-varial.settings.max_num_processes = 10
+varial.settings.max_num_processes = 24
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -93,7 +93,7 @@ def mk_limit_list_syst(sys_pat=''):
                 name='CombinedChannels', sys_pat=sys_pat))
             )
             limit_list.append(
-                varial.tools.ToolChain('Limit'+str(ind),tc))
+                varial.tools.ToolChainParallel('Limit'+str(ind),tc))
         return limit_list
     return temp
 
@@ -166,8 +166,8 @@ def run_treeproject_and_plot(base_path, output_dir):
                 'Histograms',
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None),
-                    # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    # sensitivity.mk_tc('LimitsCheck', mk_limit_list_check), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),
