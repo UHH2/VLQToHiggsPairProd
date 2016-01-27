@@ -23,7 +23,7 @@ import common_plot
 import sensitivity
 import compare_crs
 
-varial.settings.max_num_processes = 1
+# varial.settings.max_num_processes = 1
 
 
 #====PLOTTING====
@@ -32,18 +32,18 @@ datasets_to_plot = [
     'Run2015D',
     # 'TpTp_M-800_thX',
     # 'TpTp_M-1000_thX',
-    'TpTp_M-0700',
+    'TpTp_M-0700_thX',
     # 'TpTp_M-0800',
     # 'TpTp_M-0900',
     # 'TpTp_M-1000',
     # 'TpTp_M-1100',
-    'TpTp_M-1200',
+    'TpTp_M-1200_thX',
     # 'TpTp_M-1300',
     # 'TpTp_M-1400',
     # 'TpTp_M-1500',
     # 'TpTp_M-1600',
     # 'TpTp_M-1700',
-    'TpTp_M-1800',
+    'TpTp_M-1800_thX',
     # 'TpTp_M-1200_other',
     # 'TpTp_M-1400_thX',
     # 'TpTp_M-1600_thX',
@@ -86,8 +86,8 @@ def cf_loader_hook(wrps):
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
-    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
+    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=True)
+    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=True)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -180,6 +180,7 @@ def plotter_factory(**kws):
     kws['stack_setup'] = common_plot.stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
+    kws['hook_canvas_post_build'] = varial.gen.add_sample_integrals
     # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)
 
@@ -225,7 +226,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     hadd = Hadd(
         src_glob_path='../../'+src,
         basenames=basenames, 
-        overwrite=False
+        # overwrite=False
         )
     plots = varial.tools.ToolChainParallel(
         'Plots',
@@ -234,7 +235,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None):
     tc = varial.tools.ToolChain(
         version,
         [
-            hadd,
+            # hadd,
             # histo_loader,
             plots,
             # varial.tools.ToolChainParallel(

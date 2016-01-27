@@ -195,7 +195,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="2" />
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -241,6 +241,7 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpPreselectionV2'
         varial.settings.sys_uncerts = no_sys_uncerts
         basenames = common_plot.basenames_pre
+        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
         setup_for_ind_run = setup_for_finalsel
@@ -274,22 +275,49 @@ def mk_sframe_tools_and_plot(argv):
 
         return tc_list
 
-                    
-
-
-    return varial.tools.ToolChain(
-        options.outputdir,
-        [
-            git.GitAdder(),
-            ToolChain('Files_and_Plots',
-                sf_batch_tc()
+    def mk_tex_tc_pre(base):
+        return varial.tools.ToolChain('TexCopy', [
+            varial.tools.ToolChain(
+                'Tex', 
+                [
+                    # mk_autoContentSignalControlRegion(p_postbase),
+                    tex_content.mk_autoContentObjects(base),
+                    tex_content.mk_autoContentFinalSelectionHiggsVar(base),
+                    tex_content.mk_autoContentSelection(base),
+                    tex_content.mk_autoContentJetPtReweight(base),
+                    # mk_autoContentLimits(p_postbase)
+                ]
             ),
-            tex_content.make_tex_content(),
-            varial.tools.WebCreator(no_tool_check=False),
-            git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
-        ]
-    )
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        ])            
 
+
+    if options.selection == 'pre':
+        return varial.tools.ToolChain(
+            options.outputdir,
+            [
+                git.GitAdder(),
+                ToolChain('Files_and_Plots',
+                    sf_batch_tc()
+                ),
+                mk_tex_tc_pre(options.outputdir+tex_base),
+                varial.tools.WebCreator(no_tool_check=False),
+                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+            ]
+        )
+    else:
+        return varial.tools.ToolChain(
+            options.outputdir,
+            [
+                git.GitAdder(),
+                ToolChain('Files_and_Plots',
+                    sf_batch_tc()
+                ),
+                # mk_tex_tc_pre(options.outputdir+tex_base),
+                varial.tools.WebCreator(no_tool_check=False),
+                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+            ]
+        )
 
 if __name__ == '__main__':
     # if len(sys.argv) != 3:

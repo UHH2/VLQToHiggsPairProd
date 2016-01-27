@@ -60,9 +60,33 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
 
     // ====APPLY JULIES JET PT REWEIGHTING METHOD=====
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.09771, -0.000517529, "weight_ak4_jetpt"));
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.13617, -0.000418040, "weight_ak4_jetpt_up"));
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "weight_ak4_jetpt_down"));
+
+    // values below taken from Julie, recaluculate them yourself?
+    //////////////////////////////////////////
+    /*
+      Minimizer is Linear
+      Chi2                      =      9.97134
+      NDf                       =            9
+      p0                        =      1.09771   +/-   0.0384644   
+      p1                        = -0.000517529   +/-   9.94895e-05 
+      covariance p0-p0 = 0.0014795109823
+      covariance p0-p1 = -3.6104869696e-06
+      covariance p1-p1 = 9.89815635815e-09
+    */
+    //////////////////////////////////////////
+    float jetsf_p0 = 1.09771;
+    float jetsf_p1 = -0.000517529;
+
+    // get error from covariance matrix, again, values are taken from Julie
+    float cov_p0_p0 = 0.0014795109823;
+    float cov_p0_p1 = -3.6104869696e-06;
+    float cov_p1_p1 = 9.89815635815e-09;
+
+    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", jetsf_p0, jetsf_p1, cov_p0_p0, cov_p0_p1, cov_p1_p1, "weight_ak4_jetpt"));
+    // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.13617, -0.000418040, "weight_ak4_jetpt_up"));
+    // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "weight_ak4_jetpt_down"));
+
+    // WHERE DID YOU GET THE VALUES BELOW FROM??
     common_modules.emplace_back(new JetPtAndMultFixerWeight<TopJet>(ctx, "topjets", 1.10875, -0.000594446, "weight_ak8_jetpt"));
     
 

@@ -30,6 +30,9 @@ mu_channel = [
 dr_cut = [
     'first_ak8jet_dRak8    <= 2.8'
 ]
+dr_cut_invert = [
+    'first_ak8jet_dRak8    > 2.8'
+]
 
 # Electron channel
 

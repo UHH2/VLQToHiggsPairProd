@@ -134,7 +134,6 @@ def get4sel(chan, base):
 
 def get4cf(chan, base):
     p = os.path.join(base, 'CutflowTools/')
-    print p
 
     return {
         chan+'_cutflow_tabular.tex':
@@ -176,18 +175,30 @@ def mk_autoContentJetPtReweight(base):
 
 
 ######################################################### AutoContentLimits ###
-p_lim = os.path.join(p_postbase, 'Limits/Ind_Limits/Limit0/{0}/Limit{0}/plots')
-img_lim = {
-    'Limits': (
-        p_lim.format('ElectronOnly')+'/limit_band_plot-acls.png',
-        p_lim.format('MuonOnly')+'/limit_band_plot-acls.png',
-        p_lim.format('CombinedChannels')+'/limit_band_plot-acls.png',
-    ),
-}
+def getLimPlots(base):
+    p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    return {
+        'Limits': (
+            p_lim.format('El45Only')+'/plots/limit_band_plot-bayesian.png',
+            p_lim.format('Mu45Only')+'/plots/limit_band_plot-bayesian.png',
+            p_lim.format('CombinedChannels')+'/plots/limit_band_plot-bayesian.png',
+        ),
+    }
+
+def getSysTab(chan, base):
+    p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    return {
+        chan+'_side_sys_tab.tex':
+            p_lim.format('CombinedChannels')+'/sysrate_tables_SidebandRegion_%s.tex' % chan,
+        chan+'_sig1b_sys_tab.tex':
+            p_lim.format('CombinedChannels')+'/sysrate_tables_SignalRegion1b_%s.tex' % chan,
+        chan+'_sig2b_tab.tex':
+            p_lim.format('CombinedChannels')+'/sysrate_tables_SignalRegion2b_%s.tex' % chan,
+    }.items()
 
 def mk_autoContentLimits(base):
     return varial.extensions.tex.TexContent(
-        img_lim,
+        getLimPlots(base), dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),
         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
         name='AutoContentLimits',
     )
@@ -211,7 +222,7 @@ def make_tex_content():
                     mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-15-327/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
         ])
     return tc
 

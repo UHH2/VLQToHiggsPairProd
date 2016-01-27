@@ -5,7 +5,7 @@ from os.path import join
 import varial.tools
 import glob
 
-varial.settings.max_num_processes = 24
+# varial.settings.max_num_processes = 24
 
 histo_names_args = {
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
@@ -120,7 +120,7 @@ sec_sel_weight = [
     # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SignalRegion2b_Mu45DRCut', sel.sr2b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SignalRegion1b_Mu45DRCut', sel.sr1b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
     # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
     # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
@@ -210,8 +210,8 @@ def mk_sys_tps(base_path):
             ('sfmu_id__plus', 'weight_sfmu_id_up/weight_sfmu_id'),
             ('sfmu_trg__minus', 'weight_sfmu_trg_down/weight_sfmu_trg'),
             ('sfmu_trg__plus', 'weight_sfmu_trg_up/weight_sfmu_trg'),
-            # ('pu__minus', 'weight_pu_down/weight_pu'),
-            # ('pu__plus', 'weight_pu_up/weight_pu'),
+            ('pu__minus', 'weight_pu_down/weight_pu'),
+            ('pu__plus', 'weight_pu_up/weight_pu'),
             # ('ak4_jetpt__minus', 'weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', 'weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )

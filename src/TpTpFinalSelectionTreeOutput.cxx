@@ -97,7 +97,7 @@ private:
     unique_ptr<AnalysisModule> btag_sf_sr, btag_sf_cr;
     Event::Handle<double> weight_hndl;
     // Event::Handle<int> use_sr_sf_hndl;
-    vector<vector<unique_ptr<Hists>>> v_genhist_1h_after_sel, v_genhist_2h_after_sel;
+    // vector<vector<unique_ptr<Hists>>> v_genhist_1h_after_sel, v_genhist_2h_after_sel;
 
 };
 
@@ -123,7 +123,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4)));
     commonObjectCleaning->disable_jersmear();
     commonObjectCleaning->disable_jec();
-    // commonObjectCleaning->disable_mcpileupreweight();
+    commonObjectCleaning->disable_mcpileupreweight();
     // commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
     // commonObjectCleaning->set_muon_id(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1)));
     // commonObjectCleaning->switch_jetlepcleaner(true);
@@ -131,6 +131,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // commonObjectCleaning->disable_lumisel();
     commonObjectCleaning->init(ctx);
     common_module.reset(commonObjectCleaning);
+
+    other_modules.emplace_back(new MCPileupReweight(ctx));
 
     if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
         auto ak8_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK8PFchs_MC 
@@ -370,53 +372,12 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         for (auto const & sel_item : ADDITIONAL_SEL_ITEMS)
             SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        // else if (split(cat, "-")[0] == "HiggsTag0Med") {
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+4, new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5));
-        // }
-        // else if (split(cat, "-")[0] == "HiggsTag1bMed") {
-        //     // cut_collection = "higgs_tags_1b_med";
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+4, new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5));
-        // }
-        // else if (split(cat, "-")[0] == "HiggsTag2bMed") {
-        //     // cut_collection = "higgs_tags_2b_med";
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+4, new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5));
-        // }
-
-        // gendecay_accept_hndl = ctx.get_handle<int>("gendecay_accept");
-
-        // if (split(cat, "-")[0] == "NoSelection") 
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("gendecay_accept_"+fs, "GenDecay Accept", 2, -.5, 1.5));
-        // else
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("gendecay_accept", "GenDecay Accept", 2, -.5, 1.5, 1));
-
-
-        // check for b tags that do not overlap with higgs tags
-        // other_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
-        //     "b_jets_medium",
-        //     "n_additional_btags_medium",
-        //     JetId(MinMaxDeltaRId<TopJet>(ctx, cut_collection, 0.6, false))
-        //     ));
-
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("min_dR_top_1_"+cut_collection, "min deltaR(top, higgs)", 20, 0, 5.));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("min_dR_top_2_"+cut_collection, "min deltaR(top, higgs)", 20, 0, 5.));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("min_dR_top_cleaned_1_"+cut_collection, "min deltaR(top, higgs) cleaned", 20, 0, 5.));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("min_dR_top_cleaned_2_"+cut_collection, "min deltaR(top, higgs) cleaned", 20, 0, 5.));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_cmstoptagsv2", "N(Top Tags)", 5, -.5, 4.5));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_cmstoptagsv2_dR_"+cut_collection, "N(Top Tags)", 5, -.5, 4.5));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatD("ST", "ST", 45, 0, 4500));
-        // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_T", 90, 0., 900.));
 
         vector<string> item_names;
         for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
             item_names.push_back(seli->name());
 
-        sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
+        sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept_"+cat, "sel_all_accepted_"+cat));
         // sel_helper.declare_items_for_output();
         sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
 
@@ -429,8 +390,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         v_hists.emplace_back(vector<unique_ptr<Hists>>());
         v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        v_genhist_2h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        v_genhist_1h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        // v_genhist_2h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        // v_genhist_1h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
 
 
         // auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
@@ -537,16 +498,16 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
             for (auto & hist : v_hists_after_sel[i]) {
                 hist->fill(event);
             }
-            if (version.find("thth") != string::npos) {
-                for (auto & hist : v_genhist_2h_after_sel[i]) {
-                    hist->fill(event);
-                }   
-            }
-            if (version.find("thtz") != string::npos || version.find("thbw") != string::npos) {
-                for (auto & hist : v_genhist_1h_after_sel[i]) {
-                    hist->fill(event);
-                }   
-            }
+            // if (version.find("thth") != string::npos) {
+            //     for (auto & hist : v_genhist_2h_after_sel[i]) {
+            //         hist->fill(event);
+            //     }   
+            // }
+            // if (version.find("thtz") != string::npos || version.find("thbw") != string::npos) {
+            //     for (auto & hist : v_genhist_1h_after_sel[i]) {
+            //         hist->fill(event);
+            //     }   
+            // }
         }
 
     }
