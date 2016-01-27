@@ -45,21 +45,6 @@ sys_uncerts_final = {
 no_sys_uncerts = {
     'nominal'       : {'jecsmear_direction':'nominal'}
 }
-
-# datasets_to_plot = [
-#     'Run2015D',
-#     'TpTp_M-800_thth',
-#     'TpTp_M-800_thtz',
-#     'TpTp_M-800_thbw',
-#     'TpTp_M-1600_thth',
-#     'TpTp_M-1600_thtz',
-#     'TpTp_M-1600_thbw',
-#     'QCD',
-#     'TTbar',
-#     'WJets',
-#     'DYJets',
-#     'SingleT',
-# ]
   
 
 final_states_to_split_into = [
@@ -70,21 +55,6 @@ final_states_to_split_into = [
     'noH_tzbw',
     'noH_bwbw',
 ]
-
-# signal_files_to_split = [
-#     'TpTp_M-700',
-#     'TpTp_M-800',
-#     'TpTp_M-900',
-#     'TpTp_M-1000',
-#     'TpTp_M-1100',
-#     'TpTp_M-1200',
-#     'TpTp_M-1300',
-#     'TpTp_M-1400',
-#     'TpTp_M-1500',
-#     'TpTp_M-1600',
-#     'TpTp_M-1700',
-#     'TpTp_M-1800',
-# ]
 
 
 # xml config editing functions
@@ -256,7 +226,7 @@ def mk_sframe_tools_and_plot(argv):
     def sf_batch_tc():
         h_a_pl = final_plotting.hadd_and_plot(version='Plots',
             src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-            categories=categories, basenames=basenames)
+            categories=categories, basenames=basenames, datasets=samples_to_plot_final)
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -269,9 +239,14 @@ def mk_sframe_tools_and_plot(argv):
                 halt_on_exception=False,
                 )
             if uncert == 'nominal':
-                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[sf_batch, h_a_pl]))
+                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
+                    # sf_batch,
+                    h_a_pl
+                    ]))
             else:
-                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[sf_batch]))
+                tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
+                    sf_batch
+                    ]))
 
         return tc_list
 

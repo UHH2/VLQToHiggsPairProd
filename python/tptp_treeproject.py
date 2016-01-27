@@ -212,8 +212,8 @@ def mk_sys_tps(base_path):
             ('sfmu_trg__plus', 'weight_sfmu_trg_up/weight_sfmu_trg'),
             ('pu__minus', 'weight_pu_down/weight_pu'),
             ('pu__plus', 'weight_pu_up/weight_pu'),
-            # ('ak4_jetpt__minus', 'weight_ak4_jetpt_down/weight_ak4_jetpt'),
-            # ('ak4_jetpt__plus', 'weight_ak4_jetpt_up/weight_ak4_jetpt'),
+            ('ak4_jetpt__minus', 'weight_ak4_jetpt_down/weight_ak4_jetpt'),
+            ('ak4_jetpt__plus', 'weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
     sys_tps += list(

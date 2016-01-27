@@ -5,6 +5,8 @@ import varial.generators as gen
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
+import varial.operations as op
+
 #====DEFINITIONS====
 
 src_dir_rel = '../Hadd'
@@ -150,60 +152,23 @@ def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=Tr
     if buf:
         yield do_merging(buf)
 
-# def merge_samples(wrps):
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         '_Pt80to120_MuEnr',
-#         '_Pt120to170_MuEnr',
-#         '_Pt170to300_MuEnr',
-#         '_Pt300to470_MuEnr',
-#         '_Pt470to600_MuEnr',
-#         '_Pt600to800_MuEnr',
-#         '_Pt800to1000_MuEnr',
-#         '_Pt1000toInf_MuEnr',
-#     ), print_warning=False)
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         'ToLL_HT100to200',
-#         'ToLL_HT200to400',
-#         'ToLL_HT400to600',
-#         'ToLL_HT600toInf',
-#     ), print_warning=False)
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         '_tChannel',
-#         '_WAntitop',
-#         '_WTop',
-#         '_sChannel',
-#     ))
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         '_Mtt0to700',
-#         '_Mtt700to1000',
-#         '_Mtt1000toInf',
-#     ))
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         '_LNu_HT100To200',
-#         '_LNu_HT200To400',
-#         '_LNu_HT400To600',
-#         '_LNu_HT600To800',
-#         '_LNu_HT800To1200',
-#         '_LNu_HT1200To2500',
-#         '_LNu_HT2500ToInf',        
-#     ), print_warning=False)
-#     wrps = vlq_common.merge_decay_channels(wrps, (
-#         '_Ele',
-#         '_Mu',
-#         '_Had'
-#     ), print_warning=False)
-#     return wrps
 
 def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
     for w in wrps:
         if smpl_fct:
             for fct_key, fct_val in smpl_fct.iteritems():
                 if fct_key in w.sample:
-                    # if w.analyzer = 'NoSelection' or 
-                    w.lumi /= fct_val
-                    w = varial.op.norm_to_lumi(w)
-        w.lumi /= norm_all
-        w = varial.op.norm_to_lumi(w)
+                    # if w.analyzer = 'NoSelection' or
+                    if hasattr(w, 'scl_fct'):
+                        w.scl_fct *= fct_val
+                    else:
+                        op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+                    w.histo.Scale(fct_val)
+        if hasattr(w, 'scl_fct'):
+            w.scl_fct *= norm_all
+        else:
+            op.add_wrp_info(w, scl_fct=lambda _: norm_all)
+        w.histo.Scale(norm_all)
         yield w
 
 # @history.track_history
@@ -219,11 +184,15 @@ def scale_signal(wrp, fct=1.):
         fct = 1
     else:
         fct *= 5
+    if hasattr(wrp, 'scl_fct'):
+        wrp.scl_fct *= fct
+    else:
+        op.add_wrp_info(wrp, scl_fct=lambda _: fct)
     wrp.histo.Scale(fct)
     if fct > 1:
-        wrp.legend +=' (x%.2g)' % fct
+        wrp.legend +=' (%.2g pb)' % fct
     elif fct < 1:
-        wrp.legend +=' (x%.1g)' % fct
+        wrp.legend +=' (%.1g pb)' % fct
 
 def norm_to_bkg(grps):
     for g in grps:

@@ -12,7 +12,7 @@ presel_version = 'v7'
 p_prebase = p_base + 'TpTpPreselection-%s/Files_and_Plots'\
 '/Files_and_Plots_nominal/Plots/Plots/' % presel_version
 post_version = 'v3'
-p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
+p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%settings/RunLimits/Histograms/' % post_version
 ext = '.pdf'
 target_ext = '.pdf'
 varial.settings.rootfile_postfixes += ['.pdf']
@@ -71,35 +71,6 @@ def mk_autoContentFinalSelectionHiggsVar(base):
         dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name='AutoContentFinalSelectionHiggsVar',
-    )
-
-##################################################### AutoContentSignalControlRegion ###
-
-def getFinalVar(chan, base):
-    p = os.path.join(base, 'Histograms/StackedAll/')
-    # print base
-    return {
-        chan+'_Nm1ak4btag': (
-            p + 'SignalRegion1b_%s/n_additional_btags_medium_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/n_additional_btags_medium_lin' % chan + ext,
-            p + 'SidebandRegion_%s/n_additional_btags_medium_lin' % chan + ext,
-        ),
-        chan+'_Nm1htag': (
-            p + 'SidebandRegion_%s/n_higgs_tags_1b_med_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_lin' % chan + ext,
-        ),
-        chan+'_st': (
-            p + 'SignalRegion1b_%s/ST_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/ST_lin' % chan + ext,
-            p + 'SidebandRegion_%s/ST_lin' % chan + ext,
-        ),
-    }.items()
-
-def mk_autoContentSignalControlRegion(base):
-    return varial.extensions.tex.TexContent(
-        dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
-        name='AutoContentSignalControlRegion',
     )
 
 
@@ -173,15 +144,44 @@ def mk_autoContentJetPtReweight(base):
         name='AutoContentJetPtReweight',
     )
 
+##################################################### AutoContentSignalControlRegion ###
+
+def getFinalVar(chan, base):
+    p = os.path.join(base, 'Histograms/StackedAll/')
+    # print base
+    return {
+        chan+'_Nm1ak4btag': (
+            p + 'SignalRegion1b_%s/n_additional_btags_medium_lin' % chan + ext,
+            p + 'SignalRegion2b_%s/n_additional_btags_medium_lin' % chan + ext,
+            p + 'SidebandRegion_%s/n_additional_btags_medium_lin' % chan + ext,
+        ),
+        chan+'_Nm1htag': (
+            p + 'SidebandRegion_%s/n_higgs_tags_1b_med_lin' % chan + ext,
+            p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_lin' % chan + ext,
+        ),
+        chan+'_st': (
+            p + 'SignalRegion1b_%s/ST_lin' % chan + ext,
+            p + 'SignalRegion2b_%s/ST_lin' % chan + ext,
+            p + 'SidebandRegion_%s/ST_lin' % chan + ext,
+        ),
+    }.items()
+
+def mk_autoContentSignalControlRegion(base):
+    return varial.extensions.tex.TexContent(
+        dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name='AutoContentSignalControlRegion',
+    )
+
 
 ######################################################### AutoContentLimits ###
 def getLimPlots(base):
     p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return {
         'Limits': (
-            p_lim.format('El45Only')+'/plots/limit_band_plot-bayesian.png',
-            p_lim.format('Mu45Only')+'/plots/limit_band_plot-bayesian.png',
-            p_lim.format('CombinedChannels')+'/plots/limit_band_plot-bayesian.png',
+            p_lim.format('El45Only')+'/result/plots/limit_band_plot-bayesian.png',
+            p_lim.format('Mu45Only')+'/result/plots/limit_band_plot-bayesian.png',
+            p_lim.format('CombinedChannels')+'/result/plots/limit_band_plot-bayesian.png',
         ),
     }
 

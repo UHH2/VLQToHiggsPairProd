@@ -47,23 +47,18 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
 
 datasets_to_use = [
     'Run2015D',
-    # 'TpTp_M-800_thX',
-    # 'TpTp_M-1000_thX',
     'TpTp_M-0700',
-    # 'TpTp_M-0800',
-    # 'TpTp_M-0900',
+    'TpTp_M-0800',
+    'TpTp_M-0900',
     'TpTp_M-1000',
-    # 'TpTp_M-1100',
-    # 'TpTp_M-1200',
+    'TpTp_M-1100',
+    'TpTp_M-1200',
     'TpTp_M-1300',
-    # 'TpTp_M-1400',
-    # 'TpTp_M-1500',
+    'TpTp_M-1400',
+    'TpTp_M-1500',
     'TpTp_M-1600',
-    # 'TpTp_M-1700',
-    # 'TpTp_M-1800',
-    # 'TpTp_M-1200_other',
-    # 'TpTp_M-1400_thX',
-    # 'TpTp_M-1600_thX',
+    'TpTp_M-1700',
+    'TpTp_M-1800',
     'QCD',
     'TTbar',
     'WJets',
@@ -147,21 +142,21 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
-        asymptotic= False,
+        # asymptotic= False,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
             'TpTp_M-0700',
-            # 'TpTp_M-0800',
-            # 'TpTp_M-0900',
+            'TpTp_M-0800',
+            'TpTp_M-0900',
             'TpTp_M-1000',
-            # 'TpTp_M-1100',
-            # 'TpTp_M-1200',
+            'TpTp_M-1100',
+            'TpTp_M-1200',
             'TpTp_M-1300',
-            # 'TpTp_M-1400',
-            # 'TpTp_M-1500',
-            'TpTp_M-1600'])
-            # 'TpTp_M-1700'])
-            # 'TpTp_M-1800'])
+            'TpTp_M-1400',
+            'TpTp_M-1500',
+            'TpTp_M-1600',
+            'TpTp_M-1700',
+            'TpTp_M-1800'])
     )
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(
