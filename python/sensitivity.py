@@ -156,7 +156,8 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
             'TpTp_M-1500',
             'TpTp_M-1600',
             'TpTp_M-1700',
-            'TpTp_M-1800'])
+            'TpTp_M-1800']),
+        do_postfit=False,
     )
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(

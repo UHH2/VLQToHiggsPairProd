@@ -677,6 +677,23 @@ private:
 };
 
 
+template<typename T>
+const T * closestParticleMod(const Particle  & p, const std::vector<T> & particles){
+    double deltarmin = std::numeric_limits<double>::infinity();
+    const T* next=0;
+    for(unsigned int i=0; i<particles.size(); ++i) {
+        const T & pi = particles[i];
+        double dr = uhh2::deltaR(pi, p);
+        const dr_min = 1e-4;
+        if(dr < deltarmin && dr > dr_min) {
+            deltarmin = dr;
+            next = &pi;
+        }
+    }
+    return next;
+}
+
+
 class TopJetVarProducer: public AnalysisModule {
 public:
 
@@ -697,6 +714,8 @@ public:
         h_primlep_(ctx.get_handle<FlavorParticle>(prim_lep)),
         id_(id),
         ind_(ind) {}
+
+
         
 
     bool process(Event & event) override {
@@ -725,8 +744,8 @@ public:
             }
             if (event.is_valid(h_primlep_))
                 dRlep = deltaR(tj, event.get(h_primlep_));
-            auto const * closest_ak4 = closestParticle(tj, *event.jets);
-            auto const * closest_ak8 = closestParticle(tj, *event.topjets);
+            auto const * closest_ak4 = closestParticleMod(tj, *event.jets);
+            auto const * closest_ak8 = closestParticleMod(tj, *event.topjets);
             if (closest_ak4)
                 dRak4 = deltaR(tj, *closest_ak4);
             if (closest_ak8)

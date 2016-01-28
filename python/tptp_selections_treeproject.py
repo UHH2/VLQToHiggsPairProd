@@ -14,9 +14,15 @@ sr1b_channel = baseline_selection + [
     'n_higgs_tags_1b_med    >= 1',
     'n_additional_btags_medium  >= 1',
 ]
+
 sb_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  >= 1',
+]
+
+sb_wjets_channel = baseline_selection + [
+    'n_higgs_tags_1b_med        == 0',
+    'n_additional_btags_medium  == 0',
 ]
 
 el_channel = [

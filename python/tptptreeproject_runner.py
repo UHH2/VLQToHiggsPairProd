@@ -133,6 +133,43 @@ def mk_limit_list_check_drcut():
             varial.tools.ToolChainParallel('Limit'+str(ind),tc))
     return limit_list
 
+
+def mk_limit_list_check_wjets():
+    limit_list = []
+    for ind, brs_ in enumerate(sensitivity.br_list):
+        # if ind > 2: break
+        tc = []
+        tc.append(varial.tools.ToolChain(
+            'NoWJets',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_El45",
+                "SignalRegion1b_El45",
+                "SidebandRegion_El45",
+                "SignalRegion2b_Mu45",
+                "SignalRegion1b_Mu45",
+                "SidebandRegion_Mu45"],
+                'ST'),
+            name='NoWJets', sys_pat=''))
+        )
+        tc.append(varial.tools.ToolChain(
+            'WithDRCut',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_El45",
+                "SignalRegion1b_El45",
+                "SidebandRegion_El45",
+                "SignalRegion2b_Mu45",
+                "SignalRegion1b_Mu45",
+                "SidebandRegion_Mu45",
+                "SidebandWJetsRegion_El45",
+                "SidebandWJetsRegion_Mu45",
+                ],
+                'ST'),
+            name='WithDRCut', sys_pat=''))
+        )
+        limit_list.append(
+            varial.tools.ToolChainParallel('Limit'+str(ind),tc))
+    return limit_list
+
 def mk_limit_list_check_iso():
     limit_list = []
     for ind, brs_ in enumerate(sensitivity.br_list):
@@ -175,6 +212,8 @@ varial.settings.pretty_names.update({
     'LimitWithDRCut' : 'WithDRCut',
     'LimitNoIso' : 'NoIso',
     'LimitWithIso' : 'WithIso',
+    'LimitNoWJets' : 'NoWJets',
+    'LimitWithWJets' : 'WithWJets',
     'LimitCombinedChannels' : 'CombinedChannels',
 })
 
@@ -186,6 +225,8 @@ varial.settings.colors.update({
     'LimitWithDRCut' : 4,
     'LimitNoIso' : 3,
     'LimitWithIso' : 4,
+    'LimitNoWJets' : 3,
+    'LimitWithWJets' : 4,
 })
 
 
@@ -230,7 +271,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None, plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check_drcut), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check_wjets), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),
