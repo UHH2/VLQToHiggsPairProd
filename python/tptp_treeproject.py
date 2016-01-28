@@ -30,34 +30,34 @@ histo_names_args = {
     'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'trigger_accept_isoEl27'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'is_muon'                       : ('Prim. Lep. is Muon',                2, -.5, 1.5),
-    # 'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
+    'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
     'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
     'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
-    # 'first_ak8jet_pt'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
-    # 'first_ak8jet_dRlep'                : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
-    # 'first_ak8jet_dRak4'               : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    'first_ak8jet_pt'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
+    'first_ak8jet_dRlep'                : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
+    'first_ak8jet_dRak4'               : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
     'first_ak8jet_dRak8'           : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    # 'second_ak8jet_eta'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
+    'second_ak8jet_eta'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
     'second_ak8jet_mass'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
     'second_ak8jet_nsjbtags'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
     'second_ak8jet_pt'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
-    # 'second_ak8jet_dRlep'                : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
-    # 'second_ak8jet_dRak4'               : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
-    # 'second_ak8jet_dRak8'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    # 'higgs_tag_1b_eta'                : ('Eta Higgs-Tag(1b)',                  50, -3., 3.),
-    # 'higgs_tag_1b_mass'               : ('Mass Higgs-Tag(1b)',                 60, 0., 300.),
-    # 'higgs_tag_1b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(1b)',     4, -.5, 3.5),
-    # 'higgs_tag_1b_pt'                 : ('Pt Higgs-Tag(1b)',                   60, 0., 1500.),
-    # 'higgs_tag_1b_dRlep'                : ('dR(Higgs-Tag(1b), primary lepton)',   50, 0., 5.),
-    # 'higgs_tag_1b_dRak4'               : ('dR(Higgs-Tag(1b), nearest Ak4 Jet)',  50, 0., 5.),
-    # 'higgs_tag_1b_dRak8'           : ('dR(Higgs-Tag(1b), nearest Ak8 Jet)',  50, 0., 5.),
-    # 'higgs_tag_2b_eta'                : ('Eta Higgs-Tag(2b)',                  50, -3., 3.),
-    # 'higgs_tag_2b_mass'               : ('Mass Higgs-Tag(2b)',                 60, 0., 300.),
-    # 'higgs_tag_2b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(2b)',     4, -.5, 3.5),
-    # 'higgs_tag_2b_pt'                 : ('Pt Higgs-Tag(2b)',                   60, 0., 1500.),
-    # 'higgs_tag_2b_dRlep'                : ('dR(Higgs-Tag(2b), primary lepton)',   50, 0., 5.),
-    # 'higgs_tag_2b_dRak4'               : ('dR(Higgs-Tag(2b), nearest Ak4 Jet)',  50, 0., 5.),
-    # 'higgs_tag_2b_dRak8'           : ('dR(Higgs-Tag(2b), nearest Ak8 Jet)',  50, 0., 5.),
+    'second_ak8jet_dRlep'                : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
+    'second_ak8jet_dRak4'               : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    'second_ak8jet_dRak8'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    'higgs_tag_1b_eta'                : ('Eta Higgs-Tag(1b)',                  50, -3., 3.),
+    'higgs_tag_1b_mass'               : ('Mass Higgs-Tag(1b)',                 60, 0., 300.),
+    'higgs_tag_1b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(1b)',     4, -.5, 3.5),
+    'higgs_tag_1b_pt'                 : ('Pt Higgs-Tag(1b)',                   60, 0., 1500.),
+    'higgs_tag_1b_dRlep'                : ('dR(Higgs-Tag(1b), primary lepton)',   50, 0., 5.),
+    'higgs_tag_1b_dRak4'               : ('dR(Higgs-Tag(1b), nearest Ak4 Jet)',  50, 0., 5.),
+    'higgs_tag_1b_dRak8'           : ('dR(Higgs-Tag(1b), nearest Ak8 Jet)',  50, 0., 5.),
+    'higgs_tag_2b_eta'                : ('Eta Higgs-Tag(2b)',                  50, -3., 3.),
+    'higgs_tag_2b_mass'               : ('Mass Higgs-Tag(2b)',                 60, 0., 300.),
+    'higgs_tag_2b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(2b)',     4, -.5, 3.5),
+    'higgs_tag_2b_pt'                 : ('Pt Higgs-Tag(2b)',                   60, 0., 1500.),
+    'higgs_tag_2b_dRlep'                : ('dR(Higgs-Tag(2b), primary lepton)',   50, 0., 5.),
+    'higgs_tag_2b_dRak4'               : ('dR(Higgs-Tag(2b), nearest Ak4 Jet)',  50, 0., 5.),
+    'higgs_tag_2b_dRak8'           : ('dR(Higgs-Tag(2b), nearest Ak8 Jet)',  50, 0., 5.),
     # 'use_sr_sf'                     : ('Use SR SF',                         2, -.5, 1.5),
 }
 
@@ -115,12 +115,14 @@ sec_sel_weight = [
     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_El45iso', sel.sr2b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion1b_El45iso', sel.sr1b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_El45iso', sel.sb_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_Mu45iso', sel.sr2b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion1b_Mu45iso', sel.sr1b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_Mu45iso', sel.sb_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_El45iso', sel.sr2b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_El45iso', sel.sr1b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_El45iso', sel.sb_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_Mu45iso', sel.sr2b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_Mu45iso', sel.sr1b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_Mu45iso', sel.sb_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_El45DRCut', sel.sr2b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion1b_El45DRCut', sel.sr1b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt

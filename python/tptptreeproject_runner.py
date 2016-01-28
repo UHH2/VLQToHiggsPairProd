@@ -100,7 +100,7 @@ def mk_limit_list_syst(sys_pat=''):
     return temp
 
 
-def mk_limit_list_check():
+def mk_limit_list_check_drcut():
     limit_list = []
     for ind, brs_ in enumerate(sensitivity.br_list):
         # if ind > 2: break
@@ -108,6 +108,9 @@ def mk_limit_list_check():
         tc.append(varial.tools.ToolChain(
             'NoDRCut',
             sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_El45",
+                "SignalRegion1b_El45",
+                "SidebandRegion_El45",
                 "SignalRegion2b_Mu45",
                 "SignalRegion1b_Mu45",
                 "SidebandRegion_Mu45"],
@@ -117,8 +120,11 @@ def mk_limit_list_check():
         tc.append(varial.tools.ToolChain(
             'WithDRCut',
             sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-                "SignalRegion2b_Mu45DRCut",
-                "SignalRegion1b_Mu45DRCut",
+                "SignalRegion2b_El45",
+                "SignalRegion1b_El45",
+                "SidebandRegion_El45DRCut",
+                "SignalRegion2b_Mu45",
+                "SignalRegion1b_Mu45",
                 "SidebandRegion_Mu45DRCut"],
                 'ST'),
             name='WithDRCut', sys_pat=''))
@@ -224,7 +230,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None, plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check_iso), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check_drcut), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),
