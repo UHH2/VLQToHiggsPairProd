@@ -115,12 +115,18 @@ sec_sel_weight = [
     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion2b_El45iso', sel.sr2b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion1b_El45iso', sel.sr1b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_El45iso', sel.sb_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion2b_Mu45iso', sel.sr2b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SignalRegion1b_Mu45iso', sel.sr1b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('SidebandRegion_Mu45iso', sel.sb_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_El45DRCut', sel.sr2b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion1b_El45DRCut', sel.sr1b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_Mu45DRCut', sel.sr2b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion1b_Mu45DRCut', sel.sr1b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_Mu45DRCut', sel.sr2b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_Mu45DRCut', sel.sr1b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
     # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
     # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),

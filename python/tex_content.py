@@ -11,8 +11,8 @@ p_base = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1
 presel_version = 'v7'
 p_prebase = p_base + 'TpTpPreselection-%s/Files_and_Plots'\
 '/Files_and_Plots_nominal/Plots/Plots/' % presel_version
-post_version = 'v3'
-p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%settings/RunLimits/Histograms/' % post_version
+post_version = 'v4'
+p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
 ext = '.pdf'
 target_ext = '.pdf'
 varial.settings.rootfile_postfixes += ['.pdf']
@@ -179,21 +179,65 @@ def getLimPlots(base):
     p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return {
         'Limits': (
-            p_lim.format('El45Only')+'/result/plots/limit_band_plot-bayesian.png',
-            p_lim.format('Mu45Only')+'/result/plots/limit_band_plot-bayesian.png',
-            p_lim.format('CombinedChannels')+'/result/plots/limit_band_plot-bayesian.png',
+            p_lim.format('El45Only')+'/result/plots/limit_band_plot-log-bayesian.png',
+            p_lim.format('Mu45Only')+'/result/plots/limit_band_plot-log-bayesian.png',
+            p_lim.format('CombinedChannels')+'/result/plots/limit_band_plot-log-bayesian.png',
         ),
     }
 
-def getSysTab(chan, base):
+import varial.extensions.limits as limits
+
+def my_mod(table):
+    def find_column_string(line, name):
+        columns = line.split(' & ')
+        indizes = list(i for i, a in enumerate(columns) if name in a)
+        return indizes
+
+    def remove_column(line, indizes):
+        if r'\hline' in line:
+            return line
+        columns = line.split(' & ')
+        # print columns
+        new_columns = filter(lambda w: w[0] not in indizes, enumerate(columns))
+        new_columns = zip(*new_columns)[1]
+        new_columns = ' & '.join(new_columns)
+        if not new_columns.endswith(r'\\'):
+            new_columns += r'\\'
+        return new_columns
+
+    table = limits.tex_table_mod(table, [
+        ('(gauss) ', '  '),
+        ('TpTp_', '')
+    ] + limits.tex_table_mod_list)
+    lines = table.split('\n')
+    indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')
+    for i, line in enumerate(lines):
+        lines[i] = remove_column(line, indizes)
+    table = '\n'.join(lines)
+    return table
+
+
+def getSysTab(chan, base, mod=my_mod):
     p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    new_files = []
+    if mod:
+        for filename in list(p_lim.format('CombinedChannels')+'/sysrate_tables_{0}_{1}.tex'.format(g, chan)\
+                    for g in ['SidebandRegion', 'SignalRegion1b', 'SignalRegion2b']):
+            # print filename
+            with open(filename) as f:
+                cont = f.read()
+            with open(filename.replace('.tex', '_mod.tex'), 'w') as f:
+                # print mod(cont)
+                f.write(mod(cont))
+            new_files.append(filename.replace('.tex', '_mod.tex'))
+
     return {
         chan+'_side_sys_tab.tex':
-            p_lim.format('CombinedChannels')+'/sysrate_tables_SidebandRegion_%s.tex' % chan,
+            new_files[0],
         chan+'_sig1b_sys_tab.tex':
-            p_lim.format('CombinedChannels')+'/sysrate_tables_SignalRegion1b_%s.tex' % chan,
+            new_files[1],
         chan+'_sig2b_tab.tex':
-            p_lim.format('CombinedChannels')+'/sysrate_tables_SignalRegion2b_%s.tex' % chan,
+            new_files[2],
     }.items()
 
 def mk_autoContentLimits(base):
@@ -222,7 +266,7 @@ def make_tex_content():
                     mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=['*.svn'], use_rsync=True)
         ])
     return tc
 

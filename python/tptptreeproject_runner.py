@@ -127,11 +127,48 @@ def mk_limit_list_check():
             varial.tools.ToolChainParallel('Limit'+str(ind),tc))
     return limit_list
 
+def mk_limit_list_check_iso():
+    limit_list = []
+    for ind, brs_ in enumerate(sensitivity.br_list):
+        # if ind > 2: break
+        tc = []
+        tc.append(varial.tools.ToolChain(
+            'NoIso',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_Mu45",
+                "SignalRegion1b_Mu45",
+                "SidebandRegion_Mu45",
+                "SignalRegion2b_El45",
+                "SignalRegion1b_El45",
+                "SidebandRegion_El45",
+                ],
+                'ST'),
+            name='NoIso', sys_pat=''))
+        )
+        tc.append(varial.tools.ToolChain(
+            'WithIso',
+            sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                "SignalRegion2b_Mu45iso",
+                "SignalRegion1b_Mu45iso",
+                "SidebandRegion_Mu45iso",
+                "SignalRegion2b_El45iso",
+                "SignalRegion1b_El45iso",
+                "SidebandRegion_El45iso",
+                ],
+                'ST'),
+            name='WithIso', sys_pat=''))
+        )
+        limit_list.append(
+            varial.tools.ToolChainParallel('Limit'+str(ind),tc))
+    return limit_list
+
 varial.settings.pretty_names.update({
     'LimitEl45Only' : 'ElectronOnly',
     'LimitMu45Only' : 'MuonOnly',
     'LimitNoDRCut' : 'NoDRCut',
     'LimitWithDRCut' : 'WithDRCut',
+    'LimitNoIso' : 'NoIso',
+    'LimitWithIso' : 'WithIso',
     'LimitCombinedChannels' : 'CombinedChannels',
 })
 
@@ -141,6 +178,8 @@ varial.settings.colors.update({
     'LimitCombinedChannels' : 4,
     'LimitNoDRCut' : 3,
     'LimitWithDRCut' : 4,
+    'LimitNoIso' : 3,
+    'LimitWithIso' : 4,
 })
 
 
@@ -154,7 +193,7 @@ def mk_tex_tc_post(base):
                 tex_content.mk_autoContentLimits(base)
             ]
         ),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:ANTEMP/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
     ])
 
 
@@ -176,7 +215,7 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Inputs', [
                     tptp_treeproject.mk_tp(base_path),
-                    tptp_treeproject.mk_sys_tps(base_path),
+                    # tptp_treeproject.mk_sys_tps(base_path),
                     # hadd,
                 ]
             ),
@@ -185,7 +224,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 [
                     plot.mk_toolchain('Histograms', output_dir+'/Inputs/TreeProjector/*.root', None, plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                    # sensitivity.mk_tc('LimitsCheck', mk_limit_list_check), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsCheck', mk_limit_list_check_iso), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),
@@ -194,7 +233,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 #     # sensitivity.tc,
                 # ]
             ),
-            mk_tex_tc_post(output_dir+'/Histograms/'), 
+            # mk_tex_tc_post(output_dir+'/Histograms/'), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
 

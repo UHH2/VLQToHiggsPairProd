@@ -27,6 +27,14 @@ mu_channel = [
     'trigger_accept_mu45   >= 1'
 ]
 
+eliso_channel = [
+    'trigger_accept_isoEl27   >= 1'
+]
+
+muiso_channel = [
+    'trigger_accept_isoMu20   >= 1'
+]
+
 dr_cut = [
     'first_ak8jet_dRak8    <= 2.8'
 ]
