@@ -323,25 +323,25 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-        <InputData Lumi="18491.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
+    <InputData Lumi="15033" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="23760.36" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
+    <InputData Lumi="19317" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0200to0400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="188052" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
+    <InputData Lumi="152887" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="454464" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
+    <InputData Lumi="369482" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -353,13 +353,13 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="18895860.4" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
+    <InputData Lumi="18895856" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
         &MC_TtChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="291220" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_s-channel_4f_leptonDecays" Cacheable="False">
+    <InputData Lumi="984600" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_s-channel_4f_leptonDecays" Cacheable="False">
         &MC_TsChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />

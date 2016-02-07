@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "1000">
+<!ENTITY NEVT "10000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "Samples-25ns-v2/TestTreeOutput/">
 <!ENTITY QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">

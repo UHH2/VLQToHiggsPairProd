@@ -157,7 +157,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
             'TpTp_M-1600',
             'TpTp_M-1700',
             'TpTp_M-1800']),
-        do_postfit=False,
+        # do_postfit=False,
     )
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(
@@ -212,7 +212,10 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #     ]),
         varial.tools.ToolChain('LimitsWithGraphs',[
             limit_plots.LimitGraphs(
-                limit_rel_path='../Ind_Limits/Limit*/*/Limit*'
+                limit_path='../../Ind_Limits/Limit*/*/Limit*',
+                plot_obs=True,
+                plot_1sigmabands=True,
+                plot_2sigmabands=True,
                 ),
             varial.plotter.Plotter(
                 name='LimitCurvesCompared',
@@ -227,7 +230,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
                 plot_setup=lambda w: plot_setup_graphs(w,
                     th_x=common_sensitivity.theory_masses,
                     th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+                # canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
                 save_lin_log_scale=True
                 ),
             # varial.plotter.Plotter(

@@ -684,7 +684,7 @@ const T * closestParticleMod(const Particle  & p, const std::vector<T> & particl
     for(unsigned int i=0; i<particles.size(); ++i) {
         const T & pi = particles[i];
         double dr = uhh2::deltaR(pi, p);
-        const dr_min = 1e-4;
+        const double dr_min = 1e-4;
         if(dr < deltarmin && dr > dr_min) {
             deltarmin = dr;
             next = &pi;
@@ -693,17 +693,39 @@ const T * closestParticleMod(const Particle  & p, const std::vector<T> & particl
     return next;
 }
 
+template<typename T>
+inline std::pair<float, float> set_mass_and_nsubjets(Event &, T const & part, JetId const &) {
+    return std::make_pair(part.v4().M(), -1.);
+}
 
-class TopJetVarProducer: public AnalysisModule {
+template<>  
+inline std::pair<float, float> set_mass_and_nsubjets(Event & event, TopJet const & part, JetId const & id) {
+    float mass = -1., nsjbtags = -1.;
+    if (part.subjets().size() >= 2) {
+        LorentzVector sj_v4;
+        nsjbtags = 0.;
+        for (Jet const & j : part.subjets()) {
+            sj_v4 += j.v4();
+            if (id(j, event)) nsjbtags += 1.;
+        }
+        if (sj_v4.isTimelike()) 
+            mass = sj_v4.M();
+    }
+    return std::make_pair(mass, nsjbtags);
+}
+
+
+template<typename T>
+class JetVarProducer: public AnalysisModule {
 public:
 
-    explicit TopJetVarProducer(Context & ctx,
+    explicit JetVarProducer(Context & ctx,
                                 std::string const & in_name,
                                 std::string const & out_name,
                                 std::string const & prim_lep = "PrimaryMuon_noIso",
                                 JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
                                 unsigned ind = 1):
-        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+        in_hndl(ctx.get_handle<vector<T>>(in_name)),
         out_hndl_mass(ctx.declare_event_output<float>(out_name+"_mass")),
         out_hndl_pt(ctx.declare_event_output<float>(out_name+"_pt")),
         out_hndl_eta(ctx.declare_event_output<float>(out_name+"_eta")),
@@ -713,13 +735,32 @@ public:
         out_hndl_dRak8(ctx.declare_event_output<float>(out_name+"_dRak8")),
         h_primlep_(ctx.get_handle<FlavorParticle>(prim_lep)),
         id_(id),
-        ind_(ind) {}
+        ind_(ind) {
+            tj_comp_hndl = ctx.get_handle<std::vector<TopJet>>("");
+            j_comp_hndl = ctx.get_handle<std::vector<Jet>>("");
+            out_hndl_dRcompcoll = ctx.declare_event_output<float>("dummy");
+        }
+
+    explicit JetVarProducer(Context & ctx,
+                                std::string const & in_name,
+                                std::string const & out_name,
+                                std::string const & comp_coll,
+                                std::string const & prim_lep = "PrimaryMuon_noIso",
+                                JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
+                                unsigned ind = 1):
+        JetVarProducer(ctx, in_name, out_name, prim_lep, id, ind) {
+            tj_comp_hndl = ctx.get_handle<std::vector<TopJet>>(comp_coll);
+            j_comp_hndl = ctx.get_handle<std::vector<Jet>>(comp_coll);
+            out_hndl_dRcompcoll = ctx.declare_event_output<float>(out_name+"_dR_"+comp_coll);
+        }
+
 
 
         
 
     bool process(Event & event) override {
         assert(event.is_valid(in_hndl));
+        // bool is_topjet = std::is_same<T, TopJet>::value;
         float mass = -1.;
         float pt = -1.;
         float eta = -1.;
@@ -727,21 +768,13 @@ public:
         float dRlep = -1.;
         float dRak4 = -1.;
         float dRak8 = -1.;
-        vector<TopJet> const & coll = event.get(in_hndl);
+        float dRcomp = -1.;
+        vector<T> const & coll = event.get(in_hndl);
         if (coll.size() >= ind_) {
-            TopJet const & tj = coll[ind_-1];
+            T const & tj = coll[ind_-1];
             pt = tj.pt();
             eta = tj.eta();
-            if (tj.subjets().size() >= 2) {
-                LorentzVector sj_v4;
-                nsjbtags = 0.;
-                for (Jet const & j : tj.subjets()) {
-                    sj_v4 += j.v4();
-                    if (id_(j, event)) nsjbtags += 1.;
-                }
-                if (sj_v4.isTimelike()) 
-                    mass = sj_v4.M();
-            }
+            std::tie(mass, nsjbtags) = set_mass_and_nsubjets(event, tj, id_);
             if (event.is_valid(h_primlep_))
                 dRlep = deltaR(tj, event.get(h_primlep_));
             auto const * closest_ak4 = closestParticleMod(tj, *event.jets);
@@ -750,6 +783,16 @@ public:
                 dRak4 = deltaR(tj, *closest_ak4);
             if (closest_ak8)
                 dRak8 = deltaR(tj, *closest_ak8);
+            if (event.is_valid(tj_comp_hndl)) {
+                auto const closest_comp_part = closestParticleMod(tj, event.get(tj_comp_hndl));
+                if (closest_comp_part)
+                    dRcomp = deltaR(tj, *closest_comp_part);
+            } 
+            else if (event.is_valid(j_comp_hndl)) {
+                auto const closest_comp_part = closestParticleMod(tj, event.get(j_comp_hndl));
+                if (closest_comp_part)
+                    dRcomp = deltaR(tj, *closest_comp_part);
+            } 
         }
         event.set(out_hndl_mass, mass);
         event.set(out_hndl_pt, pt);
@@ -758,15 +801,19 @@ public:
         event.set(out_hndl_dRlep, dRlep);
         event.set(out_hndl_dRak4, dRak4);
         event.set(out_hndl_dRak8, dRak8);
+        event.set(out_hndl_dRcompcoll, dRcomp);
         return true;
     }
 
 private:
-    Event::Handle<vector<TopJet>> in_hndl;
+    Event::Handle<vector<T>> in_hndl;
     Event::Handle<float> out_hndl_mass, out_hndl_pt, out_hndl_eta, out_hndl_nsjbtags, out_hndl_dRlep, out_hndl_dRak4, out_hndl_dRak8;
     Event::Handle<FlavorParticle> h_primlep_;
     JetId id_;
     unsigned int ind_;
+    Event::Handle<vector<TopJet>> tj_comp_hndl;
+    Event::Handle<vector<Jet>> j_comp_hndl;
+    Event::Handle<float> out_hndl_dRcompcoll;
 };
 
 

@@ -4,70 +4,70 @@
 <!ENTITY NEVT "100">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "Samples-25ns-v2/TestTreeOutput/">
-<!ENTITY QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt20to30_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt50to80_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt50to80_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt80to120_MuEnrichedPt5 SYSTEM    "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt80to120_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt120to170_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt120to170_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt170to300_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt170to300_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt300to470_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt300to470_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt470to600_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt470to600_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt600to800_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt600to800_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt800to1000_MuEnrichedPt5 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt800to1000_MuEnrichedPt5.xml">
-<!ENTITY QCD_Pt1000toInf_MuEnrichedPt5 SYSTEM "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt1000toInf_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt20to30_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt50to80_MuEnrichedPt5 SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt50to80_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt80to120_MuEnrichedPt5 SYSTEM    "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt80to120_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt120to170_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt120to170_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt170to300_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt170to300_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt300to470_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt300to470_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt470to600_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt470to600_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt600to800_MuEnrichedPt5 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt600to800_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt800to1000_MuEnrichedPt5 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt800to1000_MuEnrichedPt5.xml">
+<!ENTITY MC_QCD_Pt1000toInf_MuEnrichedPt5 SYSTEM "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt1000toInf_MuEnrichedPt5.xml">
 
-<!ENTITY QCD_Pt-15to20_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-15to20_EMEnriched.xml">
-<!ENTITY QCD_Pt-20to30_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-20to30_EMEnriched.xml">
-<!ENTITY QCD_Pt-30to50_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-30to50_EMEnriched.xml">
-<!ENTITY QCD_Pt-50to80_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-50to80_EMEnriched.xml">
-<!ENTITY QCD_Pt-80to120_EMEnriched     SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-80to120_EMEnriched.xml">
-<!ENTITY QCD_Pt-120to170_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-120to170_EMEnriched.xml">
-<!ENTITY QCD_Pt-170to300_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-170to300_EMEnriched.xml">
-<!ENTITY QCD_Pt-300toInf_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-300toInf_EMEnriched.xml">
-<!ENTITY QCD_Pt_15to20_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_15to20_bcToE.xml">
-<!ENTITY QCD_Pt_20to30_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_20to30_bcToE.xml">
-<!ENTITY QCD_Pt_30to80_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_30to80_bcToE.xml">
-<!ENTITY QCD_Pt_80to170_bcToE          SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_80to170_bcToE.xml">
-<!ENTITY QCD_Pt_170to250_bcToE         SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_170to250_bcToE.xml">
-<!ENTITY QCD_Pt_250toInf_bcToE         SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_250toInf_bcToE.xml">
+<!ENTITY MC_QCD_Pt-15to20_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-15to20_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-20to30_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-20to30_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-30to50_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-30to50_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-50to80_EMEnriched      SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-50to80_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-80to120_EMEnriched     SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-80to120_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-120to170_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-120to170_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-170to300_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-170to300_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt-300toInf_EMEnriched    SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt-300toInf_EMEnriched.xml">
+<!ENTITY MC_QCD_Pt_15to20_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_15to20_bcToE.xml">
+<!ENTITY MC_QCD_Pt_20to30_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_20to30_bcToE.xml">
+<!ENTITY MC_QCD_Pt_30to80_bcToE           SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_30to80_bcToE.xml">
+<!ENTITY MC_QCD_Pt_80to170_bcToE          SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_80to170_bcToE.xml">
+<!ENTITY MC_QCD_Pt_170to250_bcToE         SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_170to250_bcToE.xml">
+<!ENTITY MC_QCD_Pt_250toInf_bcToE         SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt_250toInf_bcToE.xml">
 
-<!ENTITY DYJetsToLL_M50 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50.xml">
-<!ENTITY DYJetsToLL_M50_HT0100to0200 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0100to0200.xml">
-<!ENTITY DYJetsToLL_M50_HT0200to0400 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0200to0400.xml">
-<!ENTITY DYJetsToLL_M50_HT0400to0600 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0400to0600.xml">
-<!ENTITY DYJetsToLL_M50_HT0600toINFT SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0600toINFT.xml">
+<!ENTITY MC_DYJetsToLL_M50 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50.xml">
+<!ENTITY MC_DYJetsToLL_M50_HT0100to0200 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0100to0200.xml">
+<!ENTITY MC_DYJetsToLL_M50_HT0200to0400 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0200to0400.xml">
+<!ENTITY MC_DYJetsToLL_M50_HT0400to0600 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0400to0600.xml">
+<!ENTITY MC_DYJetsToLL_M50_HT0600toINFT SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.DYJetsToLL_M50_HT0600toINFT.xml">
 
-<!ENTITY TsChannel SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_s-channel_4f_leptonDecays.xml">
-<!ENTITY TtChannel SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_t-channel_4f_leptonDecays.xml">
-<!ENTITY TWAntitop SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_neg_tW_inc.xml">
-<!ENTITY TWTop SYSTEM            "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_pos_tW_inc.xml">
+<!ENTITY MC_TsChannel SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_s-channel_4f_leptonDecays.xml">
+<!ENTITY MC_TtChannel SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_t-channel_4f_leptonDecays.xml">
+<!ENTITY MC_TWAntitop SYSTEM        "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_neg_tW_inc.xml">
+<!ENTITY MC_TWTop SYSTEM            "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.SingleTop_pos_tW_inc.xml">
 
 <!ENTITY Data_SingleMu SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleMuon_Run2015D.xml">
 <!ENTITY Data_SingleEle SYSTEM     "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleEle_Run2015D.xml">
 
-<!ENTITY TTbar SYSTEM            "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TTbar.xml">
+<!ENTITY MC_TTbar SYSTEM            "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TTbar.xml">
 
-<!ENTITY WJets_LNu_HT100To200   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT100To200.xml">
-<!ENTITY WJets_LNu_HT200To400   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT200To400.xml">
-<!ENTITY WJets_LNu_HT400To600   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT400To600.xml">
-<!ENTITY WJets_LNu_HT600To800   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT600To800.xml">
-<!ENTITY WJets_LNu_HT800To1200  SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT800To1200.xml">
-<!ENTITY WJets_LNu_HT1200To2500 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT1200To2500.xml">
-<!ENTITY WJets_LNu_HT2500ToInf  SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT2500ToInf.xml">
+<!ENTITY MC_WJets_LNu_HT100To200   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT100To200.xml">
+<!ENTITY MC_WJets_LNu_HT200To400   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT200To400.xml">
+<!ENTITY MC_WJets_LNu_HT400To600   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT400To600.xml">
+<!ENTITY MC_WJets_LNu_HT600To800   SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT600To800.xml">
+<!ENTITY MC_WJets_LNu_HT800To1200  SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT800To1200.xml">
+<!ENTITY MC_WJets_LNu_HT1200To2500 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT1200To2500.xml">
+<!ENTITY MC_WJets_LNu_HT2500ToInf  SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT2500ToInf.xml">
 
-<!ENTITY TpTp_M-1000 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.xml">
-<!ENTITY TpTp_M-1100 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.xml">
-<!ENTITY TpTp_M-1200 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1200.xml">
-<!ENTITY TpTp_M-1300 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1300.xml">
-<!ENTITY TpTp_M-1400 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.xml">
-<!ENTITY TpTp_M-1500 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.xml">
-<!ENTITY TpTp_M-1600 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.xml">
-<!ENTITY TpTp_M-1700 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.xml">
-<!ENTITY TpTp_M-1800 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.xml">
-<!ENTITY TpTp_M-0700 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0700.xml">
-<!ENTITY TpTp_M-0800 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0800.xml">
-<!ENTITY TpTp_M-0900 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0900.xml">
+<!ENTITY MC_TpTp_M-1000 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.xml">
+<!ENTITY MC_TpTp_M-1100 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.xml">
+<!ENTITY MC_TpTp_M-1200 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1200.xml">
+<!ENTITY MC_TpTp_M-1300 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1300.xml">
+<!ENTITY MC_TpTp_M-1400 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.xml">
+<!ENTITY MC_TpTp_M-1500 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.xml">
+<!ENTITY MC_TpTp_M-1600 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.xml">
+<!ENTITY MC_TpTp_M-1700 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.xml">
+<!ENTITY MC_TpTp_M-1800 SYSTEM  "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.xml">
+<!ENTITY MC_TpTp_M-0700 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0700.xml">
+<!ENTITY MC_TpTp_M-0800 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0800.xml">
+<!ENTITY MC_TpTp_M-0900 SYSTEM   "../Samples-25ns-v2/TpTpPreselection-v7/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0900.xml">
 ]
 >
 
@@ -124,73 +124,73 @@
 
 
     <InputData Lumi="1755165" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="False">
-        &TpTp_M-0700;
+        &MC_TpTp_M-0700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0800" Cacheable="False">
-        &TpTp_M-0800;
+        &MC_TpTp_M-0800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="9222591" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0900" Cacheable="False">
-        &TpTp_M-0900;
+        &MC_TpTp_M-0900;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="18700000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1000" Cacheable="False">
-        &TpTp_M-1000;
+        &MC_TpTp_M-1000;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="36678571" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1100" Cacheable="False">
-        &TpTp_M-1100;
+        &MC_TpTp_M-1100;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="70576271" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1200" Cacheable="False">
-        &TpTp_M-1200;
+        &MC_TpTp_M-1200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="129953051" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1300" Cacheable="False">
-        &TpTp_M-1300;
+        &MC_TpTp_M-1300;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="235254237" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1400" Cacheable="False">
-        &TpTp_M-1400;
+        &MC_TpTp_M-1400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="406100000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1500" Cacheable="False">
-        &TpTp_M-1500;
+        &MC_TpTp_M-1500;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="804000000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1600" Cacheable="False">
-        &TpTp_M-1600;
+        &MC_TpTp_M-1600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="1664800000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1700" Cacheable="False">
-        &TpTp_M-1700;
+        &MC_TpTp_M-1700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="False">
-        &TpTp_M-1800;
+        &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -210,49 +210,49 @@
     -->
 
     <!-- <InputData Lumi="36.51028" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-80to120_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt80to120_MuEnrichedPt5;
+        &MC_QCD_Pt80to120_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="159.3254" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-120to170_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt120to170_MuEnrichedPt5;
+        &MC_QCD_Pt120to170_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
     <InputData Lumi="449.7005" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-170to300_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt170to300_MuEnrichedPt5;
+        &MC_QCD_Pt170to300_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="4950.336" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-300to470_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt300to470_MuEnrichedPt5;
+        &MC_QCD_Pt300to470_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="24328.77" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-470to600_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt470to600_MuEnrichedPt5;
+        &MC_QCD_Pt470to600_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="73285.66" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-600to800_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt600to800_MuEnrichedPt5;
+        &MC_QCD_Pt600to800_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="419776" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-800to1000_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt800to1000_MuEnrichedPt5;
+        &MC_QCD_Pt800to1000_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="1218575" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-1000toInf_MuEnrichedPt5" Cacheable="False">
-        &QCD_Pt1000toInf_MuEnrichedPt5;
+        &MC_QCD_Pt1000toInf_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -264,44 +264,44 @@
     -->
 
     <!-- <InputData Lumi="23.16145" NEventsMax="-1" Type="MC" Version="QCD_Pt-80to120_EMEnriched" Cacheable="False">
-        &QCD_Pt-80to120_EMEnriched;
+        &MC_QCD_Pt-80to120_EMEnriched;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
     <!-- <InputData Lumi="134.7854" NEventsMax="-1" Type="MC" Version="QCD_Pt-120to170_EMEnriched" Cacheable="False">
-        &QCD_Pt-120to170_EMEnriched;
+        &MC_QCD_Pt-120to170_EMEnriched;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
     <InputData Lumi="303.8623" NEventsMax="-1" Type="MC" Version="QCD_Pt-170to300_EMEnriched" Cacheable="False">
-        &QCD_Pt-170to300_EMEnriched;
+        &MC_QCD_Pt-170to300_EMEnriched;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="2737.296" NEventsMax="-1" Type="MC" Version="QCD_Pt-300toInf_EMEnriched" Cacheable="False">
-        &QCD_Pt-300toInf_EMEnriched;
+        &MC_QCD_Pt-300toInf_EMEnriched;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
 
     <!-- <InputData Lumi="134.542" NEventsMax="-1" Type="MC" Version="QCD_Pt_80to170_bcToE" Cacheable="False">
-        &QCD_Pt_80to170_bcToE;
+        &MC_QCD_Pt_80to170_bcToE;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
     <InputData Lumi="1113.396" NEventsMax="-1" Type="MC" Version="QCD_Pt_170to250_bcToE" Cacheable="False">
-        &QCD_Pt_170to250_bcToE;
+        &MC_QCD_Pt_170to250_bcToE;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="4132.781" NEventsMax="-1" Type="MC" Version="QCD_Pt_250toInf_bcToE" Cacheable="False">
-        &QCD_Pt_250toInf_bcToE;
+        &MC_QCD_Pt_250toInf_bcToE;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -312,26 +312,26 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="15896.55" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
-        &DYJetsToLL_M50_HT0100to0200;
+    <!-- <InputData Lumi="15033" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="18522.07" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
-        &DYJetsToLL_M50_HT0200to0400;
+    <InputData Lumi="19317" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0200to0400" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0200to0400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="157921.76" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
-        &DYJetsToLL_M50_HT0400to0600;
+    <InputData Lumi="152887" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0400to0600" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="367476.73" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
-        &DYJetsToLL_M50_HT0600toINFT;
+    <InputData Lumi="369482" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="False">
+        &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -342,26 +342,32 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="18895860.4" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
-        &TtChannel;
+    <!--
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    SingleT
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    -->
+
+    <InputData Lumi="18895856" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
+        &MC_TtChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="291220" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_s-channel_4f_leptonDecays" Cacheable="False">
-        &TsChannel;
+    <InputData Lumi="984600" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_s-channel_4f_leptonDecays" Cacheable="False">
+        &MC_TsChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="27766" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_neg_tW_inc" Cacheable="False">
-        &TWAntitop;
+        &MC_TWAntitop;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="27966" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_pos_tW_inc" Cacheable="False">
-        &TWTop;
+        &MC_TWTop;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -374,43 +380,43 @@
     -->
 
     <!-- <InputData Lumi="6238.42" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="False">
-        &WJets_LNu_HT100To200;
+        &MC_WJets_LNu_HT100To200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="11997" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT200To400" Cacheable="False">
-        &WJets_LNu_HT200To400;
+        &MC_WJets_LNu_HT200To400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
     <InputData Lumi="29501" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT400To600" Cacheable="False">
-        &WJets_LNu_HT400To600;
+        &MC_WJets_LNu_HT400To600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="277219" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT600To800" Cacheable="False">
-        &WJets_LNu_HT600To800;
+        &MC_WJets_LNu_HT600To800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="236566" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT800To1200" Cacheable="False">
-        &WJets_LNu_HT800To1200;
+        &MC_WJets_LNu_HT800To1200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="158969" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT1200To2500" Cacheable="False">
-        &WJets_LNu_HT1200To2500;
+        &MC_WJets_LNu_HT1200To2500;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="6502508" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT2500ToInf" Cacheable="False">
-        &WJets_LNu_HT2500ToInf;
+        &MC_WJets_LNu_HT2500ToInf;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
@@ -422,7 +428,7 @@
     -->
 
     <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
-        &TTbar;
+        &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>

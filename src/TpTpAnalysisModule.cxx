@@ -110,12 +110,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "higgs_tags_1b_med",
-                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM)))
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "higgs_tags_2b_med",
-                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     ak8jet_hists->add_level("Higgs_tags_1b_med", "higgs_tags_1b_med", vector<string>{"n", "pt", "eta", "mass_sj", "tau21", "n_sjbtags-medium", "dRlepton", "dRak4", "dRak8"}, 1);
     ak8jet_hists->add_level("Higgs_tags_2b_med", "higgs_tags_2b_med", vector<string>{"n", "pt", "eta", "mass_sj", "tau21", "n_sjbtags-medium", "dRlepton", "dRak4", "dRak8"}, 1);
@@ -126,12 +126,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "noboost_mass_1b",
-                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM)))
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "noboost_mass_2b",
-                TopJetId(HiggsFlexBTag(80., 150., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     ak8jet_hists->add_level("Noboost_mass_1b", "noboost_mass_1b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
     ak8jet_hists->add_level("Noboost_mass_2b", "noboost_mass_2b", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-medium"}, 1);
@@ -154,7 +154,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "ak8_boost",
                 "nobtag_boost_mass",
-                TopJetId(HiggsFlexBTag(80., 150.))
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
                 ));
     ak8jet_hists->add_level("Nobtag_boost_mass", "nobtag_boost_mass", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-loose", "n_sjbtags-medium"}, 1);
     
