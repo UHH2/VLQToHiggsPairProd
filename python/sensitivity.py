@@ -48,17 +48,17 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
 datasets_to_use = [
     'Run2015D',
     'TpTp_M-0700',
-    'TpTp_M-0800',
-    'TpTp_M-0900',
-    'TpTp_M-1000',
-    'TpTp_M-1100',
-    'TpTp_M-1200',
-    'TpTp_M-1300',
-    'TpTp_M-1400',
-    'TpTp_M-1500',
-    'TpTp_M-1600',
-    'TpTp_M-1700',
-    'TpTp_M-1800',
+    # 'TpTp_M-0800',
+    # 'TpTp_M-0900',
+    # 'TpTp_M-1000',
+    # 'TpTp_M-1100',
+    # 'TpTp_M-1200',
+    # 'TpTp_M-1300',
+    # 'TpTp_M-1400',
+    # 'TpTp_M-1500',
+    # 'TpTp_M-1600',
+    # 'TpTp_M-1700',
+    # 'TpTp_M-1800',
     'QCD',
     'TTbar',
     'WJets',
@@ -116,6 +116,21 @@ def loader_hook_sys(brs):
         return wrps
     return temp
 
+
+def scale_bkg_postfit(wrps, theta_res_path):
+    theta_res = varial.ana.lookup_result(theta_res_path)
+    try:
+        r, _ = theta_res.postfit_vals['TpTp_M-0700']['bkg_rate'][0]
+    except KeyError:
+        r = 0
+
+    for w in wrps:
+        if w.sample == 'Bkg':
+            w.sample = 'BkgPostFit'
+            w.legend = 'Bkg. post-fit'
+            w.histo.Scale(1+r)
+        yield w
+
 # maybe pack this up into a list of individual tool chains so that HistoLoader is the first
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
 # input_path='..')
@@ -142,22 +157,39 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
-        # asymptotic= False,
+        asymptotic= False,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
             'TpTp_M-0700',
-            'TpTp_M-0800',
-            'TpTp_M-0900',
-            'TpTp_M-1000',
-            'TpTp_M-1100',
-            'TpTp_M-1200',
-            'TpTp_M-1300',
-            'TpTp_M-1400',
-            'TpTp_M-1500',
-            'TpTp_M-1600',
-            'TpTp_M-1700',
-            'TpTp_M-1800']),
+            # 'TpTp_M-0800',
+            # 'TpTp_M-0900',
+            # 'TpTp_M-1000',
+            # 'TpTp_M-1100',
+            # 'TpTp_M-1200',
+            # 'TpTp_M-1300',
+            # 'TpTp_M-1400',
+            # 'TpTp_M-1500',
+            # 'TpTp_M-1600',
+            # 'TpTp_M-1700',
+            # 'TpTp_M-1800',
+            ]),
         # do_postfit=False,
+    )
+    postfit = ThetaPostFitPlot(
+        name='PostFit'+name,
+        input_path='../Limit'+name)
+    plotter_postfit = varial.tools.Plotter(
+        filter_keyfunc=lambda w: '700' in w.sample 
+                                 or '900' in w.sample 
+                                 or not w.is_signal,
+        plot_grouper=lambda ws: varial.gen.group(
+            ws, key_func=lambda w: w.category),
+        plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+        save_name_func=lambda w: w.category,
+        hook_canvas_post_build=varial.gen.add_sample_integrals,
+        hook_loaded_histos=lambda w: scale_bkg_postfit(
+            w, '../Limit'+name),
+        name='PostFit',
     )
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(
@@ -166,7 +198,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
             pattern=sys_pat,
             hook_loaded_histos=loader_hook_sys(brs)
         )
-        return [loader, sys_loader, plotter, limits]
+        return [loader, sys_loader, plotter, limits, postfit] # , plotter_postfit
     else:
         return [loader, plotter, limits]
 
@@ -212,7 +244,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #     ]),
         varial.tools.ToolChain('LimitsWithGraphs',[
             limit_plots.LimitGraphs(
-                limit_path='../../Ind_Limits/Limit*/*/Limit*',
+                limit_path='../../Ind_Limits/Limit*/CombinedChannels/Limit*',
                 plot_obs=True,
                 plot_1sigmabands=True,
                 plot_2sigmabands=True,

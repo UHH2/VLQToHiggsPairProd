@@ -107,17 +107,19 @@ import tptp_selections_treeproject as sel
 
 
 sec_sel_weight = [
-    ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandWJetsRegion_El45', sel.sb_wjets_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SidebandWJetsRegion_Mu45', sel.sb_wjets_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    ('BaseLineSelectionEl45', sel.baseline_selection + sel.el_channel, 'weight'), # *weight_ak4_jetpt
+    ('BaseLineSelectionMu45', sel.baseline_selection + sel.mu_channel, 'weight'), # *weight_ak4_jetpt
+    # ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # # ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandWJetsRegion_El45', sel.sb_wjets_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+    # ('SidebandWJetsRegion_Mu45', sel.sb_wjets_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion2b_El45iso', sel.sr2b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SignalRegion1b_El45iso', sel.sr1b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
     # ('SidebandRegion_El45iso', sel.sb_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
