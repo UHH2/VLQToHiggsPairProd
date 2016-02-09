@@ -223,6 +223,8 @@ def mod_legend(wrps):
 
 def loader_hook(wrps):
     wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators, use_hadd_sample=False)
+    wrps = list(wrps)
+    for w in wrps: print w.sample, w.legend, w.is_signal, w.is_data
     # wrps = gen.sort(wrps)
     wrps = mod_legend(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)

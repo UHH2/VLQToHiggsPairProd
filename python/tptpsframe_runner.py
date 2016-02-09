@@ -3,7 +3,7 @@
 ##################################### definition of UserConfig item changes ###
 
 
-start_all_parallel = False
+start_all_parallel = True
 
 
 ############################################################### script code ###
@@ -17,12 +17,14 @@ from varial.extensions import git
 varial.settings.max_num_processes = 24
 
 categories_final = [ "NoSelection",
-        'El45_H2B',
-        'El45_H1B',
-        'El45_Control',
-        'Mu45_H2B',
-        'Mu45_H1B',
-        'Mu45_Control',
+        'Mu45_Baseline',
+        'El45_Baseline',
+        # 'El45_H2B',
+        # 'El45_H1B',
+        # 'El45_Control',
+        # 'Mu45_H2B',
+        # 'Mu45_H1B',
+        # 'Mu45_Control',
         ]
 
 categories_pre = [ #"NoSelection",
@@ -226,7 +228,7 @@ def mk_sframe_tools_and_plot(argv):
     def sf_batch_tc():
         h_a_pl = final_plotting.hadd_and_plot(version='Plots',
             src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-            categories=categories, basenames=basenames, datasets=samples_to_plot_final)
+            categories=categories, basenames=basenames, datasets=final_plotting.samples_to_plot_final)
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -240,7 +242,7 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
+                    sf_batch,
                     h_a_pl
                     ]))
             else:

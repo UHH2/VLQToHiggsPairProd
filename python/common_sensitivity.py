@@ -157,14 +157,15 @@ def loader_hook_scale_excl(wrps, brs=None):
     wrps = final_state_scaling(wrps, brs)
     wrps = gen.sort(wrps, key_list=['category', 'sample'])
     wrps = list(wrps)
-    wrps = common_plot.merge_finalstates_channels(wrps, [
-        'thbw',
-        'thth',
-        'thtz',
-        'noH_bwbw',
-        'noH_tzbw',
-        'noH_tztz'
-        ], print_warning=True
-        )
+    # for w in wrps: print w.in_file_path, w.sample, w.category, w.file_path
+    # wrps = common_plot.merge_finalstates_channels(wrps, [
+    #     'thbw',
+    #     'thth',
+    #     'thtz',
+    #     'noH_bwbw',
+    #     'noH_tzbw',
+    #     'noH_tztz'
+    #     ], print_warning=False
+    #     )
     wrps = gen.sort(wrps, key_list=["category"])
     return wrps

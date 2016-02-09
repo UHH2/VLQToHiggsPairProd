@@ -47,23 +47,28 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
 
 datasets_to_use = [
     'Run2015D',
-    'TpTp_M-0700',
-    # 'TpTp_M-0800',
-    # 'TpTp_M-0900',
-    # 'TpTp_M-1000',
-    # 'TpTp_M-1100',
-    # 'TpTp_M-1200',
-    # 'TpTp_M-1300',
-    # 'TpTp_M-1400',
-    # 'TpTp_M-1500',
-    # 'TpTp_M-1600',
-    # 'TpTp_M-1700',
-    # 'TpTp_M-1800',
+    'TpTp_M-0700_thth',
+    'TpTp_M-0800_thth',
+    'TpTp_M-0900_thth',
+    'TpTp_M-1000_thth',
+    'TpTp_M-1100_thth',
+    'TpTp_M-1200_thth',
+    'TpTp_M-1300_thth',
+    'TpTp_M-1400_thth',
+    'TpTp_M-1500_thth',
+    'TpTp_M-1600_thth',
+    'TpTp_M-1700_thth',
+    'TpTp_M-1800_thth',
     'QCD',
     'TTbar',
     'WJets',
     'DYJets',
     'SingleTop',
+]
+
+datasets_not_to_use = [
+    'ak4_jetpt__minus/TpTp',
+    'ak4_jetpt__plus/TpTp',
 ]
 
 def select_files(categories=None, var=''):
@@ -77,6 +82,7 @@ def select_files(categories=None, var=''):
                 # and in_file_path.endswith('PostSelection/ST')
                 and in_file_path.endswith(var)
                 and any(a in wrp.file_path for a in datasets_to_use)
+                and all(a not in wrp.file_path for a in datasets_not_to_use)
                 and (wrp.in_file_path.split('/')[0] in categories if categories else True)) :
             # print wrp
             return True
@@ -161,17 +167,17 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
             'TpTp_M-0700',
-            # 'TpTp_M-0800',
-            # 'TpTp_M-0900',
-            # 'TpTp_M-1000',
-            # 'TpTp_M-1100',
-            # 'TpTp_M-1200',
-            # 'TpTp_M-1300',
-            # 'TpTp_M-1400',
-            # 'TpTp_M-1500',
-            # 'TpTp_M-1600',
-            # 'TpTp_M-1700',
-            # 'TpTp_M-1800',
+            'TpTp_M-0800',
+            'TpTp_M-0900',
+            'TpTp_M-1000',
+            'TpTp_M-1100',
+            'TpTp_M-1200',
+            'TpTp_M-1300',
+            'TpTp_M-1400',
+            'TpTp_M-1500',
+            'TpTp_M-1600',
+            'TpTp_M-1700',
+            'TpTp_M-1800',
             ]),
         # do_postfit=False,
     )
@@ -228,7 +234,7 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     # print list(grps)
     return grps
 
-def mk_tc(dir_limit='Limits', mk_limit_list=None):
+def mk_tc(dir_limit='Limits', mk_limit_list=None, plot_graphs=''):
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(mk_limit_list=mk_limit_list),
@@ -244,7 +250,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #     ]),
         varial.tools.ToolChain('LimitsWithGraphs',[
             limit_plots.LimitGraphs(
-                limit_path='../../Ind_Limits/Limit*/CombinedChannels/Limit*',
+                limit_path=plot_graphs,
                 plot_obs=True,
                 plot_1sigmabands=True,
                 plot_2sigmabands=True,

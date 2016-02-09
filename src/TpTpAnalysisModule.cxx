@@ -94,8 +94,8 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         common_modules.emplace_back(new TriggerAwareEventWeight(ctx, "trigger_accept_el45", (target_lumi - 86.)/target_lumi));
     }
 
-    ak8jet_hists.reset(new NParticleMultiHistProducerHelper<TopJet>("FirstAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "n_subjets", "dRlepton", "dRak4", "dRak8"}));
-    ak8jet_hists->add_level("SecondAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "n_subjets", "dRlepton", "dRak4", "dRak8"}, 2);
+    ak8jet_hists.reset(new NParticleMultiHistProducerHelper<TopJet>("FirstAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "tau21", "n_subjets", "dRlepton", "dRak4", "dRak8"}));
+    ak8jet_hists->add_level("SecondAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "tau21", "n_subjets", "dRlepton", "dRak4", "dRak8"}, 2);
 
     // boosted Ak8 jets
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,

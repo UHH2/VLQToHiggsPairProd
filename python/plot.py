@@ -122,9 +122,9 @@ def cf_loader_hook(wrps):
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
     #=== FIX MERGING WITH PREFIXES===
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=True)
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=True)
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=True)
+    wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
+    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -204,8 +204,8 @@ def loader_hook_finalstates_excl(wrps):
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=True)
-    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=True)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
