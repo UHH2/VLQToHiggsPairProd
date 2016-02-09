@@ -207,7 +207,8 @@ def my_mod(table):
 
     table = limits.tex_table_mod(table, [
         ('(gauss) ', '  '),
-        ('TpTp_', '')
+        ('TpTp_', ''),
+        (' (s) ', '')
     ] + limits.tex_table_mod_list)
     lines = table.split('\n')
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')

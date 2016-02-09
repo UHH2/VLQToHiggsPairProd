@@ -29,7 +29,7 @@ el_channel = [
     'trigger_accept_el45   >= 1',
     'trigger_accept_mu45   == 0',
     'pt_ld_ak4_jet         > 250.',
-    # 'pt_subld_ak4_jet      > 65.',
+    'pt_subld_ak4_jet      > 65.',
     'primary_lepton_pt     > 50.'
 ]
 

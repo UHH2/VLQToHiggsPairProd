@@ -126,17 +126,18 @@ varial.settings.colors.update({
 
 
 def mk_tex_tc_post(base):
-    print analysis.cwd, os.getcwd()
-    return varial.tools.ToolChain('TexCopy', [
-        varial.tools.ToolChain(
-            'Tex', 
-            [
-                tex_content.mk_autoContentSignalControlRegion(base),
-                tex_content.mk_autoContentLimits(base)
-            ]
-        ),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
-    ])
+    def tmp():
+        return varial.tools.ToolChain('TexCopy', [
+            varial.tools.ToolChain(
+                'Tex', 
+                [
+                    tex_content.mk_autoContentSignalControlRegion(base),
+                    tex_content.mk_autoContentLimits(base)
+                ]
+            ),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        ])
+    return tmp
 
 
 
@@ -175,7 +176,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 #     # sensitivity.tc,
                 # ]
             ),
-            mk_tex_tc_post(output_dir+'/Histograms/'), 
+            # mk_tex_tc_post(output_dir+'/Histograms/'), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
 

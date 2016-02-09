@@ -110,9 +110,9 @@ class LimitGraphs(varial.tools.Tool):
             if not twosigma_band:
                 y_min = onesigma_band.y_min
                 y_max = onesigma_band.y_max
-        all_graphs.Add(lim_graph_exp, 'C')
+        all_graphs.Add(lim_graph_exp, 'L')
         if self.plot_obs:
-            all_graphs.Add(lim_graph_obs, 'C')
+            all_graphs.Add(lim_graph_obs, 'L')
         # print 'next graph'
         # all_graphs.Draw('a')
         # print all_graphs.GetXaxis()       

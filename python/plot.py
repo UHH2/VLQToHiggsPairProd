@@ -306,7 +306,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None, datas
     tc = varial.tools.ToolChain(
         version,
         [
-            # hadd,
+            hadd,
             # histo_loader,
             plots,
             # varial.tools.ToolChainParallel(
