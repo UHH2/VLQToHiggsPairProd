@@ -208,10 +208,12 @@ def my_mod(table):
     table = limits.tex_table_mod(table, [
         ('(gauss) ', '  '),
         ('TpTp_', ''),
-        (' (s) ', '')
+        (' (s) ', ''),
+        ('process / nusiance parameter', 'pr./ns. par.'),
     ] + limits.tex_table_mod_list)
     lines = table.split('\n')
-    indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')
+    indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
+        + find_column_string(lines[1], 'el trg+id') + find_column_string(lines[1], 'mu trg+id')
     for i, line in enumerate(lines):
         lines[i] = remove_column(line, indizes)
     table = '\n'.join(lines)
