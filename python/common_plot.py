@@ -11,6 +11,8 @@ import varial.operations as op
 
 src_dir_rel = '../Hadd'
 
+normsignal = 20.
+
 basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'DATA.SingleMuon_Run2015D',
     'DATA.SingleEle_Run2015D',
@@ -56,7 +58,7 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     ])
 
 normfactors = {
-    # 'TpTp' : 5.,
+    # 'TpTp' : 20.,
     '_thX' : 1./0.56,
     '_other' : 1./0.44,
     'TpTp_M-0700' : 1./0.455,
@@ -208,6 +210,15 @@ def norm_to_bkg(grps):
                     scale_signal(w, fct_val)            
         yield g
 
+def norm_to_fix_xsec(grps, fct_val):
+    for g in grps:
+        for w in g.wrps:
+            if w.is_signal and not 'SignalRegion2b' in w.in_file_path:
+                scale_signal(w, 30.) 
+            if w.is_signal and 'SignalRegion2b' in w.in_file_path:
+                scale_signal(w, 5.)            
+        yield g
+
 
 def mod_legend(wrps):
     for w in wrps:
@@ -249,7 +260,8 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
 
 def stack_setup_norm_sig(grps):
     grps = gen.mc_stack_n_data_sum(grps)
-    grps = norm_to_bkg(grps)
+    # grps = norm_to_bkg(grps)
+    grps = norm_to_fix_xsec(grps, normsignal)
     return grps
 
 def plotter_factory_stack(smpl_fct=None, **kws):

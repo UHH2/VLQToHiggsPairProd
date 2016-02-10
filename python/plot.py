@@ -204,8 +204,8 @@ def loader_hook_finalstates_excl(wrps):
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -300,7 +300,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None, datas
         # overwrite=False
         )
     plots = varial.tools.ToolChainParallel(
-        'Plots',
+        'Plots_fix_scale',
         lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets)
     )
     tc = varial.tools.ToolChain(

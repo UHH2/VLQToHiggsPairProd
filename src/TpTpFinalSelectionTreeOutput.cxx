@@ -129,17 +129,21 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     other_modules.emplace_back(new MCPileupReweight(ctx));
 
+
+    auto ak8_corr = (type == "MC") ? JERFiles::Summer15_25ns_L23_AK8PFchs_MC 
+    : JERFiles::Summer15_25ns_L23_AK8PFchs_DATA;
+    auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK4PFchs_MC 
+    : JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
     if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
-        auto ak8_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK8PFchs_MC 
-        : JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
-        auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK4PFchs_MC 
-        : JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
         pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
             ak8_corr, "topjets"));
         pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
             ak4_corr, "topjets"));
         pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
     }
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));
 
     if (type == "MC") {
         pre_modules.emplace_back(new JetResolutionSmearer(ctx));    
@@ -286,6 +290,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
 
+
         SEL_ITEMS_FULL_SEL.push_back(SEL_ITEMS_BASELINE_SEL);
 
         if (version.find("thth") != string::npos) {
@@ -355,13 +360,13 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         }
         if (split(cat, "-")[0] == "El45_Baseline") {
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept Mu45", 2, -.5, 1.5, 0, 0));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900., 50.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 65.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept Mu45", 2, -.5, 1.5));
             
         }
         else if (split(cat, "-")[0] == "El45_H2B") {
@@ -498,6 +503,9 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
     for (auto & mod : pre_modules) {
         mod->process(event);
     }
+
+    assert(event.topjets);
+    sort_by_pt(*event.topjets);
 
     for (auto & mod : common_modules) {
         mod->process(event);
