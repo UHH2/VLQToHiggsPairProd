@@ -217,6 +217,8 @@ def mod_legend(wrps):
             w.legend = 'data'
         if w.legend.startswith('TpTp'):
             w.legend = 'TT M'+w.legend[7:]
+        if w.legend.endswith('_thth'):
+            w.legend = w.legend[:-5]
         yield w
 
 #====LOADER HOOKS====

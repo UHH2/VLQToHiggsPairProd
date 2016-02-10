@@ -401,46 +401,48 @@ class JetCleaningControlPlots: public Hists {
 public:
     explicit JetCleaningControlPlots(Context & ctx,
                         const string & dirname,
-                        const string & ak4_weight,
-                        const string & ak8_weight):
+                        const string & ak4_weight
+                        // const string & ak8_weight
+                        ):
         Hists(ctx, dirname),
         ak4_w_hndl_(ctx.get_handle<float>(ak4_weight)),
-        ak8_w_hndl_(ctx.get_handle<float>(ak8_weight)),
+        // ak8_w_hndl_(ctx.get_handle<float>(ak8_weight)),
         pt_ld_ak4_jet_hndl_(ctx.get_handle<float>("pt_ld_ak4_jet")),
-        pt_ld_ak8_jet_hndl_(ctx.get_handle<float>("pt_ld_ak8_jet")),
+        // pt_ld_ak8_jet_hndl_(ctx.get_handle<float>("pt_ld_ak8_jet")),
         st_hndl_(ctx.get_handle<double>("ST")),
         n_ak4_hndl_(ctx.get_handle<int>("n_ak4")),
-        n_ak8_hndl_(ctx.get_handle<int>("n_ak8")),
+        // n_ak8_hndl_(ctx.get_handle<int>("n_ak8")),
         st_cleaned(book<TH1F>("ST_cleaned", "ST cleaned", 45, 0, 4500)),
         met_cleaned(book<TH1F>("MET_cleaned","missing E_{T} cleaned", 200,0,1000)),
         pt_ak4_cleaned(book<TH1F>("pt_ak4_cleaned", "Pt(ld Ak4 Jet) cleaned", 60, 0., 1500.)),
-        n_ak4_cleaned(book<TH1F>("n_ak4_cleaned", "N(Ak4 Jet) cleaned", 15, -.5, 14.5)),
-        pt_ak8_cleaned(book<TH1F>("pt_ak8_cleaned", "Pt(ld Ak8 Jet) cleaned", 60, 0., 1500.)),
-        n_ak8_cleaned(book<TH1F>("n_ak8_cleaned", "N(Ak8 Jet) cleaned", 8, -.5, 7.5)) {}
+        n_ak4_cleaned(book<TH1F>("n_ak4_cleaned", "N(Ak4 Jet) cleaned", 15, -.5, 14.5))
+        // pt_ak8_cleaned(book<TH1F>("pt_ak8_cleaned", "Pt(ld Ak8 Jet) cleaned", 60, 0., 1500.)),
+        // n_ak8_cleaned(book<TH1F>("n_ak8_cleaned", "N(Ak8 Jet) cleaned", 8, -.5, 7.5))
+        {}
 
     virtual void fill(const Event & event) override {
         // if (TpTpAnalysisModule::version.find(versionname) == string::npos)
         //     return;
         auto pt_ld_ak4_jet = event.get(pt_ld_ak4_jet_hndl_);
-        auto pt_ld_ak8_jet = event.get(pt_ld_ak8_jet_hndl_);
+        // auto pt_ld_ak8_jet = event.get(pt_ld_ak8_jet_hndl_);
         auto st = event.get(st_hndl_);
         auto n_ak4 = event.get(n_ak4_hndl_);
-        auto n_ak8 = event.get(n_ak8_hndl_);
+        // auto n_ak8 = event.get(n_ak8_hndl_);
         auto ak4_ptreweight = event.get(ak4_w_hndl_);
-        auto ak8_ptreweight = event.get(ak8_w_hndl_);
+        // auto ak8_ptreweight = event.get(ak8_w_hndl_);
 
 
         pt_ak4_cleaned->Fill(pt_ld_ak4_jet, event.weight*ak4_ptreweight);
-        pt_ak8_cleaned->Fill(pt_ld_ak8_jet, event.weight*ak8_ptreweight);
+        // pt_ak8_cleaned->Fill(pt_ld_ak8_jet, event.weight*ak8_ptreweight);
         st_cleaned->Fill(st, event.weight*ak4_ptreweight);
         met_cleaned->Fill(event.met->pt(), event.weight*ak4_ptreweight);
         n_ak4_cleaned->Fill(n_ak4, event.weight*ak4_ptreweight);
-        n_ak8_cleaned->Fill(n_ak8, event.weight*ak8_ptreweight);
+        // n_ak8_cleaned->Fill(n_ak8, event.weight/ak8_ptreweight);
     }
 
 private:
-    Event::Handle<float> ak4_w_hndl_, ak8_w_hndl_, pt_ld_ak4_jet_hndl_, pt_ld_ak8_jet_hndl_;
+    Event::Handle<float> ak4_w_hndl_, pt_ld_ak4_jet_hndl_;
     Event::Handle<double> st_hndl_;
-    Event::Handle<int> n_ak4_hndl_, n_ak8_hndl_;
-    TH1F *st_cleaned, *met_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned, *pt_ak8_cleaned, *n_ak8_cleaned;
+    Event::Handle<int> n_ak4_hndl_;
+    TH1F *st_cleaned, *met_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned;
 };

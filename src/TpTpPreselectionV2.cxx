@@ -311,7 +311,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         for (auto hist : selected_sel_hists) {
             hist.second->insert_hist_and_sel(pos_2d_cut, new TwoDCutHist(ctx, cat+"/"+hist.first, "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"), "twoD_cut");
             hist.second->insert_additional_hist(ak8jet_hists->book_histograms(ctx, cat+"/"+hist.first));
-            hist.second->insert_additional_hist(new JetCleaningControlPlots(ctx, cat+"/"+hist.first+"/JetCleaningControlPlots", "weight_ak4_jetpt", "weight_ak8_jetpt"));
+            hist.second->insert_additional_hist(new JetCleaningControlPlots(ctx, cat+"/"+hist.first+"/JetCleaningControlPlots", "weight_ak4_jetpt"));
             // for (auto const & hist_helper : fatjet_hists) {
             //     hist.second->insert_additional_hist(hist_helper.book_histograms(ctx, cat+"/"+hist.first));
             // }
@@ -330,9 +330,9 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         //     selected_sel_hists["NoHiggsTagCut"]->insert_additional_hist(hist_helper.book_histograms(ctx, cat+"/NoHiggsTagCut"));
         // }
         v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet", "ak8softdroptopjet", "cmstopjet_cleaned"}));
-        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt", "weight_ak8_jetpt"));
-        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up", "weight_ak8_jetpt"));
-        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsDown", "weight_ak4_jetpt_down", "weight_ak8_jetpt"));
+        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt"));
+        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));
+        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsDown", "weight_ak4_jetpt_down"));
         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
         v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 

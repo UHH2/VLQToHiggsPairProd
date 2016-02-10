@@ -202,10 +202,10 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
 def loader_hook_finalstates_excl(wrps):
     wrps = loader_hook_norm_smpl(wrps, common_plot.normfactors, rebin_max_bins=60)
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
-    # wrps = list(wrps)
+    wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 

@@ -107,7 +107,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     jetpt_weight_hndl = ctx.declare_event_output<float>("weight_ak4_jetpt");
     ctx.declare_event_output<float>("weight_ak4_jetpt_up");
     ctx.declare_event_output<float>("weight_ak4_jetpt_down");
-    ctx.declare_event_output<float>("weight_ak8_jetpt");
+    // ctx.declare_event_output<float>("weight_ak8_jetpt");
 
     weight_hndl = ctx.declare_event_output<double>("weight");
     // use_sr_sf_hndl = ctx.declare_event_output<int>("use_sr_sf");
@@ -129,17 +129,17 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     other_modules.emplace_back(new MCPileupReweight(ctx));
 
-    // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
-    auto ak8_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK8PFchs_MC 
-    : JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
-    auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK4PFchs_MC 
-    : JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
-    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
-        ak8_corr, "topjets"));
-    pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
-        ak4_corr, "topjets"));
-    pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
-    // }
+    if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
+        auto ak8_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK8PFchs_MC 
+        : JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
+        auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK4PFchs_MC 
+        : JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+            ak8_corr, "topjets"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
+            ak4_corr, "topjets"));
+        pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
+    }
 
     if (type == "MC") {
         pre_modules.emplace_back(new JetResolutionSmearer(ctx));    
@@ -456,8 +456,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         if (split(cat, "-")[0] == "NoSelection") {
             // sel_helpers.back()->fill_hists_vector(v_hists.back(), cat+"/NoSelection");
             // v_hists.back().emplace_back(new OwnHistCollector(ctx, cat+"/NoSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "jet"}));
-            v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
-            // v_reweighted_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+            // v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+            v_reweighted_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
         }
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
         sel_helpers.back()->fill_hists_vector(v_reweighted_hists_after_sel.back(), cat+"/PostSelectionReweighted");
@@ -479,8 +479,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet"}));
         v_reweighted_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelectionReweighted", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet"}));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt", "weight_ak8_jetpt"));
-        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up", "weight_ak8_jetpt"));
-        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsDown", "weight_ak4_jetpt_down", "weight_ak8_jetpt"));
+        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));
+        v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsDown", "weight_ak4_jetpt_down"));
 
             // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 
@@ -537,7 +537,7 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
     event.set(weight_hndl, event.weight);
 
     for (unsigned i = 0; i < sel_modules.size(); ++i) {
-    
+
         bool all_accepted = sel_modules_passed[i];
         if (all_accepted) {
             for (auto & hist : v_hists_after_sel[i]) {

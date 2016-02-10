@@ -165,7 +165,7 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    plot.mk_toolchain('Histograms', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
+                    plot.mk_toolchain('Histograms_more_signals', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
                     sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root'), '../../Ind_Limits/Limit*/CombinedChannels/Limit*'), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                     # sensitivity.mk_tc('LimitsCheck', mk_limit_list_test), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
@@ -176,7 +176,7 @@ def run_treeproject_and_plot(base_path, output_dir):
                 #     # sensitivity.tc,
                 # ]
             ),
-            mk_tex_tc_post(output_dir+'/Histograms/')(), 
+            # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
 

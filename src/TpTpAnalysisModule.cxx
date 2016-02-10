@@ -87,7 +87,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "weight_ak4_jetpt_down"));
 
     // WHERE DID YOU GET THE VALUES BELOW FROM??
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<TopJet>(ctx, "topjets", 1.10875, -0.000594446, "weight_ak8_jetpt"));
+    // common_modules.emplace_back(new JetPtAndMultFixerWeight<TopJet>(ctx, "topjets", 1.10875, -0.000594446, "weight_ak8_jetpt"));
     
 
     if (type == "MC") {
