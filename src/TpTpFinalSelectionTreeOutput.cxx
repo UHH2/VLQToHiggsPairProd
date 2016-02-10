@@ -543,23 +543,21 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
             for (auto & hist : v_hists_after_sel[i]) {
                 hist->fill(event);
             }
+        }
 
-            if (version.find("TpTp") == string::npos && type == "MC")
-                event.weight *= event.get(jetpt_weight_hndl);
+    }
+
+    if (version.find("TpTp") == string::npos && type == "MC")
+        event.weight *= event.get(jetpt_weight_hndl);
+
+    for (unsigned i = 0; i < sel_modules.size(); ++i) {
+    
+        bool all_accepted = sel_modules_passed[i];
+        if (all_accepted) {
 
             for (auto & hist : v_reweighted_hists_after_sel[i]) {
                 hist->fill(event);
             }
-            // if (version.find("thth") != string::npos) {
-            //     for (auto & hist : v_genhist_2h_after_sel[i]) {
-            //         hist->fill(event);
-            //     }   
-            // }
-            // if (version.find("thtz") != string::npos || version.find("thbw") != string::npos) {
-            //     for (auto & hist : v_genhist_1h_after_sel[i]) {
-            //         hist->fill(event);
-            //     }   
-            // }
         }
 
     }
