@@ -167,7 +167,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="0" />
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -255,9 +255,9 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            # hadd,
+                            hadd,
                             plots,
-                            varial.tools.WebCreator(no_tool_check=True)
+                            # varial.tools.WebCreator(no_tool_check=True)
                         ]
                     )
                     ]))

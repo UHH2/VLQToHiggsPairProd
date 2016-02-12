@@ -175,25 +175,6 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets=datasets_to_plot):
         cutflow_tables.CutflowTableTex(True, None),
     ])
 
-# def loader_hook_finalstates_incl(wrps):
-#     wrps = common_plot.loader_hook_norm_smpl(wrps, common_plot.normfactors)
-#     wrps = gen.gen_add_wrp_info(
-#         wrps,
-#         finalstate = lambda w: w.in_file_path.split('/')[0],
-#         # variable=lambda w: w.in_file_path.split('/')[-1]
-#         )
-#     wrps = gen.gen_add_wrp_info(
-#         wrps,
-#         in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
-#         # variable=lambda w: w.in_file_path.split('/')[-1]
-#         )
-#     wrps = gen.sort(wrps, ['sample', 'in_file_path'])
-#     # wrps = list(wrps)
-#     # for w in wrps: print w.sample, w.in_file_path 
-#     wrps = common_plot.merge_finalstates_channels(wrps, ['_thth', '_thtz', '_thbw'], '_thX', True)
-#     wrps = common_plot.merge_finalstates_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], '_other', True)
-#     return wrps
-
 def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
     if rebin_max_bins:
         wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, rebin_max_bins)
@@ -208,7 +189,7 @@ def loader_hook_finalstates_excl(wrps):
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
-    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
