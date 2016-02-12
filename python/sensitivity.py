@@ -20,7 +20,7 @@ from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
 import common_sensitivity
 import common_plot
 import model_vlqpair
-import limit_plots
+# import limit_plots
 
 # varial.settings.use_parallel_chains = False
 
@@ -197,6 +197,30 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
             w, '../Limit'+name),
         name='PostFit',
     )
+    plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
+            LimitGraphs(
+                limit_path='../../Limit'+name,
+                plot_obs=True,
+                plot_1sigmabands=True,
+                plot_2sigmabands=True,
+                ),
+            varial.plotter.Plotter(
+                name='LimitCurvesCompared',
+                input_result_path='../LimitGraphs',
+                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                # plot_setup=plot_setup,
+                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+                plot_grouper=lambda ws: varial.gen.group(
+                        ws, key_func=lambda w: w.save_name),
+                # save_name_func=varial.plotter.save_by_name_with_hash
+                save_name_func=lambda w: w.save_name,
+                plot_setup=lambda w: plot_setup_graphs(w,
+                    th_x=common_sensitivity.theory_masses,
+                    th_y=common_sensitivity.theory_cs),
+                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+                save_lin_log_scale=True
+                ),
+            ])
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(
             name='HistoLoaderSys',
@@ -204,7 +228,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
             pattern=sys_pat,
             hook_loaded_histos=loader_hook_sys(brs)
         )
-        return [loader, sys_loader, plotter, limits, postfit] # , plotter_postfit
+        return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
     else:
         return [loader, plotter, limits]
 
@@ -230,11 +254,11 @@ def plot_setup_triangle(grps):
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
-    grps = limit_plots.add_th_curve(grps, th_x, th_y)
+    grps = add_th_curve(grps, th_x, th_y)
     # print list(grps)
     return grps
 
-def mk_tc(dir_limit='Limits', mk_limit_list=None, plot_graphs=''):
+def mk_tc(dir_limit='Limits', mk_limit_list=None):
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(mk_limit_list=mk_limit_list),
@@ -248,46 +272,30 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, plot_graphs=''):
         #         save_name_func=lambda w: 'M-'+str(w.mass)
         #         ),
         #     ]),
-        varial.tools.ToolChain('LimitsWithGraphs',[
-            limit_plots.LimitGraphs(
-                limit_path=plot_graphs,
-                plot_obs=True,
-                plot_1sigmabands=True,
-                plot_2sigmabands=True,
-                ),
-            varial.plotter.Plotter(
-                name='LimitCurvesCompared',
-                input_result_path='../LimitGraphs',
-                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-                # plot_setup=plot_setup,
-                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
-                plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.save_name),
-                # save_name_func=varial.plotter.save_by_name_with_hash
-                save_name_func=lambda w: w.save_name,
-                plot_setup=lambda w: plot_setup_graphs(w,
-                    th_x=common_sensitivity.theory_masses,
-                    th_y=common_sensitivity.theory_cs),
-                # canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
-                save_lin_log_scale=True
-                ),
-            # varial.plotter.Plotter(
-            #     name='Cleaned',
-            #     input_result_path='../LimitGraphs',
-            #     filter_keyfunc=lambda w: 'Cleaned' in w.legend,
-            #     # plot_setup=plot_setup,
-            #     hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
-            #     plot_grouper=lambda ws: varial.gen.group(
-            #             ws, key_func=lambda w: w.save_name),
-            #     # save_name_func=varial.plotter.save_by_name_with_hash
-            #     save_name_func=lambda w: w.save_name,
-            #     plot_setup=lambda w: plot_setup_graphs(w,
-            #         th_x=common_sensitivity.theory_masses,
-            #         th_y=common_sensitivity.theory_cs),
-            #     canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
-            #     save_lin_log_scale=True
-            #     ),
-            ]),
+        # varial.tools.ToolChain('LimitsWithGraphs',[
+        #     LimitGraphs(
+        #         limit_path='../../Ind_Limits/Limit*/*/Limit*',
+        #         plot_obs=True,
+        #         plot_1sigmabands=True,
+        #         plot_2sigmabands=True,
+        #         ),
+        #     varial.plotter.Plotter(
+        #         name='LimitCurvesCompared',
+        #         input_result_path='../LimitGraphs',
+        #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+        #         # plot_setup=plot_setup,
+        #         hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+        #         plot_grouper=lambda ws: varial.gen.group(
+        #                 ws, key_func=lambda w: w.save_name),
+        #         # save_name_func=varial.plotter.save_by_name_with_hash
+        #         save_name_func=lambda w: w.save_name,
+        #         plot_setup=lambda w: plot_setup_graphs(w,
+        #             th_x=common_sensitivity.theory_masses,
+        #             th_y=common_sensitivity.theory_cs),
+        #         canvas_decorators=[],
+        #         save_lin_log_scale=True
+        #         ),
+            # ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
         ])

@@ -80,14 +80,18 @@ final_states_to_plot = [
     # '_noH_bwbw',
 ]
 
-samples_to_plot_final = [
+other_samples_to_plot = [
     'TTbar',
     'SingleTop',
     'QCD',
     'DYJets',
     'WJets',
     'Run2015D',
-] +  reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
+]
+
+samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
+
+samples_to_plot_pre = other_samples_to_plot + signals_to_plot
 
 def add_fs_info(wrps):
     for w in wrps:
@@ -300,7 +304,7 @@ def hadd_and_plot(version='Test', src='', categories=None, basenames=None, datas
         # overwrite=False
         )
     plots = varial.tools.ToolChainParallel(
-        'Plots_fix_scale',
+        'Plots',
         lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets)
     )
     tc = varial.tools.ToolChain(

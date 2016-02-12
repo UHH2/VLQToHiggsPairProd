@@ -162,24 +162,24 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // =====PRODUCERS========
 
 
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost",
-                "ak8_higgs_cand",
-                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
-                ));
+    // other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    //             "ak8_boost",
+    //             "ak8_higgs_cand",
+    //             TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
+    //             ));
 
-    // ak4 jets not overlapping with higgs-candidates, collected together with higgs-candidates in one TopJet collection for applying b-tag scale factors
-    other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-                "jets",
-                "jets_no_overlap",
-                JetId(MinMaxDeltaRId<TopJet>(ctx, "ak8_higgs_cand", 0.8, false))
-                ));
+    // // ak4 jets not overlapping with higgs-candidates, collected together with higgs-candidates in one TopJet collection for applying b-tag scale factors
+    // other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+    //             "jets",
+    //             "jets_no_overlap",
+    //             JetId(MinMaxDeltaRId<TopJet>(ctx, "ak8_higgs_cand", 0.8, false))
+    //             ));
 
-    other_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
-                "ak8_higgs_cand",
-                "jets_no_overlap",
-                "tj_btag_sf_coll"
-                ));
+    // other_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
+    //             "ak8_higgs_cand",
+    //             "jets_no_overlap",
+    //             "tj_btag_sf_coll"
+    //             ));
 
 
     other_modules.emplace_back(new CollectionProducer<Jet>(ctx,

@@ -11,7 +11,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // If needed, access the configuration of the module here, e.g.:
     // string testvalue = ctx.get("TestKey", "<not set>");
     // cout << "TestKey in the configuration was: " << testvalue << endl;
-    version = ctx.get("dataset_version", "");
+    version = ctx.get("dataset_version",}{} "");
     type = ctx.get("dataset_type", "");
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
@@ -182,6 +182,25 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         "n_btags_tight",
         JetId(CSVBTag(CSVBTag::WP_TIGHT))
         ));
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "ak8_higgs_cand",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
+                ));
+
+    // ak4 jets not overlapping with higgs-candidates, collected together with higgs-candidates in one TopJet collection for applying b-tag scale factors
+    other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+                "jets",
+                "jets_no_overlap",
+                JetId(MinMaxDeltaRId<TopJet>(ctx, "ak8_higgs_cand", 0.8, false))
+                ));
+
+    other_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
+                "ak8_higgs_cand",
+                "jets_no_overlap",
+                "tj_btag_sf_coll"
+                ));
 
 
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working

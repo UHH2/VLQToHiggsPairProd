@@ -260,8 +260,8 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
 
 def stack_setup_norm_sig(grps):
     grps = gen.mc_stack_n_data_sum(grps)
-    # grps = norm_to_bkg(grps)
-    grps = norm_to_fix_xsec(grps, normsignal)
+    grps = norm_to_bkg(grps)
+    # grps = norm_to_fix_xsec(grps, normsignal)
     return grps
 
 def plotter_factory_stack(smpl_fct=None, **kws):

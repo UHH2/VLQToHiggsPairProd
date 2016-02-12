@@ -3,7 +3,7 @@
 [
 <!ENTITY NEVT "10000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
-<!ENTITY OUTPUTDIR "Samples-25ns-v2/TestPreselection/">
+<!ENTITY OUTPUTDIR "NewSamples-25ns-v2/TestPreselection/">
 
 <!ENTITY MC_QCD_Pt80to120_MuEnrichedPt5   SYSTEM "../../common/datasets/RunII_25ns_v2/MC_QCD_Pt80to120_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt120to170_MuEnrichedPt5  SYSTEM "../../common/datasets/RunII_25ns_v2/MC_QCD_Pt120to170_MuEnrichedPt5.xml">
@@ -104,12 +104,12 @@
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015D" Cacheable="True">
+    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015D" Cacheable="True">
         &Data_SingleElePD;
         &Data_SingleElePD_prompt;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
     <!--

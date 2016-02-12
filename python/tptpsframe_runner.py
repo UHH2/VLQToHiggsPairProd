@@ -167,7 +167,7 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
+   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="0" />
    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
@@ -184,9 +184,10 @@ sframe_cfg_final = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4
 sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/config/TpTpPreselectionV2.xml'
 
 import common_plot
-import plot as final_plotting
+import plot as plot
 from optparse import OptionParser
 import tex_content
+from varial.extensions.hadd import Hadd
 
 varial.settings.sys_uncerts = {}
 
@@ -214,6 +215,7 @@ def mk_sframe_tools_and_plot(argv):
         varial.settings.sys_uncerts = no_sys_uncerts
         basenames = common_plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
+        samples_to_plot = plot.samples_to_plot_pre
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
         setup_for_ind_run = setup_for_finalsel
@@ -221,14 +223,21 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpFinalSelectionTreeOutput'
         varial.settings.sys_uncerts = sys_uncerts_final
         basenames = common_plot.basenames_final
+        samples_to_plot = plot.samples_to_plot_final
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
         exit(-1)
 
     def sf_batch_tc():
-        h_a_pl = final_plotting.hadd_and_plot(version='Plots',
-            src='SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-            categories=categories, basenames=basenames, datasets=final_plotting.samples_to_plot_final)
+        hadd = Hadd(
+            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+            basenames=basenames, 
+            # overwrite=False
+            )
+        plots = varial.tools.ToolChainParallel(
+            'Plots',
+            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot)
+        )
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -243,7 +252,14 @@ def mk_sframe_tools_and_plot(argv):
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
                     sf_batch,
-                    h_a_pl
+                    varial.tools.ToolChain(
+                        'Plots',
+                        [
+                            # hadd,
+                            plots,
+                            varial.tools.WebCreator(no_tool_check=True)
+                        ]
+                    )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -277,7 +293,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_pre(options.outputdir+tex_base),
+                # mk_tex_tc_pre(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
