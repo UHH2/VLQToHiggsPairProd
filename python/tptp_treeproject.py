@@ -4,6 +4,7 @@ from varial_ext.treeprojector import TreeProjector #, SGETreeProjector
 from os.path import join
 import varial.tools
 import glob
+import os
 
 # varial.settings.max_num_processes = 24
 
@@ -353,9 +354,13 @@ class PDFHistoSquash(varial.tools.Tool):
                         varial.gen.dir_content(p+'/*.root'))
         )
         pdf_histos = sorted(pdf_histos, key=lambda w: w.sample)
-        pdf_histos = list(pdf_histos)
-        for i in pdf_histos: print w.sample, w.category, w.file_path, w.in_file_path
+        pdf_histos = sorted(pdf_histos, key=lambda w: w.in_file_path.split('/')[0])
+        pdf_histos = sorted(pdf_histos, key=lambda w: w.in_file_path.split('/')[1])
+        # pdf_histos = list(pdf_histos)
+        # for w in pdf_histos: print w.sample, w.file_path, w.in_file_path
         pdf_histos = varial.gen.group(pdf_histos, lambda w: w.sample)
+        # pdf_histos = list(pdf_histos)
+        # for p in pdf_histos: print list((g.file_path, g.in_file_path) for g in p)
         pdf_histos = (varial.op.squash_sys_stddev(h) for h in pdf_histos)
         self.result = list(pdf_histos)
         os.system('touch %s/webcreate_denial' % self.cwd)
@@ -389,11 +394,22 @@ class PDFUpDown(varial.tools.Tool):
                 w.histo.Scale(sigs[w.sample].Integral() / w.histo.Integral())
                 yield w
 
-        def store(w):
-            fsw = varial.wrp.FileServiceWrapper(name='SignalRegion')
-            fsw.vlq_mass = w.histo
-            varial.diskio.write(fsw, w.sample)
-            return w
+        from itertools import groupby
+
+        def store(grps):
+            for g in grps:
+                sample = g.wrps[0].sample
+                wrps = sorted(g.wrps, key=lambda a: a.category)
+                wrps = dict((k, list(w)) for k, w in groupby(wrps, key=lambda a: a.category))
+                for k, ws in wrps.iteritems():
+                    fsw = varial.analysis.fileservice(k)
+                    for w in ws: fsw.append(w.histo)
+                varial.diskio.write_fileservice(sample)
+                yield g
+
+
+
+
 
         histos = self.lookup_result('../SysTreeProjectorsPDF/PDFHistoSquash')
         assert histos
@@ -401,7 +417,12 @@ class PDFUpDown(varial.tools.Tool):
         histos = (varial.op.copy(w) for w in histos)
         histos = (set_values(w) for w in histos)
         # histos = norm_thing(histos)
-        histos = (store(w) for w in histos)
+        histos = varial.gen.gen_add_wrp_info(histos, 
+            category=lambda w: w.in_file_path.split('/')[0],
+            variable=lambda w: w.in_file_path.split('/')[1])
+        histos = sorted(histos, key=lambda w: w.sample)
+        histos = varial.gen.group(histos, lambda w: w.sample)
+        histos = store(histos)
         histos = list(histos)
 
         alia = varial.diskio.generate_aliases(self.cwd + '*.root')
