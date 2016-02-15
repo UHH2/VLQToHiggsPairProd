@@ -232,10 +232,22 @@ def mod_legend(wrps):
             w.legend = w.legend[:-5]
         yield w
 
+def add_wrp_info(wrps, sig_ind=None):
+    sig_ind = sig_ind or signal_indicators
+    return varial.generators.gen_add_wrp_info(
+        wrps,
+        sample=vlq_common.get_samplename,
+        legend=lambda w: w.sample,
+        is_signal=lambda w: any(s in w.sample for s in sig_ind),
+        is_data=lambda w: 'Run20' in w.sample,
+        variable=lambda w: w.in_file_path.split('/')[-1],
+        sys_info=vlq_common.get_sys_info,
+    )
+
 #====LOADER HOOKS====
 
 def loader_hook(wrps):
-    wrps = vlq_common.add_wrp_info(wrps, sig_ind=signal_indicators, use_hadd_sample=False)
+    wrps = add_wrp_info(wrps, sig_ind=signal_indicators) # , use_hadd_sample=False
     wrps = list(wrps)
     # wrps = gen.sort(wrps)
     wrps = mod_legend(wrps)

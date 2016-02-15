@@ -3,7 +3,7 @@
 [
 <!ENTITY NEVT "100">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
-<!ENTITY OUTPUTDIR "Samples-25ns-v2/TestTreeOutput/">
+<!ENTITY OUTPUTDIR "NewSamples-25ns-v2/TestTreeOutput/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt20to30_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50_MuEnrichedPt5.xml">

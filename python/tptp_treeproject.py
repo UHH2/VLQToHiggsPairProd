@@ -7,13 +7,15 @@ import glob
 
 # varial.settings.max_num_processes = 24
 
+iteration = [1]
+
 core_histos = {
     'ST'                            : ('ST',                               45, 0, 4500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
-    'n_ak8'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
+    'n_ak8_cleaned'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'pt_ld_ak4_jet'                 : ('Pt leading Ak4 Jet',               60, 0., 1500.),
     'pt_ld_ak8_jet'                 : ('Pt leading Ak8 Jet',               60, 0., 1500.),
-    'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
+    # 'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
 }
 
 more_histos = {
@@ -34,34 +36,34 @@ more_histos = {
     'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'trigger_accept_isoEl27'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'is_muon'                       : ('Prim. Lep. is Muon',                2, -.5, 1.5),
-    'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
-    'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
-    'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
-    'first_ak8jet_pt'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
-    'first_ak8jet_dRlep'                : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
-    'first_ak8jet_dRak4'               : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
-    'first_ak8jet_dRak8'           : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    'second_ak8jet_eta'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
-    'second_ak8jet_mass'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
-    'second_ak8jet_nsjbtags'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
-    'second_ak8jet_pt'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
-    'second_ak8jet_dRlep'                : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
-    'second_ak8jet_dRak4'               : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
-    'second_ak8jet_dRak8'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
-    'higgs_tag_1b_eta'                : ('Eta Higgs-Tag(1b)',                  50, -3., 3.),
-    'higgs_tag_1b_mass'               : ('Mass Higgs-Tag(1b)',                 60, 0., 300.),
-    'higgs_tag_1b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(1b)',     4, -.5, 3.5),
-    'higgs_tag_1b_pt'                 : ('Pt Higgs-Tag(1b)',                   60, 0., 1500.),
-    'higgs_tag_1b_dRlep'                : ('dR(Higgs-Tag(1b), primary lepton)',   50, 0., 5.),
-    'higgs_tag_1b_dRak4'               : ('dR(Higgs-Tag(1b), nearest Ak4 Jet)',  50, 0., 5.),
-    'higgs_tag_1b_dRak8'           : ('dR(Higgs-Tag(1b), nearest Ak8 Jet)',  50, 0., 5.),
-    'higgs_tag_2b_eta'                : ('Eta Higgs-Tag(2b)',                  50, -3., 3.),
-    'higgs_tag_2b_mass'               : ('Mass Higgs-Tag(2b)',                 60, 0., 300.),
-    'higgs_tag_2b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(2b)',     4, -.5, 3.5),
-    'higgs_tag_2b_pt'                 : ('Pt Higgs-Tag(2b)',                   60, 0., 1500.),
-    'higgs_tag_2b_dRlep'                : ('dR(Higgs-Tag(2b), primary lepton)',   50, 0., 5.),
-    'higgs_tag_2b_dRak4'               : ('dR(Higgs-Tag(2b), nearest Ak4 Jet)',  50, 0., 5.),
-    'higgs_tag_2b_dRak8'           : ('dR(Higgs-Tag(2b), nearest Ak8 Jet)',  50, 0., 5.),
+    # 'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
+    # 'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
+    # 'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
+    # 'first_ak8jet_pt'                 : ('Pt 1st Ak8 Jet',                   60, 0., 1500.),
+    # 'first_ak8jet_dRlep'                : ('dR(1st TopJet, primary lepton)',   50, 0., 5.),
+    # 'first_ak8jet_dRak4'               : ('dR(1st TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    # 'first_ak8jet_dRak8'           : ('dR(1st TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    # 'second_ak8jet_eta'                : ('Eta 2nd Ak8 Jet',                  50, -3., 3.),
+    # 'second_ak8jet_mass'               : ('Mass 2nd Ak8 Jet',                 60, 0., 300.),
+    # 'second_ak8jet_nsjbtags'           : ('N(med sj b-tags) 2nd Ak8 Jet',     4, -.5, 3.5),
+    # 'second_ak8jet_pt'                 : ('Pt 2nd Ak8 Jet',                   60, 0., 1500.),
+    # 'second_ak8jet_dRlep'                : ('dR(2nd TopJet, primary lepton)',   50, 0., 5.),
+    # 'second_ak8jet_dRak4'               : ('dR(2nd TopJet, nearest Ak4 Jet)',  50, 0., 5.),
+    # 'second_ak8jet_dRak8'           : ('dR(2nd TopJet, nearest Ak8 Jet)',  50, 0., 5.),
+    # 'higgs_tag_1b_eta'                : ('Eta Higgs-Tag(1b)',                  50, -3., 3.),
+    # 'higgs_tag_1b_mass'               : ('Mass Higgs-Tag(1b)',                 60, 0., 300.),
+    # 'higgs_tag_1b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(1b)',     4, -.5, 3.5),
+    # 'higgs_tag_1b_pt'                 : ('Pt Higgs-Tag(1b)',                   60, 0., 1500.),
+    # 'higgs_tag_1b_dRlep'                : ('dR(Higgs-Tag(1b), primary lepton)',   50, 0., 5.),
+    # 'higgs_tag_1b_dRak4'               : ('dR(Higgs-Tag(1b), nearest Ak4 Jet)',  50, 0., 5.),
+    # 'higgs_tag_1b_dRak8'           : ('dR(Higgs-Tag(1b), nearest Ak8 Jet)',  50, 0., 5.),
+    # 'higgs_tag_2b_eta'                : ('Eta Higgs-Tag(2b)',                  50, -3., 3.),
+    # 'higgs_tag_2b_mass'               : ('Mass Higgs-Tag(2b)',                 60, 0., 300.),
+    # 'higgs_tag_2b_nsjbtags'           : ('N(med sj b-tags) Higgs-Tag(2b)',     4, -.5, 3.5),
+    # 'higgs_tag_2b_pt'                 : ('Pt Higgs-Tag(2b)',                   60, 0., 1500.),
+    # 'higgs_tag_2b_dRlep'                : ('dR(Higgs-Tag(2b), primary lepton)',   50, 0., 5.),
+    # 'higgs_tag_2b_dRak4'               : ('dR(Higgs-Tag(2b), nearest Ak4 Jet)',  50, 0., 5.),
+    # 'higgs_tag_2b_dRak8'           : ('dR(Higgs-Tag(2b), nearest Ak8 Jet)',  50, 0., 5.),
     # 'use_sr_sf'                     : ('Use SR SF',                         2, -.5, 1.5),
 }
 more_histos.update(core_histos)
@@ -114,46 +116,46 @@ sample_weights = {
     'QCD' : 'weight*weight_ak4_jetpt',
     'DYJets' : 'weight*weight_ak4_jetpt',
     'WJets' : 'weight*weight_ak4_jetpt',
-    'Run2015D' : 'weight*weight_ak4_jetpt',
+    'Run2015D' : 'weight',
 }
 sample_weights.update(dict((f, 'weight') for f in signal_samples))
 
+base_weight = 'weight'
+
+sample_weights_pdf = [
+    'TTbar',
+    # 'SingleTop',
+    'DYJets',
+    'WJets',
+] + signal_samples
 
 import tptp_selections_treeproject as sel
 
-sec_sel_weight = [
-    ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
-    ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-    # ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-    ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-    ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-    ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-    ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-    ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-    # # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # # ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandWJetsRegion_El45', sel.sb_wjets_channel + sel.el_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandWJetsRegion_Mu45', sel.sb_wjets_channel + sel.mu_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion2b_El45iso', sel.sr2b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion1b_El45iso', sel.sr1b_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_El45iso', sel.sb_channel + sel.eliso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion2b_Mu45iso', sel.sr2b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion1b_Mu45iso', sel.sr1b_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_Mu45iso', sel.sb_channel + sel.muiso_channel, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion2b_El45DRCut', sel.sr2b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion1b_El45DRCut', sel.sr1b_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_El45DRCut', sel.sb_channel + sel.el_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion2b_Mu45DRCut', sel.sr2b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion1b_Mu45DRCut', sel.sr1b_channel + sel.mu_channel + sel.dr_cut, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SidebandRegion_Mu45DRCut', sel.sb_channel + sel.mu_channel + sel.dr_cut_invert, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-    # ('SignalRegion2b_1addB_3ak8', sel.sr2b_selection_1b_3ak8, 'weight'),
-    # ('SignalRegion1b_1addB_3ak8', sel.sr1b_selection_1b_3ak8, 'weight'),
-    # ('SidebandRegion_1addB_3ak8', sel.sb_selection_1b_3ak8, 'weight'),
-    # ('SignalRegion2b_1addB_2ak8', sel.sr2b_selection_1b_2ak8, sample_weights),
-    # ('SignalRegion1b_1addB_2ak8', sel.sr1b_selection_1b_2ak8, sample_weights),
-    # ('SidebandRegion_1addB_2ak8', sel.sb_selection_1b_2ak8, sample_weights),
-]
+final_regions = {
+    'BaseLineSelectionEl45' : sel.el_channel,
+    'BaseLineSelectionMu45' : sel.mu_channel,
+    'SignalRegion2b_El45' : sel.sr2b_channel + sel.el_channel,
+    'SignalRegion1b_El45' : sel.sr1b_channel + sel.el_channel,
+    'SidebandRegion_El45' : sel.sb_channel + sel.el_channel,
+    'SignalRegion2b_Mu45' : sel.sr2b_channel + sel.mu_channel,
+    'SignalRegion1b_Mu45' : sel.sr1b_channel + sel.mu_channel,
+    'SidebandRegion_Mu45' : sel.sb_channel + sel.mu_channel,
+}
+
+
+sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
+
+# [
+#     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
+#     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
+#     # ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
+#     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
+#     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
+#     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
+#     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
+#     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
+#     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
+# ]
 
 
 def mk_tp(input_pat):
@@ -188,29 +190,31 @@ def mk_sys_tps(base_path):
         ) 
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
-    nominal_sec_sel_weight = [
-        ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
-        ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-        ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights),
-        ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights),
-        ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights),
-        ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights),
-        ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights),
-        ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights),
-    ]
-    sys_tps = list(
-        TreeProjector(
-            dict(
-                (sample, list(f for f in glob.glob(pat) if sample in f))
-                for sample in samples_no_data
-            ), 
-            sys_params, 
-            nominal_sec_sel_weight,
-            add_aliases_to_analysis=False,
-            name=name,
-        )
-        for name, pat in jercs
-    )
+    nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
+    # [
+    #     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
+    #     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
+    #     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights),
+    #     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights),
+    #     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights),
+    #     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights),
+    #     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights),
+    #     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights),
+    # ]
+    sys_tps = []
+    # sys_tps = list(
+    #     TreeProjector(
+    #         dict(
+    #             (sample, list(f for f in glob.glob(pat) if sample in f))
+    #             for sample in samples_no_data
+    #         ), 
+    #         sys_params, 
+    #         nominal_sec_sel_weight,
+    #         add_aliases_to_analysis=False,
+    #         name=name,
+    #     )
+    #     for name, pat in jercs
+    # )
 
     # next put together nominal samples with with weight uncerts.
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
@@ -219,17 +223,20 @@ def mk_sys_tps(base_path):
         for sample in samples_no_data
     )
     sys_sec_sel_weight = list(
-        (name, [
-            ('BaseLineSelectionEl45', sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
-            ('BaseLineSelectionMu45', sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
-            # ('BaseLineSelection', sel.baseline_selection, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-            ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        ])
+        (name, list((g, f, dict((a, f+w) for a, f in sample_weights.iteritems()))
+            for g, f in final_regions.iteritems()) 
+        #     [
+        #     ('BaseLineSelectionEl45', sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
+        #     ('BaseLineSelectionMu45', sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
+        #     # ('BaseLineSelection', sel.baseline_selection, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        #     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
+        # ]
+        )
         # (name, [
         #     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
         #     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
@@ -255,21 +262,154 @@ def mk_sys_tps(base_path):
             ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    sys_tps += list(
+    # sys_tps += list(
+    #     TreeProjector(
+    #         filenames,
+    #         sys_params, 
+    #         ssw,
+    #         add_aliases_to_analysis=False,
+    #         name=name,
+    #     )
+    #     for name, ssw in sys_sec_sel_weight
+    # )
+
+    # PDF uncertainties
+    # with open('weight_dict_TpB') as f:
+    #     weight_dict = ast.literal_eval(f.read())
+    # with open('weight_dict_TpT') as f:
+    #     weight_dict.update(ast.literal_eval(f.read()))
+    sys_params_pdf = {
+        'histos': core_histos,
+        'treename': 'AnalysisTree',
+    }
+    sys_sec_sel_weight_pdf = list(
+        ('pdf_weight_%i'%i, list((g, f,
+            dict(
+                    (smpl, base_weight+'*weight_pdf_%i'%i)
+                    for smpl in sample_weights_pdf
+                )
+            ) for g, f in final_regions.iteritems())
+        #     list(
+        #     (
+        #         'SignalRegion',
+        #         sr_sel,
+        #         dict(
+        #             (smpl, base_weight+'*weight_pdf_%i/%s'%i)
+        #             for smpl, weight_list in weight_dict.iteritems()
+        #         )
+        #     ),
+        # ) for reg in 
+        )
+        for i in xrange(100)
+    )
+    filenames_pdf = dict(
+        (s, fs)
+        for s, fs in filenames.iteritems()
+        if s in sample_weights_pdf
+    )
+    sys_tps_pdf = list(
         TreeProjector(
-            filenames,
-            sys_params, 
+            filenames_pdf, 
+            sys_params_pdf, 
             ssw,
             add_aliases_to_analysis=False,
             name=name,
         )
-        for name, ssw in sys_sec_sel_weight
+        for name, ssw in sys_sec_sel_weight_pdf
     )
+    sys_tps_pdf.append(PDFHistoSquash())
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        PDFUpDown(name='PDF__plus'),
+        PDFUpDown(name='PDF__minus'),
+    ]
+
+    for tp in sys_tps:
+        iteration[0] += 1
+        tp.iteration = 10 * iteration[0]  # batch tp's should not interfere
 
     # make it complete with a tooloolchain!
     return varial.tools.ToolChain(
         'SysTreeProjectors', sys_tps
     )
+
+
+
+    # make it complete with a tooloolchain!
+    return varial.tools.ToolChain(
+        'SysTreeProjectors', sys_tps
+    )
+
+class PDFHistoSquash(varial.tools.Tool):
+    io = varial.pklio
+
+    def run(self):
+        pdf_paths = glob.glob(self.cwd + '../*')
+        pdf_paths.remove(self.cwd + '../PDFHistoSquash')
+        pdf_histos = (
+            w
+            for p in pdf_paths
+            for w in varial.diskio.bulk_load_histograms(
+                        varial.gen.dir_content(p+'/*.root'))
+        )
+        pdf_histos = sorted(pdf_histos, key=lambda w: w.sample)
+        pdf_histos = list(pdf_histos)
+        for i in pdf_histos: print w.sample, w.category, w.file_path, w.in_file_path
+        pdf_histos = varial.gen.group(pdf_histos, lambda w: w.sample)
+        pdf_histos = (varial.op.squash_sys_stddev(h) for h in pdf_histos)
+        self.result = list(pdf_histos)
+        os.system('touch %s/webcreate_denial' % self.cwd)
+
+
+class PDFUpDown(varial.tools.Tool):
+    io = varial.pklio
+
+    def run(self):
+        assert '__plus' in self.name or '__minus' in self.name
+        factor = 1. if '__plus' in self.name else -1.
+        self.message('INFO adding error with factor: %i' % factor)
+
+        def set_values(w):
+            h = w.histo
+            h_sys = w.histo_sys_err
+            for i in xrange(h_sys.GetNbinsX()+2):
+                h.SetBinContent(i, h_sys.GetBinContent(i) 
+                                   + factor*h_sys.GetBinError(i))
+            w.histo_sys_err = None
+            return w
+
+        def norm_thing(wrps):
+            sigs = varial.gen.dir_content('../../TreeProjector/*.root')
+            sigs = (s for s in sigs if '/Signal_' in s.file_path)
+            sigs = (s for s in sigs if s.name == 'vlq_mass')
+            sigs = (s for s in sigs if 'SignalRegion' in s.in_file_path)
+            sigs = varial.gen.load(sigs)
+            sigs = dict((s.sample, s.histo) for s in sigs)
+            for w in wrps:
+                w.histo.Scale(sigs[w.sample].Integral() / w.histo.Integral())
+                yield w
+
+        def store(w):
+            fsw = varial.wrp.FileServiceWrapper(name='SignalRegion')
+            fsw.vlq_mass = w.histo
+            varial.diskio.write(fsw, w.sample)
+            return w
+
+        histos = self.lookup_result('../SysTreeProjectorsPDF/PDFHistoSquash')
+        assert histos
+
+        histos = (varial.op.copy(w) for w in histos)
+        histos = (set_values(w) for w in histos)
+        # histos = norm_thing(histos)
+        histos = (store(w) for w in histos)
+        histos = list(histos)
+
+        alia = varial.diskio.generate_aliases(self.cwd + '*.root')
+        alia = varial.gen.gen_add_wrp_info(alia, 
+            sample=lambda a: os.path.basename(os.path.splitext(a.file_path)[0]))
+        self.result = list(alia)
+        os.system('touch %s/aliases.in.result' % self.cwd)
+        os.system('touch %s/webcreate_denial' % self.cwd)
 
 import sys
 

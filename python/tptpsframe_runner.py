@@ -16,7 +16,7 @@ from varial.extensions import git
 
 varial.settings.max_num_processes = 24
 
-categories_final = [ "NoSelection",
+categories_final = [ #"NoSelection",
         'Mu45_Baseline',
         'El45_Baseline',
         # 'El45_H2B',
@@ -231,7 +231,9 @@ def mk_sframe_tools_and_plot(argv):
     def sf_batch_tc():
         hadd = Hadd(
             src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-            basenames=basenames, 
+            basenames=basenames,
+            add_aliases_to_analysis=False,
+            samplename_func=plot.get_samplename,
             # overwrite=False
             )
         plots = varial.tools.ToolChainParallel(
@@ -255,7 +257,7 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            hadd,
+                            # hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]

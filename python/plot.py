@@ -93,6 +93,8 @@ samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g
 
 samples_to_plot_pre = other_samples_to_plot + signals_to_plot
 
+get_samplename = vlq_common.get_samplename
+
 def add_fs_info(wrps):
     for w in wrps:
         w.finalstate = w.in_file_path.split('/')[0]
@@ -126,7 +128,7 @@ def cf_loader_hook(wrps):
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
     #=== FIX MERGING WITH PREFIXES===
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
@@ -278,32 +280,32 @@ def mk_toolchain(name='', src='', categories=None, datasets=datasets_to_plot):
 
 import tex_content
 
-def hadd_and_plot(version='Test', src='', categories=None, basenames=None, datasets=datasets_to_plot):
-    hadd = Hadd(
-        src_glob_path='../../'+src,
-        basenames=basenames, 
-        # overwrite=False
-        )
-    plots = varial.tools.ToolChainParallel(
-        'Plots',
-        lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets)
-    )
-    tc = varial.tools.ToolChain(
-        version,
-        [
-            hadd,
-            # histo_loader,
-            plots,
-            # varial.tools.ToolChainParallel(
-            #     'CompareControlRegions',
-            #     lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
-            #             crs=list(c for c in categories if 'Control' in c))
-            #     ),
-            # sensitivity.mk_tc('Limits'),
-            varial.tools.WebCreator(no_tool_check=True)
-        ]
-    )
-    return tc
+# def hadd_and_plot(version='Test', src='', categories=None, basenames=None, datasets=datasets_to_plot):
+#     hadd = Hadd(
+#         src_glob_path='../../'+src,
+#         basenames=basenames, 
+#         # overwrite=False
+#         )
+#     plots = varial.tools.ToolChainParallel(
+#         'Plots',
+#         lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets)
+#     )
+#     tc = varial.tools.ToolChain(
+#         version,
+#         [
+#             hadd,
+#             # histo_loader,
+#             plots,
+#             # varial.tools.ToolChainParallel(
+#             #     'CompareControlRegions',
+#             #     lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
+#             #             crs=list(c for c in categories if 'Control' in c))
+#             #     ),
+#             # sensitivity.mk_tc('Limits'),
+#             varial.tools.WebCreator(no_tool_check=True)
+#         ]
+#     )
+#     return tc
 
 def plot_only(version='Test', src='', categories=None, basenames=None):
     plots = varial.tools.ToolChainParallel(
