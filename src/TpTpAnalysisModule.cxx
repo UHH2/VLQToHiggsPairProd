@@ -56,7 +56,13 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new METProducer(ctx, "met"));
     common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_ld_ak4_jet", 1));
     common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_subld_ak4_jet", 2));
+    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_third_ak4_jet", 3));
+    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fourth_ak4_jet", 4));
+    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fifth_ak4_jet", 5));
+    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_sixth_ak4_jet", 6));
     common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
+    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_subld_ak8_jet", 2));
+    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_third_ak8_jet", 3));
     common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
     common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));

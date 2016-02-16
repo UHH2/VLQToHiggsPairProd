@@ -146,18 +146,6 @@ final_regions = {
 
 sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
 
-# [
-#     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
-#     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-#     # ('BaseLineSelection', sel.baseline_selection, 'weight*weight_ak4_jetpt'), # *weight_ak4_jetpt
-#     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-#     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-#     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights), # *weight_ak4_jetpt
-#     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-#     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-#     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-# ]
-
 
 def mk_tp(input_pat):
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
@@ -192,16 +180,6 @@ def mk_sys_tps(base_path):
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
-    # [
-    #     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
-    #     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-    #     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights),
-    #     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights),
-    #     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights),
-    #     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights),
-    #     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights),
-    #     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights),
-    # ]
     sys_tps = []
     # sys_tps = list(
     #     TreeProjector(
@@ -226,28 +204,7 @@ def mk_sys_tps(base_path):
     sys_sec_sel_weight = list(
         (name, list((g, f, dict((a, f+w) for a, f in sample_weights.iteritems()))
             for g, f in final_regions.iteritems()) 
-        #     [
-        #     ('BaseLineSelectionEl45', sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
-        #     ('BaseLineSelectionMu45', sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())), # *weight_ak4_jetpt
-        #     # ('BaseLineSelection', sel.baseline_selection, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        #     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, dict((a, f+w) for a, f in sample_weights.iteritems())),
-        # ]
         )
-        # (name, [
-        #     ('BaseLineSelectionEl45', sel.el_channel, sample_weights), # *weight_ak4_jetpt
-        #     ('BaseLineSelectionMu45', sel.mu_channel, sample_weights), # *weight_ak4_jetpt
-        #     ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel, sample_weights),
-        #     ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel, sample_weights),
-        #     ('SidebandRegion_El45', sel.sb_channel + sel.el_channel, sample_weights),
-        #     ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel, sample_weights),
-        #     ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel, sample_weights),
-        #     ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel, sample_weights),
-        # ])
         for name, w in (
             ('btag_bc__minus', '*weight_btag_bc_down/weight_btag'),
             ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
@@ -290,18 +247,8 @@ def mk_sys_tps(base_path):
                     for smpl in sample_weights_pdf
                 )
             ) for g, f in final_regions.iteritems())
-        #     list(
-        #     (
-        #         'SignalRegion',
-        #         sr_sel,
-        #         dict(
-        #             (smpl, base_weight+'*weight_pdf_%i/%s'%i)
-        #             for smpl, weight_list in weight_dict.iteritems()
-        #         )
-        #     ),
-        # ) for reg in 
         )
-        for i in xrange(100)
+        for i in xrange(4)
     )
     filenames_pdf = dict(
         (s, fs)
@@ -318,40 +265,77 @@ def mk_sys_tps(base_path):
         )
         for name, ssw in sys_sec_sel_weight_pdf
     )
-    sys_tps_pdf.append(PDFHistoSquash())
+    sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
+    # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in sample_weights_pdf)
     sys_tps += [
         varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-        PDFUpDown(name='PDF__plus'),
-        PDFUpDown(name='PDF__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+    ]
+
+    # Scale Variation uncertainties
+    # with open('weight_dict_TpB') as f:
+    #     weight_dict = ast.literal_eval(f.read())
+    # with open('weight_dict_TpT') as f:
+    #     weight_dict.update(ast.literal_eval(f.read()))
+    sys_sec_sel_weight_scalevar = list(
+        ('scalevar_weight_%i'%i, list((g, f,
+            dict(
+                    (smpl, base_weight+'*weight_muRF_%i'%i)
+                    for smpl in sample_weights_pdf
+                )
+            ) for g, f in final_regions.iteritems())
+        )
+        for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
+    )
+    sys_tps_scalevar = list(
+        TreeProjector(
+            filenames_pdf, 
+            sys_params_pdf, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight_scalevar
+    )
+    sys_tps_scalevar += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_env)]
+    # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in sample_weights_pdf)
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
     ]
 
     for tp in sys_tps:
         iteration[0] += 1
         tp.iteration = 10 * iteration[0]  # batch tp's should not interfere
 
-    # make it complete with a tooloolchain!
     return varial.tools.ToolChain(
         'SysTreeProjectors', sys_tps
     )
 
 
-
-    # make it complete with a tooloolchain!
-    return varial.tools.ToolChain(
-        'SysTreeProjectors', sys_tps
-    )
-
-class PDFHistoSquash(varial.tools.Tool):
+class GenUncertHistoSquash(varial.tools.Tool):
     io = varial.pklio
+
+    def __init__(self, squash_func=varial.op.squash_sys_stddev, sample='', **kws):
+        super(GenUncertHistoSquash, self).__init__(**kws)
+        self.squash_func = squash_func
+        self.sample = sample
+        self.rel_path = '*.root'
+        if self.sample:
+            self.name = 'GenUncertHistoSquash_'+sample
+            self.relpath = self.sample+'.root'
 
     def run(self):
         pdf_paths = glob.glob(self.cwd + '../*')
-        pdf_paths.remove(self.cwd + '../PDFHistoSquash')
+        pdf_paths.remove(self.cwd + '../'+self.name)
         pdf_histos = (
             w
             for p in pdf_paths
             for w in varial.diskio.bulk_load_histograms(
-                        varial.gen.dir_content(p+'/*.root'))
+                        varial.gen.dir_content(p+'/%s'%self.rel_path))
+                        # varial.gen.dir_content(p+'/%s.root'%self.sample))
         )
         pdf_histos = sorted(pdf_histos, key=lambda w: w.sample)
         pdf_histos = sorted(pdf_histos, key=lambda w: w.in_file_path.split('/')[0])
@@ -361,13 +345,17 @@ class PDFHistoSquash(varial.tools.Tool):
         pdf_histos = varial.gen.group(pdf_histos, lambda w: w.sample)
         # pdf_histos = list(pdf_histos)
         # for p in pdf_histos: print list((g.file_path, g.in_file_path) for g in p)
-        pdf_histos = (varial.op.squash_sys_stddev(h) for h in pdf_histos)
+        pdf_histos = (self.squash_func(h) for h in pdf_histos)
         self.result = list(pdf_histos)
         os.system('touch %s/webcreate_denial' % self.cwd)
 
 
-class PDFUpDown(varial.tools.Tool):
+class GenUncertUpDown(varial.tools.Tool):
     io = varial.pklio
+
+    def __init__(self, input_path, **kws):
+        super(GenUncertUpDown, self).__init__(**kws)
+        self.input_path = input_path
 
     def run(self):
         assert '__plus' in self.name or '__minus' in self.name
@@ -376,7 +364,10 @@ class PDFUpDown(varial.tools.Tool):
 
         def set_values(w):
             h = w.histo
-            h_sys = w.histo_sys_err
+            if w.histo_sys_err:
+                h_sys = w.histo_sys_err
+            else:
+                h_sys = w.histo
             for i in xrange(h_sys.GetNbinsX()+2):
                 h.SetBinContent(i, h_sys.GetBinContent(i) 
                                    + factor*h_sys.GetBinError(i))
@@ -408,10 +399,10 @@ class PDFUpDown(varial.tools.Tool):
                 yield g
 
 
-
-
-
-        histos = self.lookup_result('../SysTreeProjectorsPDF/PDFHistoSquash')
+        input_list = glob.glob(os.path.join(self.cwd, self.input_path)) # '../SysTreeProjectorsPDF/GenUncertHistoSquash*'
+        # print input_list
+        histos = list(self.lookup_result(k) for k in input_list)
+        histos = list(h for g in histos for h in g)
         assert histos
 
         histos = (varial.op.copy(w) for w in histos)

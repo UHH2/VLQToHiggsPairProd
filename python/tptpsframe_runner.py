@@ -257,7 +257,7 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            # hadd,
+                            hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
