@@ -28,6 +28,8 @@ theta_auto.config.theta_dir = "/nfs/dust/cms/user/nowatsd/theta"
 
 # src_dir_rel = '../../../../../EventLoopAndPlots'
 
+varial.settings.__setattr__('asymptotic', True)
+
 br_list = []
 
 # only br_th = 100% for now
@@ -123,6 +125,16 @@ def loader_hook_sys(brs):
     return temp
 
 
+
+def limit_curve_loader_hook(wrps):
+    # wrps = list(wrps)
+    # print wrps
+    # wrps = gen.gen_add_wrp_info(wrps, save_name=lambda w: 'tH%.0ftZ%.0fbW%.0f'\
+    #    % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100))
+    wrps = gen.sort(wrps, key_list=['save_name'])
+    return wrps
+
+
 def scale_bkg_postfit(wrps, theta_res_path):
     theta_res = varial.ana.lookup_result(theta_res_path)
     try:
@@ -163,7 +175,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
-        asymptotic= False,
+        asymptotic=varial.settings.asymptotic,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [
             'TpTp_M-0700',
@@ -209,7 +221,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
                 input_result_path='../LimitGraphs',
                 # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
                 # plot_setup=plot_setup,
-                hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
+                hook_loaded_histos=limit_curve_loader_hook,
                 plot_grouper=lambda ws: varial.gen.group(
                         ws, key_func=lambda w: w.save_name),
                 # save_name_func=varial.plotter.save_by_name_with_hash
@@ -259,6 +271,8 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     return grps
 
 def mk_tc(dir_limit='Limits', mk_limit_list=None):
+# setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
+        #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
     return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(mk_limit_list=mk_limit_list),
@@ -272,30 +286,30 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #         save_name_func=lambda w: 'M-'+str(w.mass)
         #         ),
         #     ]),
-        # varial.tools.ToolChain('LimitsWithGraphs',[
-        #     LimitGraphs(
-        #         limit_path='../../Ind_Limits/Limit*/*/Limit*',
-        #         plot_obs=True,
-        #         plot_1sigmabands=True,
-        #         plot_2sigmabands=True,
-        #         ),
-        #     varial.plotter.Plotter(
-        #         name='LimitCurvesCompared',
-        #         input_result_path='../LimitGraphs',
-        #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-        #         # plot_setup=plot_setup,
-        #         hook_loaded_histos=lambda w: gen.sort(w, key_list=["save_name"]),
-        #         plot_grouper=lambda ws: varial.gen.group(
-        #                 ws, key_func=lambda w: w.save_name),
-        #         # save_name_func=varial.plotter.save_by_name_with_hash
-        #         save_name_func=lambda w: w.save_name,
-        #         plot_setup=lambda w: plot_setup_graphs(w,
-        #             th_x=common_sensitivity.theory_masses,
-        #             th_y=common_sensitivity.theory_cs),
-        #         canvas_decorators=[],
-        #         save_lin_log_scale=True
-        #         ),
-            # ]),
+        varial.tools.ToolChain('LimitsWithGraphs',[
+            LimitGraphs(
+                limit_path='../../Ind_Limits/Limit*/*/Limit*',
+                plot_obs=False,
+                plot_1sigmabands=False,
+                plot_2sigmabands=False,
+                ),
+            varial.plotter.Plotter(
+                name='LimitCurvesCompared',
+                input_result_path='../LimitGraphs',
+                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                # plot_setup=plot_setup,
+                hook_loaded_histos=limit_curve_loader_hook,
+                plot_grouper=lambda ws: varial.gen.group(
+                        ws, key_func=lambda w: w.save_name),
+                # save_name_func=varial.plotter.save_by_name_with_hash
+                save_name_func=lambda w: w.save_name,
+                plot_setup=lambda w: plot_setup_graphs(w,
+                    th_x=common_sensitivity.theory_masses,
+                    th_y=common_sensitivity.theory_cs),
+                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+                save_lin_log_scale=True
+                ),
+            ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
         ])

@@ -16,7 +16,7 @@ from varial.extensions import git
 
 
 varial.settings.max_num_processes = 24
-varial.settings.max_open_root_files = 1400
+varial.settings.max_open_root_files = 5000
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -49,8 +49,9 @@ uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 import tptp_treeproject
 import sensitivity
 import tex_content
+import limit_tcs
 
-
+print varial.settings.asymptotic
 # hadd = Hadd(
 #     input_pat, 
 #     common_plot.basenames, 
@@ -73,56 +74,32 @@ def mk_limit_list_syst(sys_pat=''):
                     'ST'),
                 name='El45Only', sys_pat=sys_pat))
             )
-            # tc.append(varial.tools.ToolChain(
-            #     'Mu45Only',
-            #     sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-            #         "SignalRegion2b_Mu45",
-            #         "SignalRegion1b_Mu45",
-            #         "SidebandRegion_Mu45"],
-            #         'ST'),
-            #     name='Mu45Only', sys_pat=sys_pat))
-            # )
-            # tc.append(varial.tools.ToolChain(
-            #     'CombinedChannels',
-            #     sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-            #         "SignalRegion2b_El45",
-            #         "SignalRegion1b_El45",
-            #         "SidebandRegion_El45",
-            #         "SignalRegion2b_Mu45",
-            #         "SignalRegion1b_Mu45",
-            #         "SidebandRegion_Mu45",
-            #         ],
-            #         'ST'),
-            #     name='CombinedChannels', sys_pat=sys_pat))
-            # )
+            tc.append(varial.tools.ToolChain(
+                'Mu45Only',
+                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                    "SignalRegion2b_Mu45",
+                    "SignalRegion1b_Mu45",
+                    "SidebandRegion_Mu45"],
+                    'ST'),
+                name='Mu45Only', sys_pat=sys_pat))
+            )
+            tc.append(varial.tools.ToolChain(
+                'CombinedChannels',
+                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+                    "SignalRegion2b_El45",
+                    "SignalRegion1b_El45",
+                    "SidebandRegion_El45",
+                    "SignalRegion2b_Mu45",
+                    "SignalRegion1b_Mu45",
+                    "SidebandRegion_Mu45",
+                    ],
+                    'ST'),
+                name='CombinedChannels', sys_pat=sys_pat))
+            )
             limit_list.append(
                 varial.tools.ToolChainParallel('Limit'+str(ind),tc))
         return limit_list
     return temp
-
-varial.settings.pretty_names.update({
-    # 'LimitEl45Only' : 'ElectronOnly',
-    'LimitMu45Only' : 'MuonOnly',
-    'LimitNoDRCut' : 'NoDRCut',
-    'LimitWithDRCut' : 'WithDRCut',
-    'LimitNoIso' : 'NoIso',
-    'LimitWithIso' : 'WithIso',
-    'LimitNoWJets' : 'NoWJets',
-    'LimitWithWJets' : 'WithWJets',
-    'LimitCombinedChannels' : 'CombinedChannels',
-})
-
-varial.settings.colors.update({
-    'LimitEl45Only' : 1,
-    'LimitMu45Only' : 1,
-    'LimitCombinedChannels' : 4,
-    'LimitNoDRCut' : 3,
-    'LimitWithDRCut' : 4,
-    'LimitNoIso' : 1,
-    'LimitWithIso' : 4,
-    'LimitNoWJets' : 3,
-    'LimitWithWJets' : 4,
-})
 
 
 def mk_tex_tc_post(base):
@@ -140,6 +117,7 @@ def mk_tex_tc_post(base):
     return tmp
 
 
+varial.settings.__setattr__('asymptotic', True)
 
 
 def run_treeproject_and_plot(base_path, output_dir):
@@ -157,17 +135,17 @@ def run_treeproject_and_plot(base_path, output_dir):
             git.GitAdder(),
             varial.tools.ToolChain(
                 'Inputs', [
-                    # tptp_treeproject.mk_tp(base_path),
-                    tptp_treeproject.mk_sys_tps(base_path),
+                    tptp_treeproject.mk_tp(base_path),
+                    # tptp_treeproject.mk_sys_tps(base_path),
                     # hadd,
                 ]
             ),
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    # plot.mk_toolchain('Histograms_more_signals_scale', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
+                    # plot.mk_toolchain('Histograms', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                    # sensitivity.mk_tc('LimitsCheck', mk_limit_list_test), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    sensitivity.mk_tc('LimitsCheck', limit_tcs.mk_limit_list_check_ak8clean), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
                 # [
                 #     plot.mk_toolchain('Selections', '%s/Inputs/TreeProjector/*.root' % dir_name),

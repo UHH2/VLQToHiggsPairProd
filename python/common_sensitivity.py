@@ -130,7 +130,7 @@ def subtract_finalstate(wrp):
         return wrp.sample[:-(len(wrp.finalstate)+1)]
 
 def loader_hook_excl(wrps):
-    wrps = vlq_common.add_wrp_info(wrps)
+    wrps = common_plot.add_wrp_info(wrps)
     wrps = common_plot.mod_legend(wrps)
     wrps = varial.generators.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0])

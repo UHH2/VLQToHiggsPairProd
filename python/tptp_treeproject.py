@@ -13,13 +13,16 @@ iteration = [1]
 core_histos = {
     'ST'                            : ('ST',                               45, 0, 4500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
-    'n_ak8_cleaned'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
+    'n_ak8'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'pt_ld_ak4_jet'                 : ('Pt leading Ak4 Jet',               60, 0., 1500.),
     'pt_ld_ak8_jet'                 : ('Pt leading Ak8 Jet',               60, 0., 1500.),
+    'pt_subld_ak4_jet'              : ('Pt subleading Ak4 Jet',             60, 0., 1500.),
+    'pt_subld_ak8_jet'              : ('Pt subleading Ak8 Jet',             60, 0., 1500.),
     # 'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
 }
 
 more_histos = {
+    'n_ak8_cleaned'                 : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
     # 'ST_cleaned'                    : ('ST cleaned',                       45, 0, 4500),
     'n_additional_btags_medium'     : ('N(non-overlapping medium b-tags)', 8, -.5, 7.5),
@@ -29,7 +32,6 @@ more_histos = {
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
     'n_jets_no_overlap'             : ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),
-    'pt_subld_ak4_jet'              : ('Pt subleading Ak4 Jet',             60, 0., 1500.),
     # 'pt_ld_ak4_jet_cleaned'         : ('Pt leading Ak4 Jet, cleaned',      60, 0., 1500.),
     # 'pt_ld_ak8_jet_cleaned'         : ('Pt leading Ak8 Jet, cleaned',      60, 0., 1500.),
     'trigger_accept_mu45'           : ('Trigger Accepted Mu45',             2, -.5, 1.5),
@@ -141,6 +143,12 @@ final_regions = {
     'SignalRegion2b_Mu45' : sel.sr2b_channel + sel.mu_channel,
     'SignalRegion1b_Mu45' : sel.sr1b_channel + sel.mu_channel,
     'SidebandRegion_Mu45' : sel.sb_channel + sel.mu_channel,
+    'SignalRegion2b_El45_clean' : sel.sr2b_channel_clean + sel.el_channel,
+    'SignalRegion1b_El45_clean' : sel.sr1b_channel_clean + sel.el_channel,
+    'SidebandRegion_El45_clean' : sel.sb_channel_clean + sel.el_channel,
+    'SignalRegion2b_Mu45_clean' : sel.sr2b_channel_clean + sel.mu_channel,
+    'SignalRegion1b_Mu45_clean' : sel.sr1b_channel_clean + sel.mu_channel,
+    'SidebandRegion_Mu45_clean' : sel.sb_channel_clean + sel.mu_channel,
 }
 
 
@@ -248,7 +256,7 @@ def mk_sys_tps(base_path):
                 )
             ) for g, f in final_regions.iteritems())
         )
-        for i in xrange(4)
+        for i in xrange(100)
     )
     filenames_pdf = dict(
         (s, fs)

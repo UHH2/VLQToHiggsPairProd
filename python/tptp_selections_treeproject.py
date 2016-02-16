@@ -2,27 +2,47 @@
 
 baseline_selection = [
     'gendecay_accept        == 1',
+    # 'n_ak8_cleaned          >= 2'
 ]
 
 sr2b_channel = baseline_selection + [
     'n_higgs_tags_2b_med    >= 1',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sr1b_channel = baseline_selection + [
     'n_higgs_tags_2b_med    == 0',
     'n_higgs_tags_1b_med    >= 1',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
+]
+
+sr2b_channel_clean = baseline_selection + [
+    'n_ak8_cleaned          >= 2',
+    'n_higgs_tags_2b_med_cleaned    >= 1',
+    # 'n_additional_btags_medium  >= 1',
+]
+
+sr1b_channel_clean = baseline_selection + [
+    'n_ak8_cleaned          >= 2',
+    'n_higgs_tags_2b_med_cleaned    == 0',
+    'n_higgs_tags_1b_med_cleaned    >= 1',
+    # 'n_additional_btags_medium  >= 1',
+]
+
+sb_channel_clean = baseline_selection + [
+    'n_ak8_cleaned          >= 2',
+    'n_higgs_tags_1b_med_cleaned        == 0',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_wjets_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
-    'n_additional_btags_medium  == 0',
+    # 'n_additional_btags_medium  == 0',
 ]
 
 el_channel = [
