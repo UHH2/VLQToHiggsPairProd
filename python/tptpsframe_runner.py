@@ -213,7 +213,7 @@ def mk_sframe_tools_and_plot(argv):
         categories = categories_pre
         analysis_module = 'TpTpPreselectionV2'
         varial.settings.sys_uncerts = no_sys_uncerts
-        basenames = common_plot.basenames_pre
+        basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
         samples_to_plot = plot.samples_to_plot_pre
     elif options.selection == 'final':
@@ -222,7 +222,7 @@ def mk_sframe_tools_and_plot(argv):
         categories = categories_final
         analysis_module = 'TpTpFinalSelectionTreeOutput'
         varial.settings.sys_uncerts = sys_uncerts_final
-        basenames = common_plot.basenames_final
+        basenames = plot.basenames_final
         samples_to_plot = plot.samples_to_plot_final
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"

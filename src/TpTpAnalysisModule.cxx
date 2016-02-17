@@ -118,12 +118,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 
     // higgs tags, with mass cuts
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
+                "ak8_boost",
                 "higgs_tags_1b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
+                "ak8_boost",
                 "higgs_tags_2b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));

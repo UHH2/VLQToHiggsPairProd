@@ -75,7 +75,7 @@ def set_category(wrps):
     return wrps
 
 def loader_hook(wrps):
-    wrps = vlq_common.add_wrp_info(wrps)
+    wrps = common_plot.add_wrp_info(wrps)
     wrps = common_plot.mod_legend(wrps)
     wrps = gen.gen_add_wrp_info(
         wrps,

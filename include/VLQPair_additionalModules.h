@@ -821,12 +821,12 @@ class NSubjetID
 {
 public:
 
-    NSubjetID(Context & ctx,
+    NSubjetID(Context &,
                 unsigned min_n_sj = 2) :
         min_n_sj_(min_n_sj)
         {}
 
-    bool operator()(const TopJet & part, const Event & event) const
+    bool operator()(const TopJet & part, const Event &) const
     {
         if (part.subjets().size() < min_n_sj_)
             return false;

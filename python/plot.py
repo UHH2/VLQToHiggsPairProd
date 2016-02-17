@@ -28,32 +28,101 @@ import compare_crs
 
 #====PLOTTING====
 
-datasets_to_plot = [
-    'Run2015D',
-    # 'TpTp_M-800_thX',
-    # 'TpTp_M-1000_thX',
-    'TpTp_M-0700',
-    # 'TpTp_M-0800',
-    # 'TpTp_M-0900',
-    # 'TpTp_M-1000',
-    # 'TpTp_M-1100',
-    'TpTp_M-1200',
-    # 'TpTp_M-1300',
-    # 'TpTp_M-1400',
-    # 'TpTp_M-1500',
-    # 'TpTp_M-1600',
-    # 'TpTp_M-1700',
-    'TpTp_M-1800',
-    # 'TpTp_M-1200_other',
-    # 'TpTp_M-1400_thX',
-    # 'TpTp_M-1600_thX',
-    'QCD',
-    'TTbar',
-    'WJets',
-    'DYJets',
-    'SingleTop',
-]
+#====DEFINITIONS====
 
+src_dir_rel = '../Hadd'
+
+normsignal = 20.
+
+basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
+    'DATA.SingleMuon_Run2015D',
+    'DATA.SingleEle_Run2015D',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.SingleTop',
+    'MC.TTbar',
+    'MC.TpTp_M-0700_thth', 'MC.TpTp_M-0700_thtz', 'MC.TpTp_M-0700_thbw', 'MC.TpTp_M-0700_noH_tztz', 'MC.TpTp_M-0700_noH_tzbw', 'MC.TpTp_M-0700_noH_bwbw',
+    'MC.TpTp_M-0800_thth', 'MC.TpTp_M-0800_thtz', 'MC.TpTp_M-0800_thbw', 'MC.TpTp_M-0800_noH_tztz', 'MC.TpTp_M-0800_noH_tzbw', 'MC.TpTp_M-0800_noH_bwbw',
+    'MC.TpTp_M-0900_thth', 'MC.TpTp_M-0900_thtz', 'MC.TpTp_M-0900_thbw', 'MC.TpTp_M-0900_noH_tztz', 'MC.TpTp_M-0900_noH_tzbw', 'MC.TpTp_M-0900_noH_bwbw',
+    'MC.TpTp_M-1000_thth', 'MC.TpTp_M-1000_thtz', 'MC.TpTp_M-1000_thbw', 'MC.TpTp_M-1000_noH_tztz', 'MC.TpTp_M-1000_noH_tzbw', 'MC.TpTp_M-1000_noH_bwbw',
+    'MC.TpTp_M-1100_thth', 'MC.TpTp_M-1100_thtz', 'MC.TpTp_M-1100_thbw', 'MC.TpTp_M-1100_noH_tztz', 'MC.TpTp_M-1100_noH_tzbw', 'MC.TpTp_M-1100_noH_bwbw',
+    'MC.TpTp_M-1200_thth', 'MC.TpTp_M-1200_thtz', 'MC.TpTp_M-1200_thbw', 'MC.TpTp_M-1200_noH_tztz', 'MC.TpTp_M-1200_noH_tzbw', 'MC.TpTp_M-1200_noH_bwbw',
+    'MC.TpTp_M-1300_thth', 'MC.TpTp_M-1300_thtz', 'MC.TpTp_M-1300_thbw', 'MC.TpTp_M-1300_noH_tztz', 'MC.TpTp_M-1300_noH_tzbw', 'MC.TpTp_M-1300_noH_bwbw',
+    'MC.TpTp_M-1400_thth', 'MC.TpTp_M-1400_thtz', 'MC.TpTp_M-1400_thbw', 'MC.TpTp_M-1400_noH_tztz', 'MC.TpTp_M-1400_noH_tzbw', 'MC.TpTp_M-1400_noH_bwbw',
+    'MC.TpTp_M-1500_thth', 'MC.TpTp_M-1500_thtz', 'MC.TpTp_M-1500_thbw', 'MC.TpTp_M-1500_noH_tztz', 'MC.TpTp_M-1500_noH_tzbw', 'MC.TpTp_M-1500_noH_bwbw',
+    'MC.TpTp_M-1600_thth', 'MC.TpTp_M-1600_thtz', 'MC.TpTp_M-1600_thbw', 'MC.TpTp_M-1600_noH_tztz', 'MC.TpTp_M-1600_noH_tzbw', 'MC.TpTp_M-1600_noH_bwbw',
+    'MC.TpTp_M-1700_thth', 'MC.TpTp_M-1700_thtz', 'MC.TpTp_M-1700_thbw', 'MC.TpTp_M-1700_noH_tztz', 'MC.TpTp_M-1700_noH_tzbw', 'MC.TpTp_M-1700_noH_bwbw',
+    'MC.TpTp_M-1800_thth', 'MC.TpTp_M-1800_thtz', 'MC.TpTp_M-1800_thbw', 'MC.TpTp_M-1800_noH_tztz', 'MC.TpTp_M-1800_noH_tzbw', 'MC.TpTp_M-1800_noH_bwbw',
+    ])
+
+basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
+    'DATA.SingleMuon_Run2015D',
+    'DATA.SingleEle_Run2015D',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.SingleTop',
+    'MC.TTbar',
+    'MC.TpTp_M-0700',
+    'MC.TpTp_M-0800',
+    'MC.TpTp_M-0900',
+    'MC.TpTp_M-1000',
+    'MC.TpTp_M-1100',
+    'MC.TpTp_M-1200',
+    'MC.TpTp_M-1300',
+    'MC.TpTp_M-1400',
+    'MC.TpTp_M-1500',
+    'MC.TpTp_M-1600',
+    'MC.TpTp_M-1700',
+    'MC.TpTp_M-1800',
+    ])
+
+normfactors = {
+    # 'TpTp' : 20.,
+    '_thX' : 1./0.56,
+    '_other' : 1./0.44,
+    'TpTp_M-0700' : 1./0.455,
+    'TpTp_M-0800' : 1./0.196,
+    'TpTp_M-0900' : 1./0.0903,
+    'TpTp_M-1000' : 1./0.0440,
+    'TpTp_M-1100' : 1./0.0224,
+    'TpTp_M-1200' : 1./0.0118,
+    'TpTp_M-1300' : 1./0.00639,
+    'TpTp_M-1400' : 1./0.00354,
+    'TpTp_M-1500' : 1./0.00200,
+    'TpTp_M-1600' : 1./0.001148,
+    'TpTp_M-1700' : 1./0.000666,
+    'TpTp_M-1800' : 1./0.000391,
+}
+
+signal_indicators = ['TpTp_']
+
+# datasets_to_plot = [
+#     'Run2015D',
+#     # 'TpTp_M-800_thX',
+#     # 'TpTp_M-1000_thX',
+#     'TpTp_M-0700',
+#     # 'TpTp_M-0800',
+#     # 'TpTp_M-0900',
+#     # 'TpTp_M-1000',
+#     # 'TpTp_M-1100',
+#     'TpTp_M-1200',
+#     # 'TpTp_M-1300',
+#     # 'TpTp_M-1400',
+#     # 'TpTp_M-1500',
+#     # 'TpTp_M-1600',
+#     # 'TpTp_M-1700',
+#     'TpTp_M-1800',
+#     # 'TpTp_M-1200_other',
+#     # 'TpTp_M-1400_thX',
+#     # 'TpTp_M-1600_thX',
+#     'QCD',
+#     'TTbar',
+#     'WJets',
+#     'DYJets',
+#     'SingleTop',
+# ]
 
 
 signals_to_plot = [
@@ -95,12 +164,6 @@ samples_to_plot_pre = other_samples_to_plot + signals_to_plot
 
 get_samplename = vlq_common.get_samplename
 
-def add_fs_info(wrps):
-    for w in wrps:
-        w.finalstate = w.in_file_path.split('/')[0]
-        w.in_file_path = '/'.join(w.in_file_path.split('/')[1:])
-        yield w
-
 varial.settings.pretty_names.update({
     'no sel._tex' : 'no sel.',
     'trigger_accept_el45_tex' : 'trigger',
@@ -113,28 +176,31 @@ varial.settings.pretty_names.update({
     'pt_ld_ak8_jet_tex' : 'pt(1st AK8 jet)',
 } )
 
-# def mod_cf_label(wrps):
-#     for wrp in wrps:
-#         for i in xrange(wrp.histo.GetNbinsX()):
-#             bin_label = cutflow_names.get(wrp.histo.GetXaxis().GetBinLabel(i + 1))
-#             if bin_label:
-#                 wrp.histo.GetXaxis().SetBinLabel(i + 1, bin_label)
-#         yield wrp
+
+def common_loader_hook(wrps):
+    wrps = common_plot.add_wrp_info(wrps, sig_ind=signal_indicators) # , use_hadd_sample=False
+    wrps = common_plot.mod_legend(wrps)
+    wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
+    wrps = vlq_common.label_axes(wrps)
+    return wrps
+
+#=======FOR CUTFLOWS=======
 
 def cf_loader_hook(wrps):
-    wrps = common_plot.loader_hook(wrps)
+    wrps = common_loader_hook(wrps)
     wrps = cutflow_tables.rebin_cutflow(wrps)
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     # wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path 
     #=== FIX MERGING WITH PREFIXES===
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    if varial.settings.merge_decay_channels:
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
-def mk_cutflow_chain_cat(category, loader_hook, datasets=datasets_to_plot):
+def mk_cutflow_chain_cat(category, loader_hook, datasets):
     cutflow_histos = varial.tools.HistoLoader(
         pattern='../../../../Hadd/*.root',
         name='CutflowHistos',
@@ -177,71 +243,46 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets=datasets_to_plot):
         cutflow_tables.CutflowTableTex(True, None),
     ])
 
-def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
-    if rebin_max_bins:
-        wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, rebin_max_bins)
-    wrps = common_plot.loader_hook(wrps)
-    # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
-    wrps = common_plot.norm_smpl(wrps, smpl_fct)
-    wrps = gen.gen_make_th2_projections(wrps)
-    return wrps
+
+#=======FOR ALL PLOTS=======
+
 
 def loader_hook_finalstates_excl(wrps):
-    wrps = loader_hook_norm_smpl(wrps, common_plot.normfactors, rebin_max_bins=60)
+    wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
+    wrps = common_loader_hook(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
     wrps = list(wrps)
-    # for w in wrps: print w.sample, w.in_file_path 
-    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+    # for w in wrps: print w.sample, w.in_file_path
+    if varial.settings.merge_decay_channels:
+        wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
-def add_sample_integrals(canvas_builders):
-    """
-    Adds {'legend1' : histo_integral, ...} to canvases.
-    """
-    def integral_histo_wrp(wrp):
-        fct = 1.
-        if hasattr(wrp, 'scl_fct'):
-            fct = wrp.scl_fct
-        return [(wrp.legend, wrp.obj.Integral()/fct)]
 
-    def integral_stack_wrp(wrp):
-        for hist in wrp.obj.GetHists():
-            fct = 1.
-            if hasattr(wrp, 'scl_fct'):
-                fct = wrp.scl_fct
-            yield hist.GetTitle(), hist.Integral()/fct
-
-    def integral(wrp):
-        if isinstance(wrp, rnd.StackRenderer):
-            return integral_stack_wrp(wrp)
-        else:
-            return integral_histo_wrp(wrp)
-
-    for cnv in canvas_builders:
-        # TODO when rendering goes generator
-        cnv.renderers[0].__dict__.update(dict(
-            ('Integral__' + legend, integ)
-            for r in cnv.renderers
-            if isinstance(r, rnd.HistoRenderer)  # applies also to StackRnd.
-            for legend, integ in integral(r)
-        ))
-        yield cnv
+def stack_setup_norm_sig(grps):
+    # grps = list(grps)
+    # print grps
+    grps = gen.mc_stack_n_data_sum(grps)
+    grps = common_plot.norm_to_bkg(grps)
+    # grps = norm_to_fix_xsec(grps, normsignal)
+    return grps
 
 def plotter_factory(**kws):
     # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
     # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
     kws['hook_loaded_histos'] = loader_hook_finalstates_excl
-    kws['plot_setup'] = common_plot.stack_setup_norm_sig
-    kws['stack_setup'] = common_plot.stack_setup_norm_sig
+    kws['plot_setup'] = stack_setup_norm_sig
+    kws['stack_setup'] = stack_setup_norm_sig
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
-    kws['hook_canvas_post_build'] = add_sample_integrals
+    kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
     # kws['canvas_decorators'] = [varial.rendering.Legend]
     return varial.tools.Plotter(**kws)
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=datasets_to_plot):
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=None):
     def create():
         plot_chain = [
             
@@ -265,14 +306,14 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=datasets_to_
                 if cat is not 'NoSelection':
                     cutflow_cat.append(mk_cutflow_chain_cat(
                         cat,
-                        common_plot.loader_hook,
+                        common_loader_hook,
                         datasets))
             plot_chain.append(varial.tools.ToolChain('CutflowTools', cutflow_cat))
 
         return plot_chain
     return create
 
-def mk_toolchain(name='', src='', categories=None, datasets=datasets_to_plot):
+def mk_toolchain(name='', src='', categories=None, datasets=None):
     return varial.tools.ToolChainParallel(
         name,
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets)
