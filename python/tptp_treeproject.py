@@ -113,17 +113,18 @@ signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for
 samples = background_samples + signal_samples + ['Run2015D']
 samples_no_data = background_samples + signal_samples
 
+base_weight = 'weight'
+
 sample_weights = {
-    'TTbar' : 'weight*weight_ak4_jetpt',
-    'SingleTop' : 'weight*weight_ak4_jetpt',
-    'QCD' : 'weight*weight_ak4_jetpt',
-    'DYJets' : 'weight*weight_ak4_jetpt',
-    'WJets' : 'weight*weight_ak4_jetpt',
-    'Run2015D' : 'weight',
+    'TTbar' : base_weight,
+    'SingleTop' : base_weight,
+    'QCD' : base_weight,
+    'DYJets' : base_weight,
+    'WJets' : base_weight,
+    'Run2015D' : '1',
 }
 sample_weights.update(dict((f, 'weight') for f in signal_samples))
 
-base_weight = 'weight'
 
 sample_weights_pdf = [
     'TTbar',
@@ -134,25 +135,25 @@ sample_weights_pdf = [
 
 import tptp_selections_treeproject as sel
 
-final_regions = {
-    'BaseLineSelectionEl45' : sel.el_channel,
-    'BaseLineSelectionMu45' : sel.mu_channel,
-    'SignalRegion2b_El45' : sel.sr2b_channel + sel.el_channel,
-    'SignalRegion1b_El45' : sel.sr1b_channel + sel.el_channel,
-    'SidebandRegion_El45' : sel.sb_channel + sel.el_channel,
-    'SignalRegion2b_Mu45' : sel.sr2b_channel + sel.mu_channel,
-    'SignalRegion1b_Mu45' : sel.sr1b_channel + sel.mu_channel,
-    'SidebandRegion_Mu45' : sel.sb_channel + sel.mu_channel,
-    'SignalRegion2b_El45_clean' : sel.sr2b_channel_clean + sel.el_channel,
-    'SignalRegion1b_El45_clean' : sel.sr1b_channel_clean + sel.el_channel,
-    'SidebandRegion_El45_clean' : sel.sb_channel_clean + sel.el_channel,
-    'SignalRegion2b_Mu45_clean' : sel.sr2b_channel_clean + sel.mu_channel,
-    'SignalRegion1b_Mu45_clean' : sel.sr1b_channel_clean + sel.mu_channel,
-    'SidebandRegion_Mu45_clean' : sel.sb_channel_clean + sel.mu_channel,
-}
+final_regions = (
+    ('BaseLineSelectionEl45', sel.el_channel),
+    ('BaseLineSelectionMu45', sel.mu_channel),
+    ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel),
+    ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel),
+    ('SidebandRegion_El45', sel.sb_channel + sel.el_channel),
+    ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel),
+    ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel),
+    ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel),
+    # 'SignalRegion2b_El45_clean' : sel.sr2b_channel_clean + sel.el_channel,
+    # 'SignalRegion1b_El45_clean' : sel.sr1b_channel_clean + sel.el_channel,
+    # 'SidebandRegion_El45_clean' : sel.sb_channel_clean + sel.el_channel,
+    # 'SignalRegion2b_Mu45_clean' : sel.sr2b_channel_clean + sel.mu_channel,
+    # 'SignalRegion1b_Mu45_clean' : sel.sr1b_channel_clean + sel.mu_channel,
+    # 'SidebandRegion_Mu45_clean' : sel.sb_channel_clean + sel.mu_channel,
+)
 
 
-sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
+sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
 
 
 def mk_tp(input_pat):
@@ -187,7 +188,7 @@ def mk_sys_tps(base_path):
         ) 
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
-    nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions.iteritems())
+    nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     sys_tps = []
     # sys_tps = list(
     #     TreeProjector(
@@ -211,7 +212,7 @@ def mk_sys_tps(base_path):
     )
     sys_sec_sel_weight = list(
         (name, list((g, f, dict((a, f+w) for a, f in sample_weights.iteritems()))
-            for g, f in final_regions.iteritems()) 
+            for g, f in final_regions) 
         )
         for name, w in (
             ('btag_bc__minus', '*weight_btag_bc_down/weight_btag'),
@@ -254,7 +255,7 @@ def mk_sys_tps(base_path):
                     (smpl, base_weight+'*weight_pdf_%i'%i)
                     for smpl in sample_weights_pdf
                 )
-            ) for g, f in final_regions.iteritems())
+            ) for g, f in final_regions)
         )
         for i in xrange(100)
     )
@@ -275,11 +276,11 @@ def mk_sys_tps(base_path):
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in sample_weights_pdf)
-    sys_tps += [
-        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-    ]
+    # sys_tps += [
+    #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+    # ]
 
     # Scale Variation uncertainties
     # with open('weight_dict_TpB') as f:
@@ -292,7 +293,7 @@ def mk_sys_tps(base_path):
                     (smpl, base_weight+'*weight_muRF_%i'%i)
                     for smpl in sample_weights_pdf
                 )
-            ) for g, f in final_regions.iteritems())
+            ) for g, f in final_regions)
         )
         for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
     )

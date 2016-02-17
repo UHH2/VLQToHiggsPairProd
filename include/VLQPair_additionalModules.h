@@ -817,6 +817,27 @@ private:
 };
 
 
+class NSubjetID
+{
+public:
+
+    NSubjetID(Context & ctx,
+                unsigned min_n_sj = 2) :
+        min_n_sj_(min_n_sj)
+        {}
+
+    bool operator()(const TopJet & part, const Event & event) const
+    {
+        if (part.subjets().size() < min_n_sj_)
+            return false;
+
+        return true;
+    }
+
+private:
+    unsigned min_n_sj_;
+};  // NSubjetID
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:

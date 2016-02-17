@@ -271,6 +271,8 @@ def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
     return wrps
 
 def stack_setup_norm_sig(grps):
+    # grps = list(grps)
+    # print grps
     grps = gen.mc_stack_n_data_sum(grps)
     grps = norm_to_bkg(grps)
     # grps = norm_to_fix_xsec(grps, normsignal)
