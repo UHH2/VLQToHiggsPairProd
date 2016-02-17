@@ -96,8 +96,6 @@ normfactors = {
     'TpTp_M-1800' : 1./0.000391,
 }
 
-signal_indicators = ['TpTp_']
-
 # datasets_to_plot = [
 #     'Run2015D',
 #     # 'TpTp_M-800_thX',

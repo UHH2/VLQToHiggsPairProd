@@ -33,6 +33,8 @@ import varial.operations as op
 #     'SingleTop',
 # ]
 
+signal_indicators = ['TpTp_']
+
 #====SELECT_FILES FUNCTIONS====
 
 def file_select(datasets_to_plot, src=''):

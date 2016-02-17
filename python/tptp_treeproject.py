@@ -18,22 +18,22 @@ core_histos = {
     'pt_ld_ak8_jet'                 : ('Pt leading Ak8 Jet',               60, 0., 1500.),
     'pt_subld_ak4_jet'              : ('Pt subleading Ak4 Jet',             60, 0., 1500.),
     'pt_subld_ak8_jet'              : ('Pt subleading Ak8 Jet',             60, 0., 1500.),
-    # 'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
 }
 
+
 more_histos = {
-    'n_ak8_cleaned'                 : ('N(Ak8 Jets)',                      8, -.5, 7.5),
+    'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
+    'primary_muon_pt'               : ('Primary Muon p_T',                 90, 0., 900.),
+    'primary_electron_pt'           : ('Primary Electron p_T',             90, 0., 900.),
+    'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
-    # 'ST_cleaned'                    : ('ST cleaned',                       45, 0, 4500),
     'n_additional_btags_medium'     : ('N(non-overlapping medium b-tags)', 8, -.5, 7.5),
-    # 'n_ak4_pt_cleaned'              : ('N(Ak4 Jets, cleaned)',             14, -.5, 13.5),
-    # 'n_ak8_pt_cleaned'              : ('N(Ak8 Jets, cleaned)',             8, -.5, 7.5),
     'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_cleaned_dr': ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_cleaned_dr': ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
     'n_jets_no_overlap'             : ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),
-    # 'pt_ld_ak4_jet_cleaned'         : ('Pt leading Ak4 Jet, cleaned',      60, 0., 1500.),
-    # 'pt_ld_ak8_jet_cleaned'         : ('Pt leading Ak8 Jet, cleaned',      60, 0., 1500.),
     'trigger_accept_mu45'           : ('Trigger Accepted Mu45',             2, -.5, 1.5),
     'trigger_accept_el45'           : ('Trigger Accepted El40',             2, -.5, 1.5),
     'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
@@ -135,28 +135,9 @@ sample_weights_pdf = [
 
 import tptp_selections_treeproject as sel
 
-final_regions = (
-    ('BaseLineSelectionEl45', sel.el_channel),
-    ('BaseLineSelectionMu45', sel.mu_channel),
-    ('SignalRegion2b_El45', sel.sr2b_channel + sel.el_channel),
-    ('SignalRegion1b_El45', sel.sr1b_channel + sel.el_channel),
-    ('SidebandRegion_El45', sel.sb_channel + sel.el_channel),
-    ('SignalRegion2b_Mu45', sel.sr2b_channel + sel.mu_channel),
-    ('SignalRegion1b_Mu45', sel.sr1b_channel + sel.mu_channel),
-    ('SidebandRegion_Mu45', sel.sb_channel + sel.mu_channel),
-    # 'SignalRegion2b_El45_clean' : sel.sr2b_channel_clean + sel.el_channel,
-    # 'SignalRegion1b_El45_clean' : sel.sr1b_channel_clean + sel.el_channel,
-    # 'SidebandRegion_El45_clean' : sel.sb_channel_clean + sel.el_channel,
-    # 'SignalRegion2b_Mu45_clean' : sel.sr2b_channel_clean + sel.mu_channel,
-    # 'SignalRegion1b_Mu45_clean' : sel.sr1b_channel_clean + sel.mu_channel,
-    # 'SidebandRegion_Mu45_clean' : sel.sb_channel_clean + sel.mu_channel,
-)
 
-
-sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
-
-
-def mk_tp(input_pat):
+def mk_tp(input_pat, final_regions):
+    sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
     filenames = dict(
         (sample, list(f for f in all_files if sample in f))
@@ -170,7 +151,7 @@ def mk_tp(input_pat):
     )
 
 
-def mk_sys_tps(base_path):
+def mk_sys_tps(base_path, final_regions):
     # some defs
     # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/'\
     #     'CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/Samples-25ns-v2/'\

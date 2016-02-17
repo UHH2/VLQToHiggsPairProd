@@ -85,7 +85,7 @@ def select_files(categories=None, var=''):
                 and in_file_path.endswith(var)
                 and any(a in wrp.file_path for a in datasets_to_use)
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
-                and (wrp.in_file_path.split('/')[0] in categories if categories else True)) :
+                and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
             # print wrp
             return True
     return tmp
