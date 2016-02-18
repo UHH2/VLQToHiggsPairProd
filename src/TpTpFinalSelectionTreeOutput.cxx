@@ -106,7 +106,6 @@ private:
 
 
 
-
 TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTpAnalysisModule(ctx) {
 
     auto data_dir_path = ctx.get("data_dir_path");
@@ -145,8 +144,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
         pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
             ak8_corr, "topjets"));
-        pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
-            ak4_corr, "topjets"));
+        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
+        //     ak4_corr, "topjets"));
         pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
     }
     pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
@@ -154,11 +153,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));
 
 
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets_cleaned_nsj", "n_ak8_cleaned_nsj"));
-
     if (type == "MC") {
         pre_modules.emplace_back(new JetResolutionSmearer(ctx));    
     }
+    pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
         data_dir_path + "MuonID_Z_RunD_Reco74X_Nov20.root", 
         "NUM_TightIDandIPCut_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));
@@ -213,7 +211,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 "ak4_jets_btagged",
                 JetId(CSVBTag(CSVBTag::WP_MEDIUM))
                 ));
-
 
     // btag_sf_sr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand"));
     btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));

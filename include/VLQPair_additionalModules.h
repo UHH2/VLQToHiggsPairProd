@@ -41,301 +41,301 @@ public:
     }
 };
 
-class NeutrinoParticleProducer: public AnalysisModule {
-public:
-    explicit NeutrinoParticleProducer(Context & ctx,
-                            const NeutrinoReconstructionMethod & neutrinofunc,
-                            const string & h_out = "neutrino_part_vec",
-                            const string & h_primlep = "PrimaryLepton") :
-        neutrinofunc_(neutrinofunc),
-        h_out_(ctx.get_handle<vector<LorentzVector>>(h_out)),
-        h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)) {}
+// class NeutrinoParticleProducer: public AnalysisModule {
+// public:
+//     explicit NeutrinoParticleProducer(Context & ctx,
+//                             const NeutrinoReconstructionMethod & neutrinofunc,
+//                             const string & h_out = "neutrino_part_vec",
+//                             const string & h_primlep = "PrimaryLepton") :
+//         neutrinofunc_(neutrinofunc),
+//         h_out_(ctx.get_handle<vector<LorentzVector>>(h_out)),
+//         h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)) {}
 
-    virtual bool process(Event & event) override {
-        assert(event.jets);
-        assert(event.met);
+//     virtual bool process(Event & event) override {
+//         assert(event.jets);
+//         assert(event.met);
         
-        if (!event.is_valid(h_primlep_)) {
-            return false;
-        }
-        const Particle & lepton = event.get(h_primlep_);
-        vector<LorentzVector> neutrino_hyps = neutrinofunc_(lepton.v4(), event.met->v4());
-        // vector<FlavorParticle> neutrino_parts;
-        // for (LorentzVector const & i_v4 : neutrino_hyps) {
-        //     FlavorParticle neutrino_part;
-        //     neutrino_part.set_v4(i_v4);
-        //     neutrino_part.set_pdgId(12); // set to dummy value of electron neutrino, not important anyway
-        //     neutrino_parts.push_back(neutrino_part); 
-        // }
+//         if (!event.is_valid(h_primlep_)) {
+//             return false;
+//         }
+//         const Particle & lepton = event.get(h_primlep_);
+//         vector<LorentzVector> neutrino_hyps = neutrinofunc_(lepton.v4(), event.met->v4());
+//         // vector<FlavorParticle> neutrino_parts;
+//         // for (LorentzVector const & i_v4 : neutrino_hyps) {
+//         //     FlavorParticle neutrino_part;
+//         //     neutrino_part.set_v4(i_v4);
+//         //     neutrino_part.set_pdgId(12); // set to dummy value of electron neutrino, not important anyway
+//         //     neutrino_parts.push_back(neutrino_part); 
+//         // }
 
-        event.set(h_out_, neutrino_hyps);
+//         event.set(h_out_, neutrino_hyps);
 
-        return true;
-    }
+//         return true;
+//     }
 
-private:
-    NeutrinoReconstructionMethod neutrinofunc_;
-    Event::Handle<vector<LorentzVector>> h_out_;
-    Event::Handle<FlavorParticle> h_primlep_;
-};
+// private:
+//     NeutrinoReconstructionMethod neutrinofunc_;
+//     Event::Handle<vector<LorentzVector>> h_out_;
+//     Event::Handle<FlavorParticle> h_primlep_;
+// };
 
 
-template<typename TYPE1, typename TYPE2>
-class MinDeltaRProducer: public AnalysisModule {
-public:
-    explicit MinDeltaRProducer(Context & ctx,
-                            const string & h_p1,
-                            const string & h_p2,
-                            const string & h_out) :
-        h_p1_(ctx.get_handle<TYPE1>(h_p1)),
-        h_p2_(ctx.get_handle<vector<TYPE2>>(h_p2)),
-        h_out_(ctx.get_handle<float>(h_out)) {}
+// template<typename TYPE1, typename TYPE2>
+// class MinDeltaRProducer: public AnalysisModule {
+// public:
+//     explicit MinDeltaRProducer(Context & ctx,
+//                             const string & h_p1,
+//                             const string & h_p2,
+//                             const string & h_out) :
+//         h_p1_(ctx.get_handle<TYPE1>(h_p1)),
+//         h_p2_(ctx.get_handle<vector<TYPE2>>(h_p2)),
+//         h_out_(ctx.get_handle<float>(h_out)) {}
 
-    virtual bool process(Event & e) override {
-        float min_dr = -1.;
-        if (e.is_valid(h_p1_) && e.is_valid(h_p2_)) {
-            const TYPE1 & ref_part = e.get(h_p1_);
-            const vector<TYPE2> & comp_parts = e.get(h_p2_);
+//     virtual bool process(Event & e) override {
+//         float min_dr = -1.;
+//         if (e.is_valid(h_p1_) && e.is_valid(h_p2_)) {
+//             const TYPE1 & ref_part = e.get(h_p1_);
+//             const vector<TYPE2> & comp_parts = e.get(h_p2_);
 
-            double deltarmin = std::numeric_limits<double>::infinity();
-            const TYPE2* closest_part=0;
-            for(unsigned int i=0; i<comp_parts.size(); ++i) {
-                const TYPE2 & pi = comp_parts[i];
-                double dr = uhh2::deltaR(pi, ref_part);
-                if(dr < deltarmin) {
-                    deltarmin = dr;
-                    closest_part = &pi;
-                }
-            }
+//             double deltarmin = std::numeric_limits<double>::infinity();
+//             const TYPE2* closest_part=0;
+//             for(unsigned int i=0; i<comp_parts.size(); ++i) {
+//                 const TYPE2 & pi = comp_parts[i];
+//                 double dr = uhh2::deltaR(pi, ref_part);
+//                 if(dr < deltarmin) {
+//                     deltarmin = dr;
+//                     closest_part = &pi;
+//                 }
+//             }
 
-            if (closest_part) {
-                min_dr = uhh2::deltaR(ref_part, *closest_part);
-            }
+//             if (closest_part) {
+//                 min_dr = uhh2::deltaR(ref_part, *closest_part);
+//             }
             
-        }
+//         }
 
-        e.set(h_out_, min_dr);
+//         e.set(h_out_, min_dr);
 
-        return true;
-    }
+//         return true;
+//     }
 
-private:
-    Event::Handle<TYPE1> h_p1_;
-    Event::Handle<vector<TYPE2>> h_p2_;
-    Event::Handle<float> h_out_;
-};
+// private:
+//     Event::Handle<TYPE1> h_p1_;
+//     Event::Handle<vector<TYPE2>> h_p2_;
+//     Event::Handle<float> h_out_;
+// };
 
-template<typename T>
-class TwoParticleCollectionProducer: public AnalysisModule {
-public:
-    explicit TwoParticleCollectionProducer(Context & ctx,
-                            const string & h_in,
-                            const string & h_out):
-        h_in_(ctx.get_handle<vector<T>>(h_in)),
-        h_out_(ctx.get_handle<vector<T>>(h_out)) {}
+// template<typename T>
+// class TwoParticleCollectionProducer: public AnalysisModule {
+// public:
+//     explicit TwoParticleCollectionProducer(Context & ctx,
+//                             const string & h_in,
+//                             const string & h_out):
+//         h_in_(ctx.get_handle<vector<T>>(h_in)),
+//         h_out_(ctx.get_handle<vector<T>>(h_out)) {}
 
-    virtual bool process(Event & event) override {
+//     virtual bool process(Event & event) override {
         
-        if (!event.is_valid(h_in_)) {
-            return false;
-        }
-        const vector<T> & in_coll = event.get(h_in_);
-        if (in_coll.size() > 1) {
-            vector<T> out_coll = {in_coll[0], in_coll[1]};
+//         if (!event.is_valid(h_in_)) {
+//             return false;
+//         }
+//         const vector<T> & in_coll = event.get(h_in_);
+//         if (in_coll.size() > 1) {
+//             vector<T> out_coll = {in_coll[0], in_coll[1]};
 
-            event.set(h_out_, out_coll);
+//             event.set(h_out_, out_coll);
 
-            return true;
-        } else {
-            return false;
-        }
-    }
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
 
-private:
-    Event::Handle<vector<T>> h_in_;
-    Event::Handle<vector<T>> h_out_;
-};
+// private:
+//     Event::Handle<vector<T>> h_in_;
+//     Event::Handle<vector<T>> h_out_;
+// };
 
 
-template<typename T>
-class DeltaRTwoLeadingParticleProducer: public AnalysisModule {
-public:
-    explicit DeltaRTwoLeadingParticleProducer(Context & ctx,
-                            const string & h_in,
-                            const string & h_dr) :
-        h_in_(ctx.get_handle<vector<T>>(h_in)),
-        h_dr_(ctx.get_handle<float>(h_dr)) {}
+// template<typename T>
+// class DeltaRTwoLeadingParticleProducer: public AnalysisModule {
+// public:
+//     explicit DeltaRTwoLeadingParticleProducer(Context & ctx,
+//                             const string & h_in,
+//                             const string & h_dr) :
+//         h_in_(ctx.get_handle<vector<T>>(h_in)),
+//         h_dr_(ctx.get_handle<float>(h_dr)) {}
 
-    virtual bool process(Event & e) override {
-        if (e.is_valid(h_in_)) {
-            const vector<T> & parts = e.get(h_in_);
+//     virtual bool process(Event & e) override {
+//         if (e.is_valid(h_in_)) {
+//             const vector<T> & parts = e.get(h_in_);
 
-            if (parts.size() > 1) {
-                float dr = deltaR(parts[0], parts[1]);
-                e.set(h_dr_, dr);
+//             if (parts.size() > 1) {
+//                 float dr = deltaR(parts[0], parts[1]);
+//                 e.set(h_dr_, dr);
 
-                return true;
-            }  
+//                 return true;
+//             }  
             
-        }
+//         }
 
-        e.set(h_dr_, -1.);
+//         e.set(h_dr_, -1.);
 
-        return false;
+//         return false;
 
-    }
+//     }
 
-private:
-    Event::Handle<vector<T>> h_in_;
-    Event::Handle<float> h_dr_;
-};
-
-
-class XTopTagProducer: public AnalysisModule {
-public:
-    explicit XTopTagProducer(Context & ctx,
-                               const string & h_in,
-                               const string & h_dr_out,
-                               const string & h_x_top_out,
-                               float dr_higgs = 1.5,
-                               unsigned number_top = 1):
-        h_in_(ctx.get_handle<vector<TopJet>>(h_in)),
-        h_dr_out_(ctx.get_handle<float>(h_dr_out)),
-        h_x_top_out_(ctx.get_handle<TopJet>(h_x_top_out)),
-        dr_higgs_(dr_higgs),
-        number_top_(number_top) {}
-
-    virtual bool process(Event & event) override {
-        float dyn_dr_higgs = -999.;
-        if (event.is_valid(h_in_)) {
-            const vector<TopJet> & topjet_coll = event.get(h_in_);
-            if (topjet_coll.size() == number_top_) {
-                dyn_dr_higgs = dr_higgs_;
-                event.set(h_x_top_out_, topjet_coll[0]);
-            }
-        }
-        // std::cout << dyn_dr_higgs << std::endl;
-        event.set(h_dr_out_, dyn_dr_higgs);
-
-        return true;
-    }
-
-private:
-    Event::Handle<std::vector<TopJet>> h_in_;
-    Event::Handle<float> h_dr_out_;
-    Event::Handle<TopJet> h_x_top_out_;
-    float dr_higgs_;
-    unsigned number_top_;
-};
+// private:
+//     Event::Handle<vector<T>> h_in_;
+//     Event::Handle<float> h_dr_;
+// };
 
 
-class HiggsXBTag {
-public:
-    explicit HiggsXBTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), 
-                               JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
-                               unsigned n_higgs_tags = 2) :
-        minmass_(minmass), maxmass_(maxmass), btagid_(id), n_higgs_tags_(n_higgs_tags) {}
+// class XTopTagProducer: public AnalysisModule {
+// public:
+//     explicit XTopTagProducer(Context & ctx,
+//                                const string & h_in,
+//                                const string & h_dr_out,
+//                                const string & h_x_top_out,
+//                                float dr_higgs = 1.5,
+//                                unsigned number_top = 1):
+//         h_in_(ctx.get_handle<vector<TopJet>>(h_in)),
+//         h_dr_out_(ctx.get_handle<float>(h_dr_out)),
+//         h_x_top_out_(ctx.get_handle<TopJet>(h_x_top_out)),
+//         dr_higgs_(dr_higgs),
+//         number_top_(number_top) {}
 
-    bool operator()(TopJet const & topjet, uhh2::Event const & event) const {
-        auto subjets = topjet.subjets();
-        if(subjets.size() < 2) return false;
-        unsigned n_sj_btags = 0;
-        // unsigned n_sj_btagvetos = 0;
-        for (const auto & sj : subjets) {
-            if (btagid_(sj, event))
-                n_sj_btags++;
-        }
+//     virtual bool process(Event & event) override {
+//         float dyn_dr_higgs = -999.;
+//         if (event.is_valid(h_in_)) {
+//             const vector<TopJet> & topjet_coll = event.get(h_in_);
+//             if (topjet_coll.size() == number_top_) {
+//                 dyn_dr_higgs = dr_higgs_;
+//                 event.set(h_x_top_out_, topjet_coll[0]);
+//             }
+//         }
+//         // std::cout << dyn_dr_higgs << std::endl;
+//         event.set(h_dr_out_, dyn_dr_higgs);
 
-        if (n_sj_btags < n_higgs_tags_)
-            return false;
+//         return true;
+//     }
 
-        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
-        if(!firsttwosubjets.isTimelike()) {
-            return false;
-        }
-        auto mjet = firsttwosubjets.M();
-        if(mjet < minmass_) return false;
-        if(mjet > maxmass_) return false;
-        return true;
-    }
-
-private:
-    float minmass_, maxmass_;
-    JetId btagid_;
-    unsigned n_higgs_tags_;
-
-};
+// private:
+//     Event::Handle<std::vector<TopJet>> h_in_;
+//     Event::Handle<float> h_dr_out_;
+//     Event::Handle<TopJet> h_x_top_out_;
+//     float dr_higgs_;
+//     unsigned number_top_;
+// };
 
 
-class SubjetCSVProducer: public AnalysisModule {
-public:
-    explicit SubjetCSVProducer(Context & ctx,
-                               const string & h_in,
-                               const string & h_out,
-                               unsigned ind_sj = 1):
-        h_in_(ctx.get_handle<std::vector<TopJet>>(h_in)),
-        h_out_(ctx.get_handle<float>(h_out)),
-        ind_sj_(ind_sj-1) {}
+// class HiggsXBTag {
+// public:
+//     explicit HiggsXBTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), 
+//                                JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
+//                                unsigned n_higgs_tags = 2) :
+//         minmass_(minmass), maxmass_(maxmass), btagid_(id), n_higgs_tags_(n_higgs_tags) {}
 
-    virtual bool process(Event & e) override {
-        if (e.is_valid(h_in_)) {
-            std::vector<TopJet> const & coll = e.get(h_in_);
-            if (coll.size()) {
-                std::vector<Jet> const & subjets = coll[0].subjets();
-                if (subjets.size() > ind_sj_) {
-                    // if (abs(subjets[ind_sj_].btag_combinedSecondaryVertex()) > 10)
-                    //     std::cout << subjets[ind_sj_].btag_combinedSecondaryVertex() << std::endl;
-                    e.set(h_out_, subjets[ind_sj_].btag_combinedSecondaryVertex());
-                }
-                else {
-                    e.set(h_out_, -1.);
-                    return true;
-                }
-            } else {
-                e.set(h_out_, -1.);
-            }
-            return true;
-        } else {
-            e.set(h_out_, -1.);
-            return false;
-        }
+//     bool operator()(TopJet const & topjet, uhh2::Event const & event) const {
+//         auto subjets = topjet.subjets();
+//         if(subjets.size() < 2) return false;
+//         unsigned n_sj_btags = 0;
+//         // unsigned n_sj_btagvetos = 0;
+//         for (const auto & sj : subjets) {
+//             if (btagid_(sj, event))
+//                 n_sj_btags++;
+//         }
 
-    }
+//         if (n_sj_btags < n_higgs_tags_)
+//             return false;
 
-private:
-    Event::Handle<std::vector<TopJet>> h_in_;
-    Event::Handle<float> h_out_;
-    unsigned ind_sj_;
-};
+//         LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+//         if(!firsttwosubjets.isTimelike()) {
+//             return false;
+//         }
+//         auto mjet = firsttwosubjets.M();
+//         if(mjet < minmass_) return false;
+//         if(mjet > maxmass_) return false;
+//         return true;
+//     }
 
-template<typename T>
-class LeadingPartEtaProducer : public AnalysisModule {
-public:
-    explicit LeadingPartEtaProducer(Context & ctx,
-                        const string & h_in,
-                        const string & h_out):
-        h_in_(ctx.get_handle<vector<T>>(h_in)),
-        h_out_(ctx.get_handle<float>(h_out)) {}
+// private:
+//     float minmass_, maxmass_;
+//     JetId btagid_;
+//     unsigned n_higgs_tags_;
 
-    virtual bool process(Event & event) override {
-        if (event.is_valid(h_in_)) {
-            vector<T> & coll = event.get(h_in_);
-            if (coll.size()) {
-                event.set(h_out_, coll[0].eta());
-            } else {
-                event.set(h_out_, -1.);
-            }
+// };
 
-            return true;
-        } else {
-            event.set(h_out_, -1.);
-            return false;
-        }
-    }
-private:
-    Event::Handle<vector<T>> h_in_;
-    Event::Handle<float> h_out_;
-};
+
+// class SubjetCSVProducer: public AnalysisModule {
+// public:
+//     explicit SubjetCSVProducer(Context & ctx,
+//                                const string & h_in,
+//                                const string & h_out,
+//                                unsigned ind_sj = 1):
+//         h_in_(ctx.get_handle<std::vector<TopJet>>(h_in)),
+//         h_out_(ctx.get_handle<float>(h_out)),
+//         ind_sj_(ind_sj-1) {}
+
+//     virtual bool process(Event & e) override {
+//         if (e.is_valid(h_in_)) {
+//             std::vector<TopJet> const & coll = e.get(h_in_);
+//             if (coll.size()) {
+//                 std::vector<Jet> const & subjets = coll[0].subjets();
+//                 if (subjets.size() > ind_sj_) {
+//                     // if (abs(subjets[ind_sj_].btag_combinedSecondaryVertex()) > 10)
+//                     //     std::cout << subjets[ind_sj_].btag_combinedSecondaryVertex() << std::endl;
+//                     e.set(h_out_, subjets[ind_sj_].btag_combinedSecondaryVertex());
+//                 }
+//                 else {
+//                     e.set(h_out_, -1.);
+//                     return true;
+//                 }
+//             } else {
+//                 e.set(h_out_, -1.);
+//             }
+//             return true;
+//         } else {
+//             e.set(h_out_, -1.);
+//             return false;
+//         }
+
+//     }
+
+// private:
+//     Event::Handle<std::vector<TopJet>> h_in_;
+//     Event::Handle<float> h_out_;
+//     unsigned ind_sj_;
+// };
+
+// template<typename T>
+// class LeadingPartEtaProducer : public AnalysisModule {
+// public:
+//     explicit LeadingPartEtaProducer(Context & ctx,
+//                         const string & h_in,
+//                         const string & h_out):
+//         h_in_(ctx.get_handle<vector<T>>(h_in)),
+//         h_out_(ctx.get_handle<float>(h_out)) {}
+
+//     virtual bool process(Event & event) override {
+//         if (event.is_valid(h_in_)) {
+//             vector<T> & coll = event.get(h_in_);
+//             if (coll.size()) {
+//                 event.set(h_out_, coll[0].eta());
+//             } else {
+//                 event.set(h_out_, -1.);
+//             }
+
+//             return true;
+//         } else {
+//             event.set(h_out_, -1.);
+//             return false;
+//         }
+//     }
+// private:
+//     Event::Handle<vector<T>> h_in_;
+//     Event::Handle<float> h_out_;
+// };
 
 
 class HiggsFlexBTag {
@@ -541,140 +541,140 @@ private:
 };
 
 
-class MaxNSubjetBtagProducer: public AnalysisModule {
-public:
+// class MaxNSubjetBtagProducer: public AnalysisModule {
+// public:
 
-    explicit MaxNSubjetBtagProducer(Context & ctx,
-                                std::string const & in_name,
-                                std::string const & out_n_name,
-                                std::string const & out_coll_name,
-                                JetId const & jet_id = CSVBTag(CSVBTag::WP_MEDIUM)):
-        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
-        out_n_hndl(ctx.get_handle<int>(out_n_name)),
-        out_coll_hndl(ctx.get_handle<vector<TopJet>>(out_coll_name)),
-        jet_id_(jet_id) {}
+//     explicit MaxNSubjetBtagProducer(Context & ctx,
+//                                 std::string const & in_name,
+//                                 std::string const & out_n_name,
+//                                 std::string const & out_coll_name,
+//                                 JetId const & jet_id = CSVBTag(CSVBTag::WP_MEDIUM)):
+//         in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+//         out_n_hndl(ctx.get_handle<int>(out_n_name)),
+//         out_coll_hndl(ctx.get_handle<vector<TopJet>>(out_coll_name)),
+//         jet_id_(jet_id) {}
 
-    bool process(Event & event) override {
-        assert(event.is_valid(in_hndl));
-        vector<TopJet> const & coll = event.get(in_hndl);
-        int max_n_sj_btags = 0;
-        for (TopJet const & tj : coll) {
-            int n_sj_btags = 0;
-            for (Jet const & j : tj.subjets()) {
-                if (jet_id_(j, event)) 
-                    n_sj_btags++;
-            }
-            if (n_sj_btags > max_n_sj_btags)
-                max_n_sj_btags = n_sj_btags;
-        }
-        event.set(out_n_hndl, max_n_sj_btags);
-        vector<TopJet> out_coll;
-        for (TopJet const & tj : coll) {
-            int n_sj_btags = 0;
-            for (Jet const & j : tj.subjets()) {
-                if (jet_id_(j, event)) 
-                    n_sj_btags++;
-            }
-            if (n_sj_btags == max_n_sj_btags)
-                out_coll.push_back(tj);
-        }
-        event.set(out_coll_hndl, out_coll);
-        return true;
-    }
+//     bool process(Event & event) override {
+//         assert(event.is_valid(in_hndl));
+//         vector<TopJet> const & coll = event.get(in_hndl);
+//         int max_n_sj_btags = 0;
+//         for (TopJet const & tj : coll) {
+//             int n_sj_btags = 0;
+//             for (Jet const & j : tj.subjets()) {
+//                 if (jet_id_(j, event)) 
+//                     n_sj_btags++;
+//             }
+//             if (n_sj_btags > max_n_sj_btags)
+//                 max_n_sj_btags = n_sj_btags;
+//         }
+//         event.set(out_n_hndl, max_n_sj_btags);
+//         vector<TopJet> out_coll;
+//         for (TopJet const & tj : coll) {
+//             int n_sj_btags = 0;
+//             for (Jet const & j : tj.subjets()) {
+//                 if (jet_id_(j, event)) 
+//                     n_sj_btags++;
+//             }
+//             if (n_sj_btags == max_n_sj_btags)
+//                 out_coll.push_back(tj);
+//         }
+//         event.set(out_coll_hndl, out_coll);
+//         return true;
+//     }
 
-private:
-    Event::Handle<vector<TopJet>> in_hndl;
-    Event::Handle<int> out_n_hndl;
-    Event::Handle<vector<TopJet>> out_coll_hndl;
-    JetId jet_id_;
-};
-
-
-class LdMassSjProducer: public AnalysisModule {
-public:
-
-    explicit LdMassSjProducer(Context & ctx,
-                                std::string const & in_name,
-                                std::string const & out_name):
-        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
-        out_hndl(ctx.get_handle<float>(out_name)) {}
-
-    bool process(Event & event) override {
-        assert(event.is_valid(in_hndl));
-        vector<TopJet> const & coll = event.get(in_hndl);
-        float mass_sj = 0.;
-        for (TopJet const & tj : coll) {
-            if (tj.subjets().size() < 2)
-                continue;
-            LorentzVector sj_v4;
-            for (Jet const & j : tj.subjets()) {
-                sj_v4 += j.v4();
-            }
-            if (!sj_v4.isTimelike())
-                continue;
-            mass_sj = sj_v4.M();
-            break;
-        }
-        event.set(out_hndl, mass_sj);
-        return true;
-    }
-
-private:
-    Event::Handle<vector<TopJet>> in_hndl;
-    Event::Handle<float> out_hndl;
-};
+// private:
+//     Event::Handle<vector<TopJet>> in_hndl;
+//     Event::Handle<int> out_n_hndl;
+//     Event::Handle<vector<TopJet>> out_coll_hndl;
+//     JetId jet_id_;
+// };
 
 
-class TopJetDeltaRProducer: public AnalysisModule {
-public:
+// class LdMassSjProducer: public AnalysisModule {
+// public:
 
-    explicit TopJetDeltaRProducer(Context & ctx,
-                                std::string const & in_name,
-                                unsigned part_ind = 1,
-                                std::string const & h_primlep = "PrimaryLepton"):
-        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
-        part_ind_(part_ind),
-        h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)),
-        h_deltaRlep_(ctx.get_handle<float>("deltaRlep_"+in_name+"_"+std::to_string(part_ind))),
-        h_deltaRak4_(ctx.get_handle<float>("deltaRak4_"+in_name+"_"+std::to_string(part_ind))),
-        h_deltaRak8_(ctx.get_handle<float>("deltaRak8_"+in_name+"_"+std::to_string(part_ind))) {}
+//     explicit LdMassSjProducer(Context & ctx,
+//                                 std::string const & in_name,
+//                                 std::string const & out_name):
+//         in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+//         out_hndl(ctx.get_handle<float>(out_name)) {}
 
-    bool process(Event & event) override {
-        if (!event.is_valid(in_hndl)) {
-            std::cout << "Error in TopJetDeltaRProducer: input handle not valid!\n";
-            assert(false);
-        }
-        vector<TopJet> const & coll = event.get(in_hndl);
-        float dRlep = -1.f;
-        float dRak4 = -1.f;
-        float dRak8 = -1.f;
-        if (coll.size() >= part_ind_ ) {
-            TopJet const & tj = coll[part_ind_-1];
-            if (event.is_valid(h_primlep_)) {
-                dRlep = deltaR(tj, event.get(h_primlep_));
-            }
-            auto const * closest_ak4 = closestParticle(tj, *event.jets);
-            if (closest_ak4) {
-                dRak4 = deltaR(tj, *closest_ak4);
-            }
-            auto const * closest_ak8 = closestParticle(tj, *event.topjets);
-            if (closest_ak8) {
-                dRak8 = deltaR(tj, *closest_ak8);
-            }
-        }
-        event.set(h_deltaRlep_, dRlep);
-        event.set(h_deltaRak4_, dRak4);
-        event.set(h_deltaRak8_, dRak8);
-        return true;
+//     bool process(Event & event) override {
+//         assert(event.is_valid(in_hndl));
+//         vector<TopJet> const & coll = event.get(in_hndl);
+//         float mass_sj = 0.;
+//         for (TopJet const & tj : coll) {
+//             if (tj.subjets().size() < 2)
+//                 continue;
+//             LorentzVector sj_v4;
+//             for (Jet const & j : tj.subjets()) {
+//                 sj_v4 += j.v4();
+//             }
+//             if (!sj_v4.isTimelike())
+//                 continue;
+//             mass_sj = sj_v4.M();
+//             break;
+//         }
+//         event.set(out_hndl, mass_sj);
+//         return true;
+//     }
 
-    }
+// private:
+//     Event::Handle<vector<TopJet>> in_hndl;
+//     Event::Handle<float> out_hndl;
+// };
 
-private:
-    Event::Handle<vector<TopJet>> in_hndl;
-    unsigned part_ind_;
-    Event::Handle<FlavorParticle> h_primlep_;
-    Event::Handle<float> h_deltaRlep_, h_deltaRak4_, h_deltaRak8_;
-};
+
+// class TopJetDeltaRProducer: public AnalysisModule {
+// public:
+
+//     explicit TopJetDeltaRProducer(Context & ctx,
+//                                 std::string const & in_name,
+//                                 unsigned part_ind = 1,
+//                                 std::string const & h_primlep = "PrimaryLepton"):
+//         in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+//         part_ind_(part_ind),
+//         h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)),
+//         h_deltaRlep_(ctx.get_handle<float>("deltaRlep_"+in_name+"_"+std::to_string(part_ind))),
+//         h_deltaRak4_(ctx.get_handle<float>("deltaRak4_"+in_name+"_"+std::to_string(part_ind))),
+//         h_deltaRak8_(ctx.get_handle<float>("deltaRak8_"+in_name+"_"+std::to_string(part_ind))) {}
+
+//     bool process(Event & event) override {
+//         if (!event.is_valid(in_hndl)) {
+//             std::cout << "Error in TopJetDeltaRProducer: input handle not valid!\n";
+//             assert(false);
+//         }
+//         vector<TopJet> const & coll = event.get(in_hndl);
+//         float dRlep = -1.f;
+//         float dRak4 = -1.f;
+//         float dRak8 = -1.f;
+//         if (coll.size() >= part_ind_ ) {
+//             TopJet const & tj = coll[part_ind_-1];
+//             if (event.is_valid(h_primlep_)) {
+//                 dRlep = deltaR(tj, event.get(h_primlep_));
+//             }
+//             auto const * closest_ak4 = closestParticle(tj, *event.jets);
+//             if (closest_ak4) {
+//                 dRak4 = deltaR(tj, *closest_ak4);
+//             }
+//             auto const * closest_ak8 = closestParticle(tj, *event.topjets);
+//             if (closest_ak8) {
+//                 dRak8 = deltaR(tj, *closest_ak8);
+//             }
+//         }
+//         event.set(h_deltaRlep_, dRlep);
+//         event.set(h_deltaRak4_, dRak4);
+//         event.set(h_deltaRak8_, dRak8);
+//         return true;
+
+//     }
+
+// private:
+//     Event::Handle<vector<TopJet>> in_hndl;
+//     unsigned part_ind_;
+//     Event::Handle<FlavorParticle> h_primlep_;
+//     Event::Handle<float> h_deltaRlep_, h_deltaRak4_, h_deltaRak8_;
+// };
 
 
 template<typename T>
