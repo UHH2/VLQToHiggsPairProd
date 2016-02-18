@@ -42,6 +42,8 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons", "PrimaryElectron"));
+
+    
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon", "primary_muon_pt", "primary_muon_eta", "primary_muon_charge"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryElectron", "primary_electron_pt", "primary_electron_eta", "primary_electron_charge"));
     // keep the following module mainly for cross-checks, to see whether e.g. your primary lepton in the muon channel is really a muon

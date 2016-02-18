@@ -27,6 +27,7 @@
 // #include "UHH2/VLQToHiggsPairProd/include/VLQPair_selectionItems.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/VLQPair_additionalHists.h"
+#include "UHH2/VLQToHiggsPairProd/include/VLQPair_massReco.h"
 // #include "UHH2/VLQToHiggsPairProd/include/VLQPair_triggerPaths.h"
 // #include "UHH2/VLQToHiggsPairProd/include/TpTpCommonModules.h"
 #include "UHH2/VLQToHiggsPairProd/include/TpTpAnalysisModule.h"
@@ -73,19 +74,22 @@ public:
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5)),
-        // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_T", 90, 0., 900.))
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRlep_topjets_1", "dR(Ak8 jet, prim. lepton)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak4_topjets_1", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak8_topjets_1", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRlep_topjets_2", "dR(Ak8 jet, prim. lepton)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak4_topjets_2", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak8_topjets_2", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRlep_higgs_tags_1b_med_1", "dR(Ak8 jet, prim. lepton)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak4_higgs_tags_1b_med_1", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak8_higgs_tags_1b_med_1", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRlep_higgs_tags_2b_med_1", "dR(Ak8 jet, prim. lepton)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak4_higgs_tags_2b_med_1", "dR(Ak8 jet, closest Ak4 jet)", 50, 0., 5.)),
-        // shared_ptr<SelectionItem>(new SelDatF("deltaRak8_higgs_tags_2b_med_1", "dR(Ak8 jet, closest Ak8 jet)", 50, 0., 5.)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_allAk8_mass_HLep", "Lep mass(H1b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_allAk8_mass_Htop", "Had mass(H1b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_allAk8_mass_Max", "Max mass(H1b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_allAk8_mass_Min", "Min mass(H1b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_allAk8_mass_HLep", "Lep mass(H2b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_allAk8_mass_Htop", "Had mass(H2b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_allAk8_mass_Max", "Max mass(H2b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_allAk8_mass_Min", "Min mass(H2b, allAk8)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_toptags_mass_HLep", "Lep mass(H1b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_toptags_mass_Htop", "Had mass(H1b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_toptags_mass_Max", "Max mass(H1b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h1b_toptags_mass_Min", "Min mass(H1b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_toptags_mass_HLep", "Lep mass(H2b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_toptags_mass_Htop", "Had mass(H2b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_toptags_mass_Max", "Max mass(H2b, toptags)", 45, 0, 4500)),
+        shared_ptr<SelectionItem>(new SelDatD("h2b_toptags_mass_Min", "Min mass(H2b, toptags)", 45, 0, 4500)),
     };
 
 
@@ -118,6 +122,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     weight_hndl = ctx.declare_event_output<double>("weight");
     // use_sr_sf_hndl = ctx.declare_event_output<int>("use_sr_sf");
+    ctx.declare_event_output<std::vector<Jet>>("jets");
+    ctx.declare_event_output<std::vector<TopJet>>("ak8_boost");
 
     // bool is_background = (version.find("TpTp") == string::npos && type == "MC") ;
 
@@ -185,25 +191,40 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     // =====PRODUCERS========
 
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "toptags",
+                TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), Type2TopTag(140, 250, Type2TopTag::MassType::groomed), Tau32(0.74)))
+                ));
 
-    // other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-    //             "ak8_boost",
-    //             "ak8_higgs_cand",
-    //             TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
-    //             ));
 
-    // // ak4 jets not overlapping with higgs-candidates, collected together with higgs-candidates in one TopJet collection for applying b-tag scale factors
-    // other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
-    //             "jets",
-    //             "jets_no_overlap",
-    //             JetId(MinMaxDeltaRId<TopJet>(ctx, "ak8_higgs_cand", 0.8, false))
-    //             ));
+    other_modules.emplace_back(new TPrimeMassProducer(ctx,
+                "higgs_tags_1b_med",
+                "topjets",
+                "PrimaryLepton",
+                "h1b_allAk8"
+                ));
 
-    // other_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
-    //             "ak8_higgs_cand",
-    //             "jets_no_overlap",
-    //             "tj_btag_sf_coll"
-    //             ));
+    other_modules.emplace_back(new TPrimeMassProducer(ctx,
+                "higgs_tags_2b_med",
+                "topjets",
+                "PrimaryLepton",
+                "h2b_allAk8"
+                ));
+
+    other_modules.emplace_back(new TPrimeMassProducer(ctx,
+                "higgs_tags_1b_med",
+                "topjets",
+                "PrimaryLepton",
+                "h1b_toptags"
+                ));
+
+    other_modules.emplace_back(new TPrimeMassProducer(ctx,
+                "higgs_tags_2b_med",
+                "topjets",
+                "PrimaryLepton",
+                "h2b_toptags"
+                ));
 
 
     other_modules.emplace_back(new CollectionProducer<Jet>(ctx,

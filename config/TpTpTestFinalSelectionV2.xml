@@ -103,7 +103,7 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015D" Cacheable="True">
+    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015D" Cacheable="True">
         &Data_SingleMu;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -113,7 +113,7 @@
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
     <!--
@@ -123,13 +123,13 @@
     -->
 
 
-    <!-- <InputData Lumi="1755165" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="True">
+    <InputData Lumi="1755165" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="True">
         &MC_TpTp_M-0700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0800" Cacheable="True">
+    <!-- <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0800" Cacheable="True">
         &MC_TpTp_M-0800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -157,7 +157,7 @@
         &MC_TpTp_M-1200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData>  -->
 
     <InputData Lumi="129953051" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1300" Cacheable="True">
         &MC_TpTp_M-1300;
@@ -165,7 +165,7 @@
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="235254237" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1400" Cacheable="True">
+    <!-- <InputData Lumi="235254237" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1400" Cacheable="True">
         &MC_TpTp_M-1400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />

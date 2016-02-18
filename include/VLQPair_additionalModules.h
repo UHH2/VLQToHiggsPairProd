@@ -191,42 +191,42 @@ public:
 // };
 
 
-// class XTopTagProducer: public AnalysisModule {
-// public:
-//     explicit XTopTagProducer(Context & ctx,
-//                                const string & h_in,
-//                                const string & h_dr_out,
-//                                const string & h_x_top_out,
-//                                float dr_higgs = 1.5,
-//                                unsigned number_top = 1):
-//         h_in_(ctx.get_handle<vector<TopJet>>(h_in)),
-//         h_dr_out_(ctx.get_handle<float>(h_dr_out)),
-//         h_x_top_out_(ctx.get_handle<TopJet>(h_x_top_out)),
-//         dr_higgs_(dr_higgs),
-//         number_top_(number_top) {}
+class XTopTagProducer: public AnalysisModule {
+public:
+    explicit XTopTagProducer(Context & ctx,
+                               const string & h_in,
+                               const string & h_dr_out,
+                               const string & h_x_top_out,
+                               float dr_higgs = 1.5,
+                               unsigned number_top = 1):
+        h_in_(ctx.get_handle<vector<TopJet>>(h_in)),
+        h_dr_out_(ctx.get_handle<float>(h_dr_out)),
+        h_x_top_out_(ctx.get_handle<TopJet>(h_x_top_out)),
+        dr_higgs_(dr_higgs),
+        number_top_(number_top) {}
 
-//     virtual bool process(Event & event) override {
-//         float dyn_dr_higgs = -999.;
-//         if (event.is_valid(h_in_)) {
-//             const vector<TopJet> & topjet_coll = event.get(h_in_);
-//             if (topjet_coll.size() == number_top_) {
-//                 dyn_dr_higgs = dr_higgs_;
-//                 event.set(h_x_top_out_, topjet_coll[0]);
-//             }
-//         }
-//         // std::cout << dyn_dr_higgs << std::endl;
-//         event.set(h_dr_out_, dyn_dr_higgs);
+    virtual bool process(Event & event) override {
+        float dyn_dr_higgs = -999.;
+        if (event.is_valid(h_in_)) {
+            const vector<TopJet> & topjet_coll = event.get(h_in_);
+            if (topjet_coll.size() == number_top_) {
+                dyn_dr_higgs = dr_higgs_;
+                event.set(h_x_top_out_, topjet_coll[0]);
+            }
+        }
+        // std::cout << dyn_dr_higgs << std::endl;
+        event.set(h_dr_out_, dyn_dr_higgs);
 
-//         return true;
-//     }
+        return true;
+    }
 
-// private:
-//     Event::Handle<std::vector<TopJet>> h_in_;
-//     Event::Handle<float> h_dr_out_;
-//     Event::Handle<TopJet> h_x_top_out_;
-//     float dr_higgs_;
-//     unsigned number_top_;
-// };
+private:
+    Event::Handle<std::vector<TopJet>> h_in_;
+    Event::Handle<float> h_dr_out_;
+    Event::Handle<TopJet> h_x_top_out_;
+    float dr_higgs_;
+    unsigned number_top_;
+};
 
 
 // class HiggsXBTag {
