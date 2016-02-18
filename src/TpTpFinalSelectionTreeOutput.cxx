@@ -43,12 +43,11 @@ public:
 
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
         shared_ptr<SelectionItem>(new SelDatI("gendecay_accept", "GenDecay Accept", 2, -.5, 1.5, 1)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
         };
     
     const vector<shared_ptr<SelectionItem>> ADDITIONAL_SEL_ITEMS {
-        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak8_cleaned_dr", "N(Ak8 Jets)", 8, -.5, 7.5)),
         shared_ptr<SelectionItem>(new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_isoMu20", "Trigger Accept IsoMu20", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_isoEl27", "Trigger Accept IsoEl27", 2, -.5, 1.5)),
@@ -73,10 +72,6 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("ak4_btagged_dR_higgs_tags_1b_med", "dR(b-tag ak4, htag)", 50, 0., 5.)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_cleaned_dr", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_cleaned_dr", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_cleaned_nsj", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_cleaned_nsj", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 8, -.5, 7.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_T", 90, 0., 900.))
         // shared_ptr<SelectionItem>(new SelDatF("deltaRlep_topjets_1", "dR(Ak8 jet, prim. lepton)", 50, 0., 5.)),
@@ -116,15 +111,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     auto data_dir_path = ctx.get("data_dir_path");
 
-    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
-                "topjets_cleaned_dr"
-                ));
-    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
-                "topjets_cleaned_nsj"
-                ));
-
     ctx.undeclare_all_event_output();
     jetpt_weight_hndl = ctx.declare_event_output<float>("weight_ak4_jetpt");
     ctx.declare_event_output<float>("weight_ak4_jetpt_up");
@@ -163,47 +149,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             ak4_corr, "topjets"));
         pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
     }
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets_cleaned_dr"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets_cleaned_dr"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, NSubjetID(ctx, 2), "topjets_cleaned_nsj"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets_cleaned_dr"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets_cleaned_nsj"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));
 
-    // clean Ak8 jets based on dR to lepton
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets_cleaned_dr",
-                "htags_cleaned_dr",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "topjets_cleaned_dr",
-                "n_higgs_tags_1b_med_cleaned_dr",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "topjets_cleaned_dr",
-                "n_higgs_tags_2b_med_cleaned_dr",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
-
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets_cleaned_dr", "n_ak8_cleaned_dr"));
-
-    // clean Ak8 jets based on n(subjets)
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets_cleaned_nsj",
-                "htags_cleaned_nsj",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "topjets_cleaned_nsj",
-                "n_higgs_tags_1b_med_cleaned_nsj",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "topjets_cleaned_nsj",
-                "n_higgs_tags_2b_med_cleaned_nsj",
-                TopJetId(AndId<TopJet>(PtEtaCut(300, 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM))))
-                ));
 
     other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets_cleaned_nsj", "n_ak8_cleaned_nsj"));
 
@@ -426,7 +375,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         }
         if (split(cat, "-")[0] == "Mu45_Baseline") {
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_ak8_cleaned_nsj", "N(Ak8 Jets)", 8, -.5, 7.5, 2));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Lepton p_T", 90, 0., 900., 47.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
@@ -438,7 +386,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         if (split(cat, "-")[0] == "El45_Baseline") {
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept Mu45", 2, -.5, 1.5, 0, 0));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_ak8_cleaned_nsj", "N(Ak8 Jets)", 8, -.5, 7.5, 2));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Lepton p_T", 90, 0., 900., 50.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 65.));
@@ -520,7 +467,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
 
         map<string, SelectedSelHists*> selected_sel_hists;
-        selected_sel_hists["NoNAk8Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8Cut", *sel_helpers.back(), {}, {"n_ak8_cleaned_nsj"});
+        selected_sel_hists["NoNAk8Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8Cut", *sel_helpers.back(), {}, {"n_ak8"});
         // selected_sel_hists["OnlyTopTagCut"] = new SelectedSelHists(ctx, cat+"/OnlyTopTagCut", *sel_helpers.back(), {"n_cmstoptagsv2"});
         // selected_sel_hists["OnlyNAk8JetsCut"] = new SelectedSelHists(ctx, cat+"/OnlyNAk8JetsCut", *sel_helpers.back(), {"n_ak8"});
 
@@ -530,10 +477,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             // hist.second->insert_hist_and_sel(pos_2d_cut, new TwoDCutHist(ctx, cat+"/"+hist.first, "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"), "twoD_cut");
             // for (auto const & hist_helper : ak8jet_hists) {
             hist.second->insert_additional_hist(new OwnHistCollector(ctx, cat+"/"+hist.first, type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"el", "cmstopjet"}));
-            hist.second->insert_additional_hist(new ExtendedTopJetHists(ctx, cat+"/"+hist.first+"/Ak8JetsCleanedDR", CSVBTag(CSVBTag::WP_MEDIUM), 3, "topjets_cleaned_dr"));
-            hist.second->insert_additional_hist(new ExtendedTopJetHists(ctx, cat+"/"+hist.first+"/HTagsCleanedDR", CSVBTag(CSVBTag::WP_MEDIUM), 2, "htags_cleaned_dr"));
-            hist.second->insert_additional_hist(new ExtendedTopJetHists(ctx, cat+"/"+hist.first+"/Ak8JetsCleanedNSJ", CSVBTag(CSVBTag::WP_MEDIUM), 3, "topjets_cleaned_nsj"));
-            hist.second->insert_additional_hist(new ExtendedTopJetHists(ctx, cat+"/"+hist.first+"/HTagsCleanedNSJ", CSVBTag(CSVBTag::WP_MEDIUM), 2, "htags_cleaned_nsj"));
             hist.second->insert_additional_hist(new ExtendedTopJetHists(ctx, cat+"/"+hist.first+"/HTags", CSVBTag(CSVBTag::WP_MEDIUM), 2, "higgs_tags_1b_med"));
             // }
             v_hists.back().emplace_back(hist.second);
@@ -565,10 +508,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         v_hists_after_sel.back().emplace_back(ak8jet_hists->book_histograms(ctx, cat+"/PostSelection"));
         v_reweighted_hists_after_sel.back().emplace_back(ak8jet_hists->book_histograms(ctx, cat+"/PostSelectionReweighted"));
         v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet"}));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsCleanedDR", CSVBTag(CSVBTag::WP_MEDIUM), 3, "topjets_cleaned_dr"));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/HTagsCleanedDR", CSVBTag(CSVBTag::WP_MEDIUM), 2, "htags_cleaned_dr"));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsCleanedNSJ", CSVBTag(CSVBTag::WP_MEDIUM), 3, "topjets_cleaned_nsj"));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/HTagsCleanedNSJ", CSVBTag(CSVBTag::WP_MEDIUM), 2, "htags_cleaned_nsj"));
         v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/HTags", CSVBTag(CSVBTag::WP_MEDIUM), 2, "higgs_tags_1b_med"));
         v_reweighted_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelectionReweighted", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet"}));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt", "weight_ak8_jetpt"));
@@ -632,10 +571,13 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
     
     event.set(weight_hndl, event.weight);
 
+    bool write_out = false;
+
     for (unsigned i = 0; i < sel_modules.size(); ++i) {
 
         bool all_accepted = sel_modules_passed[i];
         if (all_accepted) {
+            write_out = true;
             for (auto & hist : v_hists_after_sel[i]) {
                 hist->fill(event);
             }
@@ -660,13 +602,12 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
 
 
 
-
     // run all modules
     // for (bool pass_sel : sel_modules_passed) {
     //     if (pass_sel) return true;
     // }
 
-    return true;
+    return write_out;
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(TpTpFinalSelectionTreeOutput)

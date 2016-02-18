@@ -176,7 +176,7 @@ varial.settings.pretty_names.update({
 
 
 def common_loader_hook(wrps):
-    wrps = common_plot.add_wrp_info(wrps, sig_ind=signal_indicators) # , use_hadd_sample=False
+    wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
     wrps = common_plot.mod_legend(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = vlq_common.label_axes(wrps)
