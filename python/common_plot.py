@@ -163,6 +163,8 @@ def mod_legend(wrps):
             w.legend = 'TT M'+w.legend[7:]
         if w.legend.endswith('_thth'):
             w.legend = w.legend[:-5]
+        if w.legend.endswith('_thX'):
+            w.legend = w.legend[:-4]
         yield w
 
 def add_wrp_info(wrps, sig_ind=None):
@@ -171,8 +173,8 @@ def add_wrp_info(wrps, sig_ind=None):
         wrps,
         sample=vlq_common.get_samplename,
         legend=lambda w: w.sample,
-        is_signal=lambda w: any(s in w.sample for s in sig_ind),
-        is_data=lambda w: 'Run20' in w.sample,
+        is_signal=lambda w: any(s in w.file_path for s in sig_ind),
+        is_data=lambda w: 'Run20' in w.file_path,
         variable=lambda w: w.in_file_path.split('/')[-1],
         sys_info=vlq_common.get_sys_info,
     )

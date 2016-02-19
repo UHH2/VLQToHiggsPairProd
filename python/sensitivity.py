@@ -82,6 +82,7 @@ def select_files(categories=None, var=''):
         if (file_path.endswith('.root')
                 # and 'DATA' not in file_path\
                 # and in_file_path.endswith('PostSelection/ST')
+                and ('Run2015D' not in wrp.file_path or varial.settings.plot_obs)
                 and in_file_path.endswith(var)
                 and any(a in wrp.file_path for a in datasets_to_use)
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
@@ -212,7 +213,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
     plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
             LimitGraphs(
                 limit_path='../../Limit'+name,
-                plot_obs=True,
+                plot_obs=varial.settings.plot_obs,
                 plot_1sigmabands=True,
                 plot_2sigmabands=True,
                 ),
@@ -242,7 +243,7 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         )
         return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
     else:
-        return [loader, plotter, limits]
+        return [loader, plotter, limits, plot_limits]
 
 
 # tool_list.append(TriangleLimitPlots())
@@ -286,30 +287,30 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #         save_name_func=lambda w: 'M-'+str(w.mass)
         #         ),
         #     ]),
-        varial.tools.ToolChain('LimitsWithGraphs',[
-            LimitGraphs(
-                limit_path='../../Ind_Limits/Limit*/*/Limit*',
-                plot_obs=False,
-                plot_1sigmabands=False,
-                plot_2sigmabands=False,
-                ),
-            varial.plotter.Plotter(
-                name='LimitCurvesCompared',
-                input_result_path='../LimitGraphs',
-                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-                # plot_setup=plot_setup,
-                hook_loaded_histos=limit_curve_loader_hook,
-                plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.save_name),
-                # save_name_func=varial.plotter.save_by_name_with_hash
-                save_name_func=lambda w: w.save_name,
-                plot_setup=lambda w: plot_setup_graphs(w,
-                    th_x=common_sensitivity.theory_masses,
-                    th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
-                save_lin_log_scale=True
-                ),
-            ]),
+        # varial.tools.ToolChain('LimitsWithGraphs',[
+        #     LimitGraphs(
+        #         limit_path='../../Ind_Limits/Limit*/*/Limit*',
+        #         plot_obs=False,
+        #         plot_1sigmabands=False,
+        #         plot_2sigmabands=False,
+        #         ),
+        #     varial.plotter.Plotter(
+        #         name='LimitCurvesCompared',
+        #         input_result_path='../LimitGraphs',
+        #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+        #         # plot_setup=plot_setup,
+        #         hook_loaded_histos=limit_curve_loader_hook,
+        #         plot_grouper=lambda ws: varial.gen.group(
+        #                 ws, key_func=lambda w: w.save_name),
+        #         # save_name_func=varial.plotter.save_by_name_with_hash
+        #         save_name_func=lambda w: w.save_name,
+        #         plot_setup=lambda w: plot_setup_graphs(w,
+        #             th_x=common_sensitivity.theory_masses,
+        #             th_y=common_sensitivity.theory_cs),
+        #         canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+        #         save_lin_log_scale=True
+        #         ),
+        #     ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
         ])

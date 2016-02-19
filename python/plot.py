@@ -96,32 +96,6 @@ normfactors = {
     'TpTp_M-1800' : 1./0.000391,
 }
 
-# datasets_to_plot = [
-#     'Run2015D',
-#     # 'TpTp_M-800_thX',
-#     # 'TpTp_M-1000_thX',
-#     'TpTp_M-0700',
-#     # 'TpTp_M-0800',
-#     # 'TpTp_M-0900',
-#     # 'TpTp_M-1000',
-#     # 'TpTp_M-1100',
-#     'TpTp_M-1200',
-#     # 'TpTp_M-1300',
-#     # 'TpTp_M-1400',
-#     # 'TpTp_M-1500',
-#     # 'TpTp_M-1600',
-#     # 'TpTp_M-1700',
-#     'TpTp_M-1800',
-#     # 'TpTp_M-1200_other',
-#     # 'TpTp_M-1400_thX',
-#     # 'TpTp_M-1600_thX',
-#     'QCD',
-#     'TTbar',
-#     'WJets',
-#     'DYJets',
-#     'SingleTop',
-# ]
-
 
 signals_to_plot = [
     'TpTp_M-0700',
@@ -194,7 +168,7 @@ def cf_loader_hook(wrps):
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -256,6 +230,7 @@ def loader_hook_finalstates_excl(wrps):
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    wrps = common_plot.mod_legend(wrps)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -277,10 +252,13 @@ def plotter_factory(**kws):
     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
     kws['save_lin_log_scale'] = True
     kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
-    # kws['canvas_decorators'] = [varial.rendering.Legend]
+    kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
+        varial.rendering.Legend,
+        varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+        ]
     return varial.tools.Plotter(**kws)
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=None):
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre):
     def create():
         plot_chain = [
             
@@ -301,7 +279,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=None):
         if categories:
             cutflow_cat = []
             for cat in categories:
-                if cat is not 'NoSelection':
+                if cat is not 'NoSelection' and cat is not 'CombinedElMu':
                     cutflow_cat.append(mk_cutflow_chain_cat(
                         cat,
                         common_loader_hook,
@@ -319,7 +297,7 @@ def mk_toolchain(name='', src='', categories=None, datasets=None):
 
 import tex_content
 
-def plot_only(version='Test', src='', categories=None, basenames=None):
+def plot_only(version='Test', src='', categories=None):
     plots = varial.tools.ToolChainParallel(
         'Plots',
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
@@ -327,14 +305,7 @@ def plot_only(version='Test', src='', categories=None, basenames=None):
     tc = varial.tools.ToolChain(
         version,
         [
-            # histo_loader,
             plots,
-            # varial.tools.ToolChainParallel(
-            #     'CompareControlRegions',
-            #     lazy_eval_tools_func=compare_crs.mk_tc(srs=list(c for c in categories if 'Signal' in c),
-            #             crs=list(c for c in categories if 'Control' in c))
-            #     ),
-            # sensitivity.mk_tc('Limits'),
             varial.tools.WebCreator(no_tool_check=True)
         ]
     )
@@ -354,6 +325,6 @@ if __name__ == '__main__':
     else:
         cats = None
     all_tools = plot_only(version=final_dir, src=src_dir, categories=cats)
-    varial.tools.Runner(all_tools, default_reuse=True)
+    varial.tools.Runner(all_tools, default_reuse=False)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()

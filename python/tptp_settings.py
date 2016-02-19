@@ -7,7 +7,7 @@ settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
 settings.__setattr__('asymptotic', True)
 settings.__setattr__('merge_decay_channels', True)
-
+settings.__setattr__('plot_obs', True)
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
 # settings.defaults_Legend['label_height'] = 0.04

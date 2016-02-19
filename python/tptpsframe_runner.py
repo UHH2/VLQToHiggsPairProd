@@ -16,7 +16,8 @@ from varial.extensions import git
 
 varial.settings.max_num_processes = 24
 
-categories_final = [ #"NoSelection",
+categories_final = [
+        'CombinedElMu',
         'Mu45_Baseline',
         'El45_Baseline',
         # 'El45_H2B',
@@ -36,10 +37,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    'jec_up'        : {'jecsmear_direction':'up'},
-    'jec_down'      : {'jecsmear_direction':'down'},
-    'jer_up'        : {'jersmear_direction':'up'},
-    'jer_down'      : {'jersmear_direction':'down'},
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -216,6 +217,7 @@ def mk_sframe_tools_and_plot(argv):
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
         samples_to_plot = plot.samples_to_plot_pre
+        # varial.settings.merge_decay_channels = True
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
         setup_for_ind_run = setup_for_finalsel
@@ -224,6 +226,7 @@ def mk_sframe_tools_and_plot(argv):
         varial.settings.sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
         samples_to_plot = plot.samples_to_plot_final
+        # varial.settings.merge_decay_channels = False
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
         exit(-1)
@@ -257,7 +260,7 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            hadd,
+                            # hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
