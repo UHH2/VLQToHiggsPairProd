@@ -231,6 +231,7 @@ def loader_hook_finalstates_excl(wrps):
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = common_plot.mod_legend(wrps)
+    wrps = common_plot.mod_title(wrps)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 

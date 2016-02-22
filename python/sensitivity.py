@@ -47,26 +47,42 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
             'tz' : tz_br
         })
 
-datasets_to_use = [
-    'Run2015D',
-    'TpTp_M-0700_thth',
-    'TpTp_M-0800_thth',
-    'TpTp_M-0900_thth',
-    'TpTp_M-1000_thth',
-    'TpTp_M-1100_thth',
-    'TpTp_M-1200_thth',
-    'TpTp_M-1300_thth',
-    'TpTp_M-1400_thth',
-    'TpTp_M-1500_thth',
-    'TpTp_M-1600_thth',
-    'TpTp_M-1700_thth',
-    'TpTp_M-1800_thth',
+backgrounds_to_use = [
+    # 'Run2015D',
     'QCD',
     'TTbar',
     'WJets',
     'DYJets',
     'SingleTop',
 ]
+
+signals_to_use = [
+    'TpTp_M-0700',
+    'TpTp_M-0800',
+    'TpTp_M-0900',
+    'TpTp_M-1000',
+    'TpTp_M-1100',
+    'TpTp_M-1200',
+    'TpTp_M-1300',
+    'TpTp_M-1400',
+    'TpTp_M-1500',
+    'TpTp_M-1600',
+    'TpTp_M-1700',
+    'TpTp_M-1800',
+]
+
+final_states_to_use = [
+    '_thth',
+    # '_thtz',
+    # '_thbw',
+    # '_noH_tztz',
+    # '_noH_tzbw',
+    # '_noH_bwbw',
+]
+
+datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015D']
+
+back_plus_data = backgrounds_to_use + ['Run2015D']
 
 datasets_not_to_use = [
     'ak4_jetpt__minus/TpTp',
@@ -85,6 +101,23 @@ def select_files(categories=None, var=''):
                 and ('Run2015D' not in wrp.file_path or varial.settings.plot_obs)
                 and in_file_path.endswith(var)
                 and any(a in wrp.file_path for a in datasets_to_use)
+                and all(a not in wrp.file_path for a in datasets_not_to_use)
+                and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
+            # print wrp
+            return True
+    return tmp
+
+def select_single_sig(categories=None, var='', signal=''):
+    def tmp(wrp):
+        file_path = wrp.file_path
+        in_file_path = wrp.in_file_path
+        # print "before selecting: "+wrp.file_path
+        # print file_path
+        if (file_path.endswith('.root')
+                and ('Run2015D' not in wrp.file_path or varial.settings.plot_obs)
+                and in_file_path.endswith(var)
+                and (any(a in wrp.file_path for a in back_plus_data)
+                    or any(signal+f in wrp.file_path for f in final_states_to_use))
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
                 and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
             # print wrp
@@ -154,7 +187,8 @@ def scale_bkg_postfit(wrps, theta_res_path):
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
 # input_path='..')
 
-def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
+def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
+
     loader = varial.tools.HistoLoader(
         name='HistoLoader',
         # pattern=file_stack_split(),
@@ -171,48 +205,35 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         save_name_func=lambda w: w.category
     )
     limits = TpTpThetaLimits(
-        name='Limit'+name,
+        name='ThetaLimit',
         # input_path= '../HistoLoader',
         cat_key=lambda w: w.category,
         sys_key=lambda w: w.sys_type,
         # name= 'ThetaLimitsSplit'+str(ind),
         asymptotic=varial.settings.asymptotic,
         brs=brs,
-        model_func= lambda w: model_vlqpair.get_model(w, [
-            'TpTp_M-0700',
-            'TpTp_M-0800',
-            'TpTp_M-0900',
-            'TpTp_M-1000',
-            'TpTp_M-1100',
-            'TpTp_M-1200',
-            'TpTp_M-1300',
-            'TpTp_M-1400',
-            'TpTp_M-1500',
-            'TpTp_M-1600',
-            'TpTp_M-1700',
-            'TpTp_M-1800',
-            ]),
+        model_func= lambda w: model_vlqpair.get_model(w, signals_to_use),
         # do_postfit=False,
     )
     postfit = ThetaPostFitPlot(
-        name='PostFit'+name,
-        input_path='../Limit'+name)
-    plotter_postfit = varial.tools.Plotter(
-        filter_keyfunc=lambda w: '700' in w.sample 
-                                 or '900' in w.sample 
-                                 or not w.is_signal,
-        plot_grouper=lambda ws: varial.gen.group(
-            ws, key_func=lambda w: w.category),
-        plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-        save_name_func=lambda w: w.category,
-        hook_canvas_post_build=varial.gen.add_sample_integrals,
-        hook_loaded_histos=lambda w: scale_bkg_postfit(
-            w, '../Limit'+name),
         name='PostFit',
-    )
+        input_path='../ThetaLimit')
+    # plotter_postfit = varial.tools.Plotter(
+    #     filter_keyfunc=lambda w: '700' in w.sample 
+    #                              or '900' in w.sample 
+    #                              or not w.is_signal,
+    #     plot_grouper=lambda ws: varial.gen.group(
+    #         ws, key_func=lambda w: w.category),
+    #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+    #     save_name_func=lambda w: w.category,
+    #     hook_canvas_post_build=varial.gen.add_sample_integrals,
+    #     hook_loaded_histos=lambda w: scale_bkg_postfit(
+    #         w, '../Limit'+name),
+    #     name='PostFit',
+    # )
     plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
             LimitGraphs(
-                limit_path='../../Limit'+name,
+                limit_path='../../ThetaLimit',
                 plot_obs=varial.settings.plot_obs,
                 plot_1sigmabands=True,
                 plot_2sigmabands=True,
@@ -230,7 +251,9 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
                 plot_setup=lambda w: plot_setup_graphs(w,
                     th_x=common_sensitivity.theory_masses,
                     th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
+                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07),
+                    varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                    ],
                 save_lin_log_scale=True
                 ),
             ])
@@ -244,6 +267,40 @@ def mk_limit_tc(brs, filter_keyfunc, name='', sys_pat=''):
         return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
     else:
         return [loader, plotter, limits, plot_limits]
+
+def mk_limit_tc_single(brs, filter_keyfunc, signal, sys_pat=''):
+
+    loader = varial.tools.HistoLoader(
+        name='HistoLoader',
+        # pattern=file_stack_split(),
+        # pattern=,
+        filter_keyfunc=filter_keyfunc,
+        hook_loaded_histos=loader_hook(brs)
+    )
+    limits = TpTpThetaLimits(
+        name='ThetaLimit',
+        # input_path= '../HistoLoader',
+        cat_key=lambda w: w.category,
+        sys_key=lambda w: w.sys_type,
+        # name= 'ThetaLimitsSplit'+str(ind),
+        asymptotic=varial.settings.asymptotic,
+        brs=brs,
+        model_func= lambda w: model_vlqpair.get_model(w, [signal]),
+        # do_postfit=False,
+    )
+    postfit = ThetaPostFitPlot(
+        name='PostFit',
+        input_path='../ThetaLimit')
+    if sys_pat:
+        sys_loader = varial.tools.HistoLoader(
+            name='HistoLoaderSys',
+            filter_keyfunc=lambda w: filter_keyfunc(w) and 'ak4_pt' not in w.file_path,
+            pattern=sys_pat,
+            hook_loaded_histos=loader_hook_sys(brs)
+        )
+        return [loader, sys_loader, limits, postfit] # , plotter_postfit
+    else:
+        return [loader, limits]
 
 
 # tool_list.append(TriangleLimitPlots())

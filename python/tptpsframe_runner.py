@@ -217,6 +217,7 @@ def mk_sframe_tools_and_plot(argv):
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
         samples_to_plot = plot.samples_to_plot_pre
+        varial.settings.fix_presel_sample = True
         # varial.settings.merge_decay_channels = True
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
@@ -240,7 +241,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
             )
         plots = varial.tools.ToolChainParallel(
-            'Plots',
+            'PlotsForDPG',
             lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot)
         )
         tc_list = []

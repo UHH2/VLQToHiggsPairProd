@@ -165,13 +165,43 @@ def mod_legend(wrps):
             w.legend = w.legend[:-5]
         if w.legend.endswith('_thX'):
             w.legend = w.legend[:-4]
+        if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
+            w.legend = 'DY + Jets'
+        if w.legend == 'WJets':
+            w.legend = 'W + Jets'
+        if w.legend == 'SingleTop':
+            w.legend = 'Single T'
         yield w
+
+def mod_title(wrps):
+    for w in wrps:
+        # print w.histo.GetXaxis.GetTitle()
+        if w.histo.GetXaxis().GetTitle() == 'N sjbtags medium':
+            w.histo.GetXaxis().SetTitle('N(subjet b-tags)')
+        if w.histo.GetXaxis().GetTitle() == 'mass sj':
+            w.histo.GetXaxis().SetTitle('groomed AK8 jet mass [GeV]')
+        if w.histo.GetXaxis().GetTitle() == 'ST':
+            w.histo.GetXaxis().SetTitle('ST [GeV]')
+        if w.histo.GetXaxis().GetTitle() == 'N(non-overlapping medium b-tags)':
+            w.histo.GetXaxis().SetTitle('N(AK4 b-tags)')
+        yield w
+
+def fix_get_samplename(wrp):
+    fname = os.path.basename(wrp.file_path)
+    if fname.startswith('uhh2'):
+        return fname.split('.')[-2]
+    else:
+        return os.path.splitext(fname)[0]
 
 def add_wrp_info(wrps, sig_ind=None):
     sig_ind = sig_ind or signal_indicators
+    if varial.settings.fix_presel_sample:
+        get_samplename = fix_get_samplename
+    else:
+        get_samplename = vlq_common.get_samplename
     return varial.generators.gen_add_wrp_info(
         wrps,
-        sample=vlq_common.get_samplename,
+        sample=get_samplename,
         legend=lambda w: w.sample,
         is_signal=lambda w: any(s in w.file_path for s in sig_ind),
         is_data=lambda w: 'Run20' in w.file_path,

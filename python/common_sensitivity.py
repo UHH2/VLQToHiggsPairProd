@@ -74,47 +74,47 @@ def set_category(wrps):
         setattr(w, "category", category)
     return wrps
 
-def loader_hook(wrps):
-    wrps = common_plot.add_wrp_info(wrps)
-    wrps = common_plot.mod_legend(wrps)
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        finalstate = lambda w: w.in_file_path.split('/')[0],
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
-    wrps = varial.generators.gen_add_wrp_info(
-        wrps, category=lambda w: w.in_file_path.split('/')[0])
-    # wrps = common_plot.merge_samples(wrps)
-    wrps = vlq_common.label_axes(wrps)
-    # wrps = final_state_scaling(wrps, dict_factors)
-    return wrps
+# def loader_hook(wrps):
+#     wrps = common_plot.add_wrp_info(wrps)
+#     wrps = common_plot.mod_legend(wrps)
+#     wrps = gen.gen_add_wrp_info(
+#         wrps,
+#         finalstate = lambda w: w.in_file_path.split('/')[0],
+#         # variable=lambda w: w.in_file_path.split('/')[-1]
+#         )
+#     wrps = gen.gen_add_wrp_info(
+#         wrps,
+#         in_file_path = lambda w: '/'.join(w.in_file_path.split('/')[1:]),
+#         # variable=lambda w: w.in_file_path.split('/')[-1]
+#         )
+#     wrps = varial.generators.gen_add_wrp_info(
+#         wrps, category=lambda w: w.in_file_path.split('/')[0])
+#     # wrps = common_plot.merge_samples(wrps)
+#     wrps = vlq_common.label_axes(wrps)
+#     # wrps = final_state_scaling(wrps, dict_factors)
+#     return wrps
 
-def loader_hook_scale(wrps, brs=None):
-    if not brs:
-        print 'WARNING: No branching ratios set, stop running!'
-        return None
-    wrps = loader_hook(wrps)
-    wrps = final_state_scaling(wrps, brs)
-    wrps = gen.sort(wrps, key_list=['category', 'sample'])
-    wrps = list(wrps)
-    # for w in wrps:
-    #     print w.category, w.sample, w.finalstate
-    wrps = common_plot.merge_finalstates_channels(wrps, [
-        'thbw',
-        'thth',
-        'thtz',
-        'noH_bwbw',
-        'noH_tzbw',
-        'noH_tztz'
-        ], print_warning=True
-        )
-    wrps = gen.sort(wrps, key_list=["category"])
-    return wrps
+# def loader_hook_scale(wrps, brs=None):
+#     if not brs:
+#         print 'WARNING: No branching ratios set, stop running!'
+#         return None
+#     wrps = loader_hook(wrps)
+#     wrps = final_state_scaling(wrps, brs)
+#     wrps = gen.sort(wrps, key_list=['category', 'sample'])
+#     wrps = list(wrps)
+#     # for w in wrps:
+#     #     print w.category, w.sample, w.finalstate
+#     wrps = common_plot.merge_finalstates_channels(wrps, [
+#         'thbw',
+#         'thth',
+#         'thtz',
+#         'noH_bwbw',
+#         'noH_tzbw',
+#         'noH_tztz'
+#         ], print_warning=True
+#         )
+#     wrps = gen.sort(wrps, key_list=["category"])
+#     return wrps
 
 def get_final_state(wrp):
     if any(wrp.sample.endswith(g) for g in ['thth', 'thtz', 'thbw']):
