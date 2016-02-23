@@ -5,6 +5,7 @@ from os.path import join
 import varial.tools
 import glob
 import os
+import ast
 
 # varial.settings.max_num_processes = 24
 
@@ -168,20 +169,20 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
-    sys_tps = []
-    # sys_tps = list(
-    #     TreeProjector(
-    #         dict(
-    #             (sample, list(f for f in glob.glob(pat) if sample in f))
-    #             for sample in samples_no_data
-    #         ), 
-    #         sys_params, 
-    #         nominal_sec_sel_weight,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, pat in jercs
-    # )
+    # sys_tps = []
+    sys_tps = list(
+        TreeProjector(
+            dict(
+                (sample, list(f for f in glob.glob(pat) if sample in f))
+                for sample in samples_no_data
+            ), 
+            sys_params, 
+            nominal_sec_sel_weight,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, pat in jercs
+    )
 
     # next put together nominal samples with with weight uncerts.
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
@@ -208,22 +209,25 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    # sys_tps += list(
-    #     TreeProjector(
-    #         filenames,
-    #         sys_params, 
-    #         ssw,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, ssw in sys_sec_sel_weight
-    # )
+    sys_tps += list(
+        TreeProjector(
+            filenames,
+            sys_params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight
+    )
 
     # PDF uncertainties
     # with open('weight_dict_TpB') as f:
     #     weight_dict = ast.literal_eval(f.read())
     # with open('weight_dict_TpT') as f:
     #     weight_dict.update(ast.literal_eval(f.read()))
+    with open('weight_dict_pdf') as f:
+        weight_dict_pdf = ast.literal_eval(f.read())
+    weight_dict_pdf.update(dict((smpl, [1.]*100) for smpl in background_samples))
     sys_params_pdf = {
         'histos': core_histos,
         'treename': 'AnalysisTree',
@@ -231,8 +235,8 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
     sys_sec_sel_weight_pdf = list(
         ('pdf_weight_%i'%i, list((g, f,
             dict(
-                    (smpl, base_weight+'*weight_pdf_%i'%i)
-                    for smpl in samples_no_data
+                    (smpl, base_weight+'*weight_pdf_%i/%s'%(i, weight_dict[i]))
+                    for smpl, weight_dict in weight_dict_pdf.iteritems()
                 )
             ) for g, f in final_regions)
         )
@@ -255,22 +259,27 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
-    # sys_tps += [
-    #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-    # ]
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+    ]
 
     # Scale Variation uncertainties
     # with open('weight_dict_TpB') as f:
     #     weight_dict = ast.literal_eval(f.read())
     # with open('weight_dict_TpT') as f:
     #     weight_dict.update(ast.literal_eval(f.read()))
+    with open('weight_dict_scale') as f:
+        weight_dict_scale = ast.literal_eval(f.read())
+    weight_dict_scale.update(dict((smpl, [1.]*9) for smpl in background_samples))
+    for g in final_states:
+        weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in signals))
     sys_sec_sel_weight_scalevar = list(
         ('scalevar_weight_%i'%i, list((g, f,
             dict(
-                    (smpl, base_weight+'*weight_muRF_%i'%i)
-                    for smpl in samples_no_data
+                    (smpl, base_weight+'*weight_muRF_%i/%s'%(i, weight_dict[i]))
+                    for smpl, weight_dict in weight_dict_scale.iteritems()
                 )
             ) for g, f in final_regions)
         )

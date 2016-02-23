@@ -143,6 +143,20 @@ def norm_to_bkg(grps):
                     scale_signal(w, fct_val)            
         yield g
 
+def norm_stack_to_integral(grps):
+    for g in grps:
+        bkg = g.wrps[0]
+        if not (bkg.is_signal or bkg.is_data):
+            max_bkg = bkg.histo.GetMaximum()
+            max_sig = 0.
+            for w in g.wrps:
+                if w.is_signal:
+                    if not max_sig:
+                        max_sig = w.histo.GetMaximum()
+                        fct_val = (max_bkg/max_sig)*0.2
+                    scale_signal(w, fct_val)            
+        yield g
+
 def norm_to_fix_xsec(grps, fct_val):
     for g in grps:
         for w in g.wrps:

@@ -268,7 +268,7 @@ def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
     else:
         return [loader, plotter, limits, plot_limits]
 
-def mk_limit_tc_single(brs, filter_keyfunc, signal, sys_pat=''):
+def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
 
     loader = varial.tools.HistoLoader(
         name='HistoLoader',
@@ -286,19 +286,34 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, sys_pat=''):
         asymptotic=varial.settings.asymptotic,
         brs=brs,
         model_func= lambda w: model_vlqpair.get_model(w, [signal]),
+        selection=selection
         # do_postfit=False,
     )
-    postfit = ThetaPostFitPlot(
-        name='PostFit',
-        input_path='../ThetaLimit')
     if sys_pat:
+        postfit = ThetaPostFitPlot(
+            name='PostFit',
+            input_path='../ThetaLimit'
+        )
         sys_loader = varial.tools.HistoLoader(
             name='HistoLoaderSys',
-            filter_keyfunc=lambda w: filter_keyfunc(w) and 'ak4_pt' not in w.file_path,
+            filter_keyfunc=lambda w: filter_keyfunc(w),
             pattern=sys_pat,
             hook_loaded_histos=loader_hook_sys(brs)
         )
-        return [loader, sys_loader, limits, postfit] # , plotter_postfit
+        plotter_postfit = varial.tools.Plotter(
+            filter_keyfunc=lambda w: '700' in w.sample 
+                                     or '900' in w.sample 
+                                     or not w.is_signal,
+            plot_grouper=lambda ws: varial.gen.group(
+                ws, key_func=lambda w: w.category),
+            plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+            save_name_func=lambda w: w.category,
+            hook_canvas_post_build=varial.gen.add_sample_integrals,
+            hook_loaded_histos=lambda w: scale_bkg_postfit(
+                w, '../Limit'+name),
+            name='PostFit',
+        )
+        return [loader, sys_loader, limits, postfit, plotter_postfit] # , plotter_postfit
     else:
         return [loader, limits]
 

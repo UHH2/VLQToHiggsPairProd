@@ -11,7 +11,7 @@ import varial.analysis as analysis
 
 import common_plot
 import plot as plot
-from varial.extensions import git
+from varial.extensions import git, limits
 
 
 varial.settings.max_num_processes = 24
@@ -47,6 +47,7 @@ uhh_base = os.getenv('CMSSW_BASE') + '/src/UHH2/'
 # import sframe_tools
 import treeproject_tptp
 import sensitivity
+import common_sensitivity
 import tex_content
 
 # hadd = Hadd(
@@ -56,48 +57,102 @@ import tex_content
 #     samplename_func=vlq_common.get_samplename
 # )
 
-def mk_limit_list_syst(sys_pat=''):
-    def temp():
+# def mk_limit_list_syst(sys_pat=''):
+#     def temp():
+#         limit_list = []
+#         for ind, brs_ in enumerate(sensitivity.br_list):
+#             # if ind > 2: break
+#             tc = []
+#             # tc.append(varial.tools.ToolChain(
+#             #     'El45Only',
+#             #     sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+#             #         "SignalRegion2b_El45",
+#             #         "SignalRegion1b_El45",
+#             #         "SidebandRegion_El45"],
+#             #         'ST'),
+#             #     name='El45Only', sys_pat=sys_pat))
+#             # )
+#             # tc.append(varial.tools.ToolChain(
+#             #     'Mu45Only',
+#             #     sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+#             #         "SignalRegion2b_Mu45",
+#             #         "SignalRegion1b_Mu45",
+#             #         "SidebandRegion_Mu45"],
+#             #         'ST'),
+#             #     name='Mu45Only', sys_pat=sys_pat))
+#             # )
+#             tc.append(varial.tools.ToolChain(
+#                 'CombinedChannels',
+#                 sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
+#                     "SignalRegion2b_El45",
+#                     "SignalRegion1b_El45",
+#                     "SidebandRegion_El45",
+#                     "SignalRegion2b_Mu45",
+#                     "SignalRegion1b_Mu45",
+#                     "SidebandRegion_Mu45",
+#                     ],
+#                     'ST'),
+#                 sys_pat=sys_pat))
+#             )
+#             limit_list.append(
+#                 varial.tools.ToolChainParallel('Limit'+str(ind),tc))
+#         return limit_list
+#     return temp
+
+varial.settings.asymptotic = False
+
+def mk_limit_list_syst(sys_pat=None):
+    def tmp():
         limit_list = []
         for ind, brs_ in enumerate(sensitivity.br_list):
             # if ind > 2: break
             tc = []
-            tc.append(varial.tools.ToolChain(
-                'El45Only',
-                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-                    "SignalRegion2b_El45",
-                    "SignalRegion1b_El45",
-                    "SidebandRegion_El45"],
-                    'ST'),
-                name='El45Only', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'Mu45Only',
-                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-                    "SignalRegion2b_Mu45",
-                    "SignalRegion1b_Mu45",
-                    "SidebandRegion_Mu45"],
-                    'ST'),
-                name='Mu45Only', sys_pat=sys_pat))
-            )
-            tc.append(varial.tools.ToolChain(
-                'CombinedChannels',
-                sensitivity.mk_limit_tc(brs_, sensitivity.select_files([
-                    "SignalRegion2b_El45",
-                    "SignalRegion1b_El45",
-                    "SidebandRegion_El45",
-                    "SignalRegion2b_Mu45",
-                    "SignalRegion1b_Mu45",
-                    "SidebandRegion_Mu45",
-                    ],
-                    'ST'),
-                name='CombinedChannels', sys_pat=sys_pat))
-            )
+            tc.append(varial.tools.ToolChainParallel(
+                'ThetaLimits', list(varial.tools.ToolChain(
+                    sig,
+                    sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
+                        # 'SignalRegion2b_Mu45',
+                        # 'SignalRegion1b_Mu45',
+                        'SidebandRegion_Mu45',
+                        # 'SignalRegion2b_El45',
+                        # 'SignalRegion1b_El45',
+                        'SidebandRegion_El45',
+                        ],
+                        'ST', sig),
+                    sig, selection='ThetaLimits', sys_pat=sys_pat))
+                for sig in sensitivity.signals_to_use)
+            ))
+            tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
+                limits.LimitGraphs(
+                    limit_path='../../ThetaLimits/*/ThetaLimit',
+                    plot_obs=varial.settings.plot_obs,
+                    plot_1sigmabands=True,
+                    plot_2sigmabands=True,
+                    axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
+                    ),
+                varial.plotter.Plotter(
+                    name='LimitCurvesCompared',
+                    input_result_path='../LimitGraphs',
+                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                    # plot_setup=plot_setup,
+                    hook_loaded_histos=sensitivity.limit_curve_loader_hook,
+                    plot_grouper=lambda ws: varial.gen.group(
+                            ws, key_func=lambda w: w.save_name),
+                    # save_name_func=varial.plotter.save_by_name_with_hash
+                    save_name_func=lambda w: w.save_name,
+                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+                        th_x=common_sensitivity.theory_masses,
+                        th_y=common_sensitivity.theory_cs),
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.5, label_width=0.2, label_height=0.07),
+                        varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        ],
+                    save_lin_log_scale=True
+                    ),
+                ]))
             limit_list.append(
-                varial.tools.ToolChainParallel('Limit'+str(ind),tc))
+                varial.tools.ToolChain('Limit'+str(ind),tc))
         return limit_list
-    return temp
-
+    return tmp
 
 def mk_tex_tc_post(base):
     def tmp():
@@ -208,7 +263,14 @@ def run_treeproject_and_plot(base_path, output_dir):
                     #     output_dir+'/Inputs/SysTreeProjectors/sfmu_trg*/*.root',
                     #     ],
                     #     None, plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSyst', mk_limit_list_syst(output_dir+'/Inputs/SysTreeProjectors/*/*.root')), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+                    # sensitivity.mk_tc('LimitsSystScalePdf', mk_limit_list_syst([
+                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root'
+                    #     ])),
+                    # sensitivity.mk_tc('LimitsSystAllSigCorr', mk_limit_list_syst([
+                    #     output_dir+'/Inputs/SysTreeProjectors/*/*.root',
+                    #     ])),
+                    # sensitivity.mk_tc('LimitsSystNoUncert', mk_limit_list_syst()),
                     # sensitivity.mk_tc('LimitsCheck', limit_tcs.mk_limit_list_check_ak8clean), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]
             ),
