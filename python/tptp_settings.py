@@ -9,6 +9,8 @@ settings.__setattr__('asymptotic', True)
 settings.__setattr__('merge_decay_channels', True)
 settings.__setattr__('plot_obs', True)
 settings.__setattr__('fix_presel_sample', False)
+settings.__setattr__('do_norm_plot', False)
+settings.__setattr__('flex_sig_norm', True)
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
 # settings.defaults_Legend['label_height'] = 0.04
@@ -17,6 +19,11 @@ settings.__setattr__('fix_presel_sample', False)
 # settings.defaults_Legend['opt'] = 'f'
 # settings.defaults_Legend['opt_data'] = 'p'
 # settings.defaults_Legend['reverse'] = True
+
+settings.sys_error_color = (5, .7)
+settings.sys_error_fill = 3001
+settings.tot_error_color = (2, .7)
+settings.tot_error_fill = 3001
 
 # from vlq_settings
 # settings.colors = {
@@ -28,6 +35,10 @@ settings.__setattr__('fix_presel_sample', False)
 # }
 
 settings.colors.update({
+    'Background' : 920,
+    'nominal' : 1,
+    'plus' : 2,
+    'minus' : 3,
     # 'QCD' : 867,
     # 'TTbar': 632,
     # 'WJets': 878,

@@ -9,6 +9,8 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 import varial.operations as op
 import varial.wrappers
 
+from ROOT import THStack
+
 # common_datasets_to_plot = [
 #     'Run2015D',
 #     'TpTp_M-0700',
@@ -107,6 +109,13 @@ def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
         w.histo.Scale(norm_all)
         yield w
 
+def norm_to_int(wrps, use_bin_width=False):
+    option = "width" if use_bin_width else ""
+    for w in wrps:
+        integr = w.histo.Integral(option)
+        w.histo.Scale(1./integr)
+        yield w
+
 # @history.track_history
 def scale_signal(wrp, fct=1.):
     if fct >= 5:
@@ -149,34 +158,28 @@ def norm_stack_to_integral(grps):
     for g in grps:
         for w in g:
             # bkg = g.wrps[0]
+            integr_nom = w.histo.Integral() or 1.
+            w.histo.Scale(1./integr_nom)
             if isinstance(w, varial.wrappers.StackWrapper):
-                sum_int = 0.
-                for h in w.stack.GetHists():
-                    sum_int += h.Integral() or 1.
-                for h in w.stack.GetHists():
-                    # h_intgr = h.Integral() or 1.
-                    h.Scale(1./sum_int)
-                if w.histo_sys_err:
-                    w.histo_sys_err.Scale(1./sum_int)
-                # yield g
-            else:
-                integr_nom = w.histo.Integral() or 1.
-                # if integr_nom == 1.:
-                #     yield g
-                w.histo.Scale(1./integr_nom)
-                if w.histo_sys_err:
-                    integr_err = w.histo_sys_err.Integral() or 1.
-                    w.histo_sys_err.Scale(1./integr_err)
+                new_stk = THStack(w.name, w.title)
+                new_stk.Add(w.histo)
+                w.stack = new_stk
+                w.legend = 'Background'
+                w.sample = 'Background'
+                # for h in w.stack.GetHists():
+                #     h.Scale(1./integr_nom)
+            if w.histo_sys_err:
+                integr_err = w.histo_sys_err.Integral() or 1.
+                w.histo_sys_err.Scale(1./integr_err)
         yield g
 
-def norm_to_fix_xsec(grps, fct_val):
-    for g in grps:
-        for w in g.wrps:
-            if w.is_signal and not 'SignalRegion2b' in w.in_file_path:
-                scale_signal(w, 30.) 
-            if w.is_signal and 'SignalRegion2b' in w.in_file_path:
-                scale_signal(w, 5.)            
-        yield g
+def norm_to_fix_xsec(wrps):
+    for w in wrps:
+        if w.is_signal and 'SignalRegion2b' in w.in_file_path and w.in_file_path.endswith('ST'):
+            scale_signal(w, 2.)            
+        elif w.is_signal:
+            scale_signal(w, 20.) 
+        yield w
 
 
 def mod_legend(wrps):
@@ -210,6 +213,15 @@ def mod_title(wrps):
             w.histo.GetXaxis().SetTitle('ST [GeV]')
         if w.histo.GetXaxis().GetTitle() == 'N(non-overlapping medium b-tags)':
             w.histo.GetXaxis().SetTitle('N(AK4 b-tags)')
+        yield w
+
+def mod_bin(wrps):
+    for w in wrps:
+        # print w.histo.GetXaxis.GetTitle()
+        if w.in_file_path == 'SignalRegion2b_Mu45/ST':
+            w = op.rebin_nbins_max(w, 20)
+        if w.in_file_path.endswith('mass_sj'):
+            w = op.rebin_nbins_max(w, 30)
         yield w
 
 def fix_get_samplename(wrp):
@@ -269,50 +281,6 @@ def add_sample_integrals(canvas_builders):
         ))
         yield cnv
 
-# #====FOR STACKPLOTS====
-
-# def loader_hook_norm_smpl(wrps, smpl_fct=None, rebin_max_bins=60):
-#     if rebin_max_bins:
-#         wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, rebin_max_bins)
-#     wrps = loader_hook(wrps)
-#     # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
-#     wrps = norm_smpl(wrps, smpl_fct)
-#     wrps = gen.gen_make_th2_projections(wrps)
-#     return wrps
-
-
-# def plotter_factory_stack(smpl_fct=None, **kws):
-#     # kws['filter_keyfunc'] = lambda w: 'TH' in w.type
-#     kws['hook_loaded_histos'] = lambda w: loader_hook_norm_smpl(w, smpl_fct)
-#     kws['plot_setup'] = stack_setup_norm_sig
-#     kws['stack_setup'] = stack_setup_norm_sig
-#     # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-#     kws['save_lin_log_scale'] = True
-#     # kws['canvas_decorators'] = [varial.rendering.Legend]
-
-# #====FOR NORMPLOTS====
-
-# def loader_hook_norm_to_int(wrps):
-#     wrps = loader_hook(wrps)
-#     # wrps = gen.sort(wrps, key_list=['in_file_path', 'sample'])
-#     # wrps = gen.switch(
-#     #     wrps,
-#     #     lambda w: w.in_file_path.split('/')[0] == 'GenHists',
-#     #     gen.gen_make_th2_projections
-#     # )
-#     # wrps = gen.gen_make_eff_graphs(wrps)
-#     wrps = gen.switch(
-#         wrps,
-#         lambda w: 'TH' in w.type,
-#         gen.gen_noex_norm_to_integral
-#     )
-#     return wrps
-
-
-# def plotter_factory_norm(**kws):
-#     kws['hook_loaded_histos'] = loader_hook_norm_to_int
-#     kws['save_lin_log_scale'] = True
-#     return varial.tools.Plotter(**kws)
 
 
 

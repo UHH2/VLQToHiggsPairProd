@@ -223,7 +223,9 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
     # PDF uncertainties
     with open('weight_dict_pdf') as f:
         weight_dict_pdf = ast.literal_eval(f.read())
-    weight_dict_pdf.update(dict((smpl, [1.]*100) for smpl in background_samples))
+    weight_dict_pdf.update(dict((smpl, ['1']*100) for smpl in background_samples))
+    for g in final_states:
+        weight_dict_pdf.update(dict((s+g, weight_dict_pdf[s]) for s in signals))
     sys_params_pdf = {
         'histos': core_histos,
         'treename': 'AnalysisTree',
@@ -254,6 +256,8 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
         varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
     ]
 
     # Scale Variation uncertainties
@@ -270,8 +274,8 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
                 )
             ) for g, f in final_regions)
         )
-        # for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
-        for i in [8] # physical indices for scale variations without nominal value!
+        for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
+        # for i in [8] # physical indices for scale variations without nominal value!
     )
     sys_tps_scalevar = list(
         TreeProjector(
@@ -289,6 +293,8 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
         varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
         GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
     ]
 
     for tp in sys_tps:
@@ -338,9 +344,10 @@ class GenUncertHistoSquash(varial.tools.Tool):
 class GenUncertUpDown(varial.tools.Tool):
     io = varial.pklio
 
-    def __init__(self, input_path, **kws):
+    def __init__(self, input_path, norm=False, **kws):
         super(GenUncertUpDown, self).__init__(**kws)
         self.input_path = input_path
+        self.norm = norm
 
     def run(self):
         assert '__plus' in self.name or '__minus' in self.name
@@ -361,13 +368,15 @@ class GenUncertUpDown(varial.tools.Tool):
 
         def norm_thing(wrps):
             sigs = varial.gen.dir_content('../../TreeProjector/*.root')
-            sigs = (s for s in sigs if '/Signal_' in s.file_path)
-            sigs = (s for s in sigs if s.name == 'vlq_mass')
-            sigs = (s for s in sigs if 'SignalRegion' in s.in_file_path)
+            # sigs = (s for s in sigs if '/TpTp_' in s.file_path)
+            sigs = (s for s in sigs if s.name in core_histos.keys())
+            # sigs = (s for s in sigs if 'SignalRegion' in s.in_file_path)
             sigs = varial.gen.load(sigs)
-            sigs = dict((s.sample, s.histo) for s in sigs)
+            sigs = varial.gen.gen_add_wrp_info(sigs, 
+                category=lambda w: w.in_file_path.split('/')[0])
+            sigs = dict((s.sample+'_'+s.name+'_'+s.category, s.histo) for s in sigs)
             for w in wrps:
-                w.histo.Scale(sigs[w.sample].Integral() / w.histo.Integral())
+                w.histo.Scale(sigs[w.sample+'_'+w.name+'_'+w.category].Integral() / w.histo.Integral())
                 yield w
 
         from itertools import groupby
@@ -391,11 +400,12 @@ class GenUncertUpDown(varial.tools.Tool):
         assert histos
 
         histos = (varial.op.copy(w) for w in histos)
-        histos = (set_values(w) for w in histos)
-        # histos = norm_thing(histos)
         histos = varial.gen.gen_add_wrp_info(histos, 
             category=lambda w: w.in_file_path.split('/')[0],
             variable=lambda w: w.in_file_path.split('/')[1])
+        histos = (set_values(w) for w in histos)
+        if self.norm:
+            histos = norm_thing(histos)
         histos = sorted(histos, key=lambda w: w.sample)
         histos = varial.gen.group(histos, lambda w: w.sample)
         histos = store(histos)

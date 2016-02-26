@@ -3,6 +3,8 @@
 import sys
 import os
 import time
+import itertools
+import copy
 
 import varial.settings
 import varial.tools
@@ -12,6 +14,7 @@ import varial.analysis as analysis
 from varial.sample import Sample
 # from varial.extensions.sframe import SFrame
 from varial.extensions.hadd import Hadd
+import varial.wrappers as wrappers
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 import UHH2.VLQSemiLepPreSel.common as vlq_common
@@ -221,6 +224,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 def loader_hook_finalstates_excl(wrps):
     wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
+    wrps = common_plot.mod_bin(wrps)
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
@@ -229,45 +233,124 @@ def loader_hook_finalstates_excl(wrps):
     # for w in wrps: print w.sample, w.in_file_path
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+        wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = common_plot.mod_legend(wrps)
     wrps = common_plot.mod_title(wrps)
+    if not varial.settings.flex_sig_norm:
+        wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
 
+
+def loader_hook_norm_to_int(wrps):
+    key = lambda w: '{0}___{1}___{2}___{3}'.format(w.in_file_path, w.is_data, w.is_signal if not w.is_signal else w.sample, w.sys_info)
+
+    wrps = loader_hook_finalstates_excl(wrps)
+    wrps = sorted(wrps, key=key)
+    wrps = varial.gen.group(wrps, key)
+    wrps = varial.gen.gen_merge(wrps)
+    wrps = common_plot.norm_to_int(wrps)
+    return wrps
+
+def loader_hook_uncerts(wrps):
+    def set_line_width(wrps):
+        for w in wrps:
+            if isinstance(w, wrappers.HistoWrapper):
+                w.histo.SetLineWidth(2)
+            yield w
+
+    wrps = loader_hook_finalstates_excl(wrps)
+    wrps = set_line_width(wrps)
+    wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
+    return wrps
+
+
+def group_by_uncerts(wrps, first_sort_func):
+    def sort_key_func(wrp):
+        if wrp.sys_info:
+            return wrp.sys_info.split('__')[0]
+        else:
+            return ''
+
+    wrps = itertools.groupby(wrps, first_sort_func)
+    for k1, g in wrps:
+        g = sorted(g, key=sort_key_func)
+        g = list(g)
+        nominal = g[0]
+        sys_uncerts = itertools.groupby(g[1:], sort_key_func)
+        for k2, sys in sys_uncerts:
+            # print nominal.in_file_path, nominal.sample, nominal.sys_info, list((s.in_file_path, s.sample, s.sys_info) for s in sys)
+            nom_copy = copy.copy(nominal)
+            nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
+            yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
+
+def plot_setup_uncerts(grps):
+    def set_legend(wrps):
+        for w in wrps:
+            if not w.sys_info:
+                w.legend = 'nominal'
+            else:
+                w.legend = w.sys_info.split('__')[1]
+            yield w
+
+    grps = (set_legend(ws) for ws in grps)
+    grps = varial.plotter.default_plot_colorizer(grps)
+    return grps
+
+
 def stack_setup_norm_sig(grps):
-    # grps = list(grps)
-    # print grps
     grps = gen.mc_stack_n_data_sum(grps)
-    grps = common_plot.norm_to_bkg(grps)
-    # grps = norm_to_fix_xsec(grps, normsignal)
+    if varial.settings.flex_sig_norm:
+        grps = common_plot.norm_to_bkg(grps)
     return grps
 
 def stack_setup_norm_all_to_intgr(grps):
-    # grps = list(grps)
-    # print grps
     grps = gen.mc_stack_n_data_sum(grps)
     grps = common_plot.norm_stack_to_integral(grps)
-    # grps = norm_to_fix_xsec(grps, normsignal)
     return grps
 
-def plotter_factory(**kws):
-    # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
-    # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-    kws['hook_loaded_histos'] = loader_hook_finalstates_excl
-    kws['plot_setup'] = stack_setup_norm_sig
-    kws['stack_setup'] = stack_setup_norm_sig
-    # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-    kws['save_lin_log_scale'] = True
-    kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
-    kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
-        varial.rendering.Legend,
-        varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-        ]
-    return varial.tools.Plotter(**kws)
+def plotter_factory_stack(**args):
+    def tmp(**kws):
+        # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
+        # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
+        kws['hook_loaded_histos'] = loader_hook_finalstates_excl
+        kws['plot_setup'] = stack_setup_norm_sig
+        kws['stack_setup'] = stack_setup_norm_sig
+        # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+        kws['save_lin_log_scale'] = True
+        # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
+            varial.rendering.Legend,
+            varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            ]
+        kws.update(**args)
+        return varial.tools.Plotter(**kws)
+    return tmp
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre):
+
+def plotter_factory_uncerts(**args):
+    def tmp(**kws):
+        # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
+        # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
+        kws['hook_loaded_histos'] = loader_hook_uncerts
+        kws['plot_grouper'] = lambda w: group_by_uncerts(w, 
+            lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
+        kws['plot_setup'] = plot_setup_uncerts
+        # kws['stack_setup'] = stack_setup_norm_sig
+        # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+        kws['save_lin_log_scale'] = True
+        # kws['save_name_func'] = lambda w: w.save_name
+        # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
+            varial.rendering.Legend,
+            varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            ]
+        kws.update(**args)
+        return varial.tools.Plotter(**kws)
+    return tmp
+
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, **kws):
     def create():
         plot_chain = [
             
@@ -278,7 +361,19 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 filter_keyfunc=lambda w: any(f in w.file_path for f in datasets), #and 'noH' not in w.sample,
                 # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-                plotter_factory=plotter_factory,
+                plotter_factory=plotter_factory_stack(**kws),
+                # combine_files=True,
+                auto_legend=False
+                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+                ),
+            varial.plotter.RootFilePlotter(
+                pattern=src,
+                # input_result_path='../HistoLoader',
+                name='CompareUncerts',
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
+                # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
+                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+                plotter_factory=plotter_factory_uncerts(**kws),
                 # combine_files=True,
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
@@ -298,10 +393,17 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
         return plot_chain
     return create
 
-def mk_toolchain(name='', src='', categories=None, datasets=None):
+def mk_toolchain(name, src, datasets, categories=None):
     return varial.tools.ToolChainParallel(
         name,
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets)
+        )
+
+def mk_toolchain_norm(name, src, datasets, categories=None):
+    # varial.settings.do_norm_plot = True
+    return varial.tools.ToolChainParallel(
+        name,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int)
         )
 
 import tex_content

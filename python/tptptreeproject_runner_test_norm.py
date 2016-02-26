@@ -50,9 +50,8 @@ import sensitivity
 import common_sensitivity
 import tex_content
 
-varial.settings.plot_obs = True
+
 varial.settings.asymptotic = False
-varial.settings.merge_decay_channels = False
 
 def mk_limit_list_syst(sys_pat=None):
     def tmp():
@@ -96,7 +95,7 @@ def mk_limit_list_syst(sys_pat=None):
                     plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
                         th_x=common_sensitivity.theory_masses,
                         th_y=common_sensitivity.theory_cs),
-                    canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.5, label_width=0.2, label_height=0.07),
                         varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                         ],
                     save_lin_log_scale=True
@@ -120,6 +119,10 @@ def mk_tex_tc_post(base):
             varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
         ])
     return tmp
+
+
+varial.settings.asymptotic = False
+varial.settings.merge_decay_channels = False
 
 
 #!/usr/bin/env python
@@ -174,19 +177,6 @@ final_regions = (
     ('SidebandRegion_Mu45', sb_channel + mu_channel),
 )
 
-
-uncerts = [
-    'jec',
-    'jer',
-    'btag_bc',
-    'btag_udsg',
-    'sfmu_id',
-    'sfmu_trg',
-    'pu',
-    'PDF',
-    'ScaleVar',
-]
-
 def run_treeproject_and_plot(base_path, output_dir):
     tc = varial.tools.ToolChain(
         output_dir,
@@ -201,41 +191,36 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                        output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts), plot.samples_to_plot_final),
-                    # plot.mk_toolchain_norm('HistogramsTestNorm', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystTestNorm', mk_limit_list_syst(list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm'])
-                    #     )),
-                    # plot.mk_toolchain('HistogramsOnlyPdfAndScale', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                        # output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['PDF', 'ScaleVar']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfAndScale', mk_limit_list_syst([
+                    # plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
+                    plot.mk_toolchain_norm('HistogramsOnlyPdfAndScaleNorm', [output_dir+'/Inputs/TreeProjector/*.root',
+                        # output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+                        output_dir+'/Inputs/SysTreeProjectors/ScaleVarNorm*/*.root'],
+                        None, plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsOnlyPdf', [output_dir+'/Inputs/TreeProjector/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+                    #     ],
+                    #     None, plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsOnlyScale', [output_dir+'/Inputs/TreeProjector/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     ])),
-                    # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJE', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
-                    #     ])),
-                    # plot.mk_toolchain('HistogramsOnlyJE', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec', 'jer']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystOnlyJE', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
-                    #     ])),
-                    # sensitivity.mk_tc('LimitsSystOnlyJEC', mk_limit_list_syst([
+                    #     ],
+                    #     None, plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsNoPdfAndScale', [output_dir+'/Inputs/TreeProjector/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/btag_bc*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/btag_udsg*/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
-                    #     ])),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJEC', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/jer*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/pu*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/sfmu_id*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/sfmu_trg*/*.root',
+                    #     ],
+                    #     None, plot.samples_to_plot_final),
+                    # sensitivity.mk_tc('LimitsSystScalePdf', mk_limit_list_syst([
                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
+                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root'
                     #     ])),
-                    # plot.mk_toolchain('HistogramsOnlyJES', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec']), plot.samples_to_plot_final),
+                    # sensitivity.mk_tc('LimitsSystAllSigCorr', mk_limit_list_syst([
+                    #     output_dir+'/Inputs/SysTreeProjectors/*/*.root',
+                    #     ])),
                     # sensitivity.mk_tc('LimitsSystNoUncert', mk_limit_list_syst()),
                     # sensitivity.mk_tc('LimitsCheck', limit_tcs.mk_limit_list_check_ak8clean), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
                 ]

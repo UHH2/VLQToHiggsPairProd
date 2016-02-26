@@ -251,8 +251,9 @@ def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
                 plot_setup=lambda w: plot_setup_graphs(w,
                     th_x=common_sensitivity.theory_masses,
                     th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07),
-                    varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                canvas_decorators=[
+                    # varial.rendering.Legend(x_pos=0.85, y_pos=0.5, label_width=0.2, label_height=0.07),
+                    # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                     ],
                 save_lin_log_scale=True
                 ),
@@ -311,9 +312,9 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
             hook_canvas_post_build=varial.gen.add_sample_integrals,
             hook_loaded_histos=lambda w: scale_bkg_postfit(
                 w, '../Limit'+name),
-            name='PostFit',
+            # name='PostFitPlot',
         )
-        return [loader, sys_loader, limits, postfit, plotter_postfit] # , plotter_postfit
+        return [loader, sys_loader, limits, postfit] # , plotter_postfit
     else:
         return [loader, limits]
 

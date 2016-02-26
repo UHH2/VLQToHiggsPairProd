@@ -69,20 +69,35 @@ def mk_limit_list_dpg():
         # if ind > 2: break
         tc = []
         tc.append(varial.tools.ToolChainParallel(
-            'ThetaLimits', list(varial.tools.ToolChain(
-                sig,
-                sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
-                    'SignalRegion2b_Mu45',
-                    'SignalRegion1b_Mu45',
-                    'SidebandRegion_Mu45',
-                    'SignalRegion2b_El45',
-                    'SignalRegion1b_El45',
-                    'SidebandRegion_El45',
-                    ],
-                    'ST', sig),
-                sig, sys_pat=''))
-            for sig in sensitivity.signals_to_use)
-        ))
+                'ThetaLimits', list(varial.tools.ToolChain(
+                    sig,
+                    sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
+                        'SignalRegion2b_Mu45',
+                        'SignalRegion1b_Mu45',
+                        'SidebandRegion_Mu45',
+                        'SignalRegion2b_El45',
+                        'SignalRegion1b_El45',
+                        'SidebandRegion_El45',
+                        ],
+                        'ST', sig),
+                    sig, selection='ThetaLimits', sys_pat=sys_pat))
+                for sig in sensitivity.signals_to_use)
+            ))
+        # tc.append(varial.tools.ToolChainParallel(
+        #     'ThetaLimits', list(varial.tools.ToolChain(
+        #         sig,
+        #         sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
+        #             'SignalRegion2b_Mu45',
+        #             'SignalRegion1b_Mu45',
+        #             'SidebandRegion_Mu45',
+        #             'SignalRegion2b_El45',
+        #             'SignalRegion1b_El45',
+        #             'SidebandRegion_El45',
+        #             ],
+        #             'ST', sig),
+        #         sig, sys_pat=''))
+        #     for sig in sensitivity.signals_to_use)
+        # ))
         tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
             limits.LimitGraphs(
                 limit_path='../../ThetaLimits/*/ThetaLimit',
