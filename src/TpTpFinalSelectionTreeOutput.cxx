@@ -148,13 +148,13 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     : JERFiles::Summer15_25ns_L23_AK8PFchs_DATA;
     auto ak4_corr = (type == "MC") ? JERFiles::Summer15_25ns_L123_AK4PFchs_MC 
     : JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
-    if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
-        pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
-            ak8_corr, "topjets"));
-        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
-        //     ak4_corr, "topjets"));
-        pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
-    }
+    // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
+    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        ak8_corr, "topjets"));
+    pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
+        ak4_corr, "topjets"));
+    pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
+    // }
     pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
     pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
     pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));

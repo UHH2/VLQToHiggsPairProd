@@ -176,7 +176,7 @@ varial.settings.merge_decay_channels = False
 #!/usr/bin/env python
 
 baseline_selection = [
-    # 'gendecay_accept        == 1',
+    'gendecay_accept          == 1',
     'n_ak8                    >= 2'
 ]
 
@@ -240,11 +240,11 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
-                    # plot.mk_toolchain('HistogramsOnlyPdfAndScale', [output_dir+'/Inputs/TreeProjector/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root'],
-                    #     None, plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root', output_dir+'/Inputs/SysTreeProjectors/*/*.root'], None, plot.samples_to_plot_final),
+                    plot.mk_toolchain('HistogramsOnlyPdfAndScaleNorm', [output_dir+'/Inputs/TreeProjector/*.root',
+                        output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+                        output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root'],
+                        None, plot.samples_to_plot_final),
                     # plot.mk_toolchain('HistogramsOnlyPdf', [output_dir+'/Inputs/TreeProjector/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
                     #     ],

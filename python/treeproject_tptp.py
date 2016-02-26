@@ -169,7 +169,7 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
-    # sys_tps = []
+    sys_tps = []
     sys_tps = list(
         TreeProjector(
             dict(
@@ -221,10 +221,6 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
     )
 
     # PDF uncertainties
-    # with open('weight_dict_TpB') as f:
-    #     weight_dict = ast.literal_eval(f.read())
-    # with open('weight_dict_TpT') as f:
-    #     weight_dict.update(ast.literal_eval(f.read()))
     with open('weight_dict_pdf') as f:
         weight_dict_pdf = ast.literal_eval(f.read())
     weight_dict_pdf.update(dict((smpl, [1.]*100) for smpl in background_samples))
@@ -242,11 +238,6 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
         )
         for i in xrange(100)
     )
-    # filenames_pdf = dict(
-    #     (s, fs)
-    #     for s, fs in filenames.iteritems()
-    #     if s in samples_no_data
-    # )
     sys_tps_pdf = list(
         TreeProjector(
             filenames, 
@@ -266,13 +257,9 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
     ]
 
     # Scale Variation uncertainties
-    # with open('weight_dict_TpB') as f:
-    #     weight_dict = ast.literal_eval(f.read())
-    # with open('weight_dict_TpT') as f:
-    #     weight_dict.update(ast.literal_eval(f.read()))
     with open('weight_dict_scale') as f:
         weight_dict_scale = ast.literal_eval(f.read())
-    weight_dict_scale.update(dict((smpl, [1.]*9) for smpl in background_samples))
+    weight_dict_scale.update(dict((smpl, ['1']*9) for smpl in background_samples))
     for g in final_states:
         weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in signals))
     sys_sec_sel_weight_scalevar = list(
@@ -283,7 +270,8 @@ def mk_sys_tps(base_path, final_regions, name = 'SysTreeProjectors'):
                 )
             ) for g, f in final_regions)
         )
-        for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
+        # for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
+        for i in [8] # physical indices for scale variations without nominal value!
     )
     sys_tps_scalevar = list(
         TreeProjector(

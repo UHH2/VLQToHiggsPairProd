@@ -244,6 +244,14 @@ def stack_setup_norm_sig(grps):
     # grps = norm_to_fix_xsec(grps, normsignal)
     return grps
 
+def stack_setup_norm_all_to_intgr(grps):
+    # grps = list(grps)
+    # print grps
+    grps = gen.mc_stack_n_data_sum(grps)
+    grps = common_plot.norm_stack_to_integral(grps)
+    # grps = norm_to_fix_xsec(grps, normsignal)
+    return grps
+
 def plotter_factory(**kws):
     # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
     # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)

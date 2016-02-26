@@ -7,6 +7,7 @@ import varial.rendering as rnd
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 import varial.operations as op
+import varial.wrappers
 
 # common_datasets_to_plot = [
 #     'Run2015D',
@@ -143,18 +144,29 @@ def norm_to_bkg(grps):
                     scale_signal(w, fct_val)            
         yield g
 
+
 def norm_stack_to_integral(grps):
     for g in grps:
-        bkg = g.wrps[0]
-        if not (bkg.is_signal or bkg.is_data):
-            max_bkg = bkg.histo.GetMaximum()
-            max_sig = 0.
-            for w in g.wrps:
-                if w.is_signal:
-                    if not max_sig:
-                        max_sig = w.histo.GetMaximum()
-                        fct_val = (max_bkg/max_sig)*0.2
-                    scale_signal(w, fct_val)            
+        for w in g:
+            # bkg = g.wrps[0]
+            if isinstance(w, varial.wrappers.StackWrapper):
+                sum_int = 0.
+                for h in w.stack.GetHists():
+                    sum_int += h.Integral() or 1.
+                for h in w.stack.GetHists():
+                    # h_intgr = h.Integral() or 1.
+                    h.Scale(1./sum_int)
+                if w.histo_sys_err:
+                    w.histo_sys_err.Scale(1./sum_int)
+                # yield g
+            else:
+                integr_nom = w.histo.Integral() or 1.
+                # if integr_nom == 1.:
+                #     yield g
+                w.histo.Scale(1./integr_nom)
+                if w.histo_sys_err:
+                    integr_err = w.histo_sys_err.Integral() or 1.
+                    w.histo_sys_err.Scale(1./integr_err)
         yield g
 
 def norm_to_fix_xsec(grps, fct_val):

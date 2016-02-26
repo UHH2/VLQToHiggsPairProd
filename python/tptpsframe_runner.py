@@ -37,10 +37,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
+    'jec_up'        : {'jecsmear_direction':'up'},
+    'jec_down'      : {'jecsmear_direction':'down'},
+    'jer_up'        : {'jersmear_direction':'up'},
+    'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -241,7 +241,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
             )
         plots = varial.tools.ToolChainParallel(
-            'PlotsForDPG',
+            'Plots',
             lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot)
         )
         tc_list = []
@@ -261,7 +261,7 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            # hadd,
+                            hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
