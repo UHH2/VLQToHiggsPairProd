@@ -319,7 +319,7 @@ def plotter_factory_stack(**args):
         kws['stack_setup'] = stack_setup_norm_sig
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         kws['save_lin_log_scale'] = True
-        # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
             varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
@@ -341,7 +341,7 @@ def plotter_factory_uncerts(**args):
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         kws['save_lin_log_scale'] = True
         # kws['save_name_func'] = lambda w: w.save_name
-        # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
             varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
@@ -366,18 +366,18 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
-            varial.plotter.RootFilePlotter(
-                pattern=src,
-                # input_result_path='../HistoLoader',
-                name='CompareUncerts',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
-                # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
-                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-                plotter_factory=plotter_factory_uncerts(**kws),
-                # combine_files=True,
-                auto_legend=False
-                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                ),
+            # varial.plotter.RootFilePlotter(
+            #     pattern=src,
+            #     # input_result_path='../HistoLoader',
+            #     name='CompareUncerts',
+            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
+            #     # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
+            #     # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+            #     plotter_factory=plotter_factory_uncerts(**kws),
+            #     # combine_files=True,
+            #     auto_legend=False
+            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+            #     ),
             
             ]
         if categories:
