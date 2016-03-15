@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "100">
+<!ENTITY NEVT "1000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/">
-<!ENTITY OUTPUTDIR "NewSamples-25ns-v2/TestTreeOutput/">
+<!ENTITY OUTPUTDIR "NewSamples-25ns-v2/TestFinalSelection/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt20to30_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "../NewSamples-25ns-v2/Preselection-v8/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt30to50_MuEnrichedPt5.xml">
@@ -103,13 +103,13 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015D" Cacheable="True">
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015D" Cacheable="True">
         &Data_SingleMu;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015D" Cacheable="True">
+    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015D" Cacheable="True">
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -181,19 +181,19 @@
         &MC_TpTp_M-1600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <InputData Lumi="1664800000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1700" Cacheable="True">
         &MC_TpTp_M-1700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
-    <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+    <!-- <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
         &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
 

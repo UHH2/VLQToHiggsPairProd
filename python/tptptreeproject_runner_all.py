@@ -174,11 +174,11 @@ final_regions = (
     ('SignalRegion2b_El45', sr2b_channel + el_channel),
     ('SignalRegion1b_El45', sr1b_channel + el_channel),
     ('SidebandRegion_El45', sb_channel + el_channel),
-    ('SidebandWJetsRegion_El45', sb_wjets_channel + el_channel),
+    # ('SidebandWJetsRegion_El45', sb_wjets_channel + el_channel),
     ('SignalRegion2b_Mu45', sr2b_channel + mu_channel),
     ('SignalRegion1b_Mu45', sr1b_channel + mu_channel),
     ('SidebandRegion_Mu45', sb_channel + mu_channel),
-    ('SidebandWJetsRegion_Mu45', sb_wjets_channel + mu_channel),
+    # ('SidebandWJetsRegion_Mu45', sb_wjets_channel + mu_channel),
 )
 
 
@@ -202,14 +202,17 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Inputs', [
                     treeproject_tptp.mk_tp(base_path, final_regions),
-                    # treeproject_tptp.mk_sys_tps(base_path, final_regions),
+                    treeproject_tptp.mk_sys_tps(base_path, final_regions),
                 ]
             ),
             varial.tools.ToolChain(
                 'Histograms',
                 [
                     plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
-                        # + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                        ,plot.samples_to_plot_final),
+                    plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
+                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
                         ,plot.samples_to_plot_final),
                     # plot.mk_toolchain_norm('HistogramsTestNorm', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),

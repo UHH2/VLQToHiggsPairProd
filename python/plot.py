@@ -15,6 +15,7 @@ from varial.sample import Sample
 # from varial.extensions.sframe import SFrame
 from varial.extensions.hadd import Hadd
 import varial.wrappers as wrappers
+import varial.operations as op
 
 import UHH2.VLQSemiLepPreSel.cutflow_tables as cutflow_tables
 import UHH2.VLQSemiLepPreSel.common as vlq_common
@@ -26,6 +27,8 @@ import common_plot
 # import tptp_sframe 
 import sensitivity
 import compare_crs
+
+from ROOT import TLatex, TH2
 
 # varial.settings.max_num_processes = 1
 
@@ -221,9 +224,41 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
+def rebin_st_and_nak4(wrps):
+    st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
+    for w in wrps:
+        if w.in_file_path.endswith('ST'):
+            new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'ST_rebin'
+            new_w.in_file_path = w.in_file_path.replace('ST', 'ST_rebin')
+            yield new_w
+        if w.in_file_path.endswith('/HT'):
+            new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'HT_rebin'
+            new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
+            yield new_w
+        if w.in_file_path.endswith('/ht_gen_reco'):
+            new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'ht_gen_reco_rebin'
+            new_w.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin')
+            yield new_w
+        if w.in_file_path.endswith('n_ak4'):
+            new_w = op.rebin(w, nak4_bounds, True)
+            new_w.name = 'n_ak4_rebin'
+            new_w.in_file_path = w.in_file_path.replace('n_ak4', 'n_ak4_rebin')
+            yield new_w  
+        if w.in_file_path.endswith('primary_lepton_pt'):
+            w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
+        elif not isinstance(w.histo, TH2):
+            w = op.rebin_nbins_max(w, 60)
+        yield w
+
+
 
 def loader_hook_finalstates_excl(wrps):
-    wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
+    # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
+    wrps = rebin_st_and_nak4(wrps)
     wrps = common_plot.mod_bin(wrps)
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
@@ -322,7 +357,7 @@ def plotter_factory_stack(**args):
         kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
-            varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            # varial.rendering.TextBox(textbox=TLatex(0.5, 0.5, "My Box"))
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)
@@ -344,7 +379,7 @@ def plotter_factory_uncerts(**args):
         kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
-            varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)
@@ -399,11 +434,25 @@ def mk_toolchain(name, src, datasets, categories=None):
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets)
         )
 
+def mk_toolchain_pull(name, src, datasets, categories=None):
+    return varial.tools.ToolChainParallel(
+        name,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, 
+            canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
+                varial.rendering.Legend,
+                # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                ])
+        )
+
 def mk_toolchain_norm(name, src, datasets, categories=None):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int,
+            canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
+                varial.rendering.Legend,
+                # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                ])
         )
 
 import tex_content

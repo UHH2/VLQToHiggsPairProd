@@ -446,3 +446,32 @@ private:
     Event::Handle<int> n_ak4_hndl_;
     TH1F *st_cleaned, *met_cleaned, *pt_ak4_cleaned, *n_ak4_cleaned;
 };
+
+
+template<typename T>
+class RecoGenVarComp: public Hists {
+public:
+    explicit RecoGenVarComp(Context & ctx,
+                         const string & dirname,
+                         const string & reco_var_name,
+                         const string & gen_var_name,
+                         const string & var_name):
+        Hists(ctx, dirname),
+        h_reco_var(ctx.get_handle<T>(reco_var_name)),
+        h_gen_var(ctx.get_handle<T>(gen_var_name)),
+        hist(book<TH2F>("RecoGen_"+var_name,
+                        ";reco "+var_name+";gen "+var_name,
+                        45, 0., 4500., 45, 0., 4500.)) {}
+
+    virtual void fill(const Event & e) override {
+        if (!e.is_valid(h_reco_var) || !e.is_valid(h_gen_var)) {
+            return;
+        }
+        hist->Fill(e.get(h_reco_var), e.get(h_gen_var), e.weight);
+    }
+
+private:
+    Event::Handle<T> h_reco_var;
+    Event::Handle<T> h_gen_var;
+    TH2F * hist;
+};

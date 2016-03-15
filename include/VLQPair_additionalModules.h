@@ -838,6 +838,113 @@ private:
     unsigned min_n_sj_;
 };  // NSubjetID
 
+
+class GenRecoPtProducer: public AnalysisModule {
+public:
+    explicit GenRecoPtProducer(Context & ctx,
+                            const string & h_out,
+                            int part_num,
+                            const string & gen_jet_out):
+        h_out_(ctx.get_handle<float>(h_out)),
+        part_num_(part_num),
+        h_gen_jet_out_(ctx.get_handle<float>(gen_jet_out)) {}
+
+    virtual bool process(Event & e) override {
+        if (e.isRealData) {
+            const vector<Jet> & jets = *e.jets;
+            if (part_num_ < 0) {
+                if (jets.size() > 0) {
+                    e.set(h_out_, jets.back().pt());
+                    return true;
+                } else {
+                    e.set(h_out_, -1.);
+                    return false;
+                }
+            } else if (part_num_ > 0){
+                if (int(jets.size()) >= part_num_) {
+                    e.set(h_out_, jets[part_num_-1].pt());
+                    return true;
+                } else {
+                    e.set(h_out_, -1.);
+                    return false;
+                }
+            } else {
+                std::cout << "In GenRecoPtProducer: to calculate pt of the pt leading particle, give 1 as argument!\n";
+                assert(false);
+            }
+        } else {
+            const vector<Jet> & jets = *e.jets;
+            const vector<Particle> & genjets = *e.genjets;
+            if (part_num_ < 0) {
+                if (jets.size() > 0) {
+                    e.set(h_out_, jets.back().pt());
+                    return true;
+                } else {
+                    e.set(h_out_, -1.);
+                    return false;
+                }
+            } else if (part_num_ > 0){
+                if (int(jets.size()) >= part_num_) {
+                    const Jet & jet = jets[part_num_-1];
+                    const Particle * genjet = closestParticle(jet, genjets);
+                    if (genjet) {
+                        e.set(h_out_, genjet->pt());
+                        e.set(h_gen_jet_out_, genjet->pt());
+                        return true;
+                    }
+                    else {
+                        e.set(h_out_, -1.);
+                        return false;
+                    }
+                } else {
+                    e.set(h_out_, -1.);
+                    return false;
+                }
+            } else {
+                std::cout << "In GenRecoPtProducer: to calculate pt of the pt leading particle, give 1 as argument!\n";
+                assert(false);
+            }
+
+        }
+
+        e.set(h_out_, -1.);
+        return false;
+
+    }
+
+private:
+    Event::Handle<float> h_out_;
+    int part_num_;
+    Event::Handle<float> h_gen_jet_out_;
+};  // GenRecoPtProducer
+
+
+class GenRecoHTProducer: public AnalysisModule {
+public:
+    explicit GenRecoHTProducer(Context & ctx,
+                            const string & h_in,
+                            const string & h_out):
+        h_in_(ctx.get_handle<double>(h_in)),
+        h_out_(ctx.get_handle<double>(h_out)) {}
+
+    virtual bool process(Event & event) override {
+        if (!event.is_valid(h_in_)) {
+            std::cout << "WARNING: ht handle not valid!" << std::endl;
+            return false;
+        }
+
+        double ht = event.get(h_in_);
+        
+        event.set(h_out_, ht);
+        return false;
+
+    }
+
+private:
+    Event::Handle<double> h_in_;
+    Event::Handle<double> h_out_;
+};  // GenRecoHTProducer
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:

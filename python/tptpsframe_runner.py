@@ -241,7 +241,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
             )
         plots = varial.tools.ToolChainParallel(
-            'PlotsForDPG',
+            'Plots',
             lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot)
         )
         tc_list = []

@@ -68,6 +68,9 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
     common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
+    if (type == "MC") {
+        common_modules.emplace_back(new PartonHT(ctx.get_handle<double>("parton_ht")));
+    }
     // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "LeadingLepton", "leading_lepton_pt", "leading_lepton_eta", "leading_lepton_charge"));
     // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
 
