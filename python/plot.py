@@ -393,7 +393,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 pattern=src,
                 # input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in datasets), #and 'noH' not in w.sample,
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in datasets), #and 'noH' not in w.sample,
                 # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory_stack(**kws),

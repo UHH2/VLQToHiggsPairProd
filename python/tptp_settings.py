@@ -25,9 +25,10 @@ settings.sys_error_fill = 3001
 settings.tot_error_color = (2, .7)
 settings.tot_error_fill = 3001
 
-settings.defaults_BottomPlot['y_min'] = -2.
-settings.defaults_BottomPlot['y_max'] = 2.
+settings.defaults_BottomPlot['y_min'] = -1.2
+settings.defaults_BottomPlot['y_max'] = 1.2
 settings.defaults_BottomPlot['force_y_range'] = True
+# settings.defaults_BottomPlot['poisson_errs'] = False
 
 # from vlq_settings
 # settings.colors = {

@@ -945,6 +945,38 @@ private:
     Event::Handle<double> h_out_;
 };  // GenRecoHTProducer
 
+
+class GenHTCalculator: public AnalysisModule {
+public:
+    explicit GenHTCalculator(Context & ctx,
+                          string const & h_name = "gen_ht"):
+        h_ht(ctx.get_handle<double>(h_name)) {}
+
+    virtual bool process(Event & event) override {
+        if (!event.is_valid(h_primlep)) {
+            return false;
+        }
+        float st = event.get(h_primlep).pt();
+        st += event.met->pt();
+        for (const auto & j : *event.jets) {
+            if (jet_id_){
+                if ((*jet_id_)(j, event)) {
+                    st += j.pt();
+                }
+            } else {
+                st += j.pt();
+            }
+        }
+        event.set(h_ht, st);
+        return true;
+    }
+
+private:
+    boost::optional<JetId> jet_id_;
+    Event::Handle<double> h_ht;
+    Event::Handle<FlavorParticle> h_primlep;
+};  // class GenHTCalculator
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:

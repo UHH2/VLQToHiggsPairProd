@@ -144,12 +144,20 @@ sr1b_channel = baseline_selection + [
 
 sb_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
+    'n_additional_btags_medium  >= 1',
+    'met                        >= 100'
+]
+
+sb_ttbar_channel = baseline_selection + [
+    'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  >= 2',
+    'met                        >= 100'
 ]
 
 sb_wjets_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  == 0',
+    'met                        >= 100'
 ]
 
 
@@ -174,11 +182,13 @@ final_regions = (
     ('SignalRegion2b_El45', sr2b_channel + el_channel),
     ('SignalRegion1b_El45', sr1b_channel + el_channel),
     ('SidebandRegion_El45', sb_channel + el_channel),
-    # ('SidebandWJetsRegion_El45', sb_wjets_channel + el_channel),
     ('SignalRegion2b_Mu45', sr2b_channel + mu_channel),
     ('SignalRegion1b_Mu45', sr1b_channel + mu_channel),
     ('SidebandRegion_Mu45', sb_channel + mu_channel),
-    # ('SidebandWJetsRegion_Mu45', sb_wjets_channel + mu_channel),
+    ('SidebandTTJetsRegion_El45', sb_ttbar_channel + el_channel),
+    ('SidebandTTJetsRegion_Mu45', sb_ttbar_channel + mu_channel),
+    ('SidebandWPlusJetsRegion_El45', sb_wjets_channel + el_channel),
+    ('SidebandWPlusJetsRegion_Mu45', sb_wjets_channel + mu_channel),
 )
 
 
@@ -192,6 +202,7 @@ uncerts = [
     'pu',
     'PDF',
     'ScaleVar',
+    'top_pt_weight'
 ]
 
 def run_treeproject_and_plot(base_path, output_dir):

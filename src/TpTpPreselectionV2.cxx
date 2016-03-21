@@ -250,7 +250,6 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
 
         unsigned pos_2d_cut = (cat == "El45") ? 4 : 2;
 
-        other_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLepton", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso"));
         other_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryMuon_iso", "TwoDcut_Dr_iso", "TwoDcut_Dpt_iso"));
 
         vector<string> item_names;

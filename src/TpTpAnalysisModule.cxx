@@ -43,6 +43,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons", "PrimaryElectron"));
 
+    common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLepton", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", true));
     
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon", "primary_muon_pt", "primary_muon_eta", "primary_muon_charge"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryElectron", "primary_electron_pt", "primary_electron_eta", "primary_electron_charge"));
