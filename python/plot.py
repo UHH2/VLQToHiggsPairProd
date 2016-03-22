@@ -448,6 +448,13 @@ def mk_toolchain_norm(name, src, datasets, categories=None):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int)
+        )
+
+def mk_toolchain_norm_pull(name, src, datasets, categories=None):
+    # varial.settings.do_norm_plot = True
+    return varial.tools.ToolChainParallel(
+        name,
         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int,
             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
                 varial.rendering.Legend,

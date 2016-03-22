@@ -953,21 +953,13 @@ public:
         h_ht(ctx.get_handle<double>(h_name)) {}
 
     virtual bool process(Event & event) override {
-        if (!event.is_valid(h_primlep)) {
-            return false;
-        }
-        float st = event.get(h_primlep).pt();
-        st += event.met->pt();
-        for (const auto & j : *event.jets) {
-            if (jet_id_){
-                if ((*jet_id_)(j, event)) {
-                    st += j.pt();
-                }
-            } else {
-                st += j.pt();
+        double gen_ht = 0.;
+        for (const auto & j : *event.genjets) {
+            if (j.pt() > 30){
+                gen_ht += j.pt();
             }
         }
-        event.set(h_ht, st);
+        event.set(h_ht, gen_ht);
         return true;
     }
 

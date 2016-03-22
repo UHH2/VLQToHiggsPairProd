@@ -126,7 +126,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_fourth_ak4_jet", "Pt fourth Ak4 Jet (reco-gen)", 60, 0., 1500.)),
         shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_fifth_ak4_jet", "Pt fifth Ak4 Jet (reco-gen)", 60, 0., 1500.)),
         shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_sixth_ak4_jet", "Pt sixth Ak4 Jet (reco-gen)", 60, 0., 1500.)),
-        shared_ptr<SelectionItem>(new SelDatD("ht_gen_reco", "HT (reco-gen)", 45, 0, 4500)),
+        // shared_ptr<SelectionItem>(new SelDatD("parton_ht_gen_reco", "HT (reco-gen)", 45, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak4_genjet", "Pt first Ak4 GenJet", 60, 0., 1500.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_subld_ak4_genjet", "Pt second Ak4 GenJet", 60, 0., 1500.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_third_ak4_genjet", "Pt third Ak4 GenJet", 60, 0., 1500.)),
@@ -419,12 +419,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //             1
     //             ));
 
-    if (type == "MC") {
-        other_modules.emplace_back(new GenRecoHTProducer(ctx, "parton_ht", "ht_gen_reco"));
-    }
-    else
-        other_modules.emplace_back(new GenRecoHTProducer(ctx, "HT", "ht_gen_reco"));
-
+    
     other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_ld_ak4_jet", 1, "pt_ld_ak4_genjet"));
     other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_subld_ak4_jet", 2, "pt_subld_ak4_genjet"));
     other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_third_ak4_jet", 3, "pt_third_ak4_genjet"));
@@ -675,7 +670,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
             v_hists_after_sel.back().push_back(unique_ptr<CustomizableGenHists>(gen_hists)); 
-            v_hists_after_sel.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/PostSelection/RecoGenComparisons", "HT", "parton_ht", "HT")); 
+            v_hists_after_sel.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/PostSelection/RecoGenComparisons", "HT", "parton_ht", "HT_parton")); 
+            v_hists_after_sel.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/PostSelection/RecoGenComparisons", "HT", "gen_ht", "HT_gen")); 
             v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_ld_ak4_jet", "pt_ld_ak4_genjet", "pt_ld_ak4_jet")); 
             v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_subld_ak4_jet", "pt_subld_ak4_genjet", "pt_subld_ak4_jet")); 
             v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_third_ak4_jet", "pt_third_ak4_genjet", "pt_third_ak4_jet")); 

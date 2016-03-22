@@ -205,6 +205,12 @@ uncerts = [
     'top_pt_weight'
 ]
 
+theory_uncerts = [
+    'PDF',
+    'ScaleVar',
+    'top_pt_weight'
+]
+
 def run_treeproject_and_plot(base_path, output_dir):
     tc = varial.tools.ToolChain(
         output_dir,
@@ -213,20 +219,38 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Inputs', [
                     treeproject_tptp.mk_tp(base_path, final_regions),
+                    # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorWithTopPtReweight'),
+                    # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorNoTopPtReweight', top_pt_weight='weight'),
                     treeproject_tptp.mk_sys_tps(base_path, final_regions),
                 ]
             ),
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
-                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                        ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                    #     ,plot.samples_to_plot_final),
                     plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
                         + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
                         ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain_norm('HistogramsTestNorm', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+                    # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
+                    # plot.mk_toolchain_norm_pull('HistogramsNormToIntPull', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
+                    # plot.mk_toolchain_norm('HistogramsNormToIntAll', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts), plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsWithTopPtReweight', [output_dir+'/Inputs/TreeProjectorWithTopPtReweight/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                    #     ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsNoTopPtReweight', [output_dir+'/Inputs/TreeProjectorNoTopPtReweight/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                    #     ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsOnlyTheory', [output_dir+'/Inputs/TreeProjector/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
+                    #     ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain_pull('HistogramsOnlyTheoryPull', [output_dir+'/Inputs/TreeProjector/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
+                    #     ,plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSystTestNorm', mk_limit_list_syst(list(
                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm'])
                     #     )),
@@ -236,8 +260,6 @@ def run_treeproject_and_plot(base_path, output_dir):
                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
                     #     ])),
-                    # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
                     # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJE', mk_limit_list_syst([
                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',

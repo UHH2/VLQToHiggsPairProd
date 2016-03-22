@@ -2,6 +2,7 @@
 
 from varial_ext.treeprojector import TreeProjector #, SGETreeProjector
 from os.path import join
+import varial.settings
 import varial.tools
 import glob
 import os
@@ -124,7 +125,7 @@ samples_no_data = background_samples + signal_samples
 base_weight = 'weight'
 
 sample_weights = {
-    'TTbar' : base_weight+'*weight_ttbar/0.9910819',
+    'TTbar' : base_weight+'*(weight_ttbar/0.9910819)',
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
@@ -137,8 +138,15 @@ sample_weights.update(dict((f, 'weight') for f in signal_samples))
 import tptp_selections_treeproject as sel
 
 
-def mk_tp(input_pat, final_regions, samples=samples, name='TreeProjector'):
-    sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
+def mk_tp(input_pat, final_regions, samples=samples, name='TreeProjector', top_pt_weight=None):
+    if top_pt_weight:
+        new_sample_weights = dict(sample_weights)
+        new_sample_weights.update({'TTbar' : top_pt_weight})
+        weights = new_sample_weights
+    else:
+        weights = sample_weights
+        # varial.settings.top_pt_weight = top_pt_weight
+    sec_sel_weight = list((g, f, weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
     filenames = dict(
         (sample, list(f for f in all_files if sample in f))
@@ -172,19 +180,19 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     sys_tps = []
-    # sys_tps = list(
-    #     TreeProjector(
-    #         dict(
-    #             (sample, list(f for f in glob.glob(pat) if sample in f))
-    #             for sample in samples_no_data
-    #         ), 
-    #         sys_params, 
-    #         nominal_sec_sel_weight,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, pat in jercs
-    # )
+    sys_tps = list(
+        TreeProjector(
+            dict(
+                (sample, list(f for f in glob.glob(pat) if sample in f))
+                for sample in samples_no_data
+            ), 
+            sys_params, 
+            nominal_sec_sel_weight,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, pat in jercs
+    )
 
     # next put together nominal samples with with weight uncerts.
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
@@ -211,16 +219,16 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    # sys_tps += list(
-    #     TreeProjector(
-    #         filenames,
-    #         sys_params, 
-    #         ssw,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, ssw in sys_sec_sel_weight
-    # )
+    sys_tps += list(
+        TreeProjector(
+            filenames,
+            sys_params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight
+    )
 
     # PDF uncertainties
     with open('weight_dict_pdf') as f:
@@ -254,13 +262,13 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
-    # sys_tps += [
-    #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
-    # ]
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
+    ]
 
     # Scale Variation uncertainties
     with open('weight_dict_scale') as f:
@@ -277,7 +285,7 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
             ) for g, f in final_regions)
         )
         for i in [1, 2, 3, 4, 6, 8] # physical indices for scale variations without nominal value!
-        # for i in [8] # physical indices for scale variations without nominal value!
+        # for i in [1, 2] # physical indices for scale variations without nominal value!
     )
     sys_tps_scalevar = list(
         TreeProjector(
@@ -299,13 +307,18 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
         GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
     ]
 
+    sample_weights_top_pt_down = dict(sample_weights)
+    sample_weights_top_pt_up = dict(sample_weights)
+    sample_weights_top_pt_down.update({'TTbar' : base_weight+'*(weight_ttbar/0.9910819)*(weight_ttbar/0.9910819)'})
+    sample_weights_top_pt_up.update({'TTbar' : base_weight})
+
     sys_sec_sel_weight_top_pt_weight = (
-        ('top_pt_weight__minus', list((g, f, {'TTbar' : base_weight+'*weight_ttbar/0.9910819*2'}) for g, f in final_regions)),
-        ('top_pt_weight__plus', list((g, f, {'TTbar' : base_weight}) for g, f in final_regions))
+        ('top_pt_weight__minus', list((g, f, sample_weights_top_pt_down) for g, f in final_regions)),
+        ('top_pt_weight__plus', list((g, f, sample_weights_top_pt_up) for g, f in final_regions))
     )
     sys_tps += list(
         TreeProjector(
-            {'TTbar' : list(f for f in glob.glob(nominal_files) if 'TTbar' in f)},
+            filenames,
             sys_params, 
             ssw,
             add_aliases_to_analysis=False,
