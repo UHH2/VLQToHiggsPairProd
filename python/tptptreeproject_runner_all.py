@@ -202,13 +202,15 @@ uncerts = [
     'pu',
     'PDF',
     'ScaleVar',
-    'top_pt_weight'
+    'top_pt_weight',
+    'ht_reweight'
 ]
 
 theory_uncerts = [
     'PDF',
     'ScaleVar',
-    'top_pt_weight'
+    'top_pt_weight',
+    'ht_reweight'
 ]
 
 def run_treeproject_and_plot(base_path, output_dir):
@@ -227,12 +229,15 @@ def run_treeproject_and_plot(base_path, output_dir):
             varial.tools.ToolChain(
                 'Histograms',
                 [
-                    # plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
+                    plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
                         + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
                         ,plot.samples_to_plot_final),
+                    plot.mk_toolchain('HistogramsHTReweightOnly', [output_dir+'/Inputs/TreeProjector/*.root']
+                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['ht_reweight'])
+                        ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+                    #     ,plot.samples_to_plot_final),
                     # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
                     # plot.mk_toolchain_norm_pull('HistogramsNormToIntPull', [output_dir+'/Inputs/TreeProjector/*.root'] + list(

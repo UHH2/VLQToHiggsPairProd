@@ -124,12 +124,18 @@ samples_no_data = background_samples + signal_samples
 
 base_weight = 'weight'
 
+p0 = 1.252481
+p1 = -0.000216602
+
+ht_reweight = '*({0}+{1}*HT)'.format(p0, p1)
+ttbar_reweight = '*(weight_ttbar/0.9910819)'
+
 sample_weights = {
-    'TTbar' : base_weight+'*(weight_ttbar/0.9910819)',
+    'TTbar' : base_weight+ht_reweight+ttbar_reweight,
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
-    'WJets' : base_weight,
+    'WJets' : base_weight+ht_reweight,
     'Run2015D' : '1',
 }
 sample_weights.update(dict((f, 'weight') for f in signal_samples))
@@ -180,19 +186,19 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     sys_tps = []
-    sys_tps = list(
-        TreeProjector(
-            dict(
-                (sample, list(f for f in glob.glob(pat) if sample in f))
-                for sample in samples_no_data
-            ), 
-            sys_params, 
-            nominal_sec_sel_weight,
-            add_aliases_to_analysis=False,
-            name=name,
-        )
-        for name, pat in jercs
-    )
+    # sys_tps = list(
+    #     TreeProjector(
+    #         dict(
+    #             (sample, list(f for f in glob.glob(pat) if sample in f))
+    #             for sample in samples_no_data
+    #         ), 
+    #         sys_params, 
+    #         nominal_sec_sel_weight,
+    #         add_aliases_to_analysis=False,
+    #         name=name,
+    #     )
+    #     for name, pat in jercs
+    # )
 
     # next put together nominal samples with with weight uncerts.
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
@@ -219,16 +225,16 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    sys_tps += list(
-        TreeProjector(
-            filenames,
-            sys_params, 
-            ssw,
-            add_aliases_to_analysis=False,
-            name=name,
-        )
-        for name, ssw in sys_sec_sel_weight
-    )
+    # sys_tps += list(
+    #     TreeProjector(
+    #         filenames,
+    #         sys_params, 
+    #         ssw,
+    #         add_aliases_to_analysis=False,
+    #         name=name,
+    #     )
+    #     for name, ssw in sys_sec_sel_weight
+    # )
 
     # PDF uncertainties
     with open('weight_dict_pdf') as f:
@@ -262,13 +268,13 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
-    sys_tps += [
-        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
-    ]
+    # sys_tps += [
+    #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
+    # ]
 
     # Scale Variation uncertainties
     with open('weight_dict_scale') as f:
@@ -299,17 +305,17 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     )
     sys_tps_scalevar += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_env)]
     # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
-    sys_tps += [
-        varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
-    ]
+    # sys_tps += [
+    #     varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
+    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
+    # ]
 
     sample_weights_top_pt_down = dict(sample_weights)
     sample_weights_top_pt_up = dict(sample_weights)
-    sample_weights_top_pt_down.update({'TTbar' : base_weight+'*(weight_ttbar/0.9910819)*(weight_ttbar/0.9910819)'})
+    sample_weights_top_pt_down.update({'TTbar' : base_weight+ttbar_reweight+ttbar_reweight})
     sample_weights_top_pt_up.update({'TTbar' : base_weight})
 
     sys_sec_sel_weight_top_pt_weight = (
@@ -325,6 +331,32 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
             name=name,
         )
         for name, ssw in sys_sec_sel_weight_top_pt_weight
+    )
+
+    sample_weights_ht_reweight_down = dict(sample_weights)
+    sample_weights_ht_reweight_up = dict(sample_weights)
+    sample_weights_ht_reweight_down.update({
+        'TTbar' : base_weight+ht_reweight+ht_reweight+ttbar_reweight,
+        'WJets' : base_weight+ht_reweight+ht_reweight,
+        })
+    sample_weights_ht_reweight_up.update({
+        'TTbar' : base_weight+ttbar_reweight,
+        'WJets' : base_weight
+        })
+
+    sys_sec_sel_weight_ht_weight = (
+        ('ht_reweight__minus', list((g, f, sample_weights_ht_reweight_down) for g, f in final_regions)),
+        ('ht_reweight__plus', list((g, f, sample_weights_ht_reweight_up) for g, f in final_regions))
+    )
+    sys_tps += list(
+        TreeProjector(
+            filenames,
+            sys_params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight_ht_weight
     )
 
     for tp in sys_tps:
