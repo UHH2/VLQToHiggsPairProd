@@ -232,9 +232,9 @@ def run_treeproject_and_plot(base_path, output_dir):
                     plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
                         + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
                         ,plot.samples_to_plot_final),
-                    plot.mk_toolchain('HistogramsHTReweightOnly', [output_dir+'/Inputs/TreeProjector/*.root']
-                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['ht_reweight'])
-                        ,plot.samples_to_plot_final),
+                    # plot.mk_toolchain('HistogramsHTReweightOnly', [output_dir+'/Inputs/TreeProjector/*.root']
+                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['ht_reweight'])
+                    #     ,plot.samples_to_plot_final),
                     # plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
                     #     ,plot.samples_to_plot_final),

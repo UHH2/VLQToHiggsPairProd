@@ -124,18 +124,27 @@ samples_no_data = background_samples + signal_samples
 
 base_weight = 'weight'
 
-p0 = 1.252481
-p1 = -0.000216602
+# values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
+p0_from1000 = 1.252481
+p1_from1000 = -0.000216602
 
-ht_reweight = '*({0}+{1}*HT)'.format(p0, p1)
+p0_from0 = 1.353281
+p1_from0 = -0.000251745
+
+# values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
+
+p0_from0_no_top_pt_reweight = 1.165688
+p1_from0_no_top_pt_reweight = -0.000236061
+
+ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
 ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 sample_weights = {
-    'TTbar' : base_weight+ht_reweight+ttbar_reweight,
+    'TTbar' : base_weight+ht_reweight,
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
-    'WJets' : base_weight+ht_reweight,
+    'WJets' : base_weight,
     'Run2015D' : '1',
 }
 sample_weights.update(dict((f, 'weight') for f in signal_samples))
@@ -322,26 +331,24 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
         ('top_pt_weight__minus', list((g, f, sample_weights_top_pt_down) for g, f in final_regions)),
         ('top_pt_weight__plus', list((g, f, sample_weights_top_pt_up) for g, f in final_regions))
     )
-    sys_tps += list(
-        TreeProjector(
-            filenames,
-            sys_params, 
-            ssw,
-            add_aliases_to_analysis=False,
-            name=name,
-        )
-        for name, ssw in sys_sec_sel_weight_top_pt_weight
-    )
+    # sys_tps += list(
+    #     TreeProjector(
+    #         filenames,
+    #         sys_params, 
+    #         ssw,
+    #         add_aliases_to_analysis=False,
+    #         name=name,
+    #     )
+    #     for name, ssw in sys_sec_sel_weight_top_pt_weight
+    # )
 
     sample_weights_ht_reweight_down = dict(sample_weights)
     sample_weights_ht_reweight_up = dict(sample_weights)
     sample_weights_ht_reweight_down.update({
-        'TTbar' : base_weight+ht_reweight+ht_reweight+ttbar_reweight,
-        'WJets' : base_weight+ht_reweight+ht_reweight,
+        'TTbar' : base_weight+ht_reweight+ht_reweight,
         })
     sample_weights_ht_reweight_up.update({
-        'TTbar' : base_weight+ttbar_reweight,
-        'WJets' : base_weight
+        'TTbar' : base_weight,
         })
 
     sys_sec_sel_weight_ht_weight = (
