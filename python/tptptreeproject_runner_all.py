@@ -64,11 +64,11 @@ def mk_limit_list_syst(sys_pat=None):
                 'ThetaLimits', list(varial.tools.ToolChain(
                     sig,
                     sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
-                        # 'SignalRegion2b_Mu45',
-                        # 'SignalRegion1b_Mu45',
+                        'SignalRegion2b_Mu45',
+                        'SignalRegion1b_Mu45',
                         'SidebandRegion_Mu45',
-                        # 'SignalRegion2b_El45',
-                        # 'SignalRegion1b_El45',
+                        'SignalRegion2b_El45',
+                        'SignalRegion1b_El45',
                         'SidebandRegion_El45',
                         ],
                         'ST', sig),
@@ -192,18 +192,18 @@ final_regions = (
 )
 
 
-uncerts = [
-    'jec',
-    'jer',
-    'btag_bc',
-    'btag_udsg',
-    'sfmu_id',
-    'sfmu_trg',
-    'pu',
-    'PDF',
+all_uncerts = [
+    # 'jec',
+    # 'jer',
+    # 'btag_bc',
+    # 'btag_udsg',
+    # 'sfmu_id',
+    # 'sfmu_trg',
+    # 'pu',
+    # 'PDF',
     'ScaleVar',
-    'top_pt_weight',
-    'ht_reweight'
+    # 'top_pt_weight',
+    # 'ht_reweight'
 ]
 
 theory_uncerts = [
@@ -213,82 +213,67 @@ theory_uncerts = [
     'ht_reweight'
 ]
 
+# values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
+# p0_from1000 = 1.252481
+# p1_from1000 = -0.000216602
+
+# p0_from0 = 1.353281
+# p1_from0 = -0.000251745
+
+# values below from FinalSelection-v14/RunCompTopPtWeight/fit_results_ht_sideband_no_toppt_reweight.txt
+
+# values from mean of SidebandRegion
+# p0_from0_no_top_pt_reweight = 1.165688
+# p1_from0_no_top_pt_reweight = -0.000236061
+
+# values from mean of SidebandTTJetsRegion
+p0_from0_no_top_pt_reweight = 1.10761085
+p1_from0_no_top_pt_reweight = -0.000273785
+
+ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+ttbar_reweight = '*(weight_ttbar/0.9910819)'
+
+def make_tp_plot_chain(name, base_path, output_dir,
+    weight_dict=None, reweighting_list=None, uncertainties=None):
+    if weight_dict:
+        weights = dict(treeproject_tptp.sample_weights_def)
+        weights.update(weight_dict)
+    else:
+        weights = treeproject_tptp.sample_weights_def
+    uncerts = uncertainties or all_uncerts
+    return varial.tools.ToolChain(name,
+        [
+            treeproject_tptp.mk_tp(base_path, final_regions, weights=weights),
+            treeproject_tptp.mk_sys_tps(base_path, final_regions,
+                weights=weights,
+                reweighting_list=reweighting_list),
+            plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final),
+            plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final),
+            sensitivity.mk_tc('Limits', mk_limit_list_syst(
+                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                )),
+        ])
+
 def run_treeproject_and_plot(base_path, output_dir):
     tc = varial.tools.ToolChain(
         output_dir,
         [
             git.GitAdder(),
-            varial.tools.ToolChain(
-                'Inputs', [
-                    treeproject_tptp.mk_tp(base_path, final_regions),
-                    # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorWithTopPtReweight'),
-                    # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorNoTopPtReweight', top_pt_weight='weight'),
-                    treeproject_tptp.mk_sys_tps(base_path, final_regions),
-                ]
-            ),
-            varial.tools.ToolChain(
-                'Histograms',
-                [
-                    plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
-                        + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                        ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain('HistogramsHTReweightOnly', [output_dir+'/Inputs/TreeProjector/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['ht_reweight'])
-                    #     ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
-                    # plot.mk_toolchain_norm_pull('HistogramsNormToIntPull', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
-                    # plot.mk_toolchain_norm('HistogramsNormToIntAll', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts), plot.samples_to_plot_final),
-                    # plot.mk_toolchain('HistogramsWithTopPtReweight', [output_dir+'/Inputs/TreeProjectorWithTopPtReweight/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain('HistogramsNoTopPtReweight', [output_dir+'/Inputs/TreeProjectorNoTopPtReweight/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain('HistogramsOnlyTheory', [output_dir+'/Inputs/TreeProjector/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    # plot.mk_toolchain_pull('HistogramsOnlyTheoryPull', [output_dir+'/Inputs/TreeProjector/*.root']
-                    #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
-                    #     ,plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystTestNorm', mk_limit_list_syst(list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm'])
-                    #     )),
-                    # plot.mk_toolchain('HistogramsOnlyPdfAndScale', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                        # output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['PDF', 'ScaleVar']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfAndScale', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     ])),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJE', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
-                    #     ])),
-                    # plot.mk_toolchain('HistogramsOnlyJE', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec', 'jer']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystOnlyJE', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
-                    #     ])),
-                    # sensitivity.mk_tc('LimitsSystOnlyJEC', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
-                    #     ])),
-                    # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJEC', mk_limit_list_syst([
-                    #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
-                    #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
-                    #     ])),
-                    # plot.mk_toolchain('HistogramsOnlyJES', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
-                    #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec']), plot.samples_to_plot_final),
-                    # sensitivity.mk_tc('LimitsSystNoUncert', mk_limit_list_syst()),
-                    # sensitivity.mk_tc('LimitsCheck', limit_tcs.mk_limit_list_check_ak8clean), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
-                ]
-            ),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
+            # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
+            #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
+            #     reweighting_list=({'top_pt' : ttbar_reweight}),
+            #     uncertainties=all_uncerts+['top_pt']
+            #     ),
+            make_tp_plot_chain('HTReweighting', base_path, output_dir,
+                weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight},
+                reweighting_list=({'ht_reweight' : ht_reweight}),
+                uncertainties=all_uncerts+['ht_reweight']
+                ),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
@@ -299,6 +284,93 @@ def run_treeproject_and_plot(base_path, output_dir):
         ]
     )
     return tc
+
+# def run_treeproject_and_plot(base_path, output_dir):
+#     tc = varial.tools.ToolChain(
+#         output_dir,
+#         [
+#             git.GitAdder(),
+#             varial.tools.ToolChain(
+#                 'Inputs', [
+#                     treeproject_tptp.mk_tp(base_path, final_regions),
+#                     # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorWithTopPtReweight'),
+#                     # treeproject_tptp.mk_tp(base_path, final_regions, name='TreeProjectorNoTopPtReweight', top_pt_weight='weight'),
+#                     treeproject_tptp.mk_sys_tps(base_path, final_regions),
+#                 ]
+#             ),
+#             varial.tools.ToolChain(
+#                 'Histograms',
+#                 [
+#                     plot.mk_toolchain('HistogramsAll', [output_dir+'/Inputs/TreeProjector/*.root']
+#                         + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+#                         ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain('HistogramsHTReweightOnly', [output_dir+'/Inputs/TreeProjector/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['ht_reweight'])
+#                     #     ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain_pull('HistogramsAllPull', [output_dir+'/Inputs/TreeProjector/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+#                     #     ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
+#                     # plot.mk_toolchain_norm_pull('HistogramsNormToIntPull', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm']), plot.samples_to_plot_final),
+#                     # plot.mk_toolchain_norm('HistogramsNormToIntAll', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts), plot.samples_to_plot_final),
+#                     # plot.mk_toolchain('HistogramsWithTopPtReweight', [output_dir+'/Inputs/TreeProjectorWithTopPtReweight/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+#                     #     ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain('HistogramsNoTopPtReweight', [output_dir+'/Inputs/TreeProjectorNoTopPtReweight/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in uncerts)
+#                     #     ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain('HistogramsOnlyTheory', [output_dir+'/Inputs/TreeProjector/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
+#                     #     ,plot.samples_to_plot_final),
+#                     # plot.mk_toolchain_pull('HistogramsOnlyTheoryPull', [output_dir+'/Inputs/TreeProjector/*.root']
+#                     #     + list(output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in theory_uncerts)
+#                     #     ,plot.samples_to_plot_final),
+#                     # sensitivity.mk_tc('LimitsSystTestNorm', mk_limit_list_syst(list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['Norm'])
+#                     #     )),
+#                     # plot.mk_toolchain('HistogramsOnlyPdfAndScale', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                         # output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['PDF', 'ScaleVar']), plot.samples_to_plot_final),
+#                     # sensitivity.mk_tc('LimitsSystOnlyPdfAndScale', mk_limit_list_syst([
+#                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+#                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
+#                     #     ])),
+#                     # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJE', mk_limit_list_syst([
+#                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+#                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
+#                     #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
+#                     #     ])),
+#                     # plot.mk_toolchain('HistogramsOnlyJE', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec', 'jer']), plot.samples_to_plot_final),
+#                     # sensitivity.mk_tc('LimitsSystOnlyJE', mk_limit_list_syst([
+#                     #     output_dir+'/Inputs/SysTreeProjectors/je*/*.root',
+#                     #     ])),
+#                     # sensitivity.mk_tc('LimitsSystOnlyJEC', mk_limit_list_syst([
+#                     #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
+#                     #     ])),
+#                     # sensitivity.mk_tc('LimitsSystOnlyPdfScaleAndJEC', mk_limit_list_syst([
+#                     #     output_dir+'/Inputs/SysTreeProjectors/PDF*/*.root',
+#                     #     output_dir+'/Inputs/SysTreeProjectors/Scale*/*.root',
+#                     #     output_dir+'/Inputs/SysTreeProjectors/jec*/*.root',
+#                     #     ])),
+#                     # plot.mk_toolchain('HistogramsOnlyJES', [output_dir+'/Inputs/TreeProjector/*.root'] + list(
+#                     #     output_dir+'/Inputs/SysTreeProjectors/%s*/*.root'%i for i in ['jec']), plot.samples_to_plot_final),
+#                     # sensitivity.mk_tc('LimitsSystNoUncert', mk_limit_list_syst()),
+#                     # sensitivity.mk_tc('LimitsCheck', limit_tcs.mk_limit_list_check_ak8clean), # , output_dir+'/Inputs/SysTreeProjectors/*/*.root'
+#                 ]
+#             ),
+#             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
+#             varial.tools.WebCreator(),
+#             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
+
+#             # varial.tools.PrintToolTree(),
+#             # tex_content.tc,
+#             # varial.tools.CopyTool('~/www/auth/VLQ2HT', use_rsync=True),
+#         ]
+#     )
+#     return tc
 
 
 varial.settings.try_reuse_results = True

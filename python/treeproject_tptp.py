@@ -124,43 +124,37 @@ samples_no_data = background_samples + signal_samples
 
 base_weight = 'weight'
 
-# values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
-p0_from1000 = 1.252481
-p1_from1000 = -0.000216602
+# # values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
+# # p0_from1000 = 1.252481
+# # p1_from1000 = -0.000216602
 
-p0_from0 = 1.353281
-p1_from0 = -0.000251745
+# # p0_from0 = 1.353281
+# # p1_from0 = -0.000251745
 
-# values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
+# # values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
 
-p0_from0_no_top_pt_reweight = 1.165688
-p1_from0_no_top_pt_reweight = -0.000236061
+# p0_from0_no_top_pt_reweight = 1.165688
+# p1_from0_no_top_pt_reweight = -0.000236061
 
-ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
-ttbar_reweight = '*(weight_ttbar/0.9910819)'
+# ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+# ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
-sample_weights = {
-    'TTbar' : base_weight+ht_reweight,
+sample_weights_def = {
+    'TTbar' : base_weight,
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
     'WJets' : base_weight,
     'Run2015D' : '1',
 }
-sample_weights.update(dict((f, 'weight') for f in signal_samples))
+sample_weights_def.update(dict((f, 'weight') for f in signal_samples))
 
 
 import tptp_selections_treeproject as sel
 
 
-def mk_tp(input_pat, final_regions, samples=samples, name='TreeProjector', top_pt_weight=None):
-    if top_pt_weight:
-        new_sample_weights = dict(sample_weights)
-        new_sample_weights.update({'TTbar' : top_pt_weight})
-        weights = new_sample_weights
-    else:
-        weights = sample_weights
-        # varial.settings.top_pt_weight = top_pt_weight
+def mk_tp(input_pat, final_regions, samples=samples, name='TreeProjector', weights=None):
+    sample_weights = weights or sample_weights_def
     sec_sel_weight = list((g, f, weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
     filenames = dict(
@@ -175,7 +169,8 @@ def mk_tp(input_pat, final_regions, samples=samples, name='TreeProjector', top_p
     )
 
 
-def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
+def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None, reweighting_list=None):
+    sample_weights = weights or sample_weights_def
     # some defs
     # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/'\
     #     'CMSSW_7_4_15_patch1/src/UHH2/VLQToHiggsPairProd/Samples-25ns-v2/'\
@@ -276,7 +271,6 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
         for name, ssw in sys_sec_sel_weight_pdf
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
-    # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
     # sys_tps += [
     #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
     #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
@@ -313,24 +307,49 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
         for name, ssw in sys_sec_sel_weight_scalevar
     )
     sys_tps_scalevar += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_env)]
-    # sys_tps_pdf += list(GenUncertHistoSquash(s) for s in samples_no_data)
-    # sys_tps += [
-    #     varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
-    # ]
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
+    ]
 
-    sample_weights_top_pt_down = dict(sample_weights)
-    sample_weights_top_pt_up = dict(sample_weights)
-    sample_weights_top_pt_down.update({'TTbar' : base_weight+ttbar_reweight+ttbar_reweight})
-    sample_weights_top_pt_up.update({'TTbar' : base_weight})
+    if isinstance(reweighting_list, dict):
+        for n, weight in reweighting_list.iteritems():
+            sample_weights_reweight_down = dict(sample_weights)
+            sample_weights_reweight_up = dict(sample_weights)
+            sample_weights_reweight_down.update({'TTbar' : base_weight+weight+weight})
+            sample_weights_reweight_up.update({'TTbar' : base_weight})
 
-    sys_sec_sel_weight_top_pt_weight = (
-        ('top_pt_weight__minus', list((g, f, sample_weights_top_pt_down) for g, f in final_regions)),
-        ('top_pt_weight__plus', list((g, f, sample_weights_top_pt_up) for g, f in final_regions))
-    )
+            sys_sec_sel_weight_reweight_weight = (
+                (n+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
+                (n+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
+            )
+            sys_tps += list(
+                TreeProjector(
+                    filenames,
+                    sys_params, 
+                    ssw,
+                    add_aliases_to_analysis=False,
+                    name=name,
+                )
+                for name, ssw in sys_sec_sel_weight_reweight_weight
+            )
+
+    # sample_weights_ht_reweight_down = dict(sample_weights)
+    # sample_weights_ht_reweight_up = dict(sample_weights)
+    # sample_weights_ht_reweight_down.update({
+    #     'TTbar' : base_weight+ht_reweight+ht_reweight,
+    #     })
+    # sample_weights_ht_reweight_up.update({
+    #     'TTbar' : base_weight,
+    #     })
+
+    # sys_sec_sel_weight_ht_weight = (
+    #     ('ht_reweight__minus', list((g, f, sample_weights_ht_reweight_down) for g, f in final_regions)),
+    #     ('ht_reweight__plus', list((g, f, sample_weights_ht_reweight_up) for g, f in final_regions))
+    # )
     # sys_tps += list(
     #     TreeProjector(
     #         filenames,
@@ -339,32 +358,8 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors'):
     #         add_aliases_to_analysis=False,
     #         name=name,
     #     )
-    #     for name, ssw in sys_sec_sel_weight_top_pt_weight
+    #     for name, ssw in sys_sec_sel_weight_ht_weight
     # )
-
-    sample_weights_ht_reweight_down = dict(sample_weights)
-    sample_weights_ht_reweight_up = dict(sample_weights)
-    sample_weights_ht_reweight_down.update({
-        'TTbar' : base_weight+ht_reweight+ht_reweight,
-        })
-    sample_weights_ht_reweight_up.update({
-        'TTbar' : base_weight,
-        })
-
-    sys_sec_sel_weight_ht_weight = (
-        ('ht_reweight__minus', list((g, f, sample_weights_ht_reweight_down) for g, f in final_regions)),
-        ('ht_reweight__plus', list((g, f, sample_weights_ht_reweight_up) for g, f in final_regions))
-    )
-    sys_tps += list(
-        TreeProjector(
-            filenames,
-            sys_params, 
-            ssw,
-            add_aliases_to_analysis=False,
-            name=name,
-        )
-        for name, ssw in sys_sec_sel_weight_ht_weight
-    )
 
     for tp in sys_tps:
         iteration[0] += 1
