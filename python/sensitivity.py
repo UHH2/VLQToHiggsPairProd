@@ -13,6 +13,7 @@ import varial.wrappers as wrappers
 import varial.plotter
 import varial.rendering
 import varial.settings
+import varial.operations
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
@@ -124,9 +125,18 @@ def select_single_sig(categories=None, var='', signal=''):
             return True
     return tmp
 
+def rebin_st(wrps):
+    # st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    for w in wrps:
+        if w.in_file_path.endswith('ST'):
+            w = varial.operations.rebin_nbins_max(w, 20)
+            # w = varial.operations.rebin(w, st_bounds, True)
+        yield w
+
 def loader_hook(brs):
     def temp(wrps):
         wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
+        wrps = rebin_st(wrps)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct={
                 'TpTp_M-0700' : 1./0.455,
@@ -278,6 +288,14 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
         filter_keyfunc=filter_keyfunc,
         hook_loaded_histos=loader_hook(brs)
     )
+    plotter = varial.tools.Plotter(
+        name='Plotter',
+        input_result_path='../HistoLoader',
+        plot_grouper=lambda ws: varial.gen.group(
+            ws, key_func=lambda w: w.category),
+        plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+        save_name_func=lambda w: w.category
+    )
     limits = TpTpThetaLimits(
         name='ThetaLimit',
         # input_path= '../HistoLoader',
@@ -314,9 +332,9 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
                 w, '../Limit'+name),
             # name='PostFitPlot',
         )
-        return [loader, sys_loader, limits, postfit] # , plotter_postfit
+        return [loader, plotter, sys_loader, limits, postfit] # , plotter_postfit
     else:
-        return [loader, limits]
+        return [loader, plotter, limits]
 
 
 # tool_list.append(TriangleLimitPlots())

@@ -21,17 +21,14 @@ core_histos = {
     'pt_subld_ak4_jet'              : ('Pt subleading Ak4 Jet',             60, 0., 1500.),
     'pt_subld_ak8_jet'              : ('Pt subleading Ak8 Jet',             60, 0., 1500.),
     'pt_third_ak4_jet'              : ('Pt third Ak4 Jet',             60, 0., 1500.),
-    'pt_third_ak8_jet'              : ('Pt third Ak8 Jet',             60, 0., 1500.),
     'pt_fourth_ak4_jet'              : ('Pt fourth Ak4 Jet',             60, 0., 1500.),
-    'pt_fifth_ak4_jet'              : ('Pt fifth Ak4 Jet',             60, 0., 1500.),
-    'pt_sixth_ak4_jet'              : ('Pt sixth Ak4 Jet',             60, 0., 1500.),
+    'HT'                            : ('HT',                               45, 0, 4500),
+    'met'                           : ('MET',                              50, 0., 1000.),
+    'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
 }
 
 
 more_histos = {
-    'HT'                            : ('HT',                               45, 0, 4500),
-    'met'                           : ('MET',                              50, 0., 1000.),
-    'primary_lepton_pt'             : ('Primary Lepton p_T',               90, 0., 900.),
     'primary_muon_pt'               : ('Primary Muon p_T',                 90, 0., 900.),
     'primary_electron_pt'           : ('Primary Electron p_T',             90, 0., 900.),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
@@ -48,6 +45,9 @@ more_histos = {
     'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'trigger_accept_isoEl27'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'is_muon'                       : ('Prim. Lep. is Muon',                2, -.5, 1.5),
+    'pt_fifth_ak4_jet'              : ('Pt fifth Ak4 Jet',             60, 0., 1500.),
+    'pt_sixth_ak4_jet'              : ('Pt sixth Ak4 Jet',             60, 0., 1500.),
+    'pt_third_ak8_jet'              : ('Pt third Ak8 Jet',             60, 0., 1500.),
     # 'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
     # 'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
     # 'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
@@ -190,19 +190,19 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None,
     )
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     sys_tps = []
-    # sys_tps = list(
-    #     TreeProjector(
-    #         dict(
-    #             (sample, list(f for f in glob.glob(pat) if sample in f))
-    #             for sample in samples_no_data
-    #         ), 
-    #         sys_params, 
-    #         nominal_sec_sel_weight,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, pat in jercs
-    # )
+    sys_tps = list(
+        TreeProjector(
+            dict(
+                (sample, list(f for f in glob.glob(pat) if sample in f))
+                for sample in samples_no_data
+            ), 
+            sys_params, 
+            nominal_sec_sel_weight,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, pat in jercs
+    )
 
     # next put together nominal samples with with weight uncerts.
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
@@ -219,12 +219,12 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None,
             ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
             ('btag_udsg__minus', '*weight_btag_udsg_down/weight_btag'),
             ('btag_udsg__plus', '*weight_btag_udsg_up/weight_btag'),
-            ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
-            ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
-            ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
-            ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
-            ('pu__minus', '*weight_pu_down/weight_pu'),
-            ('pu__plus', '*weight_pu_up/weight_pu'),
+            # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+            # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+            # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+            # ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+            # ('pu__minus', '*weight_pu_down/weight_pu'),
+            # ('pu__plus', '*weight_pu_up/weight_pu'),
             # ('ak4_jetpt__minus', '*weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )

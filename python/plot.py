@@ -224,41 +224,13 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
-def rebin_st_and_nak4(wrps):
-    st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
-    nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
-    for w in wrps:
-        if w.in_file_path.endswith('ST'):
-            new_w = op.rebin(w, st_bounds, True)
-            new_w.name = 'ST_rebin'
-            new_w.in_file_path = w.in_file_path.replace('ST', 'ST_rebin')
-            yield new_w
-        if w.in_file_path.endswith('/HT'):
-            new_w = op.rebin(w, st_bounds, True)
-            new_w.name = 'HT_rebin'
-            new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
-            yield new_w
-        if w.in_file_path.endswith('/ht_gen_reco'):
-            new_w = op.rebin(w, st_bounds, True)
-            new_w.name = 'ht_gen_reco_rebin'
-            new_w.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin')
-            yield new_w
-        if w.in_file_path.endswith('n_ak4'):
-            new_w = op.rebin(w, nak4_bounds, True)
-            new_w.name = 'n_ak4_rebin'
-            new_w.in_file_path = w.in_file_path.replace('n_ak4', 'n_ak4_rebin')
-            yield new_w  
-        if w.in_file_path.endswith('primary_lepton_pt'):
-            w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
-        elif not isinstance(w.histo, TH2):
-            w = op.rebin_nbins_max(w, 60)
-        yield w
+
 
 
 
 def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
-    wrps = rebin_st_and_nak4(wrps)
+    wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_plot.mod_bin(wrps)
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
@@ -401,18 +373,18 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
-            # varial.plotter.RootFilePlotter(
-            #     pattern=src,
-            #     # input_result_path='../HistoLoader',
-            #     name='CompareUncerts',
-            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
-            #     # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
-            #     # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-            #     plotter_factory=plotter_factory_uncerts(**kws),
-            #     # combine_files=True,
-            #     auto_legend=False
-            #     # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-            #     ),
+            varial.plotter.RootFilePlotter(
+                pattern=src,
+                # input_result_path='../HistoLoader',
+                name='CompareUncerts',
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
+                # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
+                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+                plotter_factory=plotter_factory_uncerts(**kws),
+                # combine_files=True,
+                auto_legend=False
+                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+                ),
             
             ]
         if categories:

@@ -9,7 +9,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 import varial.operations as op
 import varial.wrappers
 
-from ROOT import THStack
+from ROOT import THStack, TH2
 
 # common_datasets_to_plot = [
 #     'Run2015D',
@@ -220,8 +220,8 @@ def mod_title(wrps):
 def mod_bin(wrps):
     for w in wrps:
         # print w.histo.GetXaxis.GetTitle()
-        if w.in_file_path == 'SignalRegion2b_Mu45/ST':
-            w = op.rebin_nbins_max(w, 20)
+        # if w.in_file_path == 'SignalRegion2b_Mu45/ST':
+        #     w = op.rebin_nbins_max(w, 20)
         if w.in_file_path.endswith('mass_sj'):
             w = op.rebin_nbins_max(w, 30)
         yield w
@@ -282,6 +282,42 @@ def add_sample_integrals(canvas_builders):
             for legend, integ in integral(r)
         ))
         yield cnv
+
+
+
+
+def rebin_st_and_nak4(wrps):
+    # st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
+    for w in wrps:
+        if w.in_file_path.endswith('ST'):
+            new_w = op.rebin_nbins_max(w, 20)
+            # new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'ST_rebin'
+            new_w.in_file_path = w.in_file_path.replace('ST', 'ST_rebin')
+            yield new_w
+        if w.in_file_path.endswith('/HT'):
+            new_w = op.rebin_nbins_max(w, 20)
+            # new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'HT_rebin'
+            new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
+            yield new_w
+        if w.in_file_path.endswith('/ht_gen_reco'):
+            new_w = op.rebin_nbins_max(w, 20)
+            # new_w = op.rebin(w, st_bounds, True)
+            new_w.name = 'ht_gen_reco_rebin'
+            new_w.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin')
+            yield new_w
+        if w.in_file_path.endswith('n_ak4'):
+            new_w = op.rebin(w, nak4_bounds, True)
+            new_w.name = 'n_ak4_rebin'
+            new_w.in_file_path = w.in_file_path.replace('n_ak4', 'n_ak4_rebin')
+            yield new_w  
+        if w.in_file_path.endswith('primary_lepton_pt'):
+            w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
+        elif not isinstance(w.histo, TH2):
+            w = op.rebin_nbins_max(w, 60)
+        yield w
 
 
 

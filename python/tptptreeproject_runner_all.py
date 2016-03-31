@@ -64,11 +64,11 @@ def mk_limit_list_syst(sys_pat=None):
                 'ThetaLimits', list(varial.tools.ToolChain(
                     sig,
                     sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
-                        'SignalRegion2b_Mu45',
-                        'SignalRegion1b_Mu45',
+                        # 'SignalRegion2b_Mu45',
+                        # 'SignalRegion1b_Mu45',
                         'SidebandRegion_Mu45',
-                        'SignalRegion2b_El45',
-                        'SignalRegion1b_El45',
+                        # 'SignalRegion2b_El45',
+                        # 'SignalRegion1b_El45',
                         'SidebandRegion_El45',
                         ],
                         'ST', sig),
@@ -126,7 +126,8 @@ def mk_tex_tc_post(base):
 
 baseline_selection = [
     'gendecay_accept          == 1',
-    'n_ak8                    >= 2'
+    'n_ak8                    >= 2',
+    'ST                       > 800'
 ]
 
 # final regions
@@ -193,8 +194,8 @@ final_regions = (
 
 
 all_uncerts = [
-    # 'jec',
-    # 'jer',
+    'jec',
+    'jer',
     # 'btag_bc',
     # 'btag_udsg',
     # 'sfmu_id',
@@ -247,15 +248,27 @@ def make_tp_plot_chain(name, base_path, output_dir,
             treeproject_tptp.mk_sys_tps(base_path, final_regions,
                 weights=weights,
                 reweighting_list=reweighting_list),
+            sensitivity.mk_tc('LimitsRebinAll', mk_limit_list_syst(
+                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                )),
+            sensitivity.mk_tc('LimitsRebinNoJEC', mk_limit_list_syst(
+                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts if i not in ['jec', 'jer'])
+                )),
+            sensitivity.mk_tc('LimitsRebinOnlyJE', mk_limit_list_syst(
+                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts if i not in ['ScaleVar', 'ht_reweight', 'top_pt_weight'])
+                )),
+            # sensitivity.mk_tc('LimitsRebinOnlyJES', mk_limit_list_syst(
+            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in ['jec'])
+            #     )),
+            # sensitivity.mk_tc('LimitsRebinOnlyJER', mk_limit_list_syst(
+            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in ['jer'])
+            #     )),
             plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
                         + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
             plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
                         + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
-            sensitivity.mk_tc('Limits', mk_limit_list_syst(
-                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                )),
         ])
 
 def run_treeproject_and_plot(base_path, output_dir):
@@ -263,7 +276,7 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
+            make_tp_plot_chain('NoReweighting', base_path, output_dir),
             # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
             #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
             #     reweighting_list=({'top_pt' : ttbar_reweight}),
