@@ -130,7 +130,7 @@ def rebin_st(wrps):
     for w in wrps:
         if w.in_file_path.endswith('ST'):
             w = varial.operations.rebin_nbins_max(w, 20)
-            # w = varial.operations.rebin(w, st_bounds, True)
+            # w = varial.operations.rebin(w, st_bounds, False)
         yield w
 
 def loader_hook(brs):

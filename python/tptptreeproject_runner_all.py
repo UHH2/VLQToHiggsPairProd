@@ -65,10 +65,10 @@ def mk_limit_list_syst(sys_pat=None):
                     sig,
                     sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
                         # 'SignalRegion2b_Mu45',
-                        # 'SignalRegion1b_Mu45',
+                        'SignalRegion1b_Mu45',
                         'SidebandRegion_Mu45',
                         # 'SignalRegion2b_El45',
-                        # 'SignalRegion1b_El45',
+                        'SignalRegion1b_El45',
                         'SidebandRegion_El45',
                         ],
                         'ST', sig),
@@ -248,13 +248,13 @@ def make_tp_plot_chain(name, base_path, output_dir,
             treeproject_tptp.mk_sys_tps(base_path, final_regions,
                 weights=weights,
                 reweighting_list=reweighting_list),
-            sensitivity.mk_tc('LimitsRebinAll', mk_limit_list_syst(
+            sensitivity.mk_tc('LimitsRebinPlusH1BAll', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                 )),
-            sensitivity.mk_tc('LimitsRebinNoJEC', mk_limit_list_syst(
+            sensitivity.mk_tc('LimitsRebinPlusH1BNoJEC', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts if i not in ['jec', 'jer'])
                 )),
-            sensitivity.mk_tc('LimitsRebinOnlyJE', mk_limit_list_syst(
+            sensitivity.mk_tc('LimitsRebinPlusH1BOnlyJE', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts if i not in ['ScaleVar', 'ht_reweight', 'top_pt_weight'])
                 )),
             # sensitivity.mk_tc('LimitsRebinOnlyJES', mk_limit_list_syst(
@@ -276,7 +276,7 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            make_tp_plot_chain('NoReweighting', base_path, output_dir),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
             # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
             #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
             #     reweighting_list=({'top_pt' : ttbar_reweight}),
