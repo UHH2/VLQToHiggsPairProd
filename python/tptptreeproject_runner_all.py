@@ -277,16 +277,16 @@ def run_treeproject_and_plot(base_path, output_dir):
         [
             git.GitAdder(),
             # make_tp_plot_chain('NoReweighting', base_path, output_dir),
-            # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
-            #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
-            #     reweighting_list=({'top_pt' : ttbar_reweight}),
-            #     uncertainties=all_uncerts+['top_pt']
-            #     ),
-            make_tp_plot_chain('HTReweighting', base_path, output_dir,
-                weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight},
-                reweighting_list=({'ht_reweight' : ht_reweight}),
-                uncertainties=all_uncerts+['ht_reweight']
+            make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
+                weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
+                reweighting_list=({'top_pt' : ttbar_reweight}),
+                uncertainties=all_uncerts+['top_pt']
                 ),
+            # make_tp_plot_chain('HTReweighting', base_path, output_dir,
+            #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight},
+            #     reweighting_list=({'ht_reweight' : ht_reweight}),
+            #     uncertainties=all_uncerts+['ht_reweight']
+            #     ),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
