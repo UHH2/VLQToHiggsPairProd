@@ -64,11 +64,11 @@ def mk_limit_list_syst(sys_pat=None):
                 'ThetaLimits', list(varial.tools.ToolChain(
                     sig,
                     sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
-                        'SignalRegion2b_Mu45',
-                        'SignalRegion1b_Mu45',
+                        # 'SignalRegion2b_Mu45',
+                        # 'SignalRegion1b_Mu45',
                         'SidebandRegion_Mu45',
-                        'SignalRegion2b_El45',
-                        'SignalRegion1b_El45',
+                        # 'SignalRegion2b_El45',
+                        # 'SignalRegion1b_El45',
                         'SidebandRegion_El45',
                         ],
                         'ST', sig),
@@ -248,7 +248,7 @@ def make_tp_plot_chain(name, base_path, output_dir,
             treeproject_tptp.mk_sys_tps(base_path, final_regions,
                 weights=weights,
                 reweighting_list=reweighting_list),
-            sensitivity.mk_tc('LimitsRebinCompleteSignalsAll', mk_limit_list_syst(
+            sensitivity.mk_tc('LimitsRebin2All', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                 )),
             # sensitivity.mk_tc('LimitsRebinCompleteSignalsNoJEC', mk_limit_list_syst(
