@@ -28,7 +28,7 @@ def get_model(hist_dir, final_states):
     model.add_lognormal_uncertainty('zjets_rate', math.log(1.50), 'DYJets')
     model.add_lognormal_uncertainty('singlet_rate', math.log(1.50), 'SingleTop')
     for smpl in background_samples:
-        model.add_lognormal_uncertainty('luminosity', math.log(1.046), smpl)
+        model.add_lognormal_uncertainty('luminosity', math.log(1.027), smpl)
     # try:
     #     for smpl in background_samples:
     #         model.add_lognormal_uncertainty('el_trg+id', math.log(1.05), smpl, 'SignalRegion2b_El45')
@@ -50,14 +50,6 @@ def get_model(hist_dir, final_states):
     #         'WARNING Cannot apply lognormal uncert for mu-trg (in ele-chan?).'
     #     )
     
-    # model.add_lognormal_uncertainty('tptp700_rate', math.log(1.15), 'TpTp_M-700')
-    # model.add_lognormal_uncertainty('tptp800_rate', math.log(1.15), 'TpTp_M-800')
-    # model.add_lognormal_uncertainty('tptp900_rate', math.log(1.15), 'TpTp_M-900')
-    # model.add_lognormal_uncertainty('tptp1000_rate', math.log(1.15), 'TpTp_M-1000')
-    # # model.add_lognormal_uncertainty('tptp1100_rate', math.log(1.15), 'TpTp_M-1100')
-    # model.add_lognormal_uncertainty('tptp1200_rate', math.log(1.15), 'TpTp_M-1200')
-    # model.add_lognormal_uncertainty('tptp1400_rate', math.log(1.15), 'TpTp_M-1400')
-    # model.add_lognormal_uncertainty('tptp1600_rate', math.log(1.15), 'TpTp_M-1600')
     # for p in model.processes:
     #     if p == 'QCD': continue
     #     model.add_lognormal_uncertainty('lumi', 0.026, p)

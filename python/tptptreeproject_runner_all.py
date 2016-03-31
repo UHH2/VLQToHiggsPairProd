@@ -196,23 +196,24 @@ final_regions = (
 all_uncerts = [
     'jec',
     'jer',
-    # 'btag_bc',
-    # 'btag_udsg',
-    # 'sfmu_id',
-    # 'sfmu_trg',
-    # 'pu',
-    # 'PDF',
+    'btag_bc',
+    'btag_udsg',
+    'sfmu_id',
+    'sfmu_trg',
+    'pu',
+    'PDF',
     'ScaleVar',
+    'rate'
     # 'top_pt_weight',
     # 'ht_reweight'
 ]
 
-theory_uncerts = [
-    'PDF',
-    'ScaleVar',
-    'top_pt_weight',
-    'ht_reweight'
-]
+# theory_uncerts = [
+#     'PDF',
+#     'ScaleVar',
+#     'top_pt_weight',
+#     'ht_reweight'
+# ]
 
 # values below from FinalSelection-v14/RunWJetsSideband/fit_results_ht_sideband_w_toppt_reweight.txt
 # p0_from1000 = 1.252481
@@ -232,6 +233,8 @@ p0_from0_no_top_pt_reweight = 1.10761085
 p1_from0_no_top_pt_reweight = -0.000273785
 
 ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
 ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 def make_tp_plot_chain(name, base_path, output_dir,
@@ -248,7 +251,7 @@ def make_tp_plot_chain(name, base_path, output_dir,
             treeproject_tptp.mk_sys_tps(base_path, final_regions,
                 weights=weights,
                 reweighting_list=reweighting_list),
-            sensitivity.mk_tc('LimitsRebin2All', mk_limit_list_syst(
+            sensitivity.mk_tc('LimitsCompleteSignalAll', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                 )),
             # sensitivity.mk_tc('LimitsRebinCompleteSignalsNoJEC', mk_limit_list_syst(

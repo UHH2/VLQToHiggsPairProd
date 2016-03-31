@@ -219,26 +219,28 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None,
             ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
             ('btag_udsg__minus', '*weight_btag_udsg_down/weight_btag'),
             ('btag_udsg__plus', '*weight_btag_udsg_up/weight_btag'),
-            # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
-            # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
-            # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
-            # ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
-            # ('pu__minus', '*weight_pu_down/weight_pu'),
-            # ('pu__plus', '*weight_pu_up/weight_pu'),
+            ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+            ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+            ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+            ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+            ('pu__minus', '*weight_pu_down/weight_pu'),
+            ('pu__plus', '*weight_pu_up/weight_pu'),
+            ('rate__minus', '*0.95'), # for 2D-cut and el/add. mu trg uncertainty
+            ('rate__plus', '*1.05'), # for 2D-cut and el/add. mu trg uncertainty
             # ('ak4_jetpt__minus', '*weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    # sys_tps += list(
-    #     TreeProjector(
-    #         filenames,
-    #         sys_params, 
-    #         ssw,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, ssw in sys_sec_sel_weight
-    # )
+    sys_tps += list(
+        TreeProjector(
+            filenames,
+            sys_params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight
+    )
 
     # PDF uncertainties
     with open('weight_dict_pdf') as f:
@@ -271,13 +273,13 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None,
         for name, ssw in sys_sec_sel_weight_pdf
     )
     sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
-    # sys_tps += [
-    #     varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
-    #     GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
-    # ]
+    sys_tps += [
+        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
+        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
+    ]
 
     # Scale Variation uncertainties
     with open('weight_dict_scale') as f:
@@ -336,30 +338,6 @@ def mk_sys_tps(base_path, final_regions, name='SysTreeProjectors', weights=None,
                 )
                 for name, ssw in sys_sec_sel_weight_reweight_weight
             )
-
-    # sample_weights_ht_reweight_down = dict(sample_weights)
-    # sample_weights_ht_reweight_up = dict(sample_weights)
-    # sample_weights_ht_reweight_down.update({
-    #     'TTbar' : base_weight+ht_reweight+ht_reweight,
-    #     })
-    # sample_weights_ht_reweight_up.update({
-    #     'TTbar' : base_weight,
-    #     })
-
-    # sys_sec_sel_weight_ht_weight = (
-    #     ('ht_reweight__minus', list((g, f, sample_weights_ht_reweight_down) for g, f in final_regions)),
-    #     ('ht_reweight__plus', list((g, f, sample_weights_ht_reweight_up) for g, f in final_regions))
-    # )
-    # sys_tps += list(
-    #     TreeProjector(
-    #         filenames,
-    #         sys_params, 
-    #         ssw,
-    #         add_aliases_to_analysis=False,
-    #         name=name,
-    #     )
-    #     for name, ssw in sys_sec_sel_weight_ht_weight
-    # )
 
     for tp in sys_tps:
         iteration[0] += 1

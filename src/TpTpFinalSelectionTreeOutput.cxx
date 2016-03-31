@@ -218,7 +218,9 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
 
     if (type == "MC") {
-        pre_modules.emplace_back(new JetResolutionSmearer(ctx));    
+        pre_modules.emplace_back(new JetResolutionSmearer(ctx));
+        ctx.declare_event_output<double>("gen_ht");
+        ctx.declare_event_output<double>("parton_ht");
     }
     pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
