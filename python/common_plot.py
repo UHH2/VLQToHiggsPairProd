@@ -291,7 +291,7 @@ def rebin_st_and_nak4(wrps):
     nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
     for w in wrps:
         if w.in_file_path.endswith('ST'):
-            new_w = op.rebin_nbins_max(w, 30)
+            new_w = op.rebin_nbins_max(w, 20)
             # new_w = op.rebin(w, st_bounds, True)
             new_w.name = 'ST_rebin'
             new_w.in_file_path = w.in_file_path.replace('ST', 'ST_rebin')
@@ -302,7 +302,7 @@ def rebin_st_and_nak4(wrps):
             new_w_flex.in_file_path = w.in_file_path.replace('ST', 'ST_rebin_flex')
             yield new_w_flex
         if w.in_file_path.endswith('/HT'):
-            new_w = op.rebin_nbins_max(w, 30)
+            new_w = op.rebin_nbins_max(w, 20)
             # new_w = op.rebin(w, st_bounds, True)
             new_w.name = 'HT_rebin'
             new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
@@ -313,7 +313,7 @@ def rebin_st_and_nak4(wrps):
             new_w_flex.in_file_path = w.in_file_path.replace('HT', 'HT_rebin_flex')
             yield new_w_flex
         if w.in_file_path.endswith('/ht_gen_reco'):
-            new_w = op.rebin_nbins_max(w, 30)
+            new_w = op.rebin_nbins_max(w, 20)
             # new_w = op.rebin(w, st_bounds, True)
             new_w.name = 'ht_gen_reco_rebin'
             new_w.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin')

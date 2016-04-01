@@ -64,11 +64,11 @@ def mk_limit_list_syst(sys_pat=None):
                 'ThetaLimits', list(varial.tools.ToolChain(
                     sig,
                     sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig([
-                        # 'SignalRegion2b_Mu45',
-                        # 'SignalRegion1b_Mu45',
+                        'SignalRegion2b_Mu45',
+                        'SignalRegion1b_Mu45',
                         'SidebandRegion_Mu45',
-                        # 'SignalRegion2b_El45',
-                        # 'SignalRegion1b_El45',
+                        'SignalRegion2b_El45',
+                        'SignalRegion1b_El45',
                         'SidebandRegion_El45',
                         ],
                         'ST', sig),
@@ -225,16 +225,17 @@ all_uncerts = [
 # values below from FinalSelection-v14/RunCompTopPtWeight/fit_results_ht_sideband_no_toppt_reweight.txt
 
 # values from mean of SidebandRegion
-# p0_from0_no_top_pt_reweight = 1.165688
-# p1_from0_no_top_pt_reweight = -0.000236061
+p0_from0_no_top_pt_reweight_0 = 1.165688
+p1_from0_no_top_pt_reweight_0 = -0.000236061
 
 # values from mean of SidebandTTJetsRegion
-p0_from0_no_top_pt_reweight = 1.10761085
-p1_from0_no_top_pt_reweight = -0.000273785
+p0_from0_no_top_pt_reweight_1 = 1.10761085
+p1_from0_no_top_pt_reweight_1 = -0.000273785
 
-ht_reweight = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
-gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
-parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+ht_reweight_0 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
+ht_reweight_1 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_1, p1_from0_no_top_pt_reweight_1)
+# gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+# parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
 ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 def make_tp_plot_chain(name, base_path, output_dir,
@@ -254,6 +255,9 @@ def make_tp_plot_chain(name, base_path, output_dir,
             sensitivity.mk_tc('LimitsCompleteSignalAll', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                 )),
+            # sensitivity.mk_tc('LimitsCompleteSignalOnlyJEC', mk_limit_list_syst(
+            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #     )),
             # sensitivity.mk_tc('LimitsRebinCompleteSignalsNoJEC', mk_limit_list_syst(
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts if i not in ['jec', 'jer'])
             #     )),
@@ -279,17 +283,27 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
             # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
             #     weight_dict={'TTbar' : treeproject_tptp.base_weight+ttbar_reweight},
             #     reweighting_list=({'top_pt' : ttbar_reweight}),
             #     uncertainties=all_uncerts+['top_pt']
             #     ),
             make_tp_plot_chain('HTReweighting', base_path, output_dir,
-                weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight},
-                reweighting_list=({'ht_reweight' : ht_reweight}),
+                weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+                reweighting_list=({'ht_reweight' : ht_reweight_1}),
                 uncertainties=all_uncerts+['ht_reweight']
                 ),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
+            # make_tp_plot_chain('GenHTReweighting', base_path, output_dir,
+            #     weight_dict={'TTbar' : treeproject_tptp.base_weight+gen_ht_reweight},
+            #     reweighting_list=({'gen_ht_reweight' : gen_ht_reweight}),
+            #     uncertainties=['gen_ht_reweight']
+            #     ),
+            # make_tp_plot_chain('PartonHTReweighting', base_path, output_dir,
+            #     weight_dict={'TTbar' : treeproject_tptp.base_weight+parton_ht_reweight},
+            #     reweighting_list=({'parton_ht_reweight' : parton_ht_reweight}),
+            #     uncertainties=['parton_ht_reweight']
+            #     ),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),

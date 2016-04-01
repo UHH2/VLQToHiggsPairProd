@@ -29,6 +29,8 @@ core_histos = {
 
 
 more_histos = {
+    # 'gen_ht'                            : ('Gen HT',                               45, 0, 4500),
+    # 'parton_ht'                            : ('Parton HT',                               45, 0, 4500),
     'primary_muon_pt'               : ('Primary Muon p_T',                 90, 0., 900.),
     'primary_electron_pt'           : ('Primary Electron p_T',             90, 0., 900.),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
