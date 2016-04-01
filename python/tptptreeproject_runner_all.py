@@ -238,20 +238,53 @@ ht_reweight_1 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_1, p1_from0_n
 # parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
 ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
-def make_tp_plot_chain(name, base_path, output_dir,
-    weight_dict=None, reweighting_list=None, uncertainties=None):
-    if weight_dict:
+
+def add_all_with_weight_uncertainties(weight_name, weight_dict):
+    def add_uncerts(base_path, weights):
+        def tmp():
+            sys_tps = []
+            sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_generic_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
+            return sys_tps
+        return tmp
+    return add_uncerts
+
+def add_only_weight_uncertainties(weight_name, weight_dict):
+    def add_uncerts(base_path, weights):
+        def tmp():
+            sys_tps = []
+            sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
+            return sys_tps
+        return tmp
+    return add_uncerts
+
+def add_all_without_uncertainties(base_path, weights):
+    def tmp():
+        sys_tps = []
+        sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
+        sys_tps += treeproject_tptp.add_generic_uncerts(base_path, final_regions, weights)
+        sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+        sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
+        return sys_tps
+    return tmp
+
+
+def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
+    mod_sample_weights=None, uncertainties=None):
+    if mod_sample_weights:
         weights = dict(treeproject_tptp.sample_weights_def)
-        weights.update(weight_dict)
+        weights.update(mod_sample_weights)
     else:
         weights = treeproject_tptp.sample_weights_def
     uncerts = uncertainties or all_uncerts
     return varial.tools.ToolChain(name,
         [
-            treeproject_tptp.mk_tp(base_path, final_regions, weights=weights),
-            treeproject_tptp.mk_sys_tps(base_path, final_regions,
-                weights=weights,
-                reweighting_list=reweighting_list),
+            treeproject_tptp.mk_tp(base_path, final_regions, weights),
+            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)
+            ),
             sensitivity.mk_tc('LimitsCompleteSignalAll', mk_limit_list_syst(
                 list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                 )),
@@ -288,12 +321,23 @@ def run_treeproject_and_plot(base_path, output_dir):
             #     reweighting_list=({'top_pt' : ttbar_reweight}),
             #     uncertainties=all_uncerts+['top_pt']
             #     ),
-            make_tp_plot_chain('HTReweighting', base_path, output_dir,
-                weight_dict={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
-                reweighting_list=({'ht_reweight' : ht_reweight_1}),
+            # make_tp_plot_chain('HTReweighting', base_path, output_dir,
+            #     add_uncert_func=add_all_with_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_1}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+            #     uncertainties=all_uncerts+['ht_reweight']
+            #     ),
+            make_tp_plot_chain('HTReweightingLow', base_path, output_dir,
+                add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_0}),
+                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_0},
                 uncertainties=all_uncerts+['ht_reweight']
                 ),
-            # make_tp_plot_chain('NoReweighting', base_path, output_dir),
+            make_tp_plot_chain('HTReweightingHigh', base_path, output_dir,
+                add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_1}),
+                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+                uncertainties=all_uncerts+['ht_reweight']
+                ),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
+            #     add_uncert_func=add_all_without_uncertainties),
             # make_tp_plot_chain('GenHTReweighting', base_path, output_dir,
             #     weight_dict={'TTbar' : treeproject_tptp.base_weight+gen_ht_reweight},
             #     reweighting_list=({'gen_ht_reweight' : gen_ht_reweight}),
