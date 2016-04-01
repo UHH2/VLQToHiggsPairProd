@@ -955,7 +955,7 @@ public:
     virtual bool process(Event & event) override {
         double gen_ht = 0.;
         for (const auto & j : *event.genjets) {
-            if (j.pt() > 30){
+            if (j.pt() > 30 && abs(j.eta()) < 2.4){
                 gen_ht += j.pt();
             }
         }

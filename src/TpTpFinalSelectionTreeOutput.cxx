@@ -268,77 +268,77 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 "n_toptags"
                 ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "topjets",
-                "topjets",
-                1.0,
-                "nohtag_allAk8"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "topjets",
+    //             "topjets",
+    //             1.0,
+    //             "nohtag_allAk8"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_1b_med",
-                "topjets",
-                1.0,
-                "h1b_allAk8"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_1b_med",
+    //             "topjets",
+    //             1.0,
+    //             "h1b_allAk8"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_2b_med",
-                "topjets",
-                1.0,
-                "h2b_allAk8"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_2b_med",
+    //             "topjets",
+    //             1.0,
+    //             "h2b_allAk8"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_1b_med",
-                "toptags",
-                1.0,
-                "h1b_toptags"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_1b_med",
+    //             "toptags",
+    //             1.0,
+    //             "h1b_toptags"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_2b_med",
-                "toptags",
-                1.0,
-                "h2b_toptags"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_2b_med",
+    //             "toptags",
+    //             1.0,
+    //             "h2b_toptags"
+    //             ));
 
-    // dR = 2
+    // // dR = 2
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "topjets",
-                "topjets",
-                2.0,
-                "nohtag_allAk8_dr2"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "topjets",
+    //             "topjets",
+    //             2.0,
+    //             "nohtag_allAk8_dr2"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_1b_med",
-                "topjets",
-                2.0,
-                "h1b_allAk8_dr2"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_1b_med",
+    //             "topjets",
+    //             2.0,
+    //             "h1b_allAk8_dr2"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_2b_med",
-                "topjets",
-                2.0,
-                "h2b_allAk8_dr2"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_2b_med",
+    //             "topjets",
+    //             2.0,
+    //             "h2b_allAk8_dr2"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_1b_med",
-                "toptags",
-                2.0,
-                "h1b_toptags_dr2"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_1b_med",
+    //             "toptags",
+    //             2.0,
+    //             "h1b_toptags_dr2"
+    //             ));
 
-    other_modules.emplace_back(new TPrimeMassProducer(ctx,
-                "higgs_tags_2b_med",
-                "toptags",
-                2.0,
-                "h2b_toptags_dr2"
-                ));
+    // other_modules.emplace_back(new TPrimeMassProducer(ctx,
+    //             "higgs_tags_2b_med",
+    //             "toptags",
+    //             2.0,
+    //             "h2b_toptags_dr2"
+    //             ));
 
 
     other_modules.emplace_back(new CollectionProducer<Jet>(ctx,

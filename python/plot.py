@@ -236,7 +236,6 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.norm_smpl(wrps, normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['in_file_path', 'sample'])
-    wrps = list(wrps)
     # for w in wrps: print w.sample, w.in_file_path
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
@@ -259,6 +258,21 @@ def loader_hook_norm_to_int(wrps):
     wrps = varial.gen.gen_merge(wrps)
     wrps = common_plot.norm_to_int(wrps)
     return wrps
+
+# def mk_legend_bkg(wrps):
+#     for w in wrps:
+#         if not w.is_signal and not w.is_data:
+#             w.legend = ""
+
+# def loader_hook_gen_reco_ht_comp(wrps):
+#     key = lambda w: '{0}___{1}___{2}___{3}'.format(w.in_file_path, w.is_data, w.is_signal if not w.is_signal else w.sample, w.sys_info)
+
+#     wrps = loader_hook_finalstates_excl(wrps)
+#     wrps = sorted(wrps, key=key)
+#     wrps = varial.gen.group(wrps, key)
+#     wrps = varial.gen.gen_merge(wrps)
+#     wrps = mk_legend_bkg(wrps)
+#     return wrps
 
 def loader_hook_uncerts(wrps):
     def set_line_width(wrps):
@@ -291,6 +305,20 @@ def group_by_uncerts(wrps, first_sort_func):
             nom_copy = copy.copy(nominal)
             nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
             yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
+
+# def group_gen_reco_ht(wrps):
+
+#     wrps = itertools.groupby(wrps, first_sort_func)
+#     for k1, g in wrps:
+#         g = sorted(g, key=lambda w: '{0}'.format())
+#         g = list(g)
+#         nominal = g[0]
+#         sys_uncerts = itertools.groupby(g[1:], sort_key_func)
+#         for k2, sys in sys_uncerts:
+#             # print nominal.in_file_path, nominal.sample, nominal.sys_info, list((s.in_file_path, s.sample, s.sys_info) for s in sys)
+#             nom_copy = copy.copy(nominal)
+#             nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
+#             yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
 
 def plot_setup_uncerts(grps):
     def set_legend(wrps):
@@ -385,6 +413,13 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
+            # varial.tools.Plotter(
+            #     'GenRecoHTComparisons',
+            #     stack=True,
+            #     input_result_path='../CutflowHistos',
+            #     save_log_scale=True,
+            #     canvas_decorators=[varial.rendering.Legend]
+            #     )
             
             ]
         if categories:
