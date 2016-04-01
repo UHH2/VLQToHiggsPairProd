@@ -229,13 +229,13 @@ p0_from0_no_top_pt_reweight_0 = 1.165688
 p1_from0_no_top_pt_reweight_0 = -0.000236061
 
 # values from mean of SidebandTTJetsRegion
-p0_from0_no_top_pt_reweight_1 = 1.10761085
-p1_from0_no_top_pt_reweight_1 = -0.000273785
+# p0_from0_no_top_pt_reweight_1 = 1.10761085
+# p1_from0_no_top_pt_reweight_1 = -0.000273785
 
 ht_reweight_0 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
-ht_reweight_1 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_1, p1_from0_no_top_pt_reweight_1)
-# gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
-# parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight, p1_from0_no_top_pt_reweight)
+# ht_reweight_1 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_1, p1_from0_no_top_pt_reweight_1)
+gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
+parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
 ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 
@@ -322,20 +322,35 @@ def run_treeproject_and_plot(base_path, output_dir):
             #     uncertainties=all_uncerts+['top_pt']
             #     ),
             # make_tp_plot_chain('HTReweighting', base_path, output_dir,
-            #     add_uncert_func=add_all_with_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_1}),
-            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+            #     add_uncert_func=add_all_with_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_0}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_0},
             #     uncertainties=all_uncerts+['ht_reweight']
             #     ),
-            make_tp_plot_chain('HTReweightingLow', base_path, output_dir,
+            make_tp_plot_chain('RecoHTReweighting', base_path, output_dir,
                 add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_0}),
                 mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_0},
                 uncertainties=all_uncerts+['ht_reweight']
                 ),
-            make_tp_plot_chain('HTReweightingHigh', base_path, output_dir,
-                add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_1}),
-                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+            make_tp_plot_chain('GenHTReweighting', base_path, output_dir,
+                add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : gen_ht_reweight}),
+                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+gen_ht_reweight},
                 uncertainties=all_uncerts+['ht_reweight']
                 ),
+            make_tp_plot_chain('PartonHTReweighting', base_path, output_dir,
+                add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : parton_ht_reweight}),
+                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+parton_ht_reweight},
+                uncertainties=all_uncerts+['ht_reweight']
+                ),
+            # make_tp_plot_chain('HTReweightingLow', base_path, output_dir,
+            #     add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_0}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_0},
+            #     uncertainties=all_uncerts+['ht_reweight']
+            #     ),
+            # make_tp_plot_chain('HTReweightingHigh', base_path, output_dir,
+            #     add_uncert_func=add_only_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_1}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_1},
+            #     uncertainties=all_uncerts+['ht_reweight']
+            #     ),
             # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
             #     add_uncert_func=add_all_without_uncertainties),
             # make_tp_plot_chain('GenHTReweighting', base_path, output_dir,
