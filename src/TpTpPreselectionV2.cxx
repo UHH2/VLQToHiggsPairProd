@@ -87,6 +87,8 @@ private:
     unique_ptr<AnalysisModule> common_module;
     vector<unique_ptr<AnalysisModule>> pre_modules;
     vector<unique_ptr<Hists>> v_hists_nosel;
+    int count_return = 0;
+    int count_pass = 0;
 
 };
 
@@ -198,7 +200,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt_iso", "Primary Electron p_T", 90, 0., 900.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Muon p_T", 90, 0., 900.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Electron p_T", 90, 0., 900.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
         }
@@ -346,8 +348,10 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
 
 bool TpTpPreselectionV2::process(Event & event) {
 
-    if (!common_module->process(event))
+    if (!common_module->process(event)) {
+        cout << "return " << count_return++ << endl;
         return false;
+    }
 
     for (auto const & mod : pre_modules)
         mod->process(event);
@@ -365,7 +369,10 @@ bool TpTpPreselectionV2::process(Event & event) {
     // run all modules
 
     for (bool pass_sel : sel_modules_passed) {
-        if (pass_sel) return true;
+        if (pass_sel) {
+            cout << "pass " << count_pass++ << endl;
+            return true;
+        }
     }
 
 

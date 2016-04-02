@@ -16,11 +16,11 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
 
-    if (version == "Run2015D_Ele") {
-        ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root");
-    } else if (version == "Run2015D_Mu") {
-        ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Latest_2015_Silver_JSON.root");
-    }
+    // if (version == "Run2015D_Ele") {
+    //     ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root");
+    // } else if (version == "Run2015D_Mu") {
+    //     ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Latest_2015_Silver_JSON.root");
+    // }
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -31,7 +31,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu20"));
     if (type == "MC")
-        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WP75_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
+        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
         // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu"));
     else
         common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));

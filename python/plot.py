@@ -41,8 +41,8 @@ src_dir_rel = '../Hadd'
 normsignal = 20.
 
 basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
-    'DATA.SingleMuon_Run2015D',
-    'DATA.SingleEle_Run2015D',
+    'DATA.SingleMuon_Run2015CD',
+    'DATA.SingleEle_Run2015CD',
     'MC.QCD',
     'MC.WJets',
     'MC.DYJetsToLL',
@@ -63,8 +63,8 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     ])
 
 basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
-    'DATA.SingleMuon_Run2015D',
-    'DATA.SingleEle_Run2015D',
+    'DATA.SingleMuon_Run2015CD',
+    'DATA.SingleEle_Run2015CD',
     'MC.QCD',
     'MC.WJets',
     'MC.DYJetsToLL',
@@ -133,7 +133,7 @@ other_samples_to_plot = [
     'QCD',
     'DYJets',
     'WJets',
-    'Run2015D',
+    'Run2015CD',
 ]
 
 samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
