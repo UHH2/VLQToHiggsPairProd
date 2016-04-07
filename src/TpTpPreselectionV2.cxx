@@ -87,8 +87,6 @@ private:
     unique_ptr<AnalysisModule> common_module;
     vector<unique_ptr<AnalysisModule>> pre_modules;
     vector<unique_ptr<Hists>> v_hists_nosel;
-    int count_return = 0;
-    int count_pass = 0;
 
 };
 
@@ -127,32 +125,32 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         //     "ak8jets_uncleaned"
         //     ));
     if (ctx.get("dataset_type", "") == "MC") {
-        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L23_AK8PFchs_MC, "topjets"));
-        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-        // pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
-        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "topjets"));
-        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L23_AK8PFchs_MC, "topjets"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        // pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_MC, "topjets"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
         // ====== IMPLEMENT TOPJETLEPTONCLEANER BY KEYMATCHING!========
-        // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L23_AK8PFchs_MC));
+        // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L23_AK8PFchs_MC));
         // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "topjets"));
-            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
-            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
             // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "ak8jets_cleaned"));
             // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsHepTopTagCHSPacked_daughters"));
     }
     else {
-        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L23_AK8PFchs_DATA, "topjets"));
-        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-        // pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
-        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "topjets"));
-        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L23_AK8PFchs_DATA, "topjets"));
+        pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        // pre_modules.emplace_back(new GenericTopJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_DATA, "topjets"));
+        pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_DATA, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
+        // pre_modules.emplace_back(new GenericSubJetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_DATA, "patJetsHepTopTagCHSPacked_daughters"));
         // ====== IMPLEMENT TOPJETLEPTONCLEANER BY KEYMATCHING!========
-        // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L23_AK8PFchs_DATA));
+        // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L23_AK8PFchs_DATA));
         // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(125., 2.4), "topjets"));
-            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
-            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "ak8jets_cleaned"));
+            // pre_modules.emplace_back(new TopJetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK8PFchs_MC, "patJetsHepTopTagCHSPacked_daughters"));
             // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "ak8jets_cleaned"));
             // pre_modules.emplace_back(new GenericTopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsHepTopTagCHSPacked_daughters"));
     }
@@ -338,7 +336,8 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsDown", "weight_ak4_jetpt_down"));
         // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
-        v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+        if ((cat == "El45" || cat == "Mu45") && ctx.get("dataset_type", "") == "MC")
+            v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 
     }
 
@@ -349,7 +348,6 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
 bool TpTpPreselectionV2::process(Event & event) {
 
     if (!common_module->process(event)) {
-        cout << "return " << count_return++ << endl;
         return false;
     }
 
@@ -370,7 +368,6 @@ bool TpTpPreselectionV2::process(Event & event) {
 
     for (bool pass_sel : sel_modules_passed) {
         if (pass_sel) {
-            cout << "pass " << count_pass++ << endl;
             return true;
         }
     }
