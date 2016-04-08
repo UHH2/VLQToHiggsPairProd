@@ -21,65 +21,10 @@ el_channel_def = 'El45_Baseline'
 muchannel_final = 'Muon'
 elchannel_final = 'Electron'
 
-######################################################## AutoContentObjects ###
-def get4obj(chan, base):
-    histos_all = 'pt_lin', 'eta_lin', 'phi_lin', 'number_lin'
-    histos_first = 'pt_1_lin', 'eta_1_lin', 'phi_1_lin', 'number_lin'
-    jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_lin'
-    p = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
-    return {
-        chan+'_muons'     : map((p+'MuonHists/{}'+ext).format, histos_first),
-        chan+'_electrons' : map((p+'ElectronHists/{}'+ext).format, histos_first),
-        chan+'_jets'      : map((p+'JetHists/{}'+ext).format, jet_histos),
-        chan+'_ak8_jets'  : map((p+'SlimmedAk8Jets/{}'+ext).format, histos_all),
-        # chan+'_higg_jets' : map((p+'HiggsJetsAfterSel/{}'+ext).format, histos),
-        chan+'_jet_pts'   : map((p+'JetHists/{}'+ext).format, 
-            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', 'pt_4_lin', )
-        ),
-        chan+'_ak8jet_pts'   : map((p+'SlimmedAk8Jets/{}'+ext).format, 
-            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
-        ),
-        chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
-            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_lin', 'MET_own_lin', )
-        ),
-    }.items()
-
-def mk_autoContentObjects(base, el_channel=None, mu_channel=None):
-    muchannel = mu_channel or mu_channel_def
-    elchannel = el_channel or el_channel_def
-    return varial.extensions.tex.TexContent(
-        dict(get4obj(muchannel, base) + get4obj(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
-        name='AutoContentObjects',
-    )
-
-
-##################################################### AutoContentFinalSelectionHiggsVar ###
-
-# --TODO: implement Nm1 Plots after higgs-tags! esp. add. b-tag plots, N(higgs tags plots)
-def getHiggsVar(chan, base):
-    p = os.path.join(base+'/StackedAll', chan, 'NoAk8PtCut/FirstAk8SoftDropSlimmed/')
-    return {
-        chan+'_Nm1Var_htag': (
-            p + 'Nobtag_boost_mass/n_sjbtags_medium_lin' + ext,
-            p + 'Noboost_mass_1b/pt_log' + ext,
-            p + 'Nomass_boost_1b/mass_sj_log' + ext,
-            p + 'Nomass_boost_2b/mass_sj_log' + ext,
-        ),
-    }.items()
-
-def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None):
-    muchannel = mu_channel or mu_channel_def
-    elchannel = el_channel or el_channel_def
-    return varial.extensions.tex.TexContent(
-        dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
-        name='AutoContentFinalSelectionHiggsVar',
-    )
-
-
-
-###################################################### AutoContentSelection ###
+#########################################################
+#=========== PRESELECTION N MINUS 1 PLOTS ===============
+#=========== PRESELECTION CUTFLOW PLOTS =================
+#########################################################
 # p_nm1 = p_prebase + '%s/Nm1Selection/'
 
 
@@ -117,7 +62,7 @@ def get4cf(chan, base):
             p + chan + '/CutflowStack/cutflow_log'+ext,
     }.items()
 
-def mk_autoContentSelection(base, el_channel=None, mu_channel=None):
+def mk_autoContentPreSelectionNm1(base, el_channel=None, mu_channel=None):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
@@ -128,31 +73,98 @@ def mk_autoContentSelection(base, el_channel=None, mu_channel=None):
         name='AutoContentSelection',
     )
 
+#########################################################
+#=========== FINAL SELECTION CONTROL PLOTS ==============
+#########################################################
 
-####################################################### AutoContentJetPtReweight ###
-def get4sb(chan, base):
-    p_correct = os.path.join(base+'/StackedAll', chan, 'PostSelection/JetCleaningControlPlots/')
-    p_uncorrect = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
+def get4obj(chan, base):
+    histos_all = 'pt_lin', 'eta_lin', 'phi_lin', 'number_lin'
+    histos_first = 'pt_1_lin', 'eta_1_lin', 'phi_1_lin', 'number_lin'
+    jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_lin'
+    p = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
     return {
-        chan+'_jetptreweight': (
-            p_correct + 'ST_cleaned_lin' + ext,
-            p_uncorrect + 'ST_lin' + ext,
-            p_correct + 'n_ak4_cleaned_lin' + ext,
-            p_uncorrect + 'n_ak4_lin' + ext,
-            p_correct + 'pt_ak4_cleaned_lin' + ext,
-            p_uncorrect + 'pt_ld_ak4_jet_lin' + ext,
-        )}.items()
+        chan+'_muons'     : map((p+'MuonHists/{}'+ext).format, histos_first),
+        chan+'_electrons' : map((p+'ElectronHists/{}'+ext).format, histos_first),
+        chan+'_jets'      : map((p+'JetHists/{}'+ext).format, jet_histos),
+        chan+'_ak8_jets'  : map((p+'SlimmedAk8Jets/{}'+ext).format, histos_all),
+        # chan+'_higg_jets' : map((p+'HiggsJetsAfterSel/{}'+ext).format, histos),
+        chan+'_jet_pts'   : map((p+'JetHists/{}'+ext).format, 
+            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', 'pt_4_lin', )
+        ),
+        chan+'_ak8jet_pts'   : map((p+'SlimmedAk8Jets/{}'+ext).format, 
+            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
+        ),
+        chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
+            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_lin', 'MET_own_lin', )
+        ),
+    }.items()
 
-def mk_autoContentJetPtReweight(base, el_channel=None, mu_channel=None):
+def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
-        dict(get4sb(muchannel, base) + get4sb(elchannel, base)),
-        include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
-        name='AutoContentJetPtReweight',
+        dict(get4obj(muchannel, base) + get4obj(elchannel, base)),
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name='AutoContentObjects',
     )
 
-##################################################### AutoContentSignalControlRegion ###
+
+#########################################################
+#=========== FINAL SELECTION HIGGS TAG PLOTS ============
+#########################################################
+
+# --TODO: implement Nm1 Plots after higgs-tags! esp. add. b-tag plots, N(higgs tags plots)
+def getHiggsVar(chan, base):
+    p = os.path.join(base+'/StackedAll', chan, 'PostSelection/FirstAk8SoftDropSlimmed/')
+    return {
+        chan+'_Nm1Var_htag': (
+            p + 'Nobtag_boost_mass/n_sjbtags_medium_lin' + ext,
+            p + 'Noboost_mass_1b/pt_log' + ext,
+            p + 'Nomass_boost_1b/mass_sj_log' + ext,
+            p + 'Nomass_boost_2b/mass_sj_log' + ext,
+        ),
+    }.items()
+
+def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    return varial.extensions.tex.TexContent(
+        dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name='AutoContentFinalSelectionHiggsVar',
+    )
+
+
+
+#########################################################
+#======== FINAL SELECTION HT REWEIGHTING PLOTS ==========
+#########################################################
+
+# def get4sb(chan, base):
+#     p_correct = os.path.join(base+'/StackedAll', chan, 'PostSelection/JetCleaningControlPlots/')
+#     p_uncorrect = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
+#     return {
+#         chan+'_jetptreweight': (
+#             p_correct + 'ST_cleaned_lin' + ext,
+#             p_uncorrect + 'ST_lin' + ext,
+#             p_correct + 'n_ak4_cleaned_lin' + ext,
+#             p_uncorrect + 'n_ak4_lin' + ext,
+#             p_correct + 'pt_ak4_cleaned_lin' + ext,
+#             p_uncorrect + 'pt_ld_ak4_jet_lin' + ext,
+#         )}.items()
+
+# def mk_autoContentJetPtReweight(base, el_channel=None, mu_channel=None):
+#     muchannel = mu_channel or mu_channel_def
+#     elchannel = el_channel or el_channel_def
+#     return varial.extensions.tex.TexContent(
+#         dict(get4sb(muchannel, base) + get4sb(elchannel, base)),
+#         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
+#         name='AutoContentJetPtReweight',
+#     )
+
+#########################################################
+#========= TREEPROJECT OUTPUT N MINUS 1 PLOTS ===========
+#########################################################
 
 def getFinalVar(chan, base):
     p = os.path.join(base, 'Histograms/StackedAll/')
@@ -184,7 +196,11 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None):
     )
 
 
-######################################################### AutoContentLimits ###
+#########################################################
+#============= TREEPROJECT OUTPUT LIMITS ================
+#=========== TREEPROJECT OUTPUT SYSTEMATICS =============
+#########################################################
+
 def getLimPlots(base):
     p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return {
@@ -274,9 +290,9 @@ def make_tex_content():
                 'Tex', 
                 [
                     mk_autoContentSignalControlRegion(p_postbase),
-                    mk_autoContentObjects(p_prebase),
+                    mk_autoContentControlPlots(p_prebase),
                     mk_autoContentFinalSelectionHiggsVar(p_prebase),
-                    mk_autoContentSelection(p_prebase),
+                    mk_autoContentPreSelectionNm1(p_prebase),
                     mk_autoContentJetPtReweight(p_prebase),
                     mk_autoContentLimits(p_postbase)
                 ]

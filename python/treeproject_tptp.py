@@ -121,7 +121,7 @@ background_samples = [
 
 signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals))
 
-samples = background_samples + signal_samples + ['Run2015D']
+samples = background_samples + signal_samples + ['Run2015CD']
 samples_no_data = background_samples + signal_samples
 
 base_weight = 'weight'
@@ -147,12 +147,12 @@ sample_weights_def = {
     'QCD' : base_weight,
     'DYJets' : base_weight,
     'WJets' : base_weight,
-    'Run2015D' : '1',
+    'Run2015CD' : '1',
 }
 sample_weights_def.update(dict((f, 'weight') for f in signal_samples))
 
 
-import tptp_selections_treeproject as sel
+# import tptp_selections_treeproject as sel
 
 
 sys_params = {
@@ -369,7 +369,10 @@ def mk_sys_tps(mk_sys_func, name='SysTreeProjectors'):
     #     'TpTpFinalSelectionTreeOutput-v0wBTagSF/Files_and_Plots/'
 
     # first put together jerc uncert with nominal weights
-    sys_tps = mk_sys_func()
+    if mk_sys_func:
+        sys_tps = mk_sys_func()
+    else:
+        sys_tps = []
 
     # next put together nominal samples with with weight uncerts.
     

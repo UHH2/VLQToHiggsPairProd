@@ -235,7 +235,7 @@ def mk_sframe_tools_and_plot(argv):
 
     def sf_batch_tc():
         hadd = Hadd(
-            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.MC.WJets*.root',
             basenames=basenames,
             add_aliases_to_analysis=False,
             samplename_func=plot.get_samplename,
@@ -258,11 +258,11 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
+                    sf_batch,
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            # hadd,
+                            hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
@@ -281,9 +281,9 @@ def mk_sframe_tools_and_plot(argv):
                 'Tex', 
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
-                    tex_content.mk_autoContentObjects(base, 'El45', 'Mu45'),
+                    tex_content.mk_autoContentControlPlots(base, 'El45', 'Mu45'),
                     # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
-                    tex_content.mk_autoContentSelection(base, 'El45', 'Mu45'),
+                    tex_content.mk_autoContentPreSelectionNm1(base, 'El45', 'Mu45'),
                     # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
                 ]
@@ -297,9 +297,9 @@ def mk_sframe_tools_and_plot(argv):
                 'Tex', 
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
-                    tex_content.mk_autoContentObjects(base, 'El45_Baseline', 'Mu45_Baseline'),
-                    # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
-                    tex_content.mk_autoContentSelection(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    tex_content.mk_autoContentControlPlots(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    tex_content.mk_autoContentFinalSelectionHiggsVar(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    # tex_content.mk_autoContentPreSelectionNm1(base, 'El45_Baseline', 'Mu45_Baseline'),
                     # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
                 ]
@@ -330,7 +330,7 @@ def mk_sframe_tools_and_plot(argv):
                     sf_batch_tc()
                 ),
                 mk_tex_tc_final(options.outputdir+tex_base),
-                # varial.tools.WebCreator(no_tool_check=False),
+                varial.tools.WebCreator(no_tool_check=False),
                 # git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )

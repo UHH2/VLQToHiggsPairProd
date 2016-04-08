@@ -488,7 +488,7 @@
             <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
-            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
+            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelecion-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
             <Item Name="BTagCalibration" Value="&SOURCEDIR;../common/data/CSVv2.csv" />
 
             <!-- specific to analysis -->
