@@ -145,7 +145,10 @@ get_samplename = vlq_common.get_samplename
 varial.settings.pretty_names.update({
     'no sel._tex' : 'no sel.',
     'trigger_accept_el45_tex' : 'trigger',
+    'trigger_accept_mu45_tex' : 'trigger',
     'primary_lepton_pt_tex' : 'pt(Lepton)',
+    'primary_electron_pt_tex' : 'pt(Electron)',
+    'primary_muon_pt_tex' : 'pt(Muon)',
     'pt_ld_ak4_jet_tex' : 'pt(1st AK4 jet)',
     'pt_subld_ak4_jet_tex' : 'pt(2nd AK4 jet)',
     '2D cut_tex' : '2D cut',

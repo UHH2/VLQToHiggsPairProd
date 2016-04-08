@@ -6,18 +6,18 @@ import varial.tools
 import os.path
 
 # base path
-p_base = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1'\
-'/src/UHH2/VLQToHiggsPairProd/Samples-25ns-v2/'
-presel_version = 'v7'
-p_prebase = p_base + 'TpTpPreselection-%s/Files_and_Plots'\
-'/Files_and_Plots_nominal/Plots/Plots/' % presel_version
-post_version = 'v4'
-p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
+# p_base = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3'\
+# '/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/'
+# presel_version = 'v7'
+# p_prebase = p_base + 'TpTpPreselection-%s/Files_and_Plots'\
+# '/Files_and_Plots_nominal/Plots/Plots/' % presel_version
+# post_version = 'v4'
+# p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
 ext = '.pdf'
 target_ext = '.pdf'
 varial.settings.rootfile_postfixes += ['.pdf']
-muchannel = 'Mu45'
-elchannel = 'El45'
+mu_channel_def = 'Mu45_Baseline'
+el_channel_def = 'El45_Baseline'
 muchannel_final = 'Muon'
 elchannel_final = 'Electron'
 
@@ -44,7 +44,9 @@ def get4obj(chan, base):
         ),
     }.items()
 
-def mk_autoContentObjects(base):
+def mk_autoContentObjects(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(get4obj(muchannel, base) + get4obj(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
@@ -66,7 +68,9 @@ def getHiggsVar(chan, base):
         ),
     }.items()
 
-def mk_autoContentFinalSelectionHiggsVar(base):
+def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
@@ -76,7 +80,7 @@ def mk_autoContentFinalSelectionHiggsVar(base):
 
 
 ###################################################### AutoContentSelection ###
-p_nm1 = p_prebase + '%s/Nm1Selection/'
+# p_nm1 = p_prebase + '%s/Nm1Selection/'
 
 
 def get4sel(chan, base):
@@ -84,7 +88,7 @@ def get4sel(chan, base):
     return {
         chan+'_twoDeeCut': (
             p + 'twod_cut_hist_noIso_QCD_lin' + ext,
-            p + 'twod_cut_hist_noIso_TpTp_M-1200_lin' + ext,
+            p + 'twod_cut_hist_noIso_TpTp_M-1300_lin' + ext,
             p + 'twod_cut_hist_noIso_px_log' + ext,
             p + 'twod_cut_hist_noIso_py_log' + ext,
         ),
@@ -113,7 +117,9 @@ def get4cf(chan, base):
             p + chan + '/CutflowStack/cutflow_log'+ext,
     }.items()
 
-def mk_autoContentSelection(base):
+def mk_autoContentSelection(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(get4sel(muchannel, base) + get4sel(elchannel, base)),
         # dict(get4sel(muchannel, base) + get4sel(elchannel, base) + img_2d_px),
@@ -137,7 +143,9 @@ def get4sb(chan, base):
             p_uncorrect + 'pt_ld_ak4_jet_lin' + ext,
         )}.items()
 
-def mk_autoContentJetPtReweight(base):
+def mk_autoContentJetPtReweight(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(get4sb(muchannel, base) + get4sb(elchannel, base)),
         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
@@ -166,7 +174,9 @@ def getFinalVar(chan, base):
         ),
     }.items()
 
-def mk_autoContentSignalControlRegion(base):
+def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
@@ -243,7 +253,9 @@ def getSysTab(chan, base, mod=my_mod):
             new_files[2],
     }.items()
 
-def mk_autoContentLimits(base):
+def mk_autoContentLimits(base, el_channel=None, mu_channel=None):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         getLimPlots(base), dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),
         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',

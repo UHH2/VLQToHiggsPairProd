@@ -226,6 +226,7 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpFinalSelectionTreeOutput'
         varial.settings.sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
+        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
         samples_to_plot = plot.samples_to_plot_final
         # varial.settings.merge_decay_channels = False
     else:
@@ -257,11 +258,11 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    sf_batch,
+                    # sf_batch,
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            hadd,
+                            # hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
@@ -280,10 +281,26 @@ def mk_sframe_tools_and_plot(argv):
                 'Tex', 
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
-                    tex_content.mk_autoContentObjects(base),
-                    tex_content.mk_autoContentFinalSelectionHiggsVar(base),
-                    tex_content.mk_autoContentSelection(base),
-                    tex_content.mk_autoContentJetPtReweight(base),
+                    tex_content.mk_autoContentObjects(base, 'El45', 'Mu45'),
+                    # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
+                    tex_content.mk_autoContentSelection(base, 'El45', 'Mu45'),
+                    # tex_content.mk_autoContentJetPtReweight(base),
+                    # mk_autoContentLimits(p_postbase)
+                ]
+            ),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        ])
+
+    def mk_tex_tc_final(base):
+        return varial.tools.ToolChain('TexCopy', [
+            varial.tools.ToolChain(
+                'Tex', 
+                [
+                    # mk_autoContentSignalControlRegion(p_postbase),
+                    tex_content.mk_autoContentObjects(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
+                    tex_content.mk_autoContentSelection(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
@@ -299,7 +316,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                # mk_tex_tc_pre(options.outputdir+tex_base),
+                mk_tex_tc_pre(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
@@ -312,9 +329,9 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                # mk_tex_tc_pre(options.outputdir+tex_base),
-                varial.tools.WebCreator(no_tool_check=False),
-                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+                mk_tex_tc_final(options.outputdir+tex_base),
+                # varial.tools.WebCreator(no_tool_check=False),
+                # git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
 
