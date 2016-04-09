@@ -235,7 +235,7 @@ def mk_sframe_tools_and_plot(argv):
 
     def sf_batch_tc():
         hadd = Hadd(
-            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.MC.WJets*.root',
+            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
             basenames=basenames,
             add_aliases_to_analysis=False,
             samplename_func=plot.get_samplename,
@@ -331,7 +331,7 @@ def mk_sframe_tools_and_plot(argv):
                 ),
                 mk_tex_tc_final(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
-                # git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
 

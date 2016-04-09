@@ -6,6 +6,7 @@ from varial.extensions.hadd import Hadd
 import varial.extensions.make
 import varial.tools
 import os
+import glob
 import sys
 import varial.analysis as analysis
 
@@ -293,13 +294,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
             #     )),
             plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
-            plot.mk_toolchain('HistogramsNoData', list(i for i in glob.glob(output_dir+'/%s/TreeProjector/*.root'%name if 'Run2015CD' not in i))
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final),
+            plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final,
+                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if 'Run2015CD' not in f)),
             plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
         ])
 
@@ -311,10 +313,11 @@ def run_treeproject_and_plot(base_path, output_dir):
             make_tp_plot_chain('NoReweighting', base_path, output_dir, 
                 add_uncert_func=no_uncertainties),
             make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
-                add_uncert_func=add_only_weight_uncertainties('top_pt_reweight', {'TTbar' : top_pt_reweight}),
-                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+top_pt_reweight},
-                uncertainties=all_uncerts+['top_pt_reweight']
-                ),
+                add_uncert_func=no_uncertainties),
+                # add_uncert_func=add_only_weight_uncertainties('top_pt_reweight', {'TTbar' : top_pt_reweight}),
+                # mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+top_pt_reweight},
+                # uncertainties=all_uncerts+['top_pt_reweight']
+                # ),
             # make_tp_plot_chain('HTReweighting', base_path, output_dir,
             #     add_uncert_func=add_all_with_weight_uncertainties('ht_reweight', {'TTbar' : ht_reweight_0}),
             #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+ht_reweight_0},

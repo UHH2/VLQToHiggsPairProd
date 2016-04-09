@@ -388,7 +388,11 @@ def plotter_factory_uncerts(**args):
         return varial.tools.Plotter(**kws)
     return tmp
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, **kws):
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, filter_keyfunc=None, **kws):
+    if filter_keyfunc:
+        filter_func = filter_keyfunc 
+    else:
+        filter_func = lambda w: any(f in w.file_path.split('/')[-1] for f in datasets)
     def create():
         plot_chain = [
             
@@ -396,7 +400,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 pattern=src,
                 # input_result_path='../HistoLoader',
                 name='StackedAll',
-                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in datasets), #and 'noH' not in w.sample,
+                filter_keyfunc=filter_func, #and 'noH' not in w.sample,
                 # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
                 # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
                 plotter_factory=plotter_factory_stack(**kws),
@@ -438,34 +442,34 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
         return plot_chain
     return create
 
-def mk_toolchain(name, src, datasets, categories=None):
+def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc)
         )
 
-def mk_toolchain_pull(name, src, datasets, categories=None):
+def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, 
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, 
             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
                 varial.rendering.Legend,
                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                 ])
         )
 
-def mk_toolchain_norm(name, src, datasets, categories=None):
+def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, hook_loaded_histos=loader_hook_norm_to_int)
         )
 
-def mk_toolchain_norm_pull(name, src, datasets, categories=None):
+def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, hook_loaded_histos=loader_hook_norm_to_int,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, hook_loaded_histos=loader_hook_norm_to_int,
             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
                 varial.rendering.Legend,
                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')

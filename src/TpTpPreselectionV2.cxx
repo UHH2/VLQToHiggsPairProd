@@ -287,7 +287,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         // selected_sel_hists["NoNAk8JetsCut"] = new SelectedSelHists(ctx, cat+"/NoNAk8JetsCut", *sel_helpers.back(), {}, {"n_ak8"});
         selected_sel_hists["NoNAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk4Cut", *sel_helpers.back(), {}, {"n_ak4"});
         selected_sel_hists["NoNAk8Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8Cut", *sel_helpers.back(), {}, {"n_ak8"});
-        selected_sel_hists["NoNAk8NAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8PtAk8Cut", *sel_helpers.back(), {}, {"n_ak8", "n_ak4"});
+        selected_sel_hists["NoNAk8NAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8NAk4Cut", *sel_helpers.back(), {}, {"n_ak8", "n_ak4"});
         // selected_sel_hists["OnlyTriggerAndLeptonCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerAndLeptonCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix});
         // selected_sel_hists["OnlyTriggerLeptonAnd2DCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerLeptonAnd2DCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix, "twoD_cut"});
         // selected_sel_hists["OnlySTCut"] = new SelectedSelHists(ctx, cat+"/OnlySTCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix, "twoD_cut", "ST", "HT"});
