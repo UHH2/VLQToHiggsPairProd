@@ -3,7 +3,7 @@
 ##################################### definition of UserConfig item changes ###
 
 
-start_all_parallel = True
+start_all_parallel = False
 
 
 ############################################################### script code ###
@@ -41,7 +41,7 @@ sys_uncerts_final = {
     'jec_down'      : {'jecsmear_direction':'down'},
     'jer_up'        : {'jersmear_direction':'up'},
     'jer_down'      : {'jersmear_direction':'down'},
-    # 'nominal'       : {'jecsmear_direction':'nominal'}
+    'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
 }
@@ -262,7 +262,7 @@ def mk_sframe_tools_and_plot(argv):
                     varial.tools.ToolChain(
                         'Plots',
                         [
-                            hadd,
+                            # hadd,
                             plots,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
