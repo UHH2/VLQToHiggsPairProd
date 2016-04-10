@@ -281,7 +281,7 @@ def mk_sframe_tools_and_plot(argv):
                 'Tex', 
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
-                    tex_content.mk_autoContentControlPlots(base, 'El45', 'Mu45'),
+                    # tex_content.mk_autoContentControlPlots(base, 'El45', 'Mu45'),
                     # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
                     tex_content.mk_autoContentPreSelectionNm1(base, 'El45', 'Mu45'),
                     # tex_content.mk_autoContentJetPtReweight(base),

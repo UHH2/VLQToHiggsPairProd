@@ -49,7 +49,7 @@ for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
         })
 
 backgrounds_to_use = [
-    # 'Run2015D',
+    # 'Run2015CD',
     'QCD',
     'TTbar',
     'WJets',
@@ -81,9 +81,9 @@ final_states_to_use = [
     # '_noH_bwbw',
 ]
 
-datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015D']
+datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015CD']
 
-back_plus_data = backgrounds_to_use + ['Run2015D']
+back_plus_data = backgrounds_to_use + ['Run2015CD']
 
 datasets_not_to_use = [
     'ak4_jetpt__minus/TpTp',
@@ -99,7 +99,7 @@ def select_files(categories=None, var=''):
         if (file_path.endswith('.root')
                 # and 'DATA' not in file_path\
                 # and in_file_path.endswith('PostSelection/ST')
-                and ('Run2015D' not in wrp.file_path or varial.settings.plot_obs)
+                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
                 and in_file_path.endswith(var)
                 and any(a in wrp.file_path for a in datasets_to_use)
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
@@ -115,7 +115,7 @@ def select_single_sig(categories=None, var='', signal=''):
         # print "before selecting: "+wrp.file_path
         # print file_path
         if (file_path.endswith('.root')
-                and ('Run2015D' not in wrp.file_path or varial.settings.plot_obs)
+                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
                 and in_file_path.endswith(var)
                 and (any(a in wrp.file_path for a in back_plus_data)
                     or any(signal+f in wrp.file_path for f in final_states_to_use))
@@ -358,7 +358,7 @@ def plot_setup_triangle(grps):
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
-    grps = add_th_curve(grps, th_x, th_y)
+    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2)
     # print list(grps)
     return grps
 

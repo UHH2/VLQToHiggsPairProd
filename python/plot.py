@@ -84,7 +84,7 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1800',
     ])
 
-normfactors = {
+normfactors_xsec = {
     # 'TpTp' : 20.,
     '_thX' : 1./0.56,
     '_other' : 1./0.44,
@@ -100,6 +100,24 @@ normfactors = {
     'TpTp_M-1600' : 1./0.001148,
     'TpTp_M-1700' : 1./0.000666,
     'TpTp_M-1800' : 1./0.000391,
+}
+
+normfactors = {
+    # 'TpTp' : 20.,
+    '_thX' : 1./0.56,
+    '_other' : 1./0.44,
+    'TpTp_M-0700' : (1./0.455)*(1748747./1769230.),
+    'TpTp_M-0800' : (1./0.196)*(4145693./4021428.),
+    'TpTp_M-0900' : (1./0.0903)*(9189878./9196013.),
+    'TpTp_M-1000' : (1./0.0440)*(18700000./18604545.),
+    'TpTp_M-1100' : (1./0.0224)*(36678571./36107142.),
+    'TpTp_M-1200' : (1./0.0118)*(70576271./69305084.),
+    'TpTp_M-1300' : (1./0.00639)*(129953051./129577464.),
+    'TpTp_M-1400' : (1./0.00354)*(235254237./233559322.),
+    'TpTp_M-1500' : (1./0.00200)*(406100000./416000000.),
+    'TpTp_M-1600' : (1./0.001148)*(804000000./704878048.),
+    'TpTp_M-1700' : (1./0.000666)*(1664800000./1194594594.),
+    'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
 }
 
 
@@ -388,7 +406,7 @@ def plotter_factory_uncerts(**args):
         return varial.tools.Plotter(**kws)
     return tmp
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, filter_keyfunc=None, **kws):
+def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, filter_keyfunc=None, compare_uncerts=False, **kws):
     if filter_keyfunc:
         filter_func = filter_keyfunc 
     else:
@@ -408,7 +426,17 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
                 ),
-            varial.plotter.RootFilePlotter(
+            # varial.tools.Plotter(
+            #     'GenRecoHTComparisons',
+            #     stack=True,
+            #     input_result_path='../CutflowHistos',
+            #     save_log_scale=True,
+            #     canvas_decorators=[varial.rendering.Legend]
+            #     )
+            
+            ]
+        if compare_uncerts:
+            plot_chain += [varial.plotter.RootFilePlotter(
                 pattern=src,
                 # input_result_path='../HistoLoader',
                 name='CompareUncerts',
@@ -419,16 +447,7 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 # combine_files=True,
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                ),
-            # varial.tools.Plotter(
-            #     'GenRecoHTComparisons',
-            #     stack=True,
-            #     input_result_path='../CutflowHistos',
-            #     save_log_scale=True,
-            #     canvas_decorators=[varial.rendering.Legend]
-            #     )
-            
-            ]
+                )]
         if categories:
             cutflow_cat = []
             for cat in categories:
@@ -442,34 +461,34 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
         return plot_chain
     return create
 
-def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None):
+def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts)
         )
 
-def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None):
+def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, 
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, 
             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
                 varial.rendering.Legend,
                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                 ])
         )
 
-def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None):
+def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, hook_loaded_histos=loader_hook_norm_to_int)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int)
         )
 
-def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None):
+def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
     # varial.settings.do_norm_plot = True
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, hook_loaded_histos=loader_hook_norm_to_int,
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int,
             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
                 varial.rendering.Legend,
                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')

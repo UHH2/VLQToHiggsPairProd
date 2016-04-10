@@ -95,7 +95,7 @@ def get4obj(chan, base):
             ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
         ),
         chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
-            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_lin', 'MET_own_lin', )
+            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_lin', 'MET_own_lin', )
         ),
     }.items()
 
@@ -163,11 +163,83 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None)
 #     )
 
 #########################################################
+#========= TREEPROJECT OUTPUT NO DATA PLOTS =============
+#########################################################
+
+# def getNoDataFinalVar(chan, base):
+#     p = os.path.join(base, 'HistogramsNoData/StackedAll/')
+#     # print base
+#     return {
+#         chan+'_Nm1ak4btag': (
+#             p + 'SignalRegion1b_%s/n_additional_btags_medium_lin' % chan + ext,
+#             p + 'SignalRegion2b_%s/n_additional_btags_medium_lin' % chan + ext,
+#             p + 'SidebandRegion_%s/n_additional_btags_medium_lin' % chan + ext,
+#         ),
+#         chan+'_Nm1htag': (
+#             p + 'SidebandRegion_%s/n_higgs_tags_1b_med_lin' % chan + ext,
+#             p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_lin' % chan + ext,
+#         ),
+#         chan+'_st': (
+#             p + 'SignalRegion1b_%s/ST_lin' % chan + ext,
+#             p + 'SignalRegion2b_%s/ST_lin' % chan + ext,
+#             p + 'SidebandRegion_%s/ST_lin' % chan + ext,
+#         ),
+#     }.items()
+
+# def mk_autoContentNoDataFinalRegions(base, el_channel=None, mu_channel=None):
+#     muchannel = mu_channel or mu_channel_def
+#     elchannel = el_channel or el_channel_def
+#     return varial.extensions.tex.TexContent(
+#         dict(getNoDataFinalVar(muchannel, base) + getNoDataFinalVar(elchannel, base)),
+#         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+#         name='AutoContentNoDataFinalRegions',
+#     )
+
+#########################################################
+#====== TREEPROJECT OUTPUT SYSTEMATIC CR PLOTS ==========
+#########################################################
+
+def getSystCRPlots(chan, base):
+    p = os.path.join(base, 'StackedAll/')
+    # print base
+    return {
+        chan+'_ak4jetpt': (
+            p + 'SidebandRegion_%s/pt_ld_ak4_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak4_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_third_ak4_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_lin' % chan + ext,
+        ),
+        chan+'_ak8jetpt': (
+            p + 'SidebandRegion_%s/pt_ld_ak8_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak8_jet_lin' % chan + ext,
+        ),
+        chan+'_eventvar': (
+            p + 'SidebandRegion_%s/ST_rebin_flex_lin' % chan + ext,
+            p + 'SidebandRegion_%s/HT_rebin_flex_lin' % chan + ext,
+            p + 'SidebandRegion_%s/primary_lepton_pt_lin' % chan + ext,
+            p + 'SidebandRegion_%s/met_lin' % chan + ext,
+        ),
+        chan+'_njets': (
+            p + 'SidebandRegion_%s/n_ak4_lin' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak8_lin' % chan + ext,
+        )
+    }.items()
+
+def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name='AutoContentSystematicCRPlots'):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    return varial.extensions.tex.TexContent(
+        dict(getSystCRPlots(muchannel, base) + getSystCRPlots(elchannel, base)),
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name=name,
+    )
+
+#########################################################
 #========= TREEPROJECT OUTPUT N MINUS 1 PLOTS ===========
 #########################################################
 
 def getFinalVar(chan, base):
-    p = os.path.join(base, 'Histograms/StackedAll/')
+    p = os.path.join(base, 'StackedAll/')
     # print base
     return {
         chan+'_Nm1ak4btag': (
@@ -186,13 +258,13 @@ def getFinalVar(chan, base):
         ),
     }.items()
 
-def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None):
+def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, name='AutoContentSignalControlRegion'):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
-        name='AutoContentSignalControlRegion',
+        name=name,
     )
 
 
@@ -201,15 +273,24 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None):
 #=========== TREEPROJECT OUTPUT SYSTEMATICS =============
 #########################################################
 
-def getLimPlots(base):
-    p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+def getLimPlotsAll(base):
+    # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return {
         'Limits': (
-            p_lim.format('El45Only')+'/result/plots/limit_band_plot-log-bayesian.png',
-            p_lim.format('Mu45Only')+'/result/plots/limit_band_plot-log-bayesian.png',
-            p_lim.format('CombinedChannels')+'/result/plots/limit_band_plot-log-bayesian.png',
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            os.path.join(base, 'LimitsAllUncertsOnlyEl/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            os.path.join(base, 'LimitsAllUncertsOnlyMu/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
     }
+
+def getLimPlotsSingle(base, prefix=''):
+    # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    tmp_dict = {
+        'Limits_'+prefix: (
+            os.path.join(base, prefix+'/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+        ) if prefix else {}
+    }
+    return tmp_dict
 
 import varial.extensions.limits as limits
 
@@ -269,13 +350,15 @@ def getSysTab(chan, base, mod=my_mod):
             new_files[2],
     }.items()
 
-def mk_autoContentLimits(base, el_channel=None, mu_channel=None):
+def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix=''):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
+    tmp_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlots(base)
     return varial.extensions.tex.TexContent(
-        getLimPlots(base), dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),
+        tmp_dict,
+        # dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),
         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
-        name='AutoContentLimits',
+        name=name,
     )
 
 

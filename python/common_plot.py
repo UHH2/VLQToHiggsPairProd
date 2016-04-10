@@ -288,6 +288,7 @@ def add_sample_integrals(canvas_builders):
 
 def rebin_st_and_nak4(wrps):
     st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    ht_bounds = [0., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
     nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
     for w in wrps:
         if w.in_file_path.endswith('ST'):
@@ -308,7 +309,7 @@ def rebin_st_and_nak4(wrps):
             new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
             yield new_w
             # new_w = op.rebin_nbins_max(w, 20)
-            new_w_flex = op.rebin(w, st_bounds, True)
+            new_w_flex = op.rebin(w, ht_bounds, True)
             new_w_flex.name = 'HT_rebin_flex'
             new_w_flex.in_file_path = w.in_file_path.replace('HT', 'HT_rebin_flex')
             yield new_w_flex
