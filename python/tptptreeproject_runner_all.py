@@ -195,16 +195,16 @@ final_regions = (
 
 
 all_uncerts = [
-    'jec',
-    'jer',
+    # 'jec',
+    # 'jer',
     'btag_bc',
     'btag_udsg',
-    'sfmu_id',
-    'sfmu_trg',
-    'pu',
-    'PDF',
-    'ScaleVar',
-    'rate'
+    # 'sfmu_id',
+    # 'sfmu_trg',
+    # 'pu',
+    # 'PDF',
+    # 'ScaleVar',
+    # 'rate'
     # 'top_pt_weight',
     # 'ht_reweight'
 ]
@@ -226,38 +226,54 @@ all_uncerts = [
 # values below from FinalSelection-v14/RunCompTopPtWeight/fit_results_ht_sideband_no_toppt_reweight.txt
 
 # values from mean of SidebandRegion
-p0_from0_no_top_pt_reweight_0 = 1.165688
-p1_from0_no_top_pt_reweight_0 = -0.000236061
+# p0_from0_no_top_pt_reweight_0 = 1.165688
+# p1_from0_no_top_pt_reweight_0 = -0.000236061
 
+# NO TOP PT REWEIGHTING
 # values from mean of SidebandTTJetsRegion
-# p0_from0_no_top_pt_reweight_1 = 1.10761085
-# p1_from0_no_top_pt_reweight_1 = -0.000273785
+p0_ttbar_from0_no_top_pt_reweight = 1.1565025
+p1_ttbar_from0_no_top_pt_reweight = -0.000297251
+# values from mean of SidebandWPlusJetsRegion
+p0_wjets_from0_no_top_pt_reweight = 1.1012315
+p1_wjets_from0_no_top_pt_reweight = -0.000217951
 
-ht_reweight_0 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
-# ht_reweight_1 = '*({0}+{1}*HT)'.format(p0_from0_no_top_pt_reweight_1, p1_from0_no_top_pt_reweight_1)
-gen_ht_reweight = '*({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
-parton_ht_reweight = '*({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
-top_pt_reweight = '*(weight_ttbar/0.9910819)'
+# WITH TOP PT REWEIGHTING
+# values from mean of SidebandTTJetsRegion
+p0_ttbar_from0_w_top_pt_reweight = 1.376561
+p1_ttbar_from0_w_top_pt_reweight = -0.000331145
+# values from mean of SidebandWPlusJetsRegion
+p0_wjets_from0_w_top_pt_reweight = 1.14162275
+p1_wjets_from0_w_top_pt_reweight = -0.000225091
+
+ht_reweight_ttbar_no_top_pt_reweight = '({0}+{1}*HT)'.format(p0_ttbar_from0_no_top_pt_reweight, p1_ttbar_from0_no_top_pt_reweight)
+ht_reweight_wjets_no_top_pt_reweight = '({0}+{1}*HT)'.format(p0_wjets_from0_no_top_pt_reweight, p1_wjets_from0_no_top_pt_reweight)
+ht_reweight_ttbar_w_top_pt_reweight = '({0}+{1}*HT)'.format(p0_ttbar_from0_w_top_pt_reweight, p1_ttbar_from0_w_top_pt_reweight)
+ht_reweight_wjets_w_top_pt_reweight = '({0}+{1}*HT)'.format(p0_wjets_from0_w_top_pt_reweight, p1_wjets_from0_w_top_pt_reweight)
+# gen_ht_reweight = '({0}+{1}*gen_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
+# parton_ht_reweight = '({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
+top_pt_reweight = '(weight_ttbar/0.9910819)'
 
 
-def add_all_with_weight_uncertainties(weight_name, weight_dict):
+def add_all_with_weight_uncertainties(dict_weight_uncerts):
     def add_uncerts(base_path, weights):
         def tmp():
             sys_tps = []
-            sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
+            # sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
             sys_tps += treeproject_tptp.add_generic_uncerts(base_path, final_regions, weights)
-            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
-            sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
-            sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
+            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+            # sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
+            for weight_name, weight_dict in dict_weight_uncerts.iteritems():
+                sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
             return sys_tps
         return tmp
     return add_uncerts
 
-def add_only_weight_uncertainties(weight_name, weight_dict):
+def add_only_weight_uncertainties(dict_weight_uncerts):
     def add_uncerts(base_path, weights):
         def tmp():
             sys_tps = []
-            sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
+            for weight_name, weight_dict in dict_weight_uncerts.iteritems():
+                sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
             return sys_tps
         return tmp
     return add_uncerts
@@ -265,10 +281,10 @@ def add_only_weight_uncertainties(weight_name, weight_dict):
 def add_all_without_weight_uncertainties(base_path, weights):
     def tmp():
         sys_tps = []
-        sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
+        # sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
         sys_tps += treeproject_tptp.add_generic_uncerts(base_path, final_regions, weights)
-        sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
-        sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
+        # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+        # sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
         return sys_tps
     return tmp
 
@@ -294,14 +310,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
             #     )),
             plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
             plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
                         # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final,
                         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if 'Run2015CD' not in f)),
             plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_final),
         ])
 
@@ -310,10 +326,40 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            make_tp_plot_chain('NoReweighting', base_path, output_dir, 
-                add_uncert_func=no_uncertainties),
-            make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
-                add_uncert_func=no_uncertainties),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
+            #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+            # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
+            #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+            #     uncertainties=all_uncerts+['top_pt_reweight']
+            #     ),
+            # make_tp_plot_chain('HTReweighting', base_path, output_dir,
+            #     add_uncert_func=add_all_with_weight_uncertainties({
+            #         'ht_reweight' : {
+            #             'TTbar' : ht_reweight_ttbar_no_top_pt_reweight,
+            #             'WJets' : ht_reweight_wjets_no_top_pt_reweight
+            #             }
+            #         }),
+            #     mod_sample_weights={
+            #         'TTbar' : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
+            #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
+            #     },
+            #     uncertainties=all_uncerts+['ht_reweight']
+            #     ),
+            make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir,
+                add_uncert_func=add_all_with_weight_uncertainties({
+                    'ht_reweight' : {
+                        'TTbar' : ht_reweight_ttbar_w_top_pt_reweight,
+                        'WJets' : ht_reweight_wjets_w_top_pt_reweight
+                        },
+                    'top_pt_reweight' : {'TTbar' : top_pt_reweight}
+                    }),
+                mod_sample_weights={
+                    'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight+'*'+ht_reweight_ttbar_w_top_pt_reweight,
+                    'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_w_top_pt_reweight,
+                },
+                uncertainties=all_uncerts+['ht_reweight']
+                ),
                 # add_uncert_func=add_only_weight_uncertainties('top_pt_reweight', {'TTbar' : top_pt_reweight}),
                 # mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+top_pt_reweight},
                 # uncertainties=all_uncerts+['top_pt_reweight']

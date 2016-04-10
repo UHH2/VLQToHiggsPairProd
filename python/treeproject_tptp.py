@@ -7,6 +7,7 @@ import varial.tools
 import glob
 import os
 import ast
+import pprint
 
 # varial.settings.max_num_processes = 24
 
@@ -217,14 +218,14 @@ def add_generic_uncerts(base_path, final_regions, sample_weights):
             ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
             ('btag_udsg__minus', '*weight_btag_udsg_down/weight_btag'),
             ('btag_udsg__plus', '*weight_btag_udsg_up/weight_btag'),
-            ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
-            ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
-            ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
-            ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
-            ('pu__minus', '*weight_pu_down/weight_pu'),
-            ('pu__plus', '*weight_pu_up/weight_pu'),
-            ('rate__minus', '*0.95'), # for 2D-cut and el/add. mu trg uncertainty
-            ('rate__plus', '*1.05'), # for 2D-cut and el/add. mu trg uncertainty
+            # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+            # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+            # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+            # ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+            # ('pu__minus', '*weight_pu_down/weight_pu'),
+            # ('pu__plus', '*weight_pu_up/weight_pu'),
+            # ('rate__minus', '*0.95'), # for 2D-cut and el/add. mu trg uncertainty
+            # ('rate__plus', '*1.05'), # for 2D-cut and el/add. mu trg uncertainty
             # ('ak4_jetpt__minus', '*weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
@@ -342,9 +343,14 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
     )
     sample_weights_reweight_down = dict(sample_weights)
     sample_weights_reweight_up = dict(sample_weights)
-    sample_weights_reweight_down.update(dict((proc, base_weight+weight+weight) for proc, weight in weight_dict.iteritems()))
-    sample_weights_reweight_up.update(dict((proc, base_weight) for proc, _ in weight_dict.iteritems()))
-
+    sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*'+weight) for proc, weight in weight_dict.iteritems()))
+    sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/'+weight) for proc, weight in weight_dict.iteritems()))
+    print 'SAMPLE_WEIGHTS'
+    pprint.pprint(sample_weights)
+    print 'SAMPLE_WEIGHTS_REWEIGHT_DOWN'
+    pprint.pprint(sample_weights_reweight_down)
+    print 'SAMPLE_WEIGHTS_REWEIGHT_UP'
+    pprint.pprint(sample_weights_reweight_up)
     sys_sec_sel_weight_reweight_weight = (
         (weight_name+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
         (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
