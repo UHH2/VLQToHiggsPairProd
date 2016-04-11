@@ -197,9 +197,9 @@ def mod_legend(wrps):
         if w.legend.endswith('_thX'):
             w.legend = w.legend[:-4]
         if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
-            w.legend = 'DY + Jets'
+            w.legend = 'DY + jets'
         if w.legend == 'WJets':
-            w.legend = 'W + Jets'
+            w.legend = 'W + jets'
         if w.legend == 'SingleTop':
             w.legend = 'Single T'
         yield w
@@ -213,17 +213,10 @@ def mod_title(wrps):
             w.histo.GetXaxis().SetTitle('groomed AK8 jet mass [GeV]')
         if w.histo.GetXaxis().GetTitle() == 'ST':
             w.histo.GetXaxis().SetTitle('ST [GeV]')
+        if w.histo.GetXaxis().GetTitle() == 'HT':
+            w.histo.GetXaxis().SetTitle('HT [GeV]')
         if w.histo.GetXaxis().GetTitle() == 'N(non-overlapping medium b-tags)':
             w.histo.GetXaxis().SetTitle('N(AK4 b-tags)')
-        yield w
-
-def mod_bin(wrps):
-    for w in wrps:
-        # print w.histo.GetXaxis.GetTitle()
-        # if w.in_file_path == 'SignalRegion2b_Mu45/ST':
-        #     w = op.rebin_nbins_max(w, 20)
-        if w.in_file_path.endswith('mass_sj'):
-            w = op.rebin_nbins_max(w, 30)
         yield w
 
 def fix_get_samplename(wrp):
@@ -328,9 +321,11 @@ def rebin_st_and_nak4(wrps):
             new_w = op.rebin(w, nak4_bounds, True)
             new_w.name = 'n_ak4_rebin'
             new_w.in_file_path = w.in_file_path.replace('n_ak4', 'n_ak4_rebin')
-            yield new_w  
+            yield new_w 
         if w.in_file_path.endswith('primary_lepton_pt'):
             w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
+        if w.in_file_path.endswith('_jet') or w.in_file_path.endswith('mass_sj'):
+            w = op.rebin_nbins_max(w, 30)
         elif not isinstance(w.histo, TH2):
             w = op.rebin_nbins_max(w, 60)
         yield w

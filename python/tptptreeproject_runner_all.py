@@ -5,9 +5,11 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 from varial.extensions.hadd import Hadd
 import varial.extensions.make
 import varial.tools
+import varial.generators as gen
 import os
 import glob
 import sys
+import pprint
 import varial.analysis as analysis
 
 import common_plot
@@ -100,9 +102,9 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
                         th_x=common_sensitivity.theory_masses,
                         th_y=common_sensitivity.theory_cs),
                     canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
-                        varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                         ],
-                    save_lin_log_scale=True
+                    # save_lin_log_scale=True
                     ),
                 ]))
             limit_list.append(
@@ -330,29 +332,29 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     tc = [
             treeproject_tptp.mk_tp(base_path, final_regions, weights),
             treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
-            sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                all_regions
-            )),
-            plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final, compare_uncerts=True),
-            plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final,
-                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if 'Run2015CD' not in f)),
-            # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
+            # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
+            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+            #     all_regions
+            # )),                                             
+            # plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final),               
-            plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final),
+            #             ,plot.samples_to_plot_final, compare_uncerts=True),
+            # plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_final,
+            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if 'Run2015CD' not in f)),
+            # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
+            # #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            # #             ,plot.samples_to_plot_final),               
+            # plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_final),
         ]
-    for uc_name, uncert_list in plot_uncerts.iteritems():
-        if any(i in uncerts for i in uncert_list):
-            tc += [plot.mk_toolchain('Histograms'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
-                + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
-                ,plot.samples_to_plot_final)]
+    # for uc_name, uncert_list in plot_uncerts.iteritems():
+    #     if any(i in uncerts for i in uncert_list):
+    #         tc += [plot.mk_toolchain('Histograms'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
+    #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
+    #             ,plot.samples_to_plot_final)]
     tc += [
         # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
@@ -378,19 +380,63 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     ['SignalRegion2b_Mu45', 'SignalRegion2b_El45']
         # )),
+        varial.tools.HistoLoader(
+            pattern='../TreeProjector/*.root',
+            name='MergedSidebandsLoader',
+            # pattern=common_plot.file_select(datasets_to_plot),
+            # input_result_path='../../../../HistoLoader',
+            filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+            any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
+            w.in_file_path.endswith('HT'),
+                           # and (('SingleEle' not in w.file_path and 'Mu' in category) or\
+                           # ('SingleMuon' not in w.file_path and 'El' in category)),
+            # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
+            hook_loaded_histos=plot.loader_hook_merge_sidebands,
+        ),
+        varial.plotter.Plotter(
+            name='HistogramsMergeSidbands',
+            stack=True,
+            input_result_path='../MergedSidebandsLoader',
+            # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+            #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
+            #                 w.in_file_path.endswith('HT'),
+            # plot_setup=plot_setup,
+            stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region),
+            save_name_func=lambda w: w._renderers[0].region+'_'+w.name
+            # save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0].split('_')[0]+'_'+w._renderers[0]'_'+w.name
+            # save_name_func=lambda w: w.save_name,
+            # plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+            #     th_x=common_sensitivity.theory_masses,
+            #     th_y=common_sensitivity.theory_cs),
+            # canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
+            #     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            #     ],
+            )
+        # plot.mk_toolchain('HistogramsMergeSidbands', [output_dir+'/%s/TreeProjector/*.root'%name]
+        #             ,plot.samples_to_plot_final,
+        #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+        #                     any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
+        #                     w.in_file_path.endswith('HT'),
+        #             hook_loaded_histos=plot.loader_hook_merge_sidebands), 
         ]
     tc_tex = [
         tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
         tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),
         tex_content.mk_autoContentSystematicCRPlots(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'SystematicCRPlots_'+name),
-        tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions'),
+        # tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions'),
     ]
+    if name == 'NoReweighting' or name == 'TopPtAndHTReweighting':
+        tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name)]
+    else:
+        tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions')]
+
     for uc_name, uncert_list in plot_uncerts.iteritems():
         if any(i in uncerts for i in uncert_list):
             tc_tex += [tex_content.mk_autoContentSystematicCRPlots(
                 os.path.join(output_dir, name)+'/Histograms'+uc_name, 'El45', 'Mu45', 'SystematicCRPlots_'+uc_name+'_'+name)]
     tc += [varial.tools.ToolChain('Tex', tc_tex),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)]
+        # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        ]
     return varial.tools.ToolChain(name, tc)
 
 def run_treeproject_and_plot(base_path, output_dir):
@@ -398,13 +444,13 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
-            #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
-            make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
-                add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-                uncertainties=all_uncerts+['top_pt_reweight']
-                ),
+            make_tp_plot_chain('NoReweighting', base_path, output_dir, 
+                add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+            # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
+            #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+            #     uncertainties=all_uncerts+['top_pt_reweight']
+            #     ),
             # make_tp_plot_chain('HTReweighting', base_path, output_dir,
             #     add_uncert_func=add_all_with_weight_uncertainties({
             #         'ht_reweight' : {
@@ -432,9 +478,9 @@ def run_treeproject_and_plot(base_path, output_dir):
             #     },
             #     uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
             #     ),
-            # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
+            # mk_tex_tc_post(output_dir+'/Histograms/')(), 
             # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
 
             # varial.tools.PrintToolTree(),

@@ -222,6 +222,10 @@ def getSystCRPlots(chan, base):
         chan+'_njets': (
             p + 'SidebandRegion_%s/n_ak4_lin' % chan + ext,
             p + 'SidebandRegion_%s/n_ak8_lin' % chan + ext,
+        ),
+        chan+'_stht': (
+            p + 'SidebandRegion_%s/ST_rebin_flex_lin' % chan + ext,
+            p + 'SidebandRegion_%s/HT_rebin_flex_lin' % chan + ext,
         )
     }.items()
 
@@ -353,7 +357,7 @@ def getSysTab(chan, base, mod=my_mod):
 def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix=''):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
-    tmp_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlots(base)
+    tmp_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
     return varial.extensions.tex.TexContent(
         tmp_dict,
         # dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),

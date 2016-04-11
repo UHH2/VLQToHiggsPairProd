@@ -252,7 +252,6 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    wrps = common_plot.mod_bin(wrps)
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
@@ -278,6 +277,34 @@ def loader_hook_norm_to_int(wrps):
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
     wrps = common_plot.norm_to_int(wrps)
+    return wrps
+
+def loader_hook_merge_sidebands(wrps):
+    key = lambda w: '{0}___{1}'.format(w.in_file_path.split('/')[0].split('_')[0], w.sample)
+
+    wrps = common_loader_hook(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = gen.gen_make_th2_projections(wrps)
+    wrps = gen.sort(wrps, ['in_file_path', 'sample'])
+    # for w in wrps: print w.sample, w.in_file_path
+    if varial.settings.merge_decay_channels:
+        wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
+        wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    wrps = common_plot.mod_legend(wrps)
+    wrps = common_plot.mod_title(wrps)
+    if not varial.settings.flex_sig_norm:
+        wrps = common_plot.norm_to_fix_xsec(wrps)
+    # wrps = gen.sort(wrps, ['in_file_path'])
+    wrps = sorted(wrps, key=key)
+    # wrps = sorted(wrps, key=lambda w: w.name)
+    wrps = list(wrps)
+    for w in wrps:
+        print w.in_file_path, w.sample
+    # pprint.pprint(wrps)
+    wrps = varial.gen.group(wrps, key)
+    wrps = varial.gen.gen_merge(wrps)
+    wrps = varial.gen.gen_add_wrp_info(wrps, region=lambda w: w.in_file_path.split('/')[0].split('_')[0])
+    wrps = common_plot.rebin_st_and_nak4(wrps)
     return wrps
 
 # def mk_legend_bkg(wrps):
@@ -461,10 +488,10 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
         return plot_chain
     return create
 
-def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
+def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False, **kws):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts)
+        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, **kws)
         )
 
 def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
