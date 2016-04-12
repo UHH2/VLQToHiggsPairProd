@@ -9,10 +9,10 @@ using namespace uhh2;
 using namespace std;
 
 TpTpReconstruction::TpTpReconstruction(Context & ctx,
-                                    vector<ReconstructionHypothesis> const & ttbar_hyp,
+                                    string const & ttbar_hyp,
                                     const string & h_out,
                                     const string & discriminator_name):
-            ttbar_hyps_(ttbar_hyp),
+            ttbar_hyps_(ctx.get_handle<std::vector<ReconstructionHypothesis>>(ttbar_hyp)),
             h_recohyps_(ctx.get_handle<vector<TpTpReconstructionHypothesis>>(h_out)),
             discriminator_name_(discriminator_name) {}
 
@@ -32,8 +32,10 @@ bool TpTpReconstruction::process(uhh2::Event & event) {
     assert(event.jets);
     //find primary charged lepton
     vector<TpTpReconstructionHypothesis> recoHyps;
+
+    std::vector<ReconstructionHypothesis> const & ttbar_hyps = event.get(ttbar_hyps_);
     
-    ReconstructionHypothesis const * ttbar_hyp_ = get_best_hypothesis(ttbar_hyps_, discriminator_name_);
+    ReconstructionHypothesis const * ttbar_hyp_ = get_best_hypothesis(ttbar_hyps, discriminator_name_);
 
     vector<Jet> sep_jets;
     for (auto const & jet : *event.jets) {
@@ -79,12 +81,12 @@ bool TpTpReconstruction::process(uhh2::Event & event) {
 	    //search jet with highest pt assigned to leptonic top
 
             //fill only hypotheses with at least one jet assigned to each top quark
-    if(hadjets>0 && lepjets>0) {
-        hyp.set_tphad_v4(tp_had);
-        hyp.set_tplep_v4(tp_lep);
-        recoHyps.emplace_back(move(hyp));
-    }
-        } // 3^n_jets jet combinations
+        if(hadjets>0 && lepjets>0) {
+            hyp.set_tphad_v4(tp_had);
+            hyp.set_tplep_v4(tp_lep);
+            recoHyps.emplace_back(move(hyp));
+        }
+    } // 3^n_jets jet combinations
     event.set(h_recohyps_, move(recoHyps));
     return true;
 }

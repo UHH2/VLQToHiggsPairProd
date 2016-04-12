@@ -41,6 +41,8 @@
 <!ENTITY Data_JetHTPD SYSTEM        "../../common/datasets/RunII_76X_v1/DATA_JetHT.xml">
 
 <!ENTITY MC_TTbar SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbar.xml">
+<!ENTITY MC_TTbar_ScaleUp SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleUp.xml">
+<!ENTITY MC_TTbar_ScaleDown SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleDown.xml">
 
 <!ENTITY MC_WJets_LNu_HT100To200   SYSTEM  "../../common/datasets/RunII_76X_v1/MC_WJetsToLNu_HT-100To200.xml">
 <!ENTITY MC_WJets_LNu_HT200To400   SYSTEM  "../../common/datasets/RunII_76X_v1/MC_WJetsToLNu_HT-200To400.xml">
@@ -434,6 +436,18 @@
 
     <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
         &MC_TTbar;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+    
+    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="False">
+        &MC_TTbar_ScaleUp;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleDown" Cacheable="False">
+        &MC_TTbar_ScaleDown;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>

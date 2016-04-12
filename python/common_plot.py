@@ -8,6 +8,7 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 import varial.operations as op
 import varial.wrappers
+import varial.util as util
 
 from ROOT import THStack, TH2
 
@@ -251,14 +252,44 @@ def add_sample_integrals(canvas_builders):
         fct = 1.
         if hasattr(wrp, 'scl_fct'):
             fct = wrp.scl_fct
-        return [(wrp.legend, wrp.obj.Integral()/fct)]
+        bkg_sum = util.integral_and_error(wrp.histo)
+        if len(bkg_sum) == 2:
+            bkg_sum = (bkg_sum[0]/fct, bkg_sum[1]/fct)
+        sys_sum = (util.integral_and_error(wrp.histo_sys_err)
+                   if wrp.histo_sys_err
+                   else tuple())
+        if len(sys_sum) == 2:
+            sys_sum = (sys_sum[0]/fct, sys_sum[1]/fct)
+        if len(sys_sum) == 2 and len(bkg_sum) >= 1:
+            diff = sys_sum[0] - bkg_sum[0]
+            sys_up = sys_sum[1] + diff
+            sys_down = sys_sum[1] - diff
+            sys_sum = (sys_up, -sys_down)
+        return [(wrp.legend, bkg_sum + sys_sum)]
 
     def integral_stack_wrp(wrp):
         for hist in wrp.obj.GetHists():
             fct = 1.
             if hasattr(wrp, 'scl_fct'):
                 fct = wrp.scl_fct
-            yield hist.GetTitle(), hist.Integral()/fct
+            tmp = util.integral_and_error(hist)
+            if len(tmp) == 2:
+                tmp = (tmp[0]/fct, tmp[1]/fct)
+            yield hist.GetTitle(), tmp
+        bkg_sum = util.integral_and_error(wrp.histo)
+        # if len(bkg_sum) == 2:
+            # bkg_sum = (bkg_sum[0]*2, bkg_sum[1]*2)
+        sys_sum = (util.integral_and_error(wrp.histo_sys_err)
+                   if wrp.histo_sys_err
+                   else tuple())
+        if len(sys_sum) == 2 and len(bkg_sum) >= 1:
+            diff = sys_sum[0] - bkg_sum[0]
+            sys_up = sys_sum[1] + diff
+            sys_down = sys_sum[1] - diff
+            sys_sum = (sys_up, -sys_down)
+        # if len(sys_sum) == 2:
+            # sys_sum = (sys_sum[0]*2, sys_sum[1]*2)
+        yield 'bkg_sum', bkg_sum + sys_sum
 
     def integral(wrp):
         if isinstance(wrp, rnd.StackRenderer):
@@ -269,12 +300,45 @@ def add_sample_integrals(canvas_builders):
     for cnv in canvas_builders:
         # TODO when rendering goes generator
         cnv.renderers[0].__dict__.update(dict(
-            ('Integral__' + legend, integ)
+            ('Integral___' + legend, integ)
             for r in cnv.renderers
             if isinstance(r, rnd.HistoRenderer)  # applies also to StackRnd.
             for legend, integ in integral(r)
         ))
         yield cnv
+
+# def add_sample_integrals(canvas_builders):
+#     """
+#     Adds {'legend1' : histo_integral, ...} to canvases.
+#     """
+#     def integral_histo_wrp(wrp):
+#         fct = 1.
+#         if hasattr(wrp, 'scl_fct'):
+#             fct = wrp.scl_fct
+#         return [(wrp.legend, wrp.obj.Integral()/fct)]
+
+#     def integral_stack_wrp(wrp):
+#         for hist in wrp.obj.GetHists():
+#             fct = 1.
+#             if hasattr(wrp, 'scl_fct'):
+#                 fct = wrp.scl_fct
+#             yield hist.GetTitle(), hist.Integral()/fct
+
+#     def integral(wrp):
+#         if isinstance(wrp, rnd.StackRenderer):
+#             return integral_stack_wrp(wrp)
+#         else:
+#             return integral_histo_wrp(wrp)
+
+#     for cnv in canvas_builders:
+#         # TODO when rendering goes generator
+#         cnv.renderers[0].__dict__.update(dict(
+#             ('Integral__' + legend, integ)
+#             for r in cnv.renderers
+#             if isinstance(r, rnd.HistoRenderer)  # applies also to StackRnd.
+#             for legend, integ in integral(r)
+#         ))
+#         yield cnv
 
 
 
@@ -295,7 +359,7 @@ def rebin_st_and_nak4(wrps):
             new_w_flex.name = 'ST_rebin_flex'
             new_w_flex.in_file_path = w.in_file_path.replace('ST', 'ST_rebin_flex')
             yield new_w_flex
-        if w.in_file_path.endswith('/HT'):
+        if w.in_file_path.endswith('/HT') and not isinstance(w.histo, TH2):
             new_w = op.rebin_nbins_max(w, 20)
             # new_w = op.rebin(w, st_bounds, True)
             new_w.name = 'HT_rebin'
@@ -306,7 +370,7 @@ def rebin_st_and_nak4(wrps):
             new_w_flex.name = 'HT_rebin_flex'
             new_w_flex.in_file_path = w.in_file_path.replace('HT', 'HT_rebin_flex')
             yield new_w_flex
-        if w.in_file_path.endswith('/ht_gen_reco'):
+        if w.in_file_path.endswith('/ht_gen_reco') and not isinstance(w.histo, TH2):
             new_w = op.rebin_nbins_max(w, 20)
             # new_w = op.rebin(w, st_bounds, True)
             new_w.name = 'ht_gen_reco_rebin'
@@ -324,7 +388,7 @@ def rebin_st_and_nak4(wrps):
             yield new_w 
         if w.in_file_path.endswith('primary_lepton_pt'):
             w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
-        if w.in_file_path.endswith('_jet') or w.in_file_path.endswith('mass_sj'):
+        if (w.in_file_path.endswith('_jet') or w.in_file_path.endswith('mass_sj')) and not isinstance(w.histo, TH2):
             w = op.rebin_nbins_max(w, 30)
         elif not isinstance(w.histo, TH2):
             w = op.rebin_nbins_max(w, 60)

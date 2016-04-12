@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "100">
+<!ENTITY NEVT "10000">
+<!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
+<!ENTITY OUTPUTDIR "Sayed_massReco/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "/nfs/dust/cms/user/nowatsd/Preselection-Files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt15to20_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt20to30_MuEnrichedPt5 SYSTEM     "/nfs/dust/cms/user/nowatsd/Preselection-Files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt20to30_MuEnrichedPt5.xml">
 <!ENTITY MC_QCD_Pt30to50_MuEnrichedPt5 SYSTEM     "/nfs/dust/cms/user/nowatsd/Preselection-Files/uhh2.AnalysisModuleRunner.MC.MC_QCD_Pt30to50_MuEnrichedPt5.xml">
@@ -82,8 +84,8 @@
     <Library Name="libSUHH2vlqToHPairProd"/>
     <Package Name="SUHH2vlqToHPairProd.par" />
 
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="2460" >
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2460" > -->
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2460" > -->
+   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2460" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="60" OutputDirectory="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/TpTpPreSelection-v5/" PostFix="" TargetLumi="1984.1" > -->
         
     <!--
@@ -141,7 +143,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="MC_TpTp_M-800" Cacheable="True">
+    <!-- <InputData Lumi="4193878" NEventsMax="&NEVT;" Type="MC" Version="MC_TpTp_M-800" Cacheable="True">
         &MC_TpTp_M-800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -163,7 +165,7 @@
         &MC_TpTp_M-1400;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <InputData Lumi="804000000" NEventsMax="&NEVT;" Type="MC" Version="MC_TpTp_M-1600" Cacheable="True">
         &MC_TpTp_M-1600;
@@ -358,7 +360,7 @@
             -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="" />
+            <Item Name="AnalysisModule" Value="tprimemassrecoModule" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->

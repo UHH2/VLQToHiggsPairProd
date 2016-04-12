@@ -105,8 +105,8 @@ signals = [
 
 final_states = [
     '_thth',
-    # '_thtz',
-    # '_thbw',
+    '_thtz',
+    '_thbw',
     # '_noH_tztz',
     # '_noH_tzbw',
     # '_noH_bwbw',
@@ -186,6 +186,7 @@ def add_jec_uncerts(base_path, final_regions, sample_weights):
         ) 
         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
     )
+    
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     return list(
         TreeProjector(
@@ -200,6 +201,38 @@ def add_jec_uncerts(base_path, final_regions, sample_weights):
         )
         for name, pat in jercs
     )
+    # return tmp
+
+def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights):
+    # def tmp():
+    files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots/Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleUp_*.root')
+    files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots/Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleDown_*.root')
+    files_nom_path = join(base_path_nominal_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root')
+    dict_nom_files = dict(
+        (sample, list(f for f in glob.glob(files_nom_path) if sample in f))
+        for sample in samples_no_data
+    )
+    dict_up_files = dict(dict_nom_files)
+    dict_up_files.update({'TTbar' : list(f for f in glob.glob(files_ttbar_scale_up))})
+    dict_down_files = dict(dict_nom_files)
+    dict_down_files.update({'TTbar' : list(f for f in glob.glob(files_ttbar_scale_down))})
+    nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
+    return [
+        TreeProjector(
+            dict_up_files, 
+            sys_params, 
+            nominal_sec_sel_weight,
+            add_aliases_to_analysis=False,
+            name='ttbar_scale__plus',
+        ),
+        TreeProjector(
+            dict_down_files, 
+            sys_params, 
+            nominal_sec_sel_weight,
+            add_aliases_to_analysis=False,
+            name='ttbar_scale__minus',
+        )
+    ]
     # return tmp
 
 def add_generic_uncerts(base_path, final_regions, sample_weights):

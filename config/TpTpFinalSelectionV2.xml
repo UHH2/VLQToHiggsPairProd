@@ -47,6 +47,8 @@
 <!ENTITY Data_SingleEle SYSTEM     "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleEle_Run2015CD.xml">
 
 <!ENTITY MC_TTbar SYSTEM            "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.TTbar.xml">
+<!ENTITY MC_TTbar_ScaleUp SYSTEM            "../NewSamples-76X-v1/Preselection_onlyTTbarScaleVar/Xml-Files/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleUp.xml">
+<!ENTITY MC_TTbar_ScaleDown SYSTEM            "../NewSamples-76X-v1/Preselection_onlyTTbarScaleVar/Xml-Files/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleDown.xml">
 
 <!ENTITY MC_WJets_LNu_HT100To200   SYSTEM  "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT100To200.xml">
 <!ENTITY MC_WJets_LNu_HT200To400   SYSTEM  "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT200To400.xml">
@@ -202,6 +204,24 @@
     backgrounds
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
+    
+    <!-- <InputData Lumi="129.67" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt80to120_MuEnrichedPt5" Cacheable="False">
+        &MC_QCD_Pt80to120_MuEnrichedPt5;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="102.9418" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-80to120_EMEnriched" Cacheable="False">
+        &MC_QCD_Pt-80to120_EMEnriched;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="402.7113" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt_80to170_bcToE" Cacheable="False">
+        &MC_QCD_Pt_80to170_bcToE;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,11 +229,6 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="129.67" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt80to120_MuEnrichedPt5" Cacheable="False">
-        &MC_QCD_Pt80to120_MuEnrichedPt5;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData> -->
 
     <InputData Lumi="316.4" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt120to170_MuEnrichedPt5" Cacheable="False">
         &MC_QCD_Pt120to170_MuEnrichedPt5;
@@ -263,12 +278,6 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="102.9418" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-80to120_EMEnriched" Cacheable="False">
-        &MC_QCD_Pt-80to120_EMEnriched;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData> -->
-
     <InputData Lumi="574.97" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-120to170_EMEnriched" Cacheable="False">
         &MC_QCD_Pt-120to170_EMEnriched;
         <InputTree Name="AnalysisTree" />
@@ -287,12 +296,6 @@
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-
-    <!-- <InputData Lumi="402.7113" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt_80to170_bcToE" Cacheable="False">
-        &MC_QCD_Pt_80to170_bcToE;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData> -->
 
     <InputData Lumi="3631.427" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt_170to250_bcToE" Cacheable="False">
         &MC_QCD_Pt_170to250_bcToE;
@@ -426,6 +429,18 @@
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
+    
+    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="False">
+        &MC_TTbar_ScaleUp;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleDown" Cacheable="False">
+        &MC_TTbar_ScaleDown;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
 
     <!-- <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0000to0700" Cacheable="False">
         &MC_TTbar;
@@ -495,6 +510,9 @@
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
             <Item Name="data_dir_path" Value="&SOURCEDIR;../common/data/" />
             <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
+            <Item Name="el_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root" />
+            <Item Name="mu_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
+            
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
             <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelecion-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
@@ -514,6 +532,8 @@
             <Item Name="pileup_directory_data_up" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_72450.root" />
             <Item Name="pileup_directory_data_down" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_65550.root" />
             <Item Name="pileup_directory" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>
+
+            <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;kinematicBinSFele.root"/>
             
             <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
             <Item Name="TestKey" Value="TestKeyValue" />

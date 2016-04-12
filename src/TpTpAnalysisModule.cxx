@@ -16,11 +16,11 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
 
-    // if (version == "Run2015D_Ele") {
-    //     ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root");
-    // } else if (version == "Run2015D_Mu") {
-    //     ctx.set("lumi_file", "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/CMSSW_7_4_15_patch1/src/UHH2/common/data/Latest_2015_Silver_JSON.root");
-    // }
+    if (version == "Run2015CD_Ele") {
+        ctx.set("lumi_file", ctx.get("ele_lumi_file", ctx.get("lumi_file")));
+    } else if (version == "Run2015D_Mu") {
+        ctx.set("lumi_file", ctx.get("mu_lumi_file", ctx.get("lumi_file")));
+    }
     
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
@@ -38,6 +38,8 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu27_v*"}, "trigger_accept_isoMu"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_mu45"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el45"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*", "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, "trigger_accept_lep_comb"));
+    // common_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLeptonComb", 50., 47.));
 
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
@@ -47,6 +49,8 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon", "primary_muon_pt", "primary_muon_eta", "primary_muon_charge"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryElectron", "primary_electron_pt", "primary_electron_eta", "primary_electron_charge"));
+    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
+    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLeptonComb", "primary_lepton_comb_pt", "primary_lepton_comb_eta", "primary_lepton_comb_charge"));
     // keep the following module mainly for cross-checks, to see whether e.g. your primary lepton in the muon channel is really a muon
     common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLepton", 50., 47., "is_muon"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
@@ -68,7 +72,6 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_third_ak8_jet", 3));
     common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
     common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
-    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
     if (type == "MC") {
         common_modules.emplace_back(new PartonHT(ctx.get_handle<double>("parton_ht")));
         common_modules.emplace_back(new GenHTCalculator(ctx, "gen_ht"));
@@ -91,15 +94,15 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
       covariance p1-p1 = 9.89815635815e-09
     */
     //////////////////////////////////////////
-    float jetsf_p0 = 1.09771;
-    float jetsf_p1 = -0.000517529;
+    // float jetsf_p0 = 1.09771;
+    // float jetsf_p1 = -0.000517529;
 
-    // get error from covariance matrix, again, values are taken from Julie
-    float cov_p0_p0 = 0.0014795109823;
-    float cov_p0_p1 = -3.6104869696e-06;
-    float cov_p1_p1 = 9.89815635815e-09;
+    // // get error from covariance matrix, again, values are taken from Julie
+    // float cov_p0_p0 = 0.0014795109823;
+    // float cov_p0_p1 = -3.6104869696e-06;
+    // float cov_p1_p1 = 9.89815635815e-09;
 
-    common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", jetsf_p0, jetsf_p1, cov_p0_p0, cov_p0_p1, cov_p1_p1, "weight_ak4_jetpt"));
+    // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", jetsf_p0, jetsf_p1, cov_p0_p0, cov_p0_p1, cov_p1_p1, "weight_ak4_jetpt"));
     // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.13617, -0.000418040, "weight_ak4_jetpt_up"));
     // common_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.05925, -0.000617018, "weight_ak4_jetpt_down"));
 
@@ -108,7 +111,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     
 
     if (type == "MC") {
-        common_modules.emplace_back(new TriggerAwareEventWeight(ctx, "trigger_accept_el45", (target_lumi - 86.)/target_lumi));
+        common_modules.emplace_back(new TriggerAwareEventWeight(ctx, "trigger_accept_el45", (target_lumi - 93)/target_lumi));
     }
 
     ak8jet_hists.reset(new NParticleMultiHistProducerHelper<TopJet>("FirstAk8SoftDropSlimmed", "topjets", vector<string>{"n", "pt", "eta", "phi", "mass_sj", "tau21", "n_subjets", "dRlepton", "dRak4", "dRak8"}));

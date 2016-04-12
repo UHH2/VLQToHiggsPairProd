@@ -32,8 +32,8 @@ def get4sel(chan, base):
     p = os.path.join(base+'/StackedAll', chan, 'Nm1Selection/')
     return {
         chan+'_twoDeeCut': (
-            p + 'twod_cut_hist_noIso_QCD_lin' + ext,
-            p + 'twod_cut_hist_noIso_TpTp_M-1300_lin' + ext,
+            p + 'twod_cut_hist_noIso_QCD_log' + ext,
+            p + 'twod_cut_hist_noIso_TpTp_M-1300_log' + ext,
             p + 'twod_cut_hist_noIso_px_log' + ext,
             p + 'twod_cut_hist_noIso_py_log' + ext,
         ),
@@ -69,7 +69,7 @@ def mk_autoContentPreSelectionNm1(base, el_channel=None, mu_channel=None):
         dict(get4sel(muchannel, base) + get4sel(elchannel, base)),
         # dict(get4sel(muchannel, base) + get4sel(elchannel, base) + img_2d_px),
         dict(get4cf(muchannel, base) + get4cf(elchannel, base)),
-        include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name='AutoContentSelection',
     )
 
@@ -95,7 +95,7 @@ def get4obj(chan, base):
             ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
         ),
         chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
-            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_lin', 'MET_own_lin', )
+            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_log', 'MET_own_lin', )
         ),
     }.items()
 
@@ -104,7 +104,7 @@ def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(get4obj(muchannel, base) + get4obj(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name='AutoContentObjects',
     )
 
@@ -130,7 +130,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None)
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.38\textwidth]{%s}',
         name='AutoContentFinalSelectionHiggsVar',
     )
 
@@ -158,7 +158,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None)
 #     elchannel = el_channel or el_channel_def
 #     return varial.extensions.tex.TexContent(
 #         dict(get4sb(muchannel, base) + get4sb(elchannel, base)),
-#         include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
+#         include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
 #         name='AutoContentJetPtReweight',
 #     )
 
@@ -191,7 +191,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None)
 #     elchannel = el_channel or el_channel_def
 #     return varial.extensions.tex.TexContent(
 #         dict(getNoDataFinalVar(muchannel, base) + getNoDataFinalVar(elchannel, base)),
-#         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+#         include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
 #         name='AutoContentNoDataFinalRegions',
 #     )
 
@@ -214,8 +214,8 @@ def getSystCRPlots(chan, base):
             p + 'SidebandRegion_%s/pt_subld_ak8_jet_lin' % chan + ext,
         ),
         chan+'_eventvar': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_lin' % chan + ext,
-            p + 'SidebandRegion_%s/HT_rebin_flex_lin' % chan + ext,
+            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
             p + 'SidebandRegion_%s/primary_lepton_pt_lin' % chan + ext,
             p + 'SidebandRegion_%s/met_lin' % chan + ext,
         ),
@@ -224,8 +224,8 @@ def getSystCRPlots(chan, base):
             p + 'SidebandRegion_%s/n_ak8_lin' % chan + ext,
         ),
         chan+'_stht': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_lin' % chan + ext,
-            p + 'SidebandRegion_%s/HT_rebin_flex_lin' % chan + ext,
+            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
         )
     }.items()
 
@@ -234,7 +234,29 @@ def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getSystCRPlots(muchannel, base) + getSystCRPlots(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        name=name,
+    )
+
+#########################################################
+#== TREEPROJECT OUTPUT SYSTEMATIC COMPARISON PLOTS ======
+#########################################################
+
+def getCompSystPlots(chan, base):
+    # p = os.path.join(base, 'StackedAll/')
+    # print base
+    return {
+        chan+'_stcomp': list(
+            p + '/StackedAll/SidebandRegion_%s/ST_rebin_flex_log' % chan + ext for p in base
+        )
+    }.items()
+
+def mk_autoContentCompSystPlots(base, el_channel=None, mu_channel=None, name='AutoContentCompSystPlots'):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    return varial.extensions.tex.TexContent(
+        dict(getCompSystPlots(muchannel, base) + getCompSystPlots(elchannel, base)),
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name=name,
     )
 
@@ -247,18 +269,23 @@ def getFinalVar(chan, base):
     # print base
     return {
         chan+'_Nm1ak4btag': (
-            p + 'SignalRegion1b_%s/n_additional_btags_medium_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/n_additional_btags_medium_lin' % chan + ext,
-            p + 'SidebandRegion_%s/n_additional_btags_medium_lin' % chan + ext,
+            p + 'SignalRegion1b_%s/n_additional_btags_medium_log' % chan + ext,
+            p + 'SignalRegion2b_%s/n_additional_btags_medium_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_additional_btags_medium_log' % chan + ext,
         ),
         chan+'_Nm1htag': (
-            p + 'SidebandRegion_%s/n_higgs_tags_1b_med_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_lin' % chan + ext,
+            p + 'SidebandRegion_%s/n_higgs_tags_1b_med_log' % chan + ext,
+            p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_log' % chan + ext,
         ),
         chan+'_st': (
-            p + 'SignalRegion1b_%s/ST_lin' % chan + ext,
-            p + 'SignalRegion2b_%s/ST_lin' % chan + ext,
-            p + 'SidebandRegion_%s/ST_lin' % chan + ext,
+            p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+        ),
+        chan+'_st_sigonly': (
+            p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
+            # p + 'SidebandRegion_%s/ST_log' % chan + ext,
         ),
     }.items()
 
@@ -267,7 +294,28 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, na
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        name=name,
+    )
+
+#########################################################
+#========= TREEPROJECT OUTPUT COMBINED CHANNELS =========
+#########################################################
+
+def getFinalVarCombined(base):
+    # print base
+    return {
+        'all_st_sigonly': (
+            os.path.join(base, 'SidebandRegion_ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion1b_ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion2b_ST_rebin_flex_log' + ext),
+        ),
+    }.items()
+
+def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalControlRegionCombined'):
+    return varial.extensions.tex.TexContent(
+        dict(getFinalVarCombined(base)),
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name=name,
     )
 
@@ -281,9 +329,9 @@ def getLimPlotsAll(base):
     # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return {
         'Limits': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             os.path.join(base, 'LimitsAllUncertsOnlyEl/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             os.path.join(base, 'LimitsAllUncertsOnlyMu/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
     }
 
@@ -298,7 +346,7 @@ def getLimPlotsSingle(base, prefix=''):
 
 import varial.extensions.limits as limits
 
-def my_mod(table):
+def my_mod_sys_table(table):
     def find_column_string(line, name):
         columns = line.split(' & ')
         indizes = list(i for i, a in enumerate(columns) if name in a)
@@ -330,20 +378,55 @@ def my_mod(table):
     table = '\n'.join(lines)
     return table
 
+def find_sig_line(table, signal_ind):
+    lines = table.split('\n')
+    signal = ''
+    rest = ''
+    for l in lines[:-1]:
+        columns = l.split(' & ')
+        if signal_ind in columns[0]:
+            signal = l
+        else:
+            rest += l + '\n'
+    return signal, rest
 
-def getSysTab(chan, base, mod=my_mod):
-    p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+# def get(table, signal_ind):
+#     lines = table.split('\n')
+#     signal = ''
+#     rest = ''
+#     for l in lines[:-1]:
+#         columns = l.split(' & ')
+#         if signal_ind in columns[0]:
+#             signal = l
+#         else:
+#             rest += l + '\n'
+#     return signal, rest
+
+
+
+def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
+    p_lim = os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/{0}/ThetaLimit')
     new_files = []
-    if mod:
-        for filename in list(p_lim.format('CombinedChannels')+'/sysrate_tables_{0}_{1}.tex'.format(g, chan)\
-                    for g in ['SidebandRegion', 'SignalRegion1b', 'SignalRegion2b']):
+    # if mod:
+    for region in ['SidebandRegion', 'SignalRegion1b', 'SignalRegion2b']:
+        new_table = ''
+        for mass in mass_points:
+            filename = p_lim.format(mass)+'/sysrate_tables_{0}_{1}.tex'.format(region, chan)
             # print filename
             with open(filename) as f:
                 cont = f.read()
-            with open(filename.replace('.tex', '_mod.tex'), 'w') as f:
-                # print mod(cont)
-                f.write(mod(cont))
-            new_files.append(filename.replace('.tex', '_mod.tex'))
+            sig, other = find_sig_line(cont, 'TpTp')
+            if not new_table:
+                new_table = other
+                new_table += sig + '\n'
+            else:
+                new_table += sig + '\n'
+        new_table += r'\hline'+'\n'
+        new_table += r'\end{tabular}\\'
+        with open(filename.replace('.tex', '_mod.tex'), 'w') as f:
+            # print mod(cont)
+            f.write(mod(new_table))
+        new_files.append(filename.replace('.tex', '_mod.tex'))
 
     return {
         chan+'_side_sys_tab.tex':
@@ -354,14 +437,40 @@ def getSysTab(chan, base, mod=my_mod):
             new_files[2],
     }.items()
 
-def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix=''):
+def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix='', mass_points=None):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     tmp_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
     return varial.extensions.tex.TexContent(
         tmp_dict,
-        # dict(getSysTab(muchannel, base) + getSysTab(elchannel, base)),
-        include_str=r'\includegraphics[width=0.49\textwidth]{%s}',
+        dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)),
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        name=name,
+    )
+
+
+
+#########################################################
+#=========== TREEPROJECT OUTPUT EFF COUNTS ==============
+#########################################################
+
+def getEffCount(filepath, mod=None):
+    path = filepath
+    if mod:
+        with open(filepath) as f:
+            cont = f.read()
+        with open(filepath.replace('.tex', '_mod.tex'), 'w') as f:
+            f.write(mod(cont))
+        path = path.replace('.tex', '._mod.tex') 
+
+    return {
+        'count_table_content.tex': path
+    }.items()
+
+def mk_autoEffCount(filepath, mod=None, name='AutoEffCount'):
+    return varial.extensions.tex.TexContent(
+        plain_files=dict(getEffCount(filepath, mod)),
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name=name,
     )
 
@@ -381,7 +490,6 @@ def make_tex_content():
                     mk_autoContentFinalSelectionHiggsVar(p_prebase),
                     mk_autoContentPreSelectionNm1(p_prebase),
                     mk_autoContentJetPtReweight(p_prebase),
-                    mk_autoContentLimits(p_postbase)
                 ]
             ),
             varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=['*.svn'], use_rsync=True)

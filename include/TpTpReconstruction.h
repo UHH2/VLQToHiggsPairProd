@@ -42,6 +42,8 @@ public:
       m_discriminators[label] = discr;
   }
   
+
+
 private:
   LorentzVector m_toplep_v4;
   LorentzVector m_tophad_v4;
@@ -50,6 +52,7 @@ private:
 
   std::vector<Jet> m_tplep_jets;
   std::vector<Jet> m_tphad_jets;
+  
 
   std::map<std::string, float> m_discriminators;
 };
@@ -60,7 +63,7 @@ class TpTpReconstruction: public uhh2::AnalysisModule {
 public:
 
     explicit TpTpReconstruction(uhh2::Context & ctx,
-          std::vector<ReconstructionHypothesis> const & ttbar_hyp,
+          std::string const & ttbar_hyp,
           const std::string & h_out="TpTpReconstruction",
           const std::string & discriminator_name = "Chi2");
 
@@ -71,7 +74,7 @@ public:
     virtual ~TpTpReconstruction();
 
 private:
-    std::vector<ReconstructionHypothesis> ttbar_hyps_;
+    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> ttbar_hyps_;
     uhh2::Event::Handle<std::vector<TpTpReconstructionHypothesis>> h_recohyps_;
     std::string discriminator_name_;
 };

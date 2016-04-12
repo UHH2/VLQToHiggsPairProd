@@ -104,8 +104,8 @@ normfactors_xsec = {
 
 normfactors = {
     # 'TpTp' : 20.,
-    '_thX' : 1./0.56,
-    '_other' : 1./0.44,
+    # '_thX' : 1./0.56,
+    # '_other' : 1./0.44,
     'TpTp_M-0700' : (1./0.455)*(1748747./1769230.),
     'TpTp_M-0800' : (1./0.196)*(4145693./4021428.),
     'TpTp_M-0900' : (1./0.0903)*(9189878./9196013.),
@@ -171,8 +171,10 @@ varial.settings.pretty_names.update({
     'pt_subld_ak4_jet_tex' : 'pt(2nd AK4 jet)',
     '2D cut_tex' : '2D cut',
     'ST_tex' : 'ST',
+    'n_ak4_tex' : 'N(AK4-jets)',
     'n_ak8_tex' : 'N(AK8-jets)',
     'pt_ld_ak8_jet_tex' : 'pt(1st AK8 jet)',
+    'output/input_tex' : 'output/input'
 } )
 
 
@@ -237,7 +239,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
         cutflow_histos,
         # cutflow_normed_plots,
         cutflow_stack_plots,
-        cutflow_tables.CutflowTableContent(),
+        cutflow_tables.CutflowTableContent(eff_factor=1.),
         cutflow_tables.CutflowTableTxt(),
         cutflow_tables.CutflowTableTex(True, None),
     ])
@@ -279,8 +281,16 @@ def loader_hook_norm_to_int(wrps):
     wrps = common_plot.norm_to_int(wrps)
     return wrps
 
-def loader_hook_merge_sidebands(wrps):
-    key = lambda w: '{0}___{1}'.format(w.in_file_path.split('/')[0].split('_')[0], w.sample)
+def loader_hook_merge_regions(wrps):
+    def get_base_selection(wrp):
+        res = wrp.in_file_path.split('/')[0]
+        if len(res.split('_')) > 1:
+            res = res.split('_')[0]
+        else:
+            res = res[:-4]
+        return res 
+                  
+    key = lambda w: '{0}___{1}___{2}'.format(get_base_selection(w), w.sample, w.sys_info)
 
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
@@ -292,19 +302,17 @@ def loader_hook_merge_sidebands(wrps):
         wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     wrps = common_plot.mod_legend(wrps)
     wrps = common_plot.mod_title(wrps)
-    if not varial.settings.flex_sig_norm:
-        wrps = common_plot.norm_to_fix_xsec(wrps)
+    # if not varial.settings.flex_sig_norm:
+    wrps = common_plot.norm_to_fix_xsec(wrps)
     # wrps = gen.sort(wrps, ['in_file_path'])
     wrps = sorted(wrps, key=key)
     # wrps = sorted(wrps, key=lambda w: w.name)
     # pprint.pprint(wrps)
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
-    wrps = varial.gen.gen_add_wrp_info(wrps, region=lambda w: w.in_file_path.split('/')[0].split('_')[0])
+    wrps = varial.gen.gen_add_wrp_info(wrps, region=get_base_selection)
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    wrps = list(wrps)
-    for w in wrps:
-        print w.in_file_path, w.sample, w.region
+    # wrps = common_plot.norm_smpl(wrps, norm_all=0.5)
     return wrps
 
 # def mk_legend_bkg(wrps):
@@ -474,7 +482,8 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
                 # combine_files=True,
                 auto_legend=False
                 # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                )]
+                )
+        ]
         if categories:
             cutflow_cat = []
             for cat in categories:

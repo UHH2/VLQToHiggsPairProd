@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "10000">
+<!ENTITY NEVT "2000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestPreselection/">
 
@@ -92,19 +92,19 @@
     -->
 
 
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
+   <!--  <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
         &Data_SingleMuPD_RunC;
         &Data_SingleMuPD_RunD;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
-
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015CD" Cacheable="True">
+ -->
+    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015CD" Cacheable="True">
         &Data_SingleElePD_RunC;
         &Data_SingleElePD_RunD;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
     <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015D" Cacheable="True">
         &Data_SingleElePD;
         &Data_SingleElePD_prompt;
@@ -201,14 +201,14 @@
         &MC_TpTp_M-1700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
      
 
     <InputData Lumi="3331200000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
         &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
 
@@ -512,7 +512,7 @@
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
             <Item Name="use_sframe_weight" Value="false" />
-            <Item Name="category" Value="NoSelection IsoMuo24 IsoEle24 Mu45 El40" />
+            <Item Name="category" Value="NoSelection IsoMuo24 IsoEle24 Mu45 El45 MuElComb" />
 
             <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>
             <Item Name="pileup_directory_25ns" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>
