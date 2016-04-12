@@ -135,6 +135,10 @@ baseline_selection = [
     'ST                       > 800'
 ]
 
+comb_lep_chan = [
+    'trigger_accept_el45 + trigger_accept_mu45          >= 1'
+]
+
 # final regions
 
 sr2b_channel = baseline_selection + [
@@ -185,6 +189,8 @@ mu_channel = [
 final_regions = (
     ('BaseLineSelectionEl45', el_channel),
     ('BaseLineSelectionMu45', mu_channel),
+    ('SidebandTTJetsRegion_Comb', comb_lep_chan     + sb_ttbar_channel),
+    ('SidebandWPlusJetsRegion_Comb', comb_lep_chan  + sb_wjets_channel),
     ('SignalRegion2b_El45', sr2b_channel + el_channel),
     ('SignalRegion1b_El45', sr1b_channel + el_channel),
     ('SidebandRegion_El45', sb_channel + el_channel),
@@ -331,7 +337,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     uncerts = uncertainties or []
     tc = [
             treeproject_tptp.mk_tp(base_path, final_regions, weights),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
             # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
             #     all_regions
@@ -346,9 +352,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
             # #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
             # #             ,plot.samples_to_plot_final),               
-            # plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
-            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final),
+            plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final),
         ]
     # for uc_name, uncert_list in plot_uncerts.iteritems():
     #     if any(i in uncerts for i in uncert_list):
@@ -380,44 +386,39 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     ['SignalRegion2b_Mu45', 'SignalRegion2b_El45']
         # )),
-        varial.tools.HistoLoader(
-            pattern='../TreeProjector/*.root',
-            name='MergedSidebandsLoader',
-            # pattern=common_plot.file_select(datasets_to_plot),
-            # input_result_path='../../../../HistoLoader',
-            filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-            any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-            w.in_file_path.endswith('HT'),
-                           # and (('SingleEle' not in w.file_path and 'Mu' in category) or\
-                           # ('SingleMuon' not in w.file_path and 'El' in category)),
-            # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
-            hook_loaded_histos=plot.loader_hook_merge_sidebands,
-        ),
-        varial.plotter.Plotter(
-            name='HistogramsMergeSidbands',
-            stack=True,
-            input_result_path='../MergedSidebandsLoader',
-            # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-            #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-            #                 w.in_file_path.endswith('HT'),
-            # plot_setup=plot_setup,
-            stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region),
-            save_name_func=lambda w: w._renderers[0].region+'_'+w.name
-            # save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0].split('_')[0]+'_'+w._renderers[0]'_'+w.name
-            # save_name_func=lambda w: w.save_name,
-            # plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-            #     th_x=common_sensitivity.theory_masses,
-            #     th_y=common_sensitivity.theory_cs),
-            # canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
-            #     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            #     ],
-            )
-        # plot.mk_toolchain('HistogramsMergeSidbands', [output_dir+'/%s/TreeProjector/*.root'%name]
-        #             ,plot.samples_to_plot_final,
-        #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-        #                     any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-        #                     w.in_file_path.endswith('HT'),
-        #             hook_loaded_histos=plot.loader_hook_merge_sidebands), 
+        # varial.tools.HistoLoader(
+        #     pattern='../TreeProjector/*.root',
+        #     name='MergedSidebandsLoader',
+        #     # pattern=common_plot.file_select(datasets_to_plot),
+        #     # input_result_path='../../../../HistoLoader',
+        #     filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+        #     any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
+        #     w.in_file_path.endswith('HT'),
+        #                    # and (('SingleEle' not in w.file_path and 'Mu' in category) or\
+        #                    # ('SingleMuon' not in w.file_path and 'El' in category)),
+        #     # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
+        #     hook_loaded_histos=plot.loader_hook_merge_sidebands,
+        # ),
+        # varial.plotter.Plotter(
+        #     name='HistogramsMergeSidbands',
+        #     stack=True,
+        #     input_result_path='../MergedSidebandsLoader',
+        #     # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+        #     #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
+        #     #                 w.in_file_path.endswith('HT'),
+        #     # plot_setup=plot_setup,
+        #     hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name),
+        #     stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
+        #     save_name_func=lambda w: w._renderers[0].region+'_'+w.name
+        #     # save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0].split('_')[0]+'_'+w._renderers[0]'_'+w.name
+        #     # save_name_func=lambda w: w.save_name,
+        #     # plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+        #     #     th_x=common_sensitivity.theory_masses,
+        #     #     th_y=common_sensitivity.theory_cs),
+        #     # canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
+        #     #     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+        #     #     ],
+        #     ) 
         ]
     tc_tex = [
         tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
@@ -444,13 +445,13 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            make_tp_plot_chain('NoReweighting', base_path, output_dir, 
-                add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
-            # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
-            #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-            #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-            #     uncertainties=all_uncerts+['top_pt_reweight']
-            #     ),
+            # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
+            #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+            make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
+                add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+                mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+                uncertainties=all_uncerts+['top_pt_reweight']
+                ),
             # make_tp_plot_chain('HTReweighting', base_path, output_dir,
             #     add_uncert_func=add_all_with_weight_uncertainties({
             #         'ht_reweight' : {

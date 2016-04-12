@@ -297,14 +297,14 @@ def loader_hook_merge_sidebands(wrps):
     # wrps = gen.sort(wrps, ['in_file_path'])
     wrps = sorted(wrps, key=key)
     # wrps = sorted(wrps, key=lambda w: w.name)
-    wrps = list(wrps)
-    for w in wrps:
-        print w.in_file_path, w.sample
     # pprint.pprint(wrps)
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
     wrps = varial.gen.gen_add_wrp_info(wrps, region=lambda w: w.in_file_path.split('/')[0].split('_')[0])
     wrps = common_plot.rebin_st_and_nak4(wrps)
+    wrps = list(wrps)
+    for w in wrps:
+        print w.in_file_path, w.sample, w.region
     return wrps
 
 # def mk_legend_bkg(wrps):
