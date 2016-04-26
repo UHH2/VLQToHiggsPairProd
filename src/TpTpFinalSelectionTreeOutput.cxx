@@ -175,12 +175,14 @@ public:
 private:
     unique_ptr<AnalysisModule> common_module;
     // unique_ptr<NParticleMultiHistProducerHelper<TopJet>> ak8jet_hists/*, ca15jet_hists*/;
-    unique_ptr<AnalysisModule> btag_sf_sr, btag_sf_cr;
+    unique_ptr<AnalysisModule> btag_sf_sr, btag_sf_cr, ele_trg_sf, ele_trg_nosf;
     Event::Handle<double> weight_hndl;
+    Event::Handle<float> weight_ele_hndl;
     // Event::Handle<float> jetpt_weight_hndl;
     // Event::Handle<int> use_sr_sf_hndl;
     // vector<vector<unique_ptr<Hists>>> v_reweighted_hists_after_sel;
     vector<unique_ptr<Hists>> v_lep_combined_hists;
+    vector<string> categories;
 
 };
 
@@ -268,7 +270,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
         ctx.get("ele_sf_trg_file"), 
         "CutBasedMedium", 0., "trg", "nominal", "prim_ele_coll"));
-
+    ele_trg_sf.reset(new MCConstantScalefactor(ctx, 
+                0.99, 0.02, "el_trg", true));
+    ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
+                1., 0., "el_trg", true));
     if (version.find("TpTp") != string::npos) {
         other_modules.emplace_back(new PDFWeightBranchCreator(ctx, 110, false));
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx));
@@ -287,6 +292,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx, true));   
     }
 
+    weight_ele_hndl = ctx.get_handle<float>("weight_el_trg");
 
     // =====PRODUCERS========
 
@@ -485,7 +491,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // else
     //     final_states = {"All"};
         
-    vector<string> categories = split(ctx.get("category", ""));
+    categories = split(ctx.get("category", ""));
     // std::vector<string> categories = {"CombinedElMu",
     //     "HiggsTag0Med-Control", //"HiggsTag0Med-Control-2Ak8", "HiggsTag0Med-Control-3Ak8", "HiggsTag0Med-Control-4Ak8", 
     //     "HiggsTag1bMed-Signal", //"HiggsTag1bMed-Signal-1addB", "HiggsTag1bMed-Signal-2addB", "HiggsTag1bMed-Signal-3addB",
@@ -839,6 +845,12 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
 
     sel_modules_passed.clear();
 
+    int base_el_ind = -1;
+    for (unsigned i = 0; i < categories.size(); ++i) {
+        if (categories[i] == "El45_Baseline")
+            base_el_ind = i;
+    }
+
     // index 0 corresponds to combined
     for (unsigned i = 0; i < sel_modules.size(); ++i) {
     
@@ -880,6 +892,13 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
         }
 
     }
+
+    if (base_el_ind >= 0 && sel_modules_passed[base_el_ind]) {
+        ele_trg_sf->process(event);
+    }
+    else
+        ele_trg_nosf->process(event);
+
 
     if (write_out) {
         for (auto & hist : v_lep_combined_hists) {

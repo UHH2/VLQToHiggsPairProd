@@ -120,6 +120,12 @@ normfactors = {
     'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
 }
 
+normfactors_comp = {
+    '_thX' : 1./0.56,
+    '_other' : 1./0.44,
+    '_thth' : 1./0.11,
+}
+
 
 signals_to_plot = [
     'TpTp_M-0700',
@@ -140,9 +146,9 @@ final_states_to_plot = [
     '_thth',
     '_thtz',
     '_thbw',
-    # '_noH_tztz',
-    # '_noH_tzbw',
-    # '_noH_bwbw',
+    '_noH_tztz',
+    '_noH_tzbw',
+    '_noH_bwbw',
 ]
 
 other_samples_to_plot = [
@@ -164,17 +170,24 @@ varial.settings.pretty_names.update({
     'no sel._tex' : 'no sel.',
     'trigger_accept_el45_tex' : 'trigger',
     'trigger_accept_mu45_tex' : 'trigger',
-    'primary_lepton_pt_tex' : 'pt(Lepton)',
-    'primary_electron_pt_tex' : 'pt(Electron)',
-    'primary_muon_pt_tex' : 'pt(Muon)',
-    'pt_ld_ak4_jet_tex' : 'pt(1st AK4 jet)',
-    'pt_subld_ak4_jet_tex' : 'pt(2nd AK4 jet)',
+    'primary_lepton_pt_tex' : 'p_T(Lepton)',
+    'primary_electron_pt_tex' : 'p_T(Electron)',
+    'primary_muon_pt_tex' : 'p_T(Muon)',
+    'pt_ld_ak4_jet_tex' : 'p_T(1st AK4 jet)',
+    'pt_subld_ak4_jet_tex' : 'p_T(2nd AK4 jet)',
     '2D cut_tex' : '2D cut',
     'ST_tex' : 'ST',
-    'n_ak4_tex' : 'N(AK4-jets)',
-    'n_ak8_tex' : 'N(AK8-jets)',
-    'pt_ld_ak8_jet_tex' : 'pt(1st AK8 jet)',
-    'output/input_tex' : 'output/input'
+    'n_ak4_tex' : 'N(AK4 jets)',
+    'n_ak8_tex' : 'N(AK8 jets)',
+    'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
+    'output/input_tex' : 'output/input',
+    'TpTp_M-0700' : 'TT M0700',
+    'TpTp_M-1000' : 'TT M1000',
+    'TpTp_M-1300' : 'TT M1300',
+    'TpTp_M-1700' : 'TT M1700',
+    'DYJetsToLL' : 'DY + jets',
+    'SingleTop' : 'Single T',
+    'WJets' : 'W + jets'
 } )
 
 
@@ -196,8 +209,8 @@ def cf_loader_hook(wrps):
     #=== FIX MERGING WITH PREFIXES===
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=None, prefixes=['SingleMuon_', 'SingleEle_'], print_warning=False)
     if varial.settings.merge_decay_channels:
-        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=True)
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=True)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -257,8 +270,7 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
-    wrps = gen.sort(wrps, ['in_file_path', 'sample'])
-    # for w in wrps: print w.sample, w.in_file_path
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
         wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
@@ -295,17 +307,24 @@ def loader_hook_merge_regions(wrps):
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
-    wrps = gen.sort(wrps, ['in_file_path', 'sample'])
-    # for w in wrps: print w.sample, w.in_file_path
-    if varial.settings.merge_decay_channels:
-        wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-        wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
-    wrps = common_plot.mod_legend(wrps)
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # print '=====BEFORE INCL MERGING====='
+    # wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
+    # if varial.settings.merge_decay_channels:
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
+    wrps = common_plot.norm_smpl(wrps, normfactors_comp)
+    wrps = common_plot.mod_legend_eff_counts(wrps)
     wrps = common_plot.mod_title(wrps)
     # if not varial.settings.flex_sig_norm:
     wrps = common_plot.norm_to_fix_xsec(wrps)
     # wrps = gen.sort(wrps, ['in_file_path'])
     wrps = sorted(wrps, key=key)
+    # print '=====AFTER SORTING====='
+    # wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
     # wrps = sorted(wrps, key=lambda w: w.name)
     # pprint.pprint(wrps)
     wrps = varial.gen.group(wrps, key)
@@ -313,6 +332,72 @@ def loader_hook_merge_regions(wrps):
     wrps = varial.gen.gen_add_wrp_info(wrps, region=get_base_selection)
     wrps = common_plot.rebin_st_and_nak4(wrps)
     # wrps = common_plot.norm_smpl(wrps, norm_all=0.5)
+    return wrps
+
+
+def loader_hook_compare_finalstates_split_lepton_channels(wrps):
+    def get_base_selection(wrp):
+        res = wrp.in_file_path.split('/')[0]
+        if len(res.split('_')) > 1:
+            res = res.split('_')[0]
+        else:
+            res = res[:-4]
+        return res 
+                  
+    key = lambda w: '{0}___{1}___{2}'.format(get_base_selection(w), w.sample, w.sys_info)
+
+    wrps = common_loader_hook(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = gen.gen_make_th2_projections(wrps)
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # print '=====BEFORE INCL MERGING====='
+    # wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
+    # if varial.settings.merge_decay_channels:
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
+    wrps = common_plot.norm_smpl(wrps, normfactors_comp)
+    wrps = common_plot.mod_legend_eff_counts(wrps)
+    wrps = common_plot.mod_title(wrps)
+    # if not varial.settings.flex_sig_norm:
+    wrps = common_plot.norm_to_fix_xsec(wrps)
+    # wrps = gen.sort(wrps, ['in_file_path'])
+    wrps = sorted(wrps, key=key)
+    # print '=====AFTER SORTING====='
+    # wrps = list(wrps)
+    # for w in wrps: print get_base_selection(w), w.sample, w.sys_info
+    # wrps = sorted(wrps, key=lambda w: w.name)
+    # pprint.pprint(wrps)
+    # wrps = varial.gen.group(wrps, key)
+    # wrps = varial.gen.gen_merge(wrps)
+    # wrps = varial.gen.gen_add_wrp_info(wrps, region=get_base_selection)
+    # wrps = common_plot.rebin_st_and_nak4(wrps)
+    # wrps = common_plot.norm_smpl(wrps, norm_all=0.5)
+    return wrps
+
+
+def loader_hook_compare_finalstates(wrps):
+    # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
+    wrps = common_plot.rebin_st_and_nak4(wrps)
+    wrps = common_loader_hook(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = gen.gen_make_th2_projections(wrps)
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # if varial.settings.merge_decay_channels:
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False, yield_orig=True)
+    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False, yield_orig=True)
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth'], suffix='_tHtH', print_warning=False, yield_orig=True)
+    wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors_comp)
+    wrps = common_plot.mod_legend(wrps)
+    wrps = common_plot.mod_title(wrps)
+    if not varial.settings.flex_sig_norm:
+        wrps = common_plot.norm_to_fix_xsec(wrps)
+    wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
 # def mk_legend_bkg(wrps):

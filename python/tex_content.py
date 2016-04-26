@@ -40,7 +40,7 @@ def get4sel(chan, base):
         chan+'_firstblock': (            
             p + 'ST_lin' + ext,
             p + 'n_ak8_lin' + ext,
-            p + 'pt_ld_ak8_jet_lin' + ext,
+            p + 'n_ak4_lin' + ext,
             p + 'primary_lepton_pt_lin' + ext,
         ),
     }.items()

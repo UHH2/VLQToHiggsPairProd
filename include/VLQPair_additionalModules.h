@@ -969,6 +969,57 @@ private:
     Event::Handle<FlavorParticle> h_primlep;
 };  // class GenHTCalculator
 
+
+class MCConstantScalefactor : public AnalysisModule {
+public:
+    MCConstantScalefactor(uhh2::Context & ctx,
+                                    float sf,
+                                    float sf_uncert,
+                                    const std::string & weight_postfix = "",
+                                    bool multiply_weight = true): 
+      sf_(sf),
+      sf_uncert_(sf_uncert),
+      h_weight_      (ctx.declare_event_output<float>("weight_" + weight_postfix)),
+      h_weight_up_   (ctx.declare_event_output<float>("weight_" + weight_postfix + "_up")),
+      h_weight_down_ (ctx.declare_event_output<float>("weight_" + weight_postfix + "_down")),
+      multiply_weight_(multiply_weight)
+    {
+        auto dataset_type = ctx.get("dataset_type");
+        is_mc_ = dataset_type == "MC";
+        if (!is_mc_) {
+            cout << "Warning: MCConstantScalefactor will not have an effect on "
+                 <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+            return;
+        }
+    }
+
+    bool process(uhh2::Event & event) {
+
+        if (!is_mc_) {  
+            event.set(h_weight_,       1.);
+            event.set(h_weight_up_,    1.);
+            event.set(h_weight_down_,  1.);
+            return true;
+        }
+        float weight = sf_, weight_up = sf_+sf_uncert_, weight_down = sf_-sf_uncert_;
+        event.set(h_weight_,       weight);
+        event.set(h_weight_up_,    weight_up);
+        event.set(h_weight_down_,  weight_down);
+        if (multiply_weight_)  {
+            event.weight *= weight;
+        }
+        return true;
+    }
+
+private:
+    float sf_, sf_uncert_;
+    uhh2::Event::Handle<float> h_weight_;
+    uhh2::Event::Handle<float> h_weight_up_;
+    uhh2::Event::Handle<float> h_weight_down_;
+    bool multiply_weight_;
+    bool is_mc_;
+};
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:

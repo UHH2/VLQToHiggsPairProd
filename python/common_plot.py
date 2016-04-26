@@ -193,16 +193,54 @@ def mod_legend(wrps):
             w.legend = 'data'
         if w.legend.startswith('TpTp'):
             w.legend = 'TT M'+w.legend[7:]
-        if w.legend.endswith('_thth'):
-            w.legend = w.legend[:-5]
-        if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-4]
+        # if w.legend.endswith('_thth'):
+        #     w.legend = w.legend[:-5] + ' tH only'
+        # if w.legend.endswith('_thX'):
+        #     w.legend = w.legend[:-4] + ' tH+X'
+        # if w.legend.endswith('_other'):
+        #     w.legend = w.legend[:-6] + ' other'
+        # if w.legend.endswith('_incl'):
+        #     w.legend = w.legend[:-5] + ' incl.'
         if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
             w.legend = 'DY + jets'
         if w.legend == 'WJets':
             w.legend = 'W + jets'
         if w.legend == 'SingleTop':
             w.legend = 'Single T'
+        yield w
+
+def mod_legend_eff_counts(wrps):
+    for w in wrps:
+        # if w.legend.startswith('MC_'):
+        #     w.legend = w.legend[3:]
+        # if w.is_data:
+        #     w.legend = 'data'
+        # if w.legend.startswith('TpTp'):
+        #     w.legend = 'TT M'+w.legend[7:]
+        if w.legend.endswith('_thth'):
+            w.legend = w.legend[:-5] + ' tHtH'
+        if w.legend.endswith('_thtz'):
+            w.legend = w.legend[:-5] + ' tHtZ'
+        if w.legend.endswith('_thbw'):
+            w.legend = w.legend[:-5] + ' tHbW'
+        if w.legend.endswith('_tztz'):
+            w.legend = w.legend[:-9] + ' tZtZ'
+        if w.legend.endswith('_tzbw'):
+            w.legend = w.legend[:-9] + ' tZbW'
+        if w.legend.endswith('_bwbw'):
+            w.legend = w.legend[:-9] + ' bWbW'
+        if w.legend.endswith('_thX'):
+            w.legend = w.legend[:-4] + ' tH+X'
+        if w.legend.endswith('_other'):
+            w.legend = w.legend[:-6] + ' other'
+        if w.legend.endswith('_incl'):
+            w.legend = w.legend[:-5] + ' incl.'
+        # if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
+        #     w.legend = 'DY + jets'
+        # if w.legend == 'WJets':
+        #     w.legend = 'W + jets'
+        # if w.legend == 'SingleTop':
+        #     w.legend = 'Single T'
         yield w
 
 def mod_title(wrps):

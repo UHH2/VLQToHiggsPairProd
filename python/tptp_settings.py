@@ -11,6 +11,15 @@ settings.__setattr__('plot_obs', True)
 settings.__setattr__('fix_presel_sample', False)
 settings.__setattr__('do_norm_plot', False)
 settings.__setattr__('flex_sig_norm', True)
+settings.__setattr__('cutflow_precision', {})
+settings.__setattr__('eff_precision', {})
+
+settings.cutflow_precision.update({
+    'TpTp_M-0700' : "%17.1f",
+    'TpTp_M-1000' : "%17.1f",
+    'TpTp_M-1300' : "%17.2f",
+    'TpTp_M-1700' : "%17.3f",
+    })
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
 # settings.defaults_Legend['label_height'] = 0.04

@@ -107,9 +107,9 @@ final_states = [
     '_thth',
     '_thtz',
     '_thbw',
-    # '_noH_tztz',
-    # '_noH_tzbw',
-    # '_noH_bwbw',
+    '_noH_tztz',
+    '_noH_tzbw',
+    '_noH_bwbw',
 ]
 
 background_samples = [
@@ -191,7 +191,7 @@ def add_jec_uncerts(base_path, final_regions, sample_weights):
     return list(
         TreeProjector(
             dict(
-                (sample, list(f for f in glob.glob(pat) if sample in f))
+                (sample, list(f for f in glob.glob(pat) if (sample in f and 'Scale' not in f)))
                 for sample in samples_no_data
             ), 
             sys_params, 
@@ -257,12 +257,36 @@ def add_generic_uncerts(base_path, final_regions, sample_weights):
             ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
             ('pu__minus', '*weight_pu_down/weight_pu'),
             ('pu__plus', '*weight_pu_up/weight_pu'),
-            ('rate__minus', '*0.95'), # for 2D-cut and el/add. mu trg uncertainty
-            ('rate__plus', '*1.05'), # for 2D-cut and el/add. mu trg uncertainty
+            ('rate__minus', '*0.95'), # for 2D-cut
+            ('rate__plus', '*1.05'), # for 2D-cut
             # ('ak4_jetpt__minus', '*weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
+    # sys_sec_sel_weight += list(
+    #     (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
+    #         for g, f in final_regions if 'Mu45' in g) 
+    #     )
+    #     for name, w in (
+    #         ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+    #         ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+    #         ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+    #         ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+    #     )
+    # )
+    # sys_sec_sel_weight += list(
+    #     (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
+    #         for g, f in final_regions if 'El45' in g) 
+    #     )
+    #     for name, w in (
+    #         ('sfel_id_trg__minus', '*0.95'),
+    #         ('sfel_id_trg__plus', '*1.05'),
+    #         # ('sfel_id__minus', '*weight_sfel_id_down/weight_sfel_id'),
+    #         # ('sfel_id__plus', '*weight_sfel_id_up/weight_sfel_id'),
+    #         # ('sfel_trg__minus', '*weight_sfel_trg_down/weight_sfel_trg'),
+    #         # ('sfel_trg__plus', '*weight_sfel_trg_up/weight_sfel_trg'),
+    #     )
+    # )
     return list(
         TreeProjector(
             filenames,
@@ -312,7 +336,8 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights):
         )
         for name, ssw in sys_sec_sel_weight_pdf
     )
-    sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
+    # sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
+    sys_tps_pdf += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev, sample=s, load_aliases=False) for s in samples_no_data)
     return [
         varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
@@ -378,12 +403,6 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
     sample_weights_reweight_up = dict(sample_weights)
     sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*'+weight) for proc, weight in weight_dict.iteritems()))
     sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/'+weight) for proc, weight in weight_dict.iteritems()))
-    # print 'SAMPLE_WEIGHTS'
-    # pprint.pprint(sample_weights)
-    # print 'SAMPLE_WEIGHTS_REWEIGHT_DOWN'
-    # pprint.pprint(sample_weights_reweight_down)
-    # print 'SAMPLE_WEIGHTS_REWEIGHT_UP'
-    # pprint.pprint(sample_weights_reweight_up)
     sys_sec_sel_weight_reweight_weight = (
         (weight_name+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
         (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
@@ -434,31 +453,38 @@ def mk_sys_tps(mk_sys_func, name='SysTreeProjectors'):
 class GenUncertHistoSquash(varial.tools.Tool):
     io = varial.pklio
 
-    def __init__(self, squash_func=varial.op.squash_sys_stddev, sample='', **kws):
+    def __init__(self, squash_func=varial.op.squash_sys_stddev, sample='', load_aliases=True, **kws):
         super(GenUncertHistoSquash, self).__init__(**kws)
         self.squash_func = squash_func
         self.sample = sample
         self.rel_path = '*.root'
+        self.load_aliases = load_aliases
         if self.sample:
             self.name = 'GenUncertHistoSquash_'+sample
-            self.relpath = self.sample+'.root'
+            self.rel_path = self.sample+'.root'
 
     def run(self):
-        pdf_paths = glob.glob(self.cwd + '../*')
-        pdf_paths.remove(self.cwd + '../'+self.name)
+        pdf_paths = glob.glob(self.cwd + '../pdf_weight*')
+        # pdf_paths.remove(self.cwd + '../'+self.name)
         uncert_histos = (
             w
             for p in pdf_paths
             for w in varial.diskio.bulk_load_histograms(
-                        varial.gen.dir_content(p+'/%s'%self.rel_path))
+                        # varial.gen.dir_content(p+'/%s'%self.rel_path))
+                        varial.gen.dir_content(p+'/%s'%self.rel_path, self.load_aliases))
                         # varial.gen.dir_content(p+'/%s.root'%self.sample))
         )
-        uncert_histos = sorted(uncert_histos, key=lambda w: w.sample)
-        uncert_histos = sorted(uncert_histos, key=lambda w: w.in_file_path.split('/')[0])
-        uncert_histos = sorted(uncert_histos, key=lambda w: w.in_file_path.split('/')[1])
+        uncert_histos = varial.gen.gen_add_wrp_info(uncert_histos, 
+            category=lambda w: w.in_file_path.split('/')[0],
+            # variable=lambda w: w.in_file_path.split('/')[1])
+            variable=lambda w: w.in_file_path.split('/')[1],
+            sample=lambda w: w.file_path.split('/')[-1].split('.')[0])
+        uncert_histos = sorted(uncert_histos, key=lambda w: w.sample+'___'+w.category+'___'+w.variable)
         # uncert_histos = list(uncert_histos)
         # for w in uncert_histos: print w.sample, w.file_path, w.in_file_path
-        uncert_histos = varial.gen.group(uncert_histos, lambda w: w.sample)
+        uncert_histos = varial.gen.group(uncert_histos, lambda w: w.sample+'___'+w.category+'___'+w.variable)
+        # uncert_histos = list(uncert_histos)
+        # print len(uncert_histos)
         # uncert_histos = list(uncert_histos)
         # for p in uncert_histos: print list((g.file_path, g.in_file_path) for g in p)
         uncert_histos = (self.squash_func(h) for h in uncert_histos)
@@ -508,6 +534,8 @@ class GenUncertUpDown(varial.tools.Tool):
 
         def store(grps):
             for g in grps:
+                # print 'NEW GROUP'
+                # for w in g.wrps: print w.in_file_path, w.file_path
                 sample = g.wrps[0].sample
                 wrps = sorted(g.wrps, key=lambda a: a.category)
                 wrps = dict((k, list(w)) for k, w in groupby(wrps, key=lambda a: a.category))
@@ -524,10 +552,13 @@ class GenUncertUpDown(varial.tools.Tool):
         histos = list(h for g in histos for h in g)
         assert histos
 
+        # for h in histos: print h.in_file_path, h.file_path
+
         histos = (varial.op.copy(w) for w in histos)
         histos = varial.gen.gen_add_wrp_info(histos, 
             category=lambda w: w.in_file_path.split('/')[0],
-            variable=lambda w: w.in_file_path.split('/')[1])
+            variable=lambda w: w.in_file_path.split('/')[1],
+            sample=lambda w: w.file_path.split('/')[-1].split('.')[0])
         histos = (set_values(w) for w in histos)
         if self.norm:
             histos = norm_thing(histos)
