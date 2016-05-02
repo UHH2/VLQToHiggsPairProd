@@ -320,9 +320,9 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
             sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
-            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
             sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path, final_regions, weights)
             sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
+            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
             return sys_tps
         return tmp
     return add_uncerts
@@ -383,14 +383,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     uncerts = uncertainties or []
     tc = [
             treeproject_tptp.mk_tp(base_path, final_regions, weights),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
             # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
             #     all_regions
             # )),                                             
-            # plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
-            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final, compare_uncerts=True),
+            plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final, compare_uncerts=True),
             # plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
             #             ,plot.samples_to_plot_final,

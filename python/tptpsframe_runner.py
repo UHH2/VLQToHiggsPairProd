@@ -247,7 +247,7 @@ def mk_sframe_tools_and_plot(argv):
             )
         plots = varial.tools.ToolChainParallel(
             'Plots',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot)
+            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot, filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot) and ('Baseline' in w.in_file_path))
         )
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
@@ -262,15 +262,15 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    sf_batch,
-                    # varial.tools.ToolChain(
-                    #     'Plots',
-                    #     [
-                    #         # hadd,
-                    #         # plots,
-                    #         # varial.tools.WebCreator(no_tool_check=True)
-                    #     ]
-                    # )
+                    # sf_batch,
+                    varial.tools.ToolChain(
+                        'Plots',
+                        [
+                            # hadd,
+                            plots,
+                            # varial.tools.WebCreator(no_tool_check=True)
+                        ]
+                    )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -333,8 +333,8 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                # mk_tex_tc_final(options.outputdir+tex_base),
-                # varial.tools.WebCreator(no_tool_check=False),
+                mk_tex_tc_final(options.outputdir+tex_base),
+                varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
@@ -343,4 +343,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

@@ -274,6 +274,7 @@ def loader_hook_finalstates_excl(wrps):
     if varial.settings.merge_decay_channels:
         wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
         wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_other']), wrps)
     wrps = common_plot.mod_legend(wrps)
     wrps = common_plot.mod_title(wrps)
     if not varial.settings.flex_sig_norm:
