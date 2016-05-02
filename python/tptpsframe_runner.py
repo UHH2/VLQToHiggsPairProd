@@ -41,10 +41,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    'jec_up'        : {'jecsmear_direction':'up'},
-    'jec_down'      : {'jecsmear_direction':'down'},
-    'jer_up'        : {'jersmear_direction':'up'},
-    'jer_down'      : {'jersmear_direction':'down'},
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -262,15 +262,15 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
-                    varial.tools.ToolChain(
-                        'Plots',
-                        [
-                            # hadd,
-                            plots,
-                            # varial.tools.WebCreator(no_tool_check=True)
-                        ]
-                    )
+                    sf_batch,
+                    # varial.tools.ToolChain(
+                    #     'Plots',
+                    #     [
+                    #         # hadd,
+                    #         # plots,
+                    #         # varial.tools.WebCreator(no_tool_check=True)
+                    #     ]
+                    # )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -333,8 +333,8 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_final(options.outputdir+tex_base),
-                varial.tools.WebCreator(no_tool_check=False),
+                # mk_tex_tc_final(options.outputdir+tex_base),
+                # varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
@@ -343,4 +343,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
