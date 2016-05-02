@@ -14,7 +14,7 @@ import copy
 
 from varial.extensions import git
 
-varial.settings.max_num_processes = 24
+varial.settings.max_num_processes = 12
 
 categories_final = [
         # 'CombinedElMu',
@@ -343,4 +343,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

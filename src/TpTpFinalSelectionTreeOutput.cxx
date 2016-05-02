@@ -76,6 +76,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatI("n_jets_no_overlap", "N(non-overlapping Ak4 jets)", 12, -.5, 11.5)),
         // shared_ptr<SelectionItem>(new SelDatF("ak4_btagged_dR_higgs_tags_1b_med", "dR(b-tag ak4, htag)", 50, 0., 5.)),
         shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N(Toptags)", 5, -.5, 4.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak8_cleaned", "N(Ak8 Jets, cleaned)", 8, -.5, 7.5)),
         // shared_ptr<SelectionItem>(new SelDatF("nohtag_allAk8_mass_HLep", "Lep mass(H1b, allAk8)", 45, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatF("nohtag_allAk8_mass_Htop", "Had mass(H1b, allAk8)", 45, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatF("nohtag_allAk8_mass_Max", "Max mass(H1b, allAk8)", 45, 0, 4500)),
@@ -248,11 +249,15 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
-                "topjets_uncleaned"
+                "topjets_cleaned"
                 ));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets_cleaned"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets_cleaned"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets_cleaned"));
+    pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+        "topjets_cleaned",
+        "n_ak8_cleaned"
+        ));
 
 
     if (type == "MC") {
@@ -269,11 +274,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         "runD_Mu45_eta2p1_PtEtaBins", 0.5, "trg", "nominal", "prim_mu_coll"));
     other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
         ctx.get("ele_sf_trg_file"), 
-        "CutBasedMedium", 0., "trg", "nominal", "prim_ele_coll"));
+        "CutBasedMedium", 0., "id", "nominal", "prim_ele_coll"));
     ele_trg_sf.reset(new MCConstantScalefactor(ctx, 
-                0.99, 0.02, "el_trg", true));
+                0.99, 0.02, "sfel_trg", true));
     ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
-                1., 0., "el_trg", true));
+                1., 0., "sfel_trg", true));
     if (version.find("TpTp") != string::npos) {
         other_modules.emplace_back(new PDFWeightBranchCreator(ctx, 110, false));
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx));
@@ -808,8 +813,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
         }
         v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/HTags", CSVBTag(CSVBTag::WP_MEDIUM), 2, "higgs_tags_1b_med"));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets"));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsUnCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets_uncleaned"));
+        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsUnCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets"));
+        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets_cleaned"));
         // v_reweighted_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelectionReweighted", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet"}));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt", "weight_ak8_jetpt"));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));

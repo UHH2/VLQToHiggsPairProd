@@ -421,11 +421,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
     
     <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="True">
         &MC_TTbar_ScaleUp;

@@ -251,42 +251,42 @@ def add_generic_uncerts(base_path, final_regions, sample_weights):
             ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
             ('btag_udsg__minus', '*weight_btag_udsg_down/weight_btag'),
             ('btag_udsg__plus', '*weight_btag_udsg_up/weight_btag'),
-            ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
-            ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
-            ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
-            ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+            # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+            # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+            # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+            # ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
             ('pu__minus', '*weight_pu_down/weight_pu'),
             ('pu__plus', '*weight_pu_up/weight_pu'),
-            ('rate__minus', '*0.95'), # for 2D-cut
-            ('rate__plus', '*1.05'), # for 2D-cut
+            # ('twoD__minus', '*0.95'), # for 2D-cut
+            # ('twoD__plus', '*1.05'), # for 2D-cut
             # ('ak4_jetpt__minus', '*weight_ak4_jetpt_down/weight_ak4_jetpt'),
             # ('ak4_jetpt__plus', '*weight_ak4_jetpt_up/weight_ak4_jetpt'),
         )
     )
-    # sys_sec_sel_weight += list(
-    #     (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
-    #         for g, f in final_regions if 'Mu45' in g) 
-    #     )
-    #     for name, w in (
-    #         ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
-    #         ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
-    #         ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
-    #         ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
-    #     )
-    # )
-    # sys_sec_sel_weight += list(
-    #     (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
-    #         for g, f in final_regions if 'El45' in g) 
-    #     )
-    #     for name, w in (
-    #         ('sfel_id_trg__minus', '*0.95'),
-    #         ('sfel_id_trg__plus', '*1.05'),
-    #         # ('sfel_id__minus', '*weight_sfel_id_down/weight_sfel_id'),
-    #         # ('sfel_id__plus', '*weight_sfel_id_up/weight_sfel_id'),
-    #         # ('sfel_trg__minus', '*weight_sfel_trg_down/weight_sfel_trg'),
-    #         # ('sfel_trg__plus', '*weight_sfel_trg_up/weight_sfel_trg'),
-    #     )
-    # )
+    sys_sec_sel_weight += list(
+        (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
+            for g, f in final_regions if 'Mu45' in g) 
+        )
+        for name, w in (
+            ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
+            ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
+            ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
+            ('sfmu_trg__plus', '*weight_sfmu_trg_up/weight_sfmu_trg'),
+        )
+    )
+    sys_sec_sel_weight += list(
+        (name, list((g, f, dict((a, c+w) for a, c in sample_weights.iteritems()))
+            for g, f in final_regions if 'El45' in g) 
+        )
+        for name, w in (
+            # ('sfel_id_trg__minus', '*0.95'),
+            # ('sfel_id_trg__plus', '*1.05'),
+            ('sfel_id__minus', '*weight_sfel_id_down/weight_sfel_id'),
+            ('sfel_id__plus', '*weight_sfel_id_up/weight_sfel_id'),
+            ('sfel_trg__minus', '*weight_sfel_trg_down/weight_sfel_trg'),
+            ('sfel_trg__plus', '*weight_sfel_trg_up/weight_sfel_trg'),
+        )
+    )
     return list(
         TreeProjector(
             filenames,
@@ -464,7 +464,7 @@ class GenUncertHistoSquash(varial.tools.Tool):
             self.rel_path = self.sample+'.root'
 
     def run(self):
-        pdf_paths = glob.glob(self.cwd + '../pdf_weight*')
+        pdf_paths = glob.glob(self.cwd + '../*_weight*')
         # pdf_paths.remove(self.cwd + '../'+self.name)
         uncert_histos = (
             w
@@ -549,10 +549,11 @@ class GenUncertUpDown(varial.tools.Tool):
         input_list = glob.glob(os.path.join(self.cwd, self.input_path)) # '../SysTreeProjectorsPDF/GenUncertHistoSquash*'
         # print input_list
         histos = list(self.lookup_result(k) for k in input_list)
+        # print histos
+        # for h in histos: print h.in_file_path, h.file_path
         histos = list(h for g in histos for h in g)
         assert histos
 
-        # for h in histos: print h.in_file_path, h.file_path
 
         histos = (varial.op.copy(w) for w in histos)
         histos = varial.gen.gen_add_wrp_info(histos, 
