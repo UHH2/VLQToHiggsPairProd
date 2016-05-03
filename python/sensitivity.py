@@ -138,20 +138,7 @@ def loader_hook(brs):
         wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
         wrps = rebin_st(wrps)
         wrps = common_plot.norm_smpl(wrps,
-            smpl_fct={
-                'TpTp_M-0700' : 1./0.455,
-                'TpTp_M-0800' : 1./0.196,
-                'TpTp_M-0900' : 1./0.0903,
-                'TpTp_M-1000' : 1./0.0440,
-                'TpTp_M-1100' : 1./0.0224,
-                'TpTp_M-1200' : 1./0.0118,
-                'TpTp_M-1300' : 1./0.00639,
-                'TpTp_M-1400' : 1./0.00354,
-                'TpTp_M-1500' : 1./0.00200,
-                'TpTp_M-1600' : 1./0.001148,
-                'TpTp_M-1700' : 1./0.000666,
-                'TpTp_M-1800' : 1./0.000391,
-            },
+            smpl_fct=common_plot.normfactors,
             # norm_all=(3000./552.67)
             )
         return wrps

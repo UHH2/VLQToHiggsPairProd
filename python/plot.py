@@ -84,43 +84,6 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1800',
     ])
 
-normfactors = {
-    # 'TpTp' : 20.,
-    # '_thX' : 1./0.56,
-    # '_other' : 1./0.44,
-    # '_thth' : 1./0.111,
-    'TpTp_M-0700' : 1./0.455,
-    'TpTp_M-0800' : 1./0.196,
-    'TpTp_M-0900' : 1./0.0903,
-    'TpTp_M-1000' : 1./0.0440,
-    'TpTp_M-1100' : 1./0.0224,
-    'TpTp_M-1200' : 1./0.0118,
-    'TpTp_M-1300' : 1./0.00639,
-    'TpTp_M-1400' : 1./0.00354,
-    'TpTp_M-1500' : 1./0.00200,
-    'TpTp_M-1600' : 1./0.001148,
-    'TpTp_M-1700' : 1./0.000666,
-    'TpTp_M-1800' : 1./0.000391,
-}
-
-normfactors_old = {
-    # 'TpTp' : 20.,
-    # '_thX' : 1./0.56,
-    # '_other' : 1./0.44,
-    'TpTp_M-0700' : (1./0.455)*(1748747./1769230.),
-    'TpTp_M-0800' : (1./0.196)*(4145693./4021428.),
-    'TpTp_M-0900' : (1./0.0903)*(9189878./9196013.),
-    'TpTp_M-1000' : (1./0.0440)*(18700000./18604545.),
-    'TpTp_M-1100' : (1./0.0224)*(36678571./36107142.),
-    'TpTp_M-1200' : (1./0.0118)*(70576271./69305084.),
-    'TpTp_M-1300' : (1./0.00639)*(129953051./129577464.),
-    'TpTp_M-1400' : (1./0.00354)*(235254237./233559322.),
-    'TpTp_M-1500' : (1./0.00200)*(406100000./416000000.),
-    'TpTp_M-1600' : (1./0.001148)*(804000000./704878048.),
-    'TpTp_M-1700' : (1./0.000666)*(1664800000./1194594594.),
-    'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
-}
-
 normfactors_comp = {
     '_thX' : 1./0.56,
     '_other' : 1./0.44,
@@ -280,7 +243,7 @@ def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
-    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
     wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
@@ -312,7 +275,7 @@ def loader_hook_norm_to_int(wrps):
 
 def loader_hook_compare_finalstates_split_lepton_channels(wrps):
     wrps = common_loader_hook(wrps)
-    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
@@ -353,7 +316,7 @@ def loader_hook_merge_regions(wrps):
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
-    wrps = common_plot.norm_smpl(wrps, normfactors)
+    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
@@ -364,7 +327,7 @@ def loader_hook_compare_finalstates(wrps):
     wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
     wrps = common_plot.norm_smpl(wrps, normfactors_comp)
-    wrps = common_plot.mod_legend(wrps)
+    wrps = common_plot.mod_legend_eff_counts(wrps)
     wrps = common_plot.mod_title(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)

@@ -372,6 +372,7 @@ def mk_tex_tc_post(base, name):
 lumi_times_pure_BR = 2630.*0.111
 lumi_times_mixed_BR = 2630.*0.222
 lumi = 2630.
+lumi_ele = 2540.
 
 def mk_merge_ch_tc(output_dir, name, uncerts):
     return varial.tools.ToolChain('MergeChannels', [
@@ -438,10 +439,10 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
                         },
                         'Integral___bkg_sum'
                     ),
@@ -467,12 +468,12 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tHtZ' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tHbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tZtZ' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tZbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 bWbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtZ' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tZtZ' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tZbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 bWbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
                         },
                         'Integral___bkg_sum'
                     ),
@@ -487,12 +488,12 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtZ' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tHbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tZtZ' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tZbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 bWbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtZ' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tHbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tZtZ' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tZbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 bWbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
                         },
                         'Integral___bkg_sum'
                     ),
@@ -603,10 +604,10 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsSplitSamples',
                         {
-                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi_ele, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi_ele, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi_ele, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi_ele, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
                         },
                         'Integral___bkg_sum'
                     ),
@@ -630,10 +631,10 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsSplitSamples',
                         {
-                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG (correct: 0.000666) VALUE DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG (correct: 0.000666) VALUE DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
                         },
                         'Integral___bkg_sum'
                     ),
@@ -667,27 +668,27 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
                         + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
                         ,plot.samples_to_plot_only_th, compare_uncerts=True),
-            # plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
-            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_only_th,
-            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th if 'Run2015CD' not in f)),
-            # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
-            # #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            # #             ,plot.samples_to_plot_only_th),               
-            # plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
-            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_only_th),
-            # plot.mk_toolchain('HistogramsCompFinalStates', [output_dir+'/%s/TreeProjector/*.root'%name]
+            plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_only_th,
+                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th if 'Run2015CD' not in f)),
+            # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final,
-            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700'])),
-            #             compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates),
+            #             ,plot.samples_to_plot_only_th),               
+            plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_only_th),
+            plot.mk_toolchain('HistogramsCompFinalStates', [output_dir+'/%s/TreeProjector/*.root'%name]
+                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+                        ,plot.samples_to_plot_final,
+                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700'])),
+                        compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates),
         ]
-    # for uc_name, uncert_list in plot_uncerts.iteritems():
-    #     if all(i in uncerts for i in uncert_list):
-    #         tc += [plot.mk_toolchain('HistogramsComp_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
-    #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
-    #             ,plot.samples_to_plot_only_th)]
+    for uc_name, uncert_list in plot_uncerts.iteritems():
+        if all(i in uncerts for i in uncert_list):
+            tc += [plot.mk_toolchain('HistogramsComp_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
+                + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
+                ,plot.samples_to_plot_only_th)]
     tc += [
         # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
