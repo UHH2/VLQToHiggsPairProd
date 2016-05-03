@@ -92,16 +92,17 @@ def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=Tr
         yield do_merging(buf)
 
 
-def norm_smpl(wrps, smpl_fct=None, norm_all=1.):
+def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True):
     for w in wrps:
         if smpl_fct:
             for fct_key, fct_val in smpl_fct.iteritems():
                 if fct_key in w.sample:
                     # if w.analyzer = 'NoSelection' or
-                    if hasattr(w, 'scl_fct'):
-                        w.scl_fct *= fct_val
-                    else:
-                        op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+                    if calc_scl_fct:
+                        if hasattr(w, 'scl_fct'):
+                            w.scl_fct *= fct_val
+                        else:
+                            op.add_wrp_info(w, scl_fct=lambda _: fct_val)
                     w.histo.Scale(fct_val)
         if hasattr(w, 'scl_fct'):
             w.scl_fct *= norm_all
@@ -194,7 +195,8 @@ def mod_legend(wrps):
         if w.legend.startswith('TpTp'):
             w.legend = 'TT M'+w.legend[7:]
         # if w.legend.endswith('_thth'):
-        #     w.legend = w.legend[:-5] + ' tH only'
+            # w.legend = w.legend[:-5] + ' tH only'
+            # w.legend = w.legend[:-5]
         # if w.legend.endswith('_thX'):
         #     w.legend = w.legend[:-4] + ' tH+X'
         # if w.legend.endswith('_other'):
@@ -211,12 +213,6 @@ def mod_legend(wrps):
 
 def mod_legend_eff_counts(wrps):
     for w in wrps:
-        # if w.legend.startswith('MC_'):
-        #     w.legend = w.legend[3:]
-        # if w.is_data:
-        #     w.legend = 'data'
-        # if w.legend.startswith('TpTp'):
-        #     w.legend = 'TT M'+w.legend[7:]
         if w.legend.endswith('_thth'):
             w.legend = w.legend[:-5] + ' tHtH'
         if w.legend.endswith('_thtz'):
@@ -235,12 +231,12 @@ def mod_legend_eff_counts(wrps):
             w.legend = w.legend[:-6] + ' other'
         if w.legend.endswith('_incl'):
             w.legend = w.legend[:-5] + ' incl.'
-        # if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
-        #     w.legend = 'DY + jets'
-        # if w.legend == 'WJets':
-        #     w.legend = 'W + jets'
-        # if w.legend == 'SingleTop':
-        #     w.legend = 'Single T'
+        yield w
+
+def mod_legend_no_thth(wrps):
+    for w in wrps:
+        if w.legend.endswith('_thth'):
+            w.legend = w.legend[:-5]
         yield w
 
 def mod_title(wrps):

@@ -29,9 +29,9 @@ settings.cutflow_precision.update({
 # settings.defaults_Legend['opt_data'] = 'p'
 # settings.defaults_Legend['reverse'] = True
 
-settings.sys_error_color = (5, .7)
+settings.sys_error_color = (632, .7)
 settings.sys_error_fill = 3001
-settings.tot_error_color = (2, .7)
+settings.tot_error_color = (922, .7)
 settings.tot_error_fill = 3001
 
 settings.defaults_BottomPlot['y_min'] = -1.2

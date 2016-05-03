@@ -125,13 +125,13 @@ def getHiggsVar(chan, base):
         ),
     }.items()
 
-def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None):
+def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None, name='AutoContentFinalSelectionHiggsVar'):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
         include_str=r'\includegraphics[width=0.38\textwidth]{%s}',
-        name='AutoContentFinalSelectionHiggsVar',
+        name=name,
     )
 
 
@@ -386,7 +386,8 @@ def my_mod_sys_table(table):
     ] + limits.tex_table_mod_list)
     lines = table.split('\n')
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
-        + find_column_string(lines[1], 'el trg+id') + find_column_string(lines[1], 'mu trg+id')
+        + find_column_string(lines[2], '---')
+        # + find_column_string(lines[1], 'el trg+id') + find_column_string(lines[1], 'mu trg+id')
     for i, line in enumerate(lines):
         lines[i] = remove_column(line, indizes)
     table = '\n'.join(lines)

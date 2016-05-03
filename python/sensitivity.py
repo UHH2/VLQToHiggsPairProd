@@ -126,11 +126,11 @@ def select_single_sig(categories=None, var='', signal=''):
     return tmp
 
 def rebin_st(wrps):
-    # st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    st_bounds = st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
     for w in wrps:
         if w.in_file_path.endswith('ST'):
-            w = varial.operations.rebin_nbins_max(w, 20)
-            # w = varial.operations.rebin(w, st_bounds, False)
+            # w = varial.operations.rebin_nbins_max(w, 15)
+            w = varial.operations.rebin(w, st_bounds, False)
         yield w
 
 def loader_hook(brs):

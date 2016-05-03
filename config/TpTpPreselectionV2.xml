@@ -440,13 +440,13 @@
         <OutputTree Name="AnalysisTree" />
     </InputData>
     
-    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="False">
+    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="False">
         &MC_TTbar_ScaleUp;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
-    <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleDown" Cacheable="False">
+    <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleDown" Cacheable="False">
         &MC_TTbar_ScaleDown;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />

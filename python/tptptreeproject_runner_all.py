@@ -251,7 +251,7 @@ all_uncerts = [
 ]
 
 plot_uncerts = {
-    'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'sfmu_id', 'sfmu_trg', 'pu', 'rate'],
+    'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg' 'pu'],
     'ScaleVar' : ['ScaleVar'],
     'PDF' : ['PDF'],
     'TTbarScale' : ['ttbar_scale'],
@@ -369,9 +369,285 @@ def mk_tex_tc_post(base, name):
     # ])
 
 
-lumi_times_pure_BR = 2630.*0.33*0.33
-lumi_times_mixed_BR = 2630.*0.66*0.33
+lumi_times_pure_BR = 2630.*0.111
+lumi_times_mixed_BR = 2630.*0.222
 lumi = 2630.
+
+def mk_merge_ch_tc(output_dir, name, uncerts):
+    return varial.tools.ToolChain('MergeChannels', [
+            varial.tools.HistoLoader(
+                pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+                    w.in_file_path.endswith('ST'),
+                hook_loaded_histos=plot.loader_hook_merge_regions,
+            ),
+            varial.plotter.Plotter(
+                name='HistogramsMergeLeptonChannels',
+                stack=True,
+                input_result_path='../HistoLoader',
+                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name),
+                hook_canvas_post_build= common_plot.add_sample_integrals,
+                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
+                save_name_func=lambda w: w._renderers[0].region+'_'+w.name
+                ),
+            varial.plotter.Plotter(
+                name='HistogramsMergeLeptonChannelsSplitSamples',
+                stack=True,
+                input_result_path='../HistoLoader',
+                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name+'__'+w.sample),
+                hook_canvas_post_build= common_plot.add_sample_integrals,
+                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name+'__'+w.sample),
+                save_name_func=lambda w: w._renderers[0].region+'_'+w._renderers[0].sample+'_'+w.name
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsMergeLeptonChannelsSplitSamples',
+                        'Integral___bkg_sum'
+                    ),
+                    (
+                        ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsMergeLeptonChannelsSplitSamples', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../HistogramsMergeLeptonChannels', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../HistogramsMergeLeptonChannels', 'Integral___data'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection' in w,
+                'Sideband' : lambda w: 'SidebandRegion' in w,
+                'H1B category' : lambda w: 'SignalRegion1b' in w,
+                'H2B category' : lambda w: 'SignalRegion2b' in w
+                },
+                name='CountTable'
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsMergeLeptonChannelsSplitSamples',
+                        {
+                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        },
+                        'Integral___bkg_sum'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection' in w,
+                'Sideband' : lambda w: 'SidebandRegion' in w,
+                'H1B category' : lambda w: 'SignalRegion1b' in w,
+                'H2B category' : lambda w: 'SignalRegion2b' in w
+                },
+                calc_eff=True,
+                name='EffTable'
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M0700 tHtZ' : lambda w: w.endswith('TpTp_M-0700_thtz_ST'),
+                        'TT M0700 tHbW' : lambda w: w.endswith('TpTp_M-0700_thbw_ST'),
+                        'TT M0700 tZtZ' : lambda w: w.endswith('TpTp_M-0700_noH_tztz_ST'),
+                        'TT M0700 tZbW' : lambda w: w.endswith('TpTp_M-0700_noH_tzbw_ST'),
+                        'TT M0700 bWbW' : lambda w: w.endswith('TpTp_M-0700_noH_bwbw_ST'),
+                        },
+                        '../HistogramsMergeLeptonChannelsSplitSamples',
+                        {
+                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtZ' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tZtZ' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tZbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 bWbW' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        },
+                        'Integral___bkg_sum'
+                    ),
+                    (
+                        {
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        'TT M1700 tHtZ' : lambda w: w.endswith('TpTp_M-1700_thtz_ST'),
+                        'TT M1700 tHbW' : lambda w: w.endswith('TpTp_M-1700_thbw_ST'),
+                        'TT M1700 tZtZ' : lambda w: w.endswith('TpTp_M-1700_noH_tztz_ST'),
+                        'TT M1700 tZbW' : lambda w: w.endswith('TpTp_M-1700_noH_tzbw_ST'),
+                        'TT M1700 bWbW' : lambda w: w.endswith('TpTp_M-1700_noH_bwbw_ST'),
+                        },
+                        '../HistogramsMergeLeptonChannelsSplitSamples',
+                        {
+                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtZ' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tHbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tZtZ' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tZbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 bWbW' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        },
+                        'Integral___bkg_sum'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection' in w,
+                'Sideband' : lambda w: 'SidebandRegion' in w,
+                'H1B category' : lambda w: 'SignalRegion1b' in w,
+                'H2B category' : lambda w: 'SignalRegion2b' in w
+                },
+                calc_eff=True,
+                name='EffTableCompFS'
+                ),
+
+            ])
+
+def mk_ind_eff_tc(output_dir, name, uncerts):
+    return varial.tools.ToolChain('IndEfficiencies', [
+            varial.tools.HistoLoader(
+                pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th) and\
+                    w.in_file_path.endswith('ST'),
+                hook_loaded_histos=plot.loader_hook_compare_finalstates_split_lepton_channels,
+            ),
+            varial.plotter.Plotter(
+                name='Histograms',
+                stack=True,
+                input_result_path='../HistoLoader',
+                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.in_file_path.split('/')[0]+'__'+w.name),
+                hook_canvas_post_build= common_plot.add_sample_integrals,
+                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.in_file_path.split('/')[0]+'__'+w.name),
+                save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0]+'_'+w.name
+                ),
+            varial.plotter.Plotter(
+                name='HistogramsSplitSamples',
+                stack=True,
+                input_result_path='../HistoLoader',
+                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.in_file_path.split('/')[0]+'__'+w.name+'__'+w.sample),
+                hook_canvas_post_build= common_plot.add_sample_integrals,
+                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.in_file_path.split('/')[0]+'__'+w.name+'__'+w.sample),
+                save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0]+'_'+w._renderers[0].sample+'_'+w.name
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsSplitSamples',
+                        'Integral___bkg_sum'
+                    ),
+                    (
+                        ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsSplitSamples', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___data'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection_El45' in w,
+                'Sideband' : lambda w: 'SidebandRegion_El45' in w,
+                'H1B category' : lambda w: 'SignalRegion1b_El45' in w,
+                'H2B category' : lambda w: 'SignalRegion2b_El45' in w
+                },
+                name='CountTableEl45'
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsSplitSamples',
+                        'Integral___bkg_sum'
+                    ),
+                    (
+                        ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsSplitSamples', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___bkg_sum'
+                    ),
+                    (
+                        {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___data'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection_Mu45' in w,
+                'Sideband' : lambda w: 'SidebandRegion_Mu45' in w,
+                'H1B category' : lambda w: 'SignalRegion1b_Mu45' in w,
+                'H2B category' : lambda w: 'SignalRegion2b_Mu45' in w
+                },
+                name='CountTableMu45'
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsSplitSamples',
+                        {
+                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        },
+                        'Integral___bkg_sum'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection_El45' in w,
+                'Sideband' : lambda w: 'SidebandRegion_El45' in w,
+                'H1B category' : lambda w: 'SignalRegion1b_El45' in w,
+                'H2B category' : lambda w: 'SignalRegion2b_El45' in w
+                },
+                calc_eff=True,
+                name='EffTableEl45'
+                ),
+            EffNumTable([
+                    (
+                        {
+                        'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
+                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
+                        },
+                        '../HistogramsSplitSamples',
+                        {
+                        'TT M0700 tHtH' : 0.455*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1000 tHtH' : 0.0440*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1300 tHtH' : 0.00639*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M1700 tHtH' : 0.000666*lumi, # WRONG (correct: 0.000666) VALUE DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        },
+                        'Integral___bkg_sum'
+                    ),
+                ],
+                {
+                'Preselection' : lambda w: 'BaseLineSelection_Mu45' in w,
+                'Sideband' : lambda w: 'SidebandRegion_Mu45' in w,
+                'H1B category' : lambda w: 'SignalRegion1b_Mu45' in w,
+                'H2B category' : lambda w: 'SignalRegion2b_Mu45' in w
+                },
+                calc_eff=True,
+                name='EffTableMu45'
+                ),
+            ])
 
 def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     mod_sample_weights=None, uncertainties=None):
@@ -390,17 +666,17 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # )),                                             
             plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
                         + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final, compare_uncerts=True),
+                        ,plot.samples_to_plot_only_th, compare_uncerts=True),
             # plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final,
-            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if 'Run2015CD' not in f)),
+            #             ,plot.samples_to_plot_only_th,
+            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th if 'Run2015CD' not in f)),
             # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
             # #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            # #             ,plot.samples_to_plot_final),               
+            # #             ,plot.samples_to_plot_only_th),               
             # plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_final),
+            #             ,plot.samples_to_plot_only_th),
             # plot.mk_toolchain('HistogramsCompFinalStates', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
             #             ,plot.samples_to_plot_final,
@@ -411,8 +687,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     #     if all(i in uncerts for i in uncert_list):
     #         tc += [plot.mk_toolchain('HistogramsComp_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
     #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
-    #             ,plot.samples_to_plot_final)]
-    # tc += [
+    #             ,plot.samples_to_plot_only_th)]
+    tc += [
         # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     all_regions
@@ -437,327 +713,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     ['SignalRegion2b_Mu45', 'SignalRegion2b_El45']
         # )),
-    #     varial.tools.ToolChain('MergeChannels', [
-    #         varial.tools.HistoLoader(
-    #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-    #             # pattern=common_plot.file_select(datasets_to_plot),
-    #             # input_result_path='../../../../HistoLoader',
-    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             # any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             w.in_file_path.endswith('ST'),
-    #                            # and (('SingleEle' not in w.file_path and 'Mu' in category) or\
-    #                            # ('SingleMuon' not in w.file_path and 'El' in category)),
-    #             # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
-    #             hook_loaded_histos=plot.loader_hook_merge_regions,
-    #         ),
-    #         varial.plotter.Plotter(
-    #             name='HistogramsMergeLeptonChannels',
-    #             stack=True,
-    #             input_result_path='../HistoLoader',
-    #             # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             #                 w.in_file_path.endswith('HT'),
-    #             # plot_setup=plot_setup,
-    #             hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name),
-    #             hook_canvas_post_build= common_plot.add_sample_integrals,
-    #             # stack_setup = plot.stack_setup_norm_sig,
-    #             stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
-    #             save_name_func=lambda w: w._renderers[0].region+'_'+w.name
-    #             # save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0].split('_')[0]+'_'+w._renderers[0]'_'+w.name
-    #             # save_name_func=lambda w: w.save_name,
-    #             # plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-    #             #     th_x=common_sensitivity.theory_masses,
-    #             #     th_y=common_sensitivity.theory_cs),
-    #             # canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
-    #             #     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-    #             #     ],
-    #             ),
-    #         varial.plotter.Plotter(
-    #             name='HistogramsMergeLeptonChannelsSplitSamples',
-    #             stack=True,
-    #             input_result_path='../HistoLoader',
-    #             # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             #                 w.in_file_path.endswith('HT'),
-    #             # plot_setup=plot_setup,
-    #             hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name+'__'+w.sample),
-    #             hook_canvas_post_build= common_plot.add_sample_integrals,
-    #             # stack_setup = plot.stack_setup_norm_sig,
-    #             stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name+'__'+w.sample),
-    #             save_name_func=lambda w: w._renderers[0].region+'_'+w._renderers[0].sample+'_'+w.name
-    #             # save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0].split('_')[0]+'_'+w._renderers[0]'_'+w.name
-    #             # save_name_func=lambda w: w.save_name,
-    #             # plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-    #             #     th_x=common_sensitivity.theory_masses,
-    #             #     th_y=common_sensitivity.theory_cs),
-    #             # canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
-    #             #     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-    #             #     ],
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsMergeLeptonChannelsSplitSamples',
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsMergeLeptonChannelsSplitSamples', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../HistogramsMergeLeptonChannels', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../HistogramsMergeLeptonChannels', 'Integral___data'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b' in w
-    #             },
-    #             name='CountTable'
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsMergeLeptonChannelsSplitSamples',
-    #                     {
-    #                     'TT M0700 incl.' : 0.460*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1000 incl.' : 0.0438*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1300 incl.' : 0.00637*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1700 incl.' : 0.000477*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     },
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b' in w
-    #             },
-    #             calc_eff=True,
-    #             name='EffTable'
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-    #                     'TT M0700 tHtZ' : lambda w: w.endswith('TpTp_M-0700_thtz_ST'),
-    #                     'TT M0700 tHbW' : lambda w: w.endswith('TpTp_M-0700_thbw_ST'),
-    #                     'TT M0700 tZtZ' : lambda w: w.endswith('TpTp_M-0700_noH_tztz_ST'),
-    #                     'TT M0700 tZbW' : lambda w: w.endswith('TpTp_M-0700_noH_tzbw_ST'),
-    #                     'TT M0700 bWbW' : lambda w: w.endswith('TpTp_M-0700_noH_bwbw_ST'),
-    #                     },
-    #                     '../HistogramsMergeLeptonChannelsSplitSamples',
-    #                     {
-    #                     'TT M0700 tHtH' : 0.460*lumi_times_pure_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M0700 tHtZ' : 0.460*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M0700 tHbW' : 0.460*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M0700 tZtZ' : 0.460*lumi_times_pure_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M0700 tZbW' : 0.460*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M0700 bWbW' : 0.460*lumi_times_pure_BR, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     },
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {
-    #                     'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
-    #                     'TT M1700 tHtZ' : lambda w: w.endswith('TpTp_M-1700_thtz_ST'),
-    #                     'TT M1700 tHbW' : lambda w: w.endswith('TpTp_M-1700_thbw_ST'),
-    #                     'TT M1700 tZtZ' : lambda w: w.endswith('TpTp_M-1700_noH_tztz_ST'),
-    #                     'TT M1700 tZbW' : lambda w: w.endswith('TpTp_M-1700_noH_tzbw_ST'),
-    #                     'TT M1700 bWbW' : lambda w: w.endswith('TpTp_M-1700_noH_bwbw_ST'),
-    #                     },
-    #                     '../HistogramsMergeLeptonChannelsSplitSamples',
-    #                     {
-    #                     'TT M1700 tHtH' : 0.000477*lumi_times_pure_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1700 tHtZ' : 0.000477*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-    #                     'TT M1700 tHbW' : 0.000477*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-    #                     'TT M1700 tZtZ' : 0.000477*lumi_times_pure_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-    #                     'TT M1700 tZbW' : 0.000477*lumi_times_mixed_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-    #                     'TT M1700 bWbW' : 0.000477*lumi_times_pure_BR, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-    #                     },
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b' in w
-    #             },
-    #             calc_eff=True,
-    #             name='EffTableCompFS'
-    #             ),
-
-    #         ]),
-    #     varial.tools.ToolChain('IndEfficiencies', [
-    #         varial.tools.HistoLoader(
-    #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-    #             # pattern=common_plot.file_select(datasets_to_plot),
-    #             # input_result_path='../../../../HistoLoader',
-    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             # any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             w.in_file_path.endswith('ST'),
-    #                            # and (('SingleEle' not in w.file_path and 'Mu' in category) or\
-    #                            # ('SingleMuon' not in w.file_path and 'El' in category)),
-    #             # hook_loaded_histos=lambda w: cutflow_tables.rebin_cutflow(loader_hook(w))
-    #             hook_loaded_histos=plot.loader_hook_compare_finalstates_split_lepton_channels,
-    #         ),
-    #         varial.plotter.Plotter(
-    #             name='Histograms',
-    #             stack=True,
-    #             input_result_path='../HistoLoader',
-    #             # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             #                 w.in_file_path.endswith('HT'),
-    #             # plot_setup=plot_setup,
-    #             hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.in_file_path.split('/')[0]+'__'+w.name),
-    #             hook_canvas_post_build= common_plot.add_sample_integrals,
-    #             # stack_setup = plot.stack_setup_norm_sig,
-    #             stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.in_file_path.split('/')[0]+'__'+w.name),
-    #             save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0]+'_'+w.name
-    #             ),
-    #         varial.plotter.Plotter(
-    #             name='HistogramsSplitSamples',
-    #             stack=True,
-    #             input_result_path='../HistoLoader',
-    #             # filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
-    #             #                 any(i in w.in_file_path for i in ['SidebandTTJets', 'SidebandWPlusJets']) and\
-    #             #                 w.in_file_path.endswith('HT'),
-    #             # plot_setup=plot_setup,
-    #             hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.in_file_path.split('/')[0]+'__'+w.name+'__'+w.sample),
-    #             hook_canvas_post_build= common_plot.add_sample_integrals,
-    #             # stack_setup = plot.stack_setup_norm_sig,
-    #             stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.in_file_path.split('/')[0]+'__'+w.name+'__'+w.sample),
-    #             save_name_func=lambda w: w._renderers[0].in_file_path.split('/')[0]+'_'+w._renderers[0].sample+'_'+w.name
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsSplitSamples',
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsSplitSamples', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___data'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection_El45' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion_El45' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b_El45' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b_El45' in w
-    #             },
-    #             name='CountTableEl45'
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsSplitSamples',
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     ['TTbar', 'WJets', 'DYJets', 'QCD', 'SingleTop'], '../HistogramsSplitSamples', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{Total Background}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___bkg_sum'
-    #                 ),
-    #                 (
-    #                     {r'\textbf{data}' : lambda w: w.endswith('ST')}, '../Histograms', 'Integral___data'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection_Mu45' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion_Mu45' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b_Mu45' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b_Mu45' in w
-    #             },
-    #             name='CountTableMu45'
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsSplitSamples',
-    #                     {
-    #                     'TT M0700 incl.' : 0.460*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1000 incl.' : 0.0438*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1300 incl.' : 0.00637*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1700 incl.' : 0.000477*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     },
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection_El45' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion_El45' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b_El45' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b_El45' in w
-    #             },
-    #             calc_eff=True,
-    #             name='EffTableEl45'
-    #             ),
-    #         EffNumTable([
-    #                 (
-    #                     {
-    #                     'TT M0700 incl.' : lambda w: w.endswith('TpTp_M-0700_incl_ST'),
-    #                     'TT M1000 incl.' : lambda w: w.endswith('TpTp_M-1000_incl_ST'),
-    #                     'TT M1300 incl.' : lambda w: w.endswith('TpTp_M-1300_incl_ST'),
-    #                     'TT M1700 incl.' : lambda w: w.endswith('TpTp_M-1700_incl_ST'),
-    #                     },
-    #                     '../HistogramsSplitSamples',
-    #                     {
-    #                     'TT M0700 incl.' : 0.460*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1000 incl.' : 0.0438*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1300 incl.' : 0.00637*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     'TT M1700 incl.' : 0.000477*lumi, # WRONG (correct: 0.000666) VALUE DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-    #                     },
-    #                     'Integral___bkg_sum'
-    #                 ),
-    #             ],
-    #             {
-    #             'Preselection' : lambda w: 'BaseLineSelection_Mu45' in w,
-    #             'Sideband' : lambda w: 'SidebandRegion_Mu45' in w,
-    #             'H1B category' : lambda w: 'SignalRegion1b_Mu45' in w,
-    #             'H2B category' : lambda w: 'SignalRegion2b_Mu45' in w
-    #             },
-    #             calc_eff=True,
-    #             name='EffTableMu45'
-    #             ),
-    #         ]),
-    #     ]
+        # mk_merge_ch_tc(output_dir, name, uncerts),
+        # mk_ind_eff_tc(output_dir, name, uncerts)
+        ]
     # tc_tex = [
     #     tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
     #     tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),

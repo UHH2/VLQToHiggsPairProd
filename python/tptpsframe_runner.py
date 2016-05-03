@@ -219,7 +219,7 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpPreselectionV2'
         varial.settings.sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
-        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
+        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.samples_to_plot_pre
         varial.settings.fix_presel_sample = True
         # varial.settings.merge_decay_channels = True
@@ -230,7 +230,7 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpFinalSelectionTreeOutput'
         varial.settings.sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
-        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/Plots/'
+        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.samples_to_plot_final
         # varial.settings.merge_decay_channels = False
     else:
@@ -249,6 +249,12 @@ def mk_sframe_tools_and_plot(argv):
             'Plots',
             lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot, filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot) and ('Baseline' in w.in_file_path))
         )
+        plots_comp_fs = plot.mk_toolchain('PlotsCompFinalStates',
+                    categories=categories, datasets=samples_to_plot,
+                    filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot\
+                        if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700']))\
+                        and ('Baseline' in w.in_file_path),
+                    compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates),
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -268,6 +274,7 @@ def mk_sframe_tools_and_plot(argv):
                         [
                             # hadd,
                             plots,
+                            plots_comp_fs
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
                     )
@@ -287,7 +294,7 @@ def mk_sframe_tools_and_plot(argv):
                     # mk_autoContentSignalControlRegion(p_postbase),
                     # tex_content.mk_autoContentControlPlots(base, 'El45', 'Mu45'),
                     # tex_content.mk_autoContentFinalSelectionHiggsVar(base),
-                    tex_content.mk_autoContentPreSelectionNm1(base, 'El45', 'Mu45'),
+                    tex_content.mk_autoContentPreSelectionNm1(base+'Plots/', 'El45', 'Mu45'),
                     # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
                 ]
@@ -301,8 +308,9 @@ def mk_sframe_tools_and_plot(argv):
                 'Tex', 
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
-                    tex_content.mk_autoContentControlPlots(base, 'El45_Baseline', 'Mu45_Baseline'),
-                    tex_content.mk_autoContentFinalSelectionHiggsVar(base, 'El45_Baseline', 'Mu45_Baseline'),
+                    tex_content.mk_autoContentControlPlots(base+'Plots/', 'El45_Baseline', 'Mu45_Baseline'),
+                    tex_content.mk_autoContentFinalSelectionHiggsVar(base+'Plots/', 'El45_Baseline', 'Mu45_Baseline'),
+                    tex_content.mk_autoContentFinalSelectionHiggsVar(base+'PlotsCompFinalStates/', 'El45_Baseline', 'Mu45_Baseline', name='HiggsVarCompFinalState'),
                     # tex_content.mk_autoContentPreSelectionNm1(base, 'El45_Baseline', 'Mu45_Baseline'),
                     # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
@@ -320,7 +328,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_pre(options.outputdir+tex_base),
+                mk_tex_tc_pre(options.outputdir),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
@@ -333,7 +341,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_final(options.outputdir+tex_base),
+                mk_tex_tc_final(options.outputdir),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
