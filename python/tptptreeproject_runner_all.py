@@ -251,7 +251,7 @@ all_uncerts = [
 ]
 
 plot_uncerts = {
-    'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg' 'pu'],
+    'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'pu'], # , 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'
     'ScaleVar' : ['ScaleVar'],
     'PDF' : ['PDF'],
     'TTbarScale' : ['ttbar_scale'],
@@ -322,7 +322,7 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
             sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path, final_regions, weights)
             sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
-            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
             return sys_tps
         return tmp
     return add_uncerts
@@ -378,34 +378,36 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
     return varial.tools.ToolChain('MergeChannels', [
             varial.tools.HistoLoader(
                 pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final) and\
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
                     w.in_file_path.endswith('ST'),
                 hook_loaded_histos=plot.loader_hook_merge_regions,
             ),
             varial.plotter.Plotter(
-                name='HistogramsMergeLeptonChannels',
-                stack=True,
-                input_result_path='../HistoLoader',
-                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name),
-                hook_canvas_post_build= common_plot.add_sample_integrals,
-                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
-                save_name_func=lambda w: w._renderers[0].region+'_'+w.name
-                ),
-            varial.plotter.Plotter(
                 name='HistogramsMergeLeptonChannelsSplitSamples',
                 stack=True,
                 input_result_path='../HistoLoader',
-                hook_loaded_histos=lambda w: sorted(w, key=lambda w: w.region+'__'+w.name+'__'+w.sample),
+                hook_loaded_histos=plot.loader_hook_split_lep_channels,
                 hook_canvas_post_build= common_plot.add_sample_integrals,
                 stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name+'__'+w.sample),
                 save_name_func=lambda w: w._renderers[0].region+'_'+w._renderers[0].sample+'_'+w.name
+                ),
+            varial.plotter.Plotter(
+                name='HistogramsMergeLeptonChannels',
+                stack=True,
+                input_result_path='../HistoLoader',
+                hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+                hook_canvas_post_build= common_plot.add_sample_integrals,
+                stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
+                save_name_func=lambda w: w._renderers[0].region+'_'+w.name
                 ),
             EffNumTable([
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
@@ -433,16 +435,20 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0900 tHtH' : (1./common_plot.normfactors['TpTp_M-0900'])*lumi,
+                        'TT M1100 tHtH' : (1./common_plot.normfactors['TpTp_M-1100'])*lumi,
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-1300'])*lumi,
+                        'TT M1500 tHtH' : (1./common_plot.normfactors['TpTp_M-1500'])*lumi,
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
                         },
                         'Integral___bkg_sum'
                     ),
@@ -468,12 +474,12 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tHtZ' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tHbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tZtZ' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 tZbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M0700 bWbW' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0700 tHtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0700 tHbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0700 tZtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0700 tZbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0700 bWbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
                         },
                         'Integral___bkg_sum'
                     ),
@@ -488,12 +494,12 @@ def mk_merge_ch_tc(output_dir, name, uncerts):
                         },
                         '../HistogramsMergeLeptonChannelsSplitSamples',
                         {
-                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtZ' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tHbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tZtZ' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 tZbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
-                        'TT M1700 bWbW' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors),
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
+                        'TT M1700 tHtZ' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
+                        'TT M1700 tHbW' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
+                        'TT M1700 tZtZ' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
+                        'TT M1700 tZbW' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
+                        'TT M1700 bWbW' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
                         },
                         'Integral___bkg_sum'
                     ),
@@ -514,7 +520,7 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
     return varial.tools.ToolChain('IndEfficiencies', [
             varial.tools.HistoLoader(
                 pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th) and\
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples_to_plot_only_th) and\
                     w.in_file_path.endswith('ST'),
                 hook_loaded_histos=plot.loader_hook_compare_finalstates_split_lepton_channels,
             ),
@@ -540,8 +546,10 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsSplitSamples',
@@ -569,8 +577,10 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsSplitSamples',
@@ -598,16 +608,20 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsSplitSamples',
                         {
-                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi_ele, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi_ele, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi_ele, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi_ele, # WRONG VALUE (correct: 0.000666) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi_ele,
+                        'TT M0900 tHtH' : (1./common_plot.normfactors['TpTp_M-0900'])*lumi_ele,
+                        'TT M1100 tHtH' : (1./common_plot.normfactors['TpTp_M-1100'])*lumi_ele,
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-1300'])*lumi_ele,
+                        'TT M1500 tHtH' : (1./common_plot.normfactors['TpTp_M-1500'])*lumi_ele,
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi_ele,
                         },
                         'Integral___bkg_sum'
                     ),
@@ -625,16 +639,20 @@ def mk_ind_eff_tc(output_dir, name, uncerts):
                     (
                         {
                         'TT M0700 tHtH' : lambda w: w.endswith('TpTp_M-0700_thth_ST'),
-                        'TT M1000 tHtH' : lambda w: w.endswith('TpTp_M-1000_thth_ST'),
+                        'TT M0900 tHtH' : lambda w: w.endswith('TpTp_M-0900_thth_ST'),
+                        'TT M1100 tHtH' : lambda w: w.endswith('TpTp_M-1100_thth_ST'),
                         'TT M1300 tHtH' : lambda w: w.endswith('TpTp_M-1300_thth_ST'),
+                        'TT M1500 tHtH' : lambda w: w.endswith('TpTp_M-1500_thth_ST'),
                         'TT M1700 tHtH' : lambda w: w.endswith('TpTp_M-1700_thth_ST'),
                         },
                         '../HistogramsSplitSamples',
                         {
-                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-M0700'])*lumi, # WRONG VALUE (correct: 0.455) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1000 tHtH' : (1./common_plot.normfactors['TpTp_M-M1000'])*lumi, # WRONG VALUE (correct: 0.0440) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-M1300'])*lumi, # WRONG VALUE (correct: 0.00639) DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
-                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-M1700'])*lumi, # WRONG (correct: 0.000666) VALUE DUE TO WRONG LUMI WEIGHT IN SFRAME CONFIG! (see also plot.normfactors)
+                        'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
+                        'TT M0900 tHtH' : (1./common_plot.normfactors['TpTp_M-0900'])*lumi,
+                        'TT M1100 tHtH' : (1./common_plot.normfactors['TpTp_M-1100'])*lumi,
+                        'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-1300'])*lumi,
+                        'TT M1500 tHtH' : (1./common_plot.normfactors['TpTp_M-1500'])*lumi,
+                        'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
                         },
                         'Integral___bkg_sum'
                     ),
@@ -659,37 +677,47 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         weights = treeproject_tptp.sample_weights_def
     uncerts = uncertainties or []
     tc = [
-            treeproject_tptp.mk_tp(base_path, final_regions, weights),
+            # treeproject_tptp.mk_tp(base_path, final_regions, weights),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
             # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
             #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
             #     all_regions
             # )),                                             
-            plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_only_th, compare_uncerts=True),
-            plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_only_th,
-                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th if 'Run2015CD' not in f)),
-            # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
+            # plot.mk_toolchain('Histograms', [output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-            #             ,plot.samples_to_plot_only_th),               
-            plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_only_th),
-            plot.mk_toolchain('HistogramsCompFinalStates', [output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ,plot.samples_to_plot_final,
-                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700'])),
-                        compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates),
+            #             ,plot.samples_to_plot_only_th, compare_uncerts=True),                                             
+            # plot.mk_toolchain_norm('HistogramsNormToInt', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_only_th, compare_uncerts=False),
+            # plot.mk_toolchain('HistogramsNoData', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_only_th,
+            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_only_th if 'Run2015CD' not in f)),
+            # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProjector/*.root'%name]
+            # #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            # #             ,plot.samples_to_plot_only_th),               
+            # plot.mk_toolchain('HistogramsNoUncerts', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             # + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_only_th),
+            # plot.mk_toolchain('HistogramsCompFinalStates', [output_dir+'/%s/TreeProjector/*.root'%name]
+            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ,plot.samples_to_plot_final,
+            #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700'])),
+            #             compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates),
         ]
     for uc_name, uncert_list in plot_uncerts.iteritems():
         if all(i in uncerts for i in uncert_list):
-            tc += [plot.mk_toolchain('HistogramsComp_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
-                + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
-                ,plot.samples_to_plot_only_th)]
+            tc += [
+                plot.mk_toolchain('HistogramsComp_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
+                    + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
+                    ,plot.samples_to_plot_only_th),                                             
+                plot.mk_toolchain_norm('HistogramsCompNormToInt_'+uc_name, [output_dir+'/%s/TreeProjector/*.root'%name]
+                    + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncert_list if i in uncerts)
+                    ,plot.samples_to_plot_only_th),
+                ]
     tc += [
+        mk_merge_ch_tc(output_dir, name, uncerts),
+        # mk_ind_eff_tc(output_dir, name, uncerts),
         # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     all_regions
@@ -702,53 +730,46 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45']
         # )),
-        # sensitivity.mk_tc('LimitsAllUncertsOnlySignal', mk_limit_list_syst(
-        #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-        #     ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SignalRegion2b_El45', 'SignalRegion1b_El45']
-        # )),
-        # sensitivity.mk_tc('LimitsAllUncertsNoH1B', mk_limit_list_syst(
-        #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-        #     ['SignalRegion2b_Mu45', 'SidebandRegion_Mu45', 'SignalRegion2b_El45', 'SidebandRegion_El45']
-        # )),
-        # sensitivity.mk_tc('LimitsAllUncertsOnlyH2B', mk_limit_list_syst(
-        #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-        #     ['SignalRegion2b_Mu45', 'SignalRegion2b_El45']
-        # )),
-        # mk_merge_ch_tc(output_dir, name, uncerts),
-        # mk_ind_eff_tc(output_dir, name, uncerts)
         ]
-    # tc_tex = [
-    #     tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
-    #     tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),
-    #     tex_content.mk_autoContentSystematicCRPlots(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'SystematicCRPlots_'+name),
-    #     # tex_content.mk_autoContentSignalControlRegionCombined(os.path.join(output_dir, name)+'/HistogramsMergeLeptonChannels', 'WithDataFinalRegionsCombined_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/CountTable/count_table_content.tex', name='CountTable_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
-    #     tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
-    #     # tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions'),
-    # ]
-    # if name == 'NoReweighting' or name == 'TopPtAndHTReweighting':
-    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name,
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])
-    #     ]
-    # else:
-    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions',
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    tc_tex = [
+        tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
+        tex_content.mk_autoContentSignalControlRegion(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),
+        tex_content.mk_autoContentSystematicCRPlots(os.path.join(output_dir, name)+'/Histograms', 'El45', 'Mu45', 'SystematicCRPlots_'+name),
+        # tex_content.mk_autoContentSystematicCRPlots(os.path.join(output_dir, name)+'/HistogramsNormToInt', 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+name),
+        tex_content.mk_autoContentSignalControlRegionCombined(os.path.join(output_dir, name)+'/MergeChannels/HistogramsMergeLeptonChannels', 'WithDataFinalRegionsCombined_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/CountTable/count_table_content.tex', name='CountTable_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
+        tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
+    ]
+    if name == 'NoReweighting' or name == 'TopPtAndHTReweighting':
+        tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name,
+            mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])
+        ]
+    else:
+        tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions',
+            mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
 
     # tc_tex += [tex_content.mk_autoContentCompSystPlots(
-    #             list(os.path.join(output_dir, name)+'/HistogramsComp_'+uc_name for uc_name in ['Exp', 'ScaleVar', 'PDF', 'TTbarScale']),
+    #             list(os.path.join(output_dir, name)+'/HistogramsComp_'+uc_name for uc_name in ['ScaleVar', 'PDF', 'TTbarScale', 'Exp']),
     #              'El45', 'Mu45', 'CompSystPlots_'+name)]
-    # for uc_name, uncert_list in plot_uncerts.iteritems():
-    #     if any(i in uncerts for i in uncert_list):
-    #         tc_tex += [tex_content.mk_autoContentSystematicCRPlots(
-    #             os.path.join(output_dir, name)+'/HistogramsComp_'+uc_name, 'El45', 'Mu45', 'SystematicCRPlots_'+uc_name+'_'+name)]
-    # tc += [varial.tools.ToolChain('Tex', tc_tex),
-    #     varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
-    #     ]
+    # tc_tex += [tex_content.mk_autoContentCompSystPlots(
+                # list(os.path.join(output_dir, name)+'/HistogramsCompNormToInt_'+uc_name for uc_name in ['ScaleVar', 'PDF', 'TTbarScale', 'Exp']),
+                 # 'El45', 'Mu45', 'CompSystPlotsNormed_'+name)]
+    for uc_name, uncert_list in plot_uncerts.iteritems():
+        if any(i in uncerts for i in uncert_list):
+            tc_tex += [
+                tex_content.mk_autoContentSystematicCRPlots(
+                    os.path.join(output_dir, name)+'/HistogramsComp_'+uc_name, 'El45', 'Mu45', 'SystematicCRPlots_'+uc_name+'_'+name),
+                # tex_content.mk_autoContentSystematicCRPlots(
+                #     os.path.join(output_dir, name)+'/HistogramsCompNormToInt_'+uc_name, 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+uc_name+'_'+name)
+                ]
+    tc += [varial.tools.ToolChain('Tex', tc_tex),
+        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        ]
     return varial.tools.ToolChain(name, tc)
 
 def run_treeproject_and_plot(base_path, output_dir):

@@ -204,24 +204,30 @@ def getSystCRPlots(chan, base):
     # print base
     return {
         chan+'_ak4jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak4_jet_lin' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak4_jet_lin' % chan + ext,
-            p + 'SidebandRegion_%s/pt_third_ak4_jet_lin' % chan + ext,
-            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_ld_ak4_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak4_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_third_ak4_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_rebin_log' % chan + ext,
         ),
         chan+'_ak8jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak8_jet_lin' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak8_jet_lin' % chan + ext,
+            p + 'SidebandRegion_%s/pt_ld_ak8_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak8_jet_rebin_log' % chan + ext,
+        ),
+        chan+'_stplusjets': (
+            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
         ),
         chan+'_eventvar': (
             p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
             p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/primary_lepton_pt_lin' % chan + ext,
-            p + 'SidebandRegion_%s/met_lin' % chan + ext,
+            p + 'SidebandRegion_%s/primary_lepton_pt_log' % chan + ext,
+            p + 'SidebandRegion_%s/met_log' % chan + ext,
         ),
         chan+'_njets': (
-            p + 'SidebandRegion_%s/n_ak4_lin' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak8_lin' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
         ),
         chan+'_stht': (
             p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
@@ -386,7 +392,7 @@ def my_mod_sys_table(table):
     ] + limits.tex_table_mod_list)
     lines = table.split('\n')
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
-        + find_column_string(lines[2], '---')
+        + find_column_string(lines[3], '---')
         # + find_column_string(lines[1], 'el trg+id') + find_column_string(lines[1], 'mu trg+id')
     for i, line in enumerate(lines):
         lines[i] = remove_column(line, indizes)

@@ -251,7 +251,7 @@ def mk_sframe_tools_and_plot(argv):
         )
         plots_comp_fs = varial.tools.ToolChainParallel(
             'PlotsCompFinalStates',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=plot.samples_to_plot_final,
+            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=None, datasets=plot.samples_to_plot_final,
                 filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final\
                     if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700']))\
                     and ('Baseline' in w.in_file_path),

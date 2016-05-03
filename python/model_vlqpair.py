@@ -21,10 +21,10 @@ def get_model(hist_dir, final_states):
     # for process, factor in branching_ratios:
     #     model.scale_predictions(factor, process, observable)
     # model.add_lognormal_uncertainty('ttbar_rate', math.log(1.15), 'TTbar')
-    model.add_lognormal_uncertainty('ttbar_rate', math.log(1.056), 'TTbar')
+    model.add_lognormal_uncertainty('ttbar_rate', math.log(1.10), 'TTbar')
     model.add_lognormal_uncertainty('qcd_rate', math.log(1.50), 'QCD')
     # model.add_lognormal_uncertainty('wjets_rate', math.log(1.15), 'WJets')
-    model.add_lognormal_uncertainty('wjets_rate', math.log(1.04), 'WJets')
+    model.add_lognormal_uncertainty('wjets_rate', math.log(1.10), 'WJets')
     model.add_lognormal_uncertainty('zjets_rate', math.log(1.50), 'DYJets')
     model.add_lognormal_uncertainty('singlet_rate', math.log(1.50), 'SingleTop')
     for smpl in background_samples:

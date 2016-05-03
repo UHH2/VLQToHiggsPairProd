@@ -16,9 +16,9 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
 
-    if (version == "Run2015CD_Ele") {
-        ctx.set("lumi_file", ctx.get("ele_lumi_file", ctx.get("lumi_file")));
-    } else if (version == "Run2015D_Mu") {
+    if (version == "SingleEle_Run2015CD") {
+        ctx.set("lumi_file", ctx.get("el_lumi_file", ctx.get("lumi_file")));
+    } else if (version == "SingleMuon_Run2015CD") {
         ctx.set("lumi_file", ctx.get("mu_lumi_file", ctx.get("lumi_file")));
     }
     
