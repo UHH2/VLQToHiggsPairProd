@@ -465,7 +465,7 @@ def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoConte
     return varial.extensions.tex.TexContent(
         tmp_dict,
         dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name=name,
     )
 

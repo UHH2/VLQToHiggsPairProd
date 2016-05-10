@@ -302,7 +302,7 @@ def mk_sframe_tools_and_plot(argv):
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True)
         ])
 
     def mk_tex_tc_final(base):
@@ -319,7 +319,7 @@ def mk_sframe_tools_and_plot(argv):
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True)
         ])            
 
 

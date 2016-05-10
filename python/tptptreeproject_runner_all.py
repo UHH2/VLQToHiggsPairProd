@@ -768,7 +768,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 #     os.path.join(output_dir, name)+'/HistogramsCompNormToInt_'+uc_name, 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+uc_name+'_'+name)
                 ]
     tc += [varial.tools.ToolChain('Tex', tc_tex),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn', '*.html'), use_rsync=True)
         ]
     return varial.tools.ToolChain(name, tc)
 

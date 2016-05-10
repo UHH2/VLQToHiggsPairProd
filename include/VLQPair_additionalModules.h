@@ -1020,6 +1020,33 @@ private:
     bool is_mc_;
 };
 
+
+template<typename T>
+class ParticleCleaner : public AnalysisModule {
+public:
+
+    typedef std::function<bool (const T &, const uhh2::Event &)> ID;
+
+    ParticleCleaner(Context & ctx, const ID & part_id_, std::string const & label_):
+        part_id_(part_id_), hndl_(ctx.get_handle<std::vector<T>>(label_)) {}
+      
+
+    bool process(uhh2::Event & event) {
+        if (!event.is_valid(hndl_)) {
+            cerr << "In ParticleCleaner: Handle not valid!\n";
+            assert(false);
+        }
+        vector<T> & part_collection = event.get(hndl_);
+        clean_collection(part_collection, event, part_id_);
+        return true;
+    }
+
+private:
+    ID part_id_;
+    uhh2::Event::Handle<std::vector<T>> hndl_;
+};
+
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:

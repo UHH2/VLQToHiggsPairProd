@@ -38,21 +38,26 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu27_v*"}, "trigger_accept_isoMu"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_mu45"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el45"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele105_CaloIdVT_GsfTrkIdT_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el105"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*", "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, "trigger_accept_lep_comb"));
     // common_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLeptonComb", 50., 47.));
 
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
+    common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonEl105", "trigger_accept_el105", "trigger_accept_mu45", 115., 47.));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons", "PrimaryElectron"));
 
     common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLepton", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", true));
+    common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLeptonEl105", "TwoDcut_Dr_noIso_el105", "TwoDcut_Dpt_noIso_el105", true));
     
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon", "primary_muon_pt", "primary_muon_eta", "primary_muon_charge"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryElectron", "primary_electron_pt", "primary_electron_eta", "primary_electron_charge"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
+    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLeptonEl105", "primary_lepton_pt_el105", "primary_lepton_eta_el105", "primary_lepton_charge_el105"));
     common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLeptonComb", "primary_lepton_comb_pt", "primary_lepton_comb_eta", "primary_lepton_comb_charge"));
     // keep the following module mainly for cross-checks, to see whether e.g. your primary lepton in the muon channel is really a muon
     common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLepton", 50., 47., "is_muon"));
+    common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLeptonEl105", 115., 47., "is_muon"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_dRak8", MuonId(MinMaxDeltaRId<TopJet>(ctx, "topjets", 0.1))));
     common_modules.emplace_back(new HTCalculator(ctx, boost::none, "HT"));
