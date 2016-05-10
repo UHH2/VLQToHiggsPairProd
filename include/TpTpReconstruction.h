@@ -78,4 +78,3 @@ private:
     uhh2::Event::Handle<std::vector<TpTpReconstructionHypothesis>> h_recohyps_;
     std::string discriminator_name_;
 };
-
