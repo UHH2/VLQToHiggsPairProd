@@ -337,11 +337,21 @@ def getFinalVarCombinedMore(base):
             os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
             os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
         ),
+        'baseline_control_plots_all': (
+            os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/met_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
+        ),
         'baseline_control_plots': (
             os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
             os.path.join(base, 'BaseLineSelection/met_lin' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_log' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_log' + ext),
+        ),
+        'baseline_control_plots_ht_nak4': (
             os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
         ),

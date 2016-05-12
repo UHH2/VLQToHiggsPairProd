@@ -179,17 +179,28 @@ private:
 
 
 template<typename T>
-class NParticleMultiHistProducerHelper {
+class NParticleMultiHistProducerHelper : public AnalysisModule {
 public:
     explicit NParticleMultiHistProducerHelper(
+                        Context & ctx,
                         const string & rel_dirname,
                         const string & h_name,
                         const vector<string> & variables = {"n", "pt", "eta", "phi", "mass_sj", "csv_first_sj", "csv_second_sj", "n_subjets"},
-                        unsigned part_ind = 1) :
+                        unsigned part_ind = 1,
+                        bool declare_event_branch = false) :
         rel_dirname_(rel_dirname),
         h_name_(h_name),
         variables_(variables),
         part_ind_(part_ind) {
+            if (declare_event_branch) {
+                h_part_coll_ = ctx.get_handle<std::vector<T>>(h_name);
+                for (auto const & var : variables) {
+                    if (var == "n" || var == "n_subjets")
+                        h_int_[var] = ctx.declare_event_output<int>(h_name+"_"+var);
+                    else
+                        h_float_[var] = ctx.declare_event_output<float>(h_name+"_"+var);
+                }
+            }
         }
 
     // ~NParticleMultiHistProducerHelper() {
@@ -236,6 +247,117 @@ public:
         cout << "rel_dirname_: " << rel_dirname_ << " h_name_: " << h_name_ << " address: " << this << endl;
     }
 
+    virtual bool process(Event & event) override {
+        if (event.is_valid(h_part_coll_)) {
+            bool is_topjet = std::is_same<T, TopJet>::value;
+            vector<T> const & coll = event.get(h_part_coll_);
+            for (map<string, Event::Handle<int>>::const_iterator it = h_int_.begin(); it != h_int_.end(); ++it) {
+                if (it->first == "n") event.set(it->second, coll.size() );
+                if (coll.size() >= part_ind_) {
+                    if (it->first == "n_subjets") {
+                            // assert(false);
+                        assert(is_topjet);
+                        event.set(it->second, particle.subjets().size() );
+                    }
+                }
+            }
+            for (map<string, Event::Handle<float>>::const_iterator it = h_float_.begin(); it != h_float_.end(); ++it) {
+                if (coll.size() >= part_ind_) {
+                    T const & particle = coll[part_ind_-1];
+                    if (it->first == "pt") event.set(it->second, particle.pt() );
+                    if (it->first == "eta") event.set(it->second, particle.eta() );
+                    if (it->first == "phi") event.set(it->second, particle.phi() );
+                    if (it->first == "mass") event.set(it->second, particle.v4().M() );
+                    if (it->first == "mass_sj") {
+                        assert(is_topjet);
+                        if (particle.subjets().size()){
+                            LorentzVector sum_subjets;
+                            for (Jet const & subjet : particle.subjets())
+                                sum_subjets += subjet.v4();
+                            event.set(it->second, sum_subjets.M() );
+                        } else {
+                            event.set(it->second, -1. );
+                        }
+                    }
+                    if (it->first == "tau21") {
+                        assert(is_topjet);
+                        event.set(it->second, particle.tau2()/particle.tau1() );
+                    }
+                    if (it->first == "tau32") {
+                        assert(is_topjet);
+                        event.set(it->second, particle.tau3()/particle.tau2() );
+                    }
+                    if (it->first == "csv_first_sj") {
+                        assert(is_topjet);
+                        if (particle.subjets().size() >= 1){
+                            event.set(it->second, particle.subjets()[0].btag_combinedSecondaryVertex() );
+                        } else {
+                            event.set(it->second, -1. );
+                        }
+                    }
+                    if (it->first == "csv_second_sj") {
+                        assert(is_topjet);
+                        if (particle.subjets().size() >= 2){
+                            event.set(it->second, particle.subjets()[1].btag_combinedSecondaryVertex() );
+                        } else {
+                            event.set(it->second, -1. );
+                        }
+                    }
+                    if (it->first == "csv_max_sj") {
+                        assert(is_topjet);
+                        double csv_max = -1.;
+                        for (Jet const & subjet : particle.subjets()){
+                            if (subjet.btag_combinedSecondaryVertex() > csv_max)
+                                csv_max = subjet.btag_combinedSecondaryVertex();
+                        }
+                        event.set(it->second, csv_max );
+                    }
+                    if (it->first == "dRlepton") {
+                        if (event.is_valid(h_primlep_)) {
+                            float dRlep = deltaR(particle, event.get(h_primlep_));
+                            event.set(it->second, dRlep );
+                        }
+                        else {event.set(it->second, -1. );}
+                    }
+                    if (it->first == "dRak4") {
+                        auto const * closest_ak4 = closestParticle(particle, *event.jets);
+                        if (closest_ak4) {
+                            float dRak4 = deltaR(particle, *closest_ak4);
+                            event.set(it->second, dRak4 );
+                        }
+                        else {event.set(it->second, -1. );}
+                    }
+                    if (it->first == "dRak8") {
+                        auto const * closest_ak8 = closestParticle(particle, *event.topjets);
+                        if (closest_ak8) {
+                            float dRak8 = deltaR(particle, *closest_ak8);
+                            event.set(it->second, dRak8 );
+                        }
+                        else {event.set(it->second, -1. );}
+                    }
+                    if (split(it->first, "-")[0] == "n_sjbtags") {
+                        CSVBTag::wp wp_;
+                        if (split(it->first, "-")[1] == "loose")
+                            wp_ = CSVBTag::WP_LOOSE;
+                        else if (split(it->first, "-")[1] == "tight")
+                            wp_ = CSVBTag::WP_TIGHT;
+                        else
+                            wp_ = CSVBTag::WP_MEDIUM;
+                        CSVBTag btag_(wp_);
+                        int n_sj = 0;
+                        for (auto const & sj : particle.subjets()) {
+                            if (btag_(sj, event))
+                                n_sj++;
+                        }
+                        event.set(it->second, n_sj );
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
 private:
     string rel_dirname_;
     string h_name_;
@@ -243,6 +365,10 @@ private:
     std::map<string, unsigned> indizes_;
     vector<NParticleMultiHistProducerHelper<T>> sub_levels_;
     unsigned part_ind_;
+    vector<Event::Handle<vector<T>>> h_part_coll_;
+    map<string, Event::Handle<int>> h_int_;
+    map<string, Event::Handle<float>> h_float_;
+    // vector<Event::Handle<double>> h_double_;
 };
 
 class OwnHistCollector : public uhh2::Hists {
