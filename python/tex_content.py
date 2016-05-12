@@ -325,6 +325,35 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
         name=name,
     )
 
+#########################################################
+#====== TREEPROJECT MORE OUTPUT COMBINED CHANNELS =======
+#########################################################
+
+def getFinalVarCombinedMore(base):
+    # print base
+    return {
+        'all_st_sigonly': (
+            os.path.join(base, 'SidebandRegion/ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
+        ),
+        'baseline_control_plots': (
+            os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/met_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
+        ),
+    }.items()
+
+def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
+    return varial.extensions.tex.TexContent(
+        dict(getFinalVarCombinedMore(base)),
+        include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
+        name=name,
+    )
+
 
 #########################################################
 #============= TREEPROJECT OUTPUT LIMITS ================

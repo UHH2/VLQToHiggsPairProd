@@ -130,6 +130,21 @@ more_signals = [
     # 'TpTp_M-1800',
 ]
 
+less_signals = [
+    # 'TpTp_M-0700',
+    'TpTp_M-0800',
+    # 'TpTp_M-0900',
+    # 'TpTp_M-1000',
+    # 'TpTp_M-1100',
+    'TpTp_M-1200',
+    # 'TpTp_M-1300',
+    # # 'TpTp_M-1400',
+    # 'TpTp_M-1500',
+    'TpTp_M-1600',
+    # 'TpTp_M-1700',
+    # 'TpTp_M-1800',
+]
+
 final_states_to_plot = [
     '_thth',
     '_thtz',
@@ -150,9 +165,11 @@ other_samples_to_plot = [
 
 samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
 more_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in more_signals))
+less_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in less_signals))
 
 samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in signals_to_plot)
 more_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in more_signals)
+less_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in less_signals)
 
 samples_to_plot_pre = other_samples_to_plot + signals_to_plot
 
@@ -324,13 +341,18 @@ def loader_hook_merge_regions(wrps):
             return 'sflep'+wrp.sys_info[4:]
         else:
             return wrp.sys_info
+
+    def get_new_infile_path(wrp):
+        comps = wrp.in_file_path.split('/')
+        return get_base_selection(wrp)+'/'+'/'.join(comps[1:])
                   
-    key = lambda w: '{0}___{1}___{2}'.format(get_base_selection(w), w.sample, get_sys_info(w))
+    key = lambda w: '{0}___{1}___{2}___{3}'.format(get_base_selection(w), w.sample, get_sys_info(w), w.variable)
 
     wrps = merge_final_states(wrps)
     wrps = sorted(wrps, key=key)
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
+    wrps = varial.gen.gen_add_wrp_info(wrps, in_file_path=get_new_infile_path)
     wrps = varial.gen.gen_add_wrp_info(wrps, region=get_base_selection)
     return wrps
 
@@ -481,26 +503,23 @@ def plotter_factory_uncerts(**args):
         return varial.tools.Plotter(**kws)
     return tmp
 
-def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_plot_pre, filter_keyfunc=None, compare_uncerts=False, **kws):
-    if filter_keyfunc:
-        filter_func = filter_keyfunc 
-    else:
+def mk_plots_and_cf(categories=None, datasets=None, **kws):
+    if datasets:
         filter_func = lambda w: any(f in w.file_path.split('/')[-1] for f in datasets)
+    else:
+        filter_func = lambda w: w
+    args = {
+        'pattern' : '../Hadd/*.root',
+        'filter_keyfunc' : filter_func,
+        'plotter_factory' : plotter_factory_stack(),
+        'auto_legend' : False,
+        'name' : 'StackedAll'
+    }
+    args.update(**kws)
     def create():
         plot_chain = [
             
-            varial.plotter.RootFilePlotter(
-                pattern=src,
-                # input_result_path='../HistoLoader',
-                name='StackedAll',
-                filter_keyfunc=filter_func, #and 'noH' not in w.sample,
-                # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
-                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-                plotter_factory=plotter_factory_stack(**kws),
-                # combine_files=True,
-                auto_legend=False
-                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                ),
+            varial.plotter.RootFilePlotter(**args),
             # varial.tools.Plotter(
             #     'GenRecoHTComparisons',
             #     stack=True,
@@ -509,20 +528,19 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
             #     canvas_decorators=[varial.rendering.Legend]
             #     )
             
-            ]
-        if compare_uncerts:
-            plot_chain += [varial.plotter.RootFilePlotter(
-                pattern=src,
-                # input_result_path='../HistoLoader',
-                name='CompareUncerts',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
-                # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
-                # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-                plotter_factory=plotter_factory_uncerts(**kws),
-                # combine_files=True,
-                auto_legend=False
-                # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-                )
+        # if compare_uncerts:
+        #     plot_chain += [varial.plotter.RootFilePlotter(
+        #         pattern=args['pattern'],
+        #         # input_result_path='../HistoLoader',
+        #         name='CompareUncerts',
+        #         filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
+        #         # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
+        #         # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
+        #         plotter_factory=plotter_factory_uncerts(),
+        #         # combine_files=True,
+        #         auto_legend=args['auto_legend']
+        #         # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
+        #         )
         ]
         if categories:
             cutflow_cat = []
@@ -537,39 +555,39 @@ def mk_plots_and_cf(src='../Hadd/*.root', categories=None, datasets=samples_to_p
         return plot_chain
     return create
 
-def mk_toolchain(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False, **kws):
+def mk_toolchain(name, datasets=None, categories=None, **kws):
     return varial.tools.ToolChainParallel(
         name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, **kws)
+        lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets, **kws)
         )
 
-def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-    return varial.tools.ToolChainParallel(
-        name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, 
-            canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
-                varial.rendering.Legend,
-                # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-                ])
-        )
+# def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
+#     return varial.tools.ToolChainParallel(
+#         name,
+#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, 
+#             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
+#                 varial.rendering.Legend,
+#                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+#                 ])
+#         )
 
-def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-    # varial.settings.do_norm_plot = True
-    return varial.tools.ToolChainParallel(
-        name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int)
-        )
+# def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
+#     # varial.settings.do_norm_plot = True
+#     return varial.tools.ToolChainParallel(
+#         name,
+#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int)
+#         )
 
-def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-    # varial.settings.do_norm_plot = True
-    return varial.tools.ToolChainParallel(
-        name,
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int,
-            canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
-                varial.rendering.Legend,
-                # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-                ])
-        )
+# def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
+#     # varial.settings.do_norm_plot = True
+#     return varial.tools.ToolChainParallel(
+#         name,
+#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int,
+#             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
+#                 varial.rendering.Legend,
+#                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+#                 ])
+#         )
 
 import tex_content
 

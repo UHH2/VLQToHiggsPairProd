@@ -26,6 +26,7 @@ core_histos = {
     'HT'                            : ('H_{T}',                               45, 0, 4500),
     'met'                           : ('missing E_{T}',                              50, 0., 1000.),
     'primary_lepton_pt'             : ('Primary Lepton p_{T}',               90, 0., 900.),
+    'n_additional_btags_medium'     : ('N(b-tags)',                             8, -.5, 7.5),
 }
 
 
@@ -36,7 +37,6 @@ more_histos = {
     'primary_electron_pt'           : ('Primary Electron p_{T}',             90, 0., 900.),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
-    'n_additional_btags_medium'     : ('N(non-overlapping medium b-tags)', 8, -.5, 7.5),
     'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),

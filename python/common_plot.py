@@ -135,26 +135,30 @@ def norm_to_int(wrps, use_bin_width=False):
 
 # @history.track_history
 def scale_signal(wrp, fct=1.):
-    if fct >= 5:
-        fct = int(fct)
-        if fct % 5 > 2:
-            fct += fct % 5
-        else: fct -= fct % 5
-    elif fct >= 1.:
-        fct = int(fct)
-    elif fct >= 0.2:
-        fct = 1
-    else:
-        fct *= 5
-    if hasattr(wrp, 'scl_fct'):
-        wrp.scl_fct *= fct
-    else:
-        op.add_wrp_info(wrp, scl_fct=lambda _: fct)
-    wrp.histo.Scale(fct)
-    if fct > 1:
-        wrp.legend +=' (%.2g pb)' % fct
-    elif fct < 1:
-        wrp.legend +=' (%.1g pb)' % fct
+    if not hasattr(wrp, 'is_scaled'):
+        if fct >= 5:
+            fct = int(fct)
+            if fct % 5 > 2:
+                fct += fct % 5
+            else: fct -= fct % 5
+        elif fct >= 1.:
+            fct = int(fct)
+        elif fct >= 0.2:
+            fct = 1
+        else:
+            fct *= 5
+        if hasattr(wrp, 'scl_fct'):
+            wrp.scl_fct *= fct
+        else:
+            op.add_wrp_info(wrp, scl_fct=lambda _: fct)
+        wrp.histo.Scale(fct)
+        op.add_wrp_info(wrp, is_scaled=lambda w: True)
+        if fct > 1:
+            wrp.legend +=' (%.2g pb)' % fct
+        elif fct < 1:
+            wrp.legend +=' (%.1g pb)' % fct
+    # else:
+    #     print 'WARNING! histogram '+wrp.in_file_path+' already scaled'
 
 def norm_to_bkg(grps):
     for g in grps:

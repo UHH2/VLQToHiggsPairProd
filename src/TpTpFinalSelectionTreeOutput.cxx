@@ -248,8 +248,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     }
 
 
-    auto ak8_corr = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
-    : JERFiles::Fall15_25ns_L23_AK8PFchs_DATA;
+    auto ak8_corr = (type == "MC") ? JERFiles::Fall15_25ns_1L23_AK8PFchs_MC 
+    : JERFiles::Fall15_25ns_1L23_AK8PFchs_DATA;
     auto ak4_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK4PFchs_MC 
     : JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
     // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
