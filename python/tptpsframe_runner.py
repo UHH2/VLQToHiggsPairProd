@@ -247,15 +247,16 @@ def mk_sframe_tools_and_plot(argv):
             )
         plots = varial.tools.ToolChainParallel(
             'Plots',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot, filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot) and ('Baseline' in w.in_file_path))
+            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot) and ('Baseline' in w.in_file_path))
         )
         plots_comp_fs = varial.tools.ToolChainParallel(
             'PlotsCompFinalStates',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=None, datasets=plot.samples_to_plot_final,
+            lazy_eval_tools_func=plot.mk_plots_and_cf(
                 filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final\
                     if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700']))\
                     and ('Baseline' in w.in_file_path),
-                compare_uncerts=False, hook_loaded_histos=plot.loader_hook_compare_finalstates
+                plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
             )
         )
         tc_list = []
@@ -276,7 +277,7 @@ def mk_sframe_tools_and_plot(argv):
                         'Plots',
                         [
                             # hadd,
-                            plots,
+                            # plots,
                             plots_comp_fs,
                             # varial.tools.WebCreator(no_tool_check=True)
                         ]
@@ -319,7 +320,8 @@ def mk_sframe_tools_and_plot(argv):
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True, name='CopyToolPAS')
         ])            
 
 

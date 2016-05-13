@@ -39,6 +39,31 @@ settings.defaults_BottomPlot['y_max'] = 1.2
 settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
+settings.defaults_Legend.update({
+    'x_pos': 0.81,
+    'y_pos': 0.5,
+    'label_width': 0.2,
+    'label_height': 0.04,
+    'opt': 'f',
+    'opt_data': 'p',
+    'reverse': True
+})
+
+settings.stacking_order = [
+    'TTbar',
+    'WJets',
+    'SingleT',
+    'DYJets',
+    'QCD',
+]
+
+settings.box_text_size = 0.04
+settings.canvas_size_x = 618
+settings.canvas_size_y = 494
+settings.root_style.SetPadTopMargin(0.125)
+settings.root_style.SetPadBottomMargin(0.125)
+settings.root_style.SetPadRightMargin(0.1)
+
 # from vlq_settings
 # settings.colors = {
 #     'TTbar': 632, # Red

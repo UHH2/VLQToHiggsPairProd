@@ -18,6 +18,7 @@ target_ext = '.pdf'
 varial.settings.rootfile_postfixes += ['.pdf']
 mu_channel_def = 'Mu45_Baseline'
 el_channel_def = 'El45_Baseline'
+muel_comb_def = 'MuElComb_Baseline'
 muchannel_final = 'Muon'
 elchannel_final = 'Electron'
 
@@ -118,18 +119,23 @@ def getHiggsVar(chan, base):
     p = os.path.join(base+'/StackedAll', chan, 'PostSelection/FirstAk8SoftDropSlimmed/')
     return {
         chan+'_Nm1Var_htag': (
-            p + 'Nobtag_boost_mass/n_sjbtags_medium_lin' + ext,
+            p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
             p + 'Noboost_mass_1b/pt_log' + ext,
             p + 'Nomass_boost_1b/mass_sj_log' + ext,
             p + 'Nomass_boost_2b/mass_sj_log' + ext,
         ),
+        chan+'_Nm1Var_htag_only_massbtag': (
+            p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
+            p + 'Nomass_boost_2b/mass_sj_log' + ext,
+        ),
     }.items()
 
-def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None, name='AutoContentFinalSelectionHiggsVar'):
+def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None, muel_comb=None, name='AutoContentFinalSelectionHiggsVar'):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
+    muelcomb = muel_comb or muel_comb_def
     return varial.extensions.tex.TexContent(
-        dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base)),
+        dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base) + getHiggsVar(muelcomb, base)),
         include_str=r'\includegraphics[width=0.38\textwidth]{%s}',
         name=name,
     )
@@ -308,19 +314,24 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, na
 #========= TREEPROJECT OUTPUT COMBINED CHANNELS =========
 #########################################################
 
-def getFinalVarCombined(base):
+def getCRSplitComb(base_split, base_comb, el_chan, mu_chan):
     # print base
     return {
-        'all_st_sigonly': (
-            os.path.join(base, 'SidebandRegion_ST_rebin_flex_log' + ext),
-            os.path.join(base, 'SignalRegion1b_ST_rebin_flex_log' + ext),
-            os.path.join(base, 'SignalRegion2b_ST_rebin_flex_log' + ext),
+        'st_split_comb': (
+            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
+            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
+            os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
+        ),
+        'st_split': (
+            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
+            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
+            # os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
         ),
     }.items()
 
-def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalControlRegionCombined'):
+def mk_autoContentControlRegion(base_split, base_comb, el_chan, mu_chan, name='AutoContentSignalControlRegionCombined'):
     return varial.extensions.tex.TexContent(
-        dict(getFinalVarCombined(base)),
+        dict(getCRSplitComb(base_split, base_comb, el_chan, mu_chan)),
         include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
         name=name,
     )
@@ -332,8 +343,12 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
 def getFinalVarCombinedMore(base):
     # print base
     return {
-        'all_st_sigonly': (
+        'all_st': (
             os.path.join(base, 'SidebandRegion/ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
+            os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
+        ),
+        'st_sigonly': (
             os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
             os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
         ),
@@ -354,6 +369,11 @@ def getFinalVarCombinedMore(base):
         'baseline_control_plots_ht_nak4': (
             os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
+        ),
+        'nminus1_plots': (
+            os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_higgs_tags_2b_med_log' + ext),
         ),
     }.items()
 
@@ -376,6 +396,9 @@ def getLimPlotsAll(base):
         'Limits': (
             os.path.join(base, 'LimitsAllUncertsOnlyEl/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             os.path.join(base, 'LimitsAllUncertsOnlyMu/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+        ),
+        'Limits_comb_only': (
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
         'Postfit-M0700': (

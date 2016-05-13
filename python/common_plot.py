@@ -495,6 +495,20 @@ def rebin_st_and_nak4(wrps):
                 w = op.rebin_nbins_max(w, 60)
         yield w
 
+def mod_post_canv(grps):
+    for g in grps:
+        if g.name == 'mass_sj':
+            g.y_min_gr_zero = 0.2
+            _, y_max = g.y_bounds
+            g.first_drawn.SetMaximum(y_max * 1.2)
+        if not any(w.is_data for w in g.renderers):
+            g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
+        yield g
 
+def mod_pre_canv(grps):
+    for g in grps:
+        if g.name == 'mass_sj':
+            g.dec_par['y_pos'] = 0.7
+        yield g
 
 

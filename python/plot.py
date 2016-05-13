@@ -377,12 +377,12 @@ def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
-    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False, yield_orig=True)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False, yield_orig=True)
-    wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
+    wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thth','_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
     wrps = common_plot.norm_smpl(wrps, normfactors_comp)
     wrps = common_plot.mod_legend_eff_counts(wrps)
@@ -451,6 +451,15 @@ def plot_setup_uncerts(grps):
     grps = varial.plotter.default_plot_colorizer(grps)
     return grps
 
+# def canvas_setup_pre(grps):
+#     grps = common_plot.mod_pre_canv(grps)
+#     return grps
+
+def canvas_setup_post(grps):
+    grps = common_plot.add_sample_integrals(grps)
+    grps = common_plot.mod_post_canv(grps)
+    return grps
+
 
 def stack_setup_norm_sig(grps):
     grps = gen.mc_stack_n_data_sum(grps)
@@ -472,7 +481,8 @@ def plotter_factory_stack(**args):
         kws['stack_setup'] = stack_setup_norm_sig
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         kws['save_lin_log_scale'] = True
-        kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        kws['hook_canvas_post_build'] = canvas_setup_post
+        kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
             # varial.rendering.TextBox(textbox=TLatex(0.5, 0.5, "My Box"))
