@@ -3,6 +3,7 @@ import os
 import varial.analysis
 import varial.generators as gen
 import varial.rendering as rnd
+import pprint
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
@@ -48,6 +49,9 @@ normfactors_wrong = {
     'TpTp_M-1700' : (1./0.000666)*(1664800000./1194594594.),
     'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
 }
+
+
+
 
 
 signal_indicators = ['TpTp_']
@@ -495,12 +499,43 @@ def rebin_st_and_nak4(wrps):
                 w = op.rebin_nbins_max(w, 60)
         yield w
 
+def set_leg_2_col(rnd):
+    rnd.legend.SetNColumns(2)
+    n_entries = len(rnd.legend.GetListOfPrimitives())
+    x_pos   = rnd.dec_par.get('x_pos', varial.settings.defaults_Legend['x_pos'])
+    y_pos   = rnd.dec_par.get('y_pos', varial.settings.defaults_Legend['y_pos'])
+    width   = rnd.dec_par.get('label_width', varial.settings.defaults_Legend['label_width'])
+    height  = rnd.dec_par.get('label_height', varial.settings.defaults_Legend['label_height']) * n_entries / 2.
+    rnd.legend.SetX1(x_pos - 3*width/2.)
+    rnd.legend.SetY1(y_pos - 0.2*height)
+    rnd.legend.SetX2(x_pos + width/2.)
+    rnd.legend.SetY2(y_pos + 0.8*height)
+
+
 def mod_post_canv(grps):
     for g in grps:
+        _, y_max = g.y_bounds
         if g.name == 'mass_sj':
-            g.y_min_gr_zero = 0.2
-            _, y_max = g.y_bounds
-            g.first_drawn.SetMaximum(y_max * 1.2)
+            g.y_min_gr_zero = 0.4
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'pt_ld_ak4_jet':
+            g.y_min_gr_zero = 2.0
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'pt_ld_ak8_jet':
+            g.y_min_gr_zero = 2.0
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'n_sjbtags_medium':
+            g.y_min_gr_zero = 40.0
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'n_additional_btags_medium':
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'n_higgs_tags_1b_med':
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'n_higgs_tags_2b_med':
+            g.first_drawn.SetMaximum(y_max * 1.3)
+        if g.name == 'ST' or g.name == 'ST_rebin' or g.name == 'ST_rebin_flex':
+            setattr(g.renderers[0], 'y_max_log', y_max * 1000.)
+            set_leg_2_col(g)
         if not any(w.is_data for w in g.renderers):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         yield g

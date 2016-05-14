@@ -121,12 +121,12 @@ def getHiggsVar(chan, base):
         chan+'_Nm1Var_htag': (
             p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
             p + 'Noboost_mass_1b/pt_log' + ext,
-            p + 'Nomass_boost_1b/mass_sj_log' + ext,
-            p + 'Nomass_boost_2b/mass_sj_log' + ext,
+            p + 'Nomass_boost_1b/mass_sj_lin' + ext,
+            p + 'Nomass_boost_2b/mass_sj_lin' + ext,
         ),
         chan+'_Nm1Var_htag_only_massbtag': (
             p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
-            p + 'Nomass_boost_2b/mass_sj_log' + ext,
+            p + 'Nomass_boost_2b/mass_sj_lin' + ext,
         ),
     }.items()
 

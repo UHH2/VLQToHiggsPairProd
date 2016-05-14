@@ -34,19 +34,20 @@ settings.sys_error_fill = 3002
 settings.tot_error_color = (923, 1.)
 settings.tot_error_fill = 3002
 
-settings.defaults_BottomPlot['y_min'] = -1.2
-settings.defaults_BottomPlot['y_max'] = 1.2
-settings.defaults_BottomPlot['force_y_range'] = True
+settings.defaults_BottomPlot['y_min'] = -3.
+settings.defaults_BottomPlot['y_max'] = 3.
+# settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
 settings.defaults_Legend.update({
-    'x_pos': 0.81,
-    'y_pos': 0.5,
-    'label_width': 0.2,
+    'x_pos': 0.75,
+    'y_pos': 0.7,
+    'label_width': 0.22,
     'label_height': 0.04,
     'opt': 'f',
     'opt_data': 'p',
-    'reverse': True
+    'reverse': True,
+    'sort_legend' : lambda w: 'TT ' in w[1]
 })
 
 settings.stacking_order = [
@@ -57,7 +58,7 @@ settings.stacking_order = [
     'QCD',
 ]
 
-settings.box_text_size = 0.04
+settings.box_text_size = 0.03
 settings.canvas_size_x = 618
 settings.canvas_size_y = 494
 settings.root_style.SetPadTopMargin(0.125)

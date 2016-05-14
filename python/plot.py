@@ -485,7 +485,8 @@ def plotter_factory_stack(**args):
         kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
-            # varial.rendering.TextBox(textbox=TLatex(0.5, 0.5, "My Box"))
+            varial.rendering.TextBox(textbox=TLatex(0.25, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
+            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.7]{2.7 fb^{-1} (13 TeV)}")),
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)
