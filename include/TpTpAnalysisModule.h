@@ -48,7 +48,7 @@ public:
 protected:
     
     const float HIGGS_MIN_MASS = 60.;
-    const float HIGGS_MAX_MASS = 150.;
+    const float HIGGS_MAX_MASS = 160.;
 
     // void swap_selitems(vector<shared_ptr<SelectionItem>> & sel_items,
     //                    SelectionItem * new_item, int new_pos = -1) {

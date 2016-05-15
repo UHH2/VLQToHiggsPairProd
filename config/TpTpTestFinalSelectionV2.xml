@@ -506,7 +506,10 @@
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
             <Item Name="data_dir_path" Value="&SOURCEDIR;../common/data/" />
-            <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
+            <Item Name="lumi_file" Value="" />
+            <!-- <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" /> -->
+            <Item Name="el_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root" />
+            <Item Name="mu_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
             <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelecion-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
@@ -520,14 +523,15 @@
             <Item Name="jersmear_smear_met" Value="true" />
 
             <Item Name="use_sframe_weight" Value="false" />
-            <Item Name="category" Value="Mu45_Baseline El45_Baseline El45_H2B El45_H1B El45_Sideband Mu45_H2B Mu45_H1B Mu45_Sideband MuElComb_Baseline MuElComb_H2B MuElComb_H1B MuElComb_Sideband CombinedElMu" />
+            <Item Name="category" Value="Mu45_Baseline El45_Baseline MuElComb_Baseline El45Tight_Baseline" />
 
             <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>
             <Item Name="pileup_directory_data_up" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_72450.root" />
             <Item Name="pileup_directory_data_down" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_65550.root" />
             <Item Name="pileup_directory" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>
             
-            <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;kinematicBinSFele.root"/>
+            <!-- <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;kinematicBinSFele.root"/> -->
+            <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;CutBasedID_MediumWP_76X_18Feb.txt_SF2D.root"/>
             
             <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
             <Item Name="TestKey" Value="TestKeyValue" />

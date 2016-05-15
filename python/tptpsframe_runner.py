@@ -19,17 +19,20 @@ varial.settings.max_num_processes = 12
 categories_final = [
         # 'CombinedElMu',
         'El45_Baseline',
-        'El45_H2B',
-        'El45_H1B',
-        'El45_Sideband',
+        # 'El45_H2B',
+        # 'El45_H1B',
+        # 'El45_Sideband',
         'Mu45_Baseline',
-        'Mu45_H2B',
-        'Mu45_H1B',
-        'Mu45_Sideband',
+        # 'Mu45_H2B',
+        # 'Mu45_H1B',
+        # 'Mu45_Sideband',
+        # 'MuElComb_H2B',
+        # 'MuElComb_H1B',
+        # 'MuElComb_Sideband',
+        'El45Tight_Baseline',
+        # 'El45MVALoose_Baseline',
+        # 'El45MVATight_Baseline',
         'MuElComb_Baseline',
-        'MuElComb_H2B',
-        'MuElComb_H1B',
-        'MuElComb_Sideband',
         ]
 
 categories_pre = [ #"NoSelection",
@@ -41,10 +44,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
+    'jec_up'        : {'jecsmear_direction':'up'},
+    'jec_down'      : {'jecsmear_direction':'down'},
+    'jer_up'        : {'jersmear_direction':'up'},
+    'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -272,16 +275,16 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
-                    varial.tools.ToolChain(
-                        'Plots',
-                        [
-                            # hadd,
-                            # plots,
-                            plots_comp_fs,
-                            # varial.tools.WebCreator(no_tool_check=True)
-                        ]
-                    )
+                    sf_batch,
+                    # varial.tools.ToolChain(
+                    #     'Plots',
+                    #     [
+                    #         hadd,
+                    #         plots,
+                    #         plots_comp_fs,
+                    #         # varial.tools.WebCreator(no_tool_check=True)
+                    #     ]
+                    # )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -321,7 +324,7 @@ def mk_sframe_tools_and_plot(argv):
                 ]
             ),
             varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True, name='CopyToolPAS')
+            # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True, name='CopyToolPAS')
         ])            
 
 
@@ -356,4 +359,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)

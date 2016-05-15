@@ -728,10 +728,10 @@ public:
         in_hndl(ctx.get_handle<vector<T>>(in_name)),
         out_hndl_mass(ctx.declare_event_output<float>(out_name+"_mass")),
         out_hndl_pt(ctx.declare_event_output<float>(out_name+"_pt")),
-        out_hndl_eta(ctx.declare_event_output<float>(out_name+"_eta")),
+        // out_hndl_eta(ctx.declare_event_output<float>(out_name+"_eta")),
         out_hndl_nsjbtags(ctx.declare_event_output<float>(out_name+"_nsjbtags")),
         out_hndl_dRlep(ctx.declare_event_output<float>(out_name+"_dRlep")),
-        out_hndl_dRak4(ctx.declare_event_output<float>(out_name+"_dRak4")),
+        // out_hndl_dRak4(ctx.declare_event_output<float>(out_name+"_dRak4")),
         out_hndl_dRak8(ctx.declare_event_output<float>(out_name+"_dRak8")),
         h_primlep_(ctx.get_handle<FlavorParticle>(prim_lep)),
         id_(id),
@@ -763,24 +763,24 @@ public:
         // bool is_topjet = std::is_same<T, TopJet>::value;
         float mass = -1.;
         float pt = -1.;
-        float eta = -1.;
+        // float eta = -1.;
         float nsjbtags = -1.;
         float dRlep = -1.;
-        float dRak4 = -1.;
+        // float dRak4 = -1.;
         float dRak8 = -1.;
         float dRcomp = -1.;
         vector<T> const & coll = event.get(in_hndl);
         if (coll.size() >= ind_) {
             T const & tj = coll[ind_-1];
             pt = tj.pt();
-            eta = tj.eta();
+            // eta = tj.eta();
             std::tie(mass, nsjbtags) = set_mass_and_nsubjets(event, tj, id_);
             if (event.is_valid(h_primlep_))
                 dRlep = deltaR(tj, event.get(h_primlep_));
-            auto const * closest_ak4 = closestParticleMod(tj, *event.jets);
+            // auto const * closest_ak4 = closestParticleMod(tj, *event.jets);
             auto const * closest_ak8 = closestParticleMod(tj, *event.topjets);
-            if (closest_ak4)
-                dRak4 = deltaR(tj, *closest_ak4);
+            // if (closest_ak4)
+                // dRak4 = deltaR(tj, *closest_ak4);
             if (closest_ak8)
                 dRak8 = deltaR(tj, *closest_ak8);
             if (event.is_valid(tj_comp_hndl)) {
@@ -796,10 +796,10 @@ public:
         }
         event.set(out_hndl_mass, mass);
         event.set(out_hndl_pt, pt);
-        event.set(out_hndl_eta, eta);
+        // event.set(out_hndl_eta, eta);
         event.set(out_hndl_nsjbtags, nsjbtags);
         event.set(out_hndl_dRlep, dRlep);
-        event.set(out_hndl_dRak4, dRak4);
+        // event.set(out_hndl_dRak4, dRak4);
         event.set(out_hndl_dRak8, dRak8);
         event.set(out_hndl_dRcompcoll, dRcomp);
         return true;
@@ -807,7 +807,7 @@ public:
 
 private:
     Event::Handle<vector<T>> in_hndl;
-    Event::Handle<float> out_hndl_mass, out_hndl_pt, out_hndl_eta, out_hndl_nsjbtags, out_hndl_dRlep, out_hndl_dRak4, out_hndl_dRak8;
+    Event::Handle<float> out_hndl_mass, out_hndl_pt, out_hndl_nsjbtags, out_hndl_dRlep, out_hndl_dRak8;
     Event::Handle<FlavorParticle> h_primlep_;
     JetId id_;
     unsigned int ind_;
