@@ -238,7 +238,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // 9.910819e-01 = 0.9910819 as calculated with TpTpTTbarWeight.cxx
     // In the end, the overall weight that you apply thus needs to be multiplied by 1./0.9919819
 
-    if (version.find("TTbar") != string::npos) {
+    if (version.find("TTbar") != string::npos || version.find("TTjets") != string::npos) {
         other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen"));
         other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
     }
@@ -324,7 +324,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     "CutBasedMedium", 0., "id", "nominal", "prim_ele_coll"));
     other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
         ctx.get("ele_sf_trg_file"), 
-        "EGamma_SF2D", 0., "id", "nominal", "prim_ele_coll"));
+        "EGamma_SF2D", 0., "id", "nominal", "prim_ele_coll", true));
     ele_trg_sf.reset(new MCConstantScalefactor(ctx, 
                 0.99, 0.02, "sfel_trg", true));
     ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 

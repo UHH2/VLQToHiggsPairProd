@@ -520,13 +520,14 @@ def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
             new_files[2],
     }.items()
 
-def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix='', mass_points=None):
+def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix='', mass_points=None, get_sys_tab=True):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
-    tmp_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
+    lim_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
+    tab_dict = dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)) if get_sys_tab else {}
     return varial.extensions.tex.TexContent(
-        tmp_dict,
-        dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)),
+        lim_dict,
+        tab_dict,
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name=name,
     )

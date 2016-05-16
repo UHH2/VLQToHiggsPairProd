@@ -516,17 +516,22 @@ def plotter_factory_uncerts(**args):
 
 def mk_plots_and_cf(categories=None, datasets=None, **kws):
     if datasets:
-        filter_func = lambda w: any(f in w.file_path.split('/')[-1] for f in datasets)
+        dataset_filter = lambda w: any(f in w.file_path.split('/')[-1] for f in datasets)
     else:
-        filter_func = lambda w: w
+        dataset_filter = lambda w: w
     args = {
         'pattern' : '../Hadd/*.root',
-        'filter_keyfunc' : filter_func,
+        # 'filter_keyfunc' : filter_func,
         'plotter_factory' : plotter_factory_stack(),
         'auto_legend' : False,
         'name' : 'StackedAll'
     }
     args.update(**kws)
+    if 'filter_keyfunc' in args.keys():
+        filter_func = args['filter_keyfunc']
+        args['filter_keyfunc'] = lambda w: filter_func(w) and dataset_filter(w)
+    else:
+        args['filter_keyfunc'] = dataset_filter
     def create():
         plot_chain = [
             

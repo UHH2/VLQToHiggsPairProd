@@ -14,29 +14,32 @@ import pprint
 iteration = [1]
 
 core_histos = {
-    'ST'                            : ('S_{T}',                               45, 0, 4500),
+    'ST'                            : ('S_{T}',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
     'n_ak8'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
-    'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet',               30, 0., 1500.),
-    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet',               30, 0., 1500.),
-    'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet',             30, 0., 1500.),
-    'HT'                            : ('H_{T}',                               45, 0, 4500),
+    'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet',               100, 0., 2000.),
+    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet',               100, 0., 2000.),
+    'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet',             80, 0., 1600.),
+    'HT'                            : ('H_{T}',                               65, 0, 6500),
     'met'                           : ('missing E_{T}',                              50, 0., 1000.),
-    'primary_lepton_pt'             : ('Primary Lepton p_{T}',               90, 0., 900.),
+    'primary_lepton_pt'             : ('Primary Lepton p_{T}',               50, 0., 1200.),
     'n_additional_btags_medium'     : ('N(b-tags)',                             8, -.5, 7.5),
-    'primary_muon_pt'               : ('Primary Muon p_{T}',                 90, 0., 900.),
-    'primary_electron_pt'           : ('Primary Electron p_{T}',             90, 0., 900.),
+    'primary_muon_pt'               : ('Primary Muon p_{T}',                 50, 0., 1200.),
+    'primary_electron_pt'           : ('Primary Electron p_{T}',             50, 0., 1200.),
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'nomass_boost_1b_mass'           : ('mass sj',           60, 0., 300.),
+    'nomass_boost_2b_mass'           : ('mass sj',           60, 0., 300.),
+    'nobtag_boost_mass_nsjbtags'           : ('N sjbtags medium',           6, -0.5, 5.5),
 }
 
-
 more_histos = {
-    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             30, 0., 1500.),
-    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             20, 0., 1000.),
-    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             20, 0., 1000.),
-    # 'gen_ht'                            : ('Gen HT',                               45, 0, 4500),
-    # 'parton_ht'                            : ('Parton HT',                               45, 0, 4500),
+    'ak4_jets_btagged_dR_higgs_tags_1b_med'              : ('#Delta R(AK4 b-tag, Higgs tag)',             50, 0., 5.),
+    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             80, 0., 1600.),
+    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
+    # 'gen_ht'                            : ('Gen HT',                               65, 0, 6500),
+    # 'parton_ht'                            : ('Parton HT',                               65, 0, 6500),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
     'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
@@ -48,9 +51,9 @@ more_histos = {
     'trigger_accept_isoMu20'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'trigger_accept_isoEl27'          : ('Trigger Accepted IsoMu',            2, -.5, 1.5),
     'is_muon'                       : ('Prim. Lep. is Muon',                2, -.5, 1.5),
-    'pt_fifth_ak4_jet'              : ('p_{T} fifth Ak4 Jet',             60, 0., 1500.),
-    'pt_sixth_ak4_jet'              : ('p_{T} sixth Ak4 Jet',             60, 0., 1500.),
-    'pt_third_ak8_jet'              : ('p_{T} third Ak8 Jet',             60, 0., 1500.),
+    # 'pt_fifth_ak4_jet'              : ('p_{T} fifth Ak4 Jet',             60, 0., 1500.),
+    # 'pt_sixth_ak4_jet'              : ('p_{T} sixth Ak4 Jet',             60, 0., 1500.),
+    # 'pt_third_ak8_jet'              : ('p_{T} third Ak8 Jet',             60, 0., 1500.),
     # 'first_ak8jet_eta'                : ('Eta 1st Ak8 Jet',                  50, -3., 3.),
     # 'first_ak8jet_mass'               : ('Mass 1st Ak8 Jet',                 60, 0., 300.),
     # 'first_ak8jet_nsjbtags'           : ('N(med sj b-tags) 1st Ak8 Jet',     4, -.5, 3.5),
@@ -166,6 +169,7 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples, name='TreePro
     sample_weights = weights or sample_weights_def
     sec_sel_weight = list((g, f, weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
+
     filenames = dict(
         (sample, list(f for f in all_files if sample in f))
         for sample in samples
@@ -205,8 +209,8 @@ def add_jec_uncerts(base_path, final_regions, sample_weights):
 
 def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights):
     # def tmp():
-    files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots/Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleUp_*.root')
-    files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots/Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleDown_*.root')
+    files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleUp_*.root')
+    files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleDown_*.root')
     files_nom_path = join(base_path_nominal_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root')
     dict_nom_files = dict(
         (sample, list(f for f in glob.glob(files_nom_path) if sample in f))
@@ -527,7 +531,8 @@ class GenUncertUpDown(varial.tools.Tool):
                 category=lambda w: w.in_file_path.split('/')[0])
             sigs = dict((s.sample+'_'+s.name+'_'+s.category, s.histo) for s in sigs)
             for w in wrps:
-                w.histo.Scale(sigs[w.sample+'_'+w.name+'_'+w.category].Integral() / w.histo.Integral())
+                if w.histo.Integral():
+                    w.histo.Scale(sigs[w.sample+'_'+w.name+'_'+w.category].Integral() / w.histo.Integral())
                 yield w
 
         from itertools import groupby
