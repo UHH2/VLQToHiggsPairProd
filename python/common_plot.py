@@ -512,7 +512,7 @@ def set_leg_2_col(rnd):
 def mod_post_canv(grps):
     for g in grps:
         _, y_max = g.y_bounds
-        mod_wrp_dict = mod_dict.get(w.name, None)
+        mod_wrp_dict = mod_dict.get(g.name, None)
         if mod_wrp_dict:
             y_min_gr_zero = mod_wrp_dict.get('y_min_gr_zero', None)
             if y_min_gr_zero:

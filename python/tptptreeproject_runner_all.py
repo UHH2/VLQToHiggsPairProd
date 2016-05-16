@@ -68,10 +68,27 @@ all_regions = [
     'SidebandRegion_El45',
 ]
 
+br_list = []
+
+# only br_th = 100% for now
+# bw_max = 1
+bw_max = 0
+for bw_br in [i/10. for i in xrange(0, int(bw_max*10)+2, 2)]:
+    # tz_max = 1.0-bw_br
+    tz_max = 0
+    for tz_br in [ii/10. for ii in xrange(0, int(tz_max*10)+2, 2)]:
+        th_br = 1-bw_br-tz_br
+        # print bw_br, th_br, tz_br
+        br_list.append({
+            'bw' : bw_br,
+            'th' : th_br,
+            'tz' : tz_br
+        })
+
 def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
     def tmp():
         limit_list = []
-        for ind, brs_ in enumerate(sensitivity.br_list):
+        for ind, brs_ in enumerate(br_list):
             # if ind > 2: break
             tc = []
             tc.append(varial.tools.ToolChainParallel(
@@ -103,9 +120,9 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
                     plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
                         th_x=common_sensitivity.theory_masses,
                         th_y=common_sensitivity.theory_cs),
-                    canvas_decorators=[varial.rendering.Legend(x_pos=.85, y_pos=0.6, label_width=0.2, label_height=0.07),
-                            varial.rendering.TextBox(textbox=TLatex(0.18, 0.9, "#bf{CMS} #scale[0.8]{#it{Preliminary}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.8, 0.9, "#scale[0.7]{2.7 fb^{-1} (13 TeV)}")),
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.75, label_width=0.2, label_height=0.05),
+                            varial.rendering.TextBox(textbox=TLatex(0.18, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.7, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
                         # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                         ],
                     # save_lin_log_scale=True
