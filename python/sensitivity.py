@@ -16,7 +16,7 @@ import varial.settings
 import varial.operations
 from varial.sample import Sample
 from varial.extensions.limits import *
-from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleLimitPlots
+from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots
 
 import common_sensitivity
 import common_plot
@@ -157,13 +157,16 @@ def loader_hook_sys(brs):
 
 
 
-def limit_curve_loader_hook(wrps):
-    # wrps = list(wrps)
-    # print wrps
-    # wrps = gen.gen_add_wrp_info(wrps, save_name=lambda w: 'tH%.0ftZ%.0fbW%.0f'\
-    #    % (w.brs['th']*100, w.brs['tz']*100, w.brs['bw']*100))
-    wrps = gen.sort(wrps, key_list=['save_name'])
-    return wrps
+def limit_curve_loader_hook(brs):
+    def tmp(wrps):
+        # wrps = list(wrps)
+        # print wrps
+        # wrps = gen.gen_add_wrp_info(wrps, save_name=lambda w: 'tH%.0ftZ%.0fbW%.0f'\
+        #    % (brs['th']*100, brs['tz']*100, brs['bw']*100))
+        wrps = gen.gen_add_wrp_info(wrps, brs=lambda w: brs)
+        wrps = gen.sort(wrps, key_list=['save_name'])
+        return wrps
+    return tmp
 
 
 def scale_bkg_postfit(wrps, theta_res_path):
@@ -184,87 +187,87 @@ def scale_bkg_postfit(wrps, theta_res_path):
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
 # input_path='..')
 
-def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
+# def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
 
-    loader = varial.tools.HistoLoader(
-        name='HistoLoader',
-        # pattern=file_stack_split(),
-        # pattern=,
-        filter_keyfunc=filter_keyfunc,
-        hook_loaded_histos=loader_hook(brs)
-    )
-    plotter = varial.tools.Plotter(
-        name='Plotter',
-        input_result_path='../HistoLoader',
-        plot_grouper=lambda ws: varial.gen.group(
-            ws, key_func=lambda w: w.category),
-        plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-        save_name_func=lambda w: w.category
-    )
-    limits = TpTpThetaLimits(
-        name='ThetaLimit',
-        # input_path= '../HistoLoader',
-        cat_key=lambda w: w.category,
-        sys_key=lambda w: w.sys_info,
-        # name= 'ThetaLimitsSplit'+str(ind),
-        asymptotic=varial.settings.asymptotic,
-        brs=brs,
-        model_func= lambda w: model_vlqpair.get_model(w, signals_to_use),
-        # do_postfit=False,
-    )
-    postfit = ThetaPostFitPlot(
-        name='PostFit',
-        input_path='../ThetaLimit')
-    # plotter_postfit = varial.tools.Plotter(
-    #     filter_keyfunc=lambda w: '700' in w.sample 
-    #                              or '900' in w.sample 
-    #                              or not w.is_signal,
-    #     plot_grouper=lambda ws: varial.gen.group(
-    #         ws, key_func=lambda w: w.category),
-    #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-    #     save_name_func=lambda w: w.category,
-    #     hook_canvas_post_build=varial.gen.add_sample_integrals,
-    #     hook_loaded_histos=lambda w: scale_bkg_postfit(
-    #         w, '../Limit'+name),
-    #     name='PostFit',
-    # )
-    plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
-            LimitGraphs(
-                limit_path='../../ThetaLimit',
-                plot_obs=varial.settings.plot_obs,
-                plot_1sigmabands=True,
-                plot_2sigmabands=True,
-                ),
-            varial.plotter.Plotter(
-                name='LimitCurvesCompared',
-                input_result_path='../LimitGraphs',
-                # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-                # plot_setup=plot_setup,
-                hook_loaded_histos=limit_curve_loader_hook,
-                plot_grouper=lambda ws: varial.gen.group(
-                        ws, key_func=lambda w: w.save_name),
-                # save_name_func=varial.plotter.save_by_name_with_hash
-                save_name_func=lambda w: w.save_name,
-                plot_setup=lambda w: plot_setup_graphs(w,
-                    th_x=common_sensitivity.theory_masses,
-                    th_y=common_sensitivity.theory_cs),
-                canvas_decorators=[
-                    # varial.rendering.Legend(x_pos=0.85, y_pos=0.5, label_width=0.2, label_height=0.07),
-                    # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-                    ],
-                save_lin_log_scale=True
-                ),
-            ])
-    if sys_pat:
-        sys_loader = varial.tools.HistoLoader(
-            name='HistoLoaderSys',
-            filter_keyfunc=lambda w: filter_keyfunc(w) and 'ak4_pt' not in w.file_path,
-            pattern=sys_pat,
-            hook_loaded_histos=loader_hook_sys(brs)
-        )
-        return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
-    else:
-        return [loader, plotter, limits, plot_limits]
+#     loader = varial.tools.HistoLoader(
+#         name='HistoLoader',
+#         # pattern=file_stack_split(),
+#         # pattern=,
+#         filter_keyfunc=filter_keyfunc,
+#         hook_loaded_histos=loader_hook(brs)
+#     )
+#     plotter = varial.tools.Plotter(
+#         name='Plotter',
+#         input_result_path='../HistoLoader',
+#         plot_grouper=lambda ws: varial.gen.group(
+#             ws, key_func=lambda w: w.category),
+#         plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+#         save_name_func=lambda w: w.category
+#     )
+#     limits = TpTpThetaLimits(
+#         name='ThetaLimit',
+#         # input_path= '../HistoLoader',
+#         cat_key=lambda w: w.category,
+#         sys_key=lambda w: w.sys_info,
+#         # name= 'ThetaLimitsSplit'+str(ind),
+#         asymptotic=varial.settings.asymptotic,
+#         brs=brs,
+#         model_func= lambda w: model_vlqpair.get_model(w, signals_to_use),
+#         # do_postfit=False,
+#     )
+#     postfit = ThetaPostFitPlot(
+#         name='PostFit',
+#         input_path='../ThetaLimit')
+#     # plotter_postfit = varial.tools.Plotter(
+#     #     filter_keyfunc=lambda w: '700' in w.sample 
+#     #                              or '900' in w.sample 
+#     #                              or not w.is_signal,
+#     #     plot_grouper=lambda ws: varial.gen.group(
+#     #         ws, key_func=lambda w: w.category),
+#     #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+#     #     save_name_func=lambda w: w.category,
+#     #     hook_canvas_post_build=varial.gen.add_sample_integrals,
+#     #     hook_loaded_histos=lambda w: scale_bkg_postfit(
+#     #         w, '../Limit'+name),
+#     #     name='PostFit',
+#     # )
+#     plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
+#             LimitGraphs(
+#                 limit_path='../../ThetaLimit',
+#                 plot_obs=varial.settings.plot_obs,
+#                 plot_1sigmabands=True,
+#                 plot_2sigmabands=True,
+#                 ),
+#             varial.plotter.Plotter(
+#                 name='LimitCurvesCompared',
+#                 input_result_path='../LimitGraphs',
+#                 # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+#                 # plot_setup=plot_setup,
+#                 hook_loaded_histos=limit_curve_loader_hook,
+#                 plot_grouper=lambda ws: varial.gen.group(
+#                         ws, key_func=lambda w: w.save_name),
+#                 # save_name_func=varial.plotter.save_by_name_with_hash
+#                 save_name_func=lambda w: w.save_name,
+#                 plot_setup=lambda w: plot_setup_graphs(w,
+#                     th_x=common_sensitivity.theory_masses,
+#                     th_y=common_sensitivity.theory_cs),
+#                 canvas_decorators=[
+#                     # varial.rendering.Legend(x_pos=0.85, y_pos=0.5, label_width=0.2, label_height=0.07),
+#                     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+#                     ],
+#                 save_lin_log_scale=True
+#                 ),
+#             ])
+#     if sys_pat:
+#         sys_loader = varial.tools.HistoLoader(
+#             name='HistoLoaderSys',
+#             filter_keyfunc=lambda w: filter_keyfunc(w) and 'ak4_pt' not in w.file_path,
+#             pattern=sys_pat,
+#             hook_loaded_histos=loader_hook_sys(brs)
+#         )
+#         return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
+#     else:
+#         return [loader, plotter, limits, plot_limits]
 
 def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
 
@@ -327,8 +330,8 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
 # tool_list.append(TriangleLimitPlots())
 
 def mk_limit_chain(name='Ind_Limits', mk_limit_list=None):
-    return varial.tools.ToolChain(
-        name, lazy_eval_tools_func=mk_limit_list
+    return varial.tools.ToolChainParallel(
+        name, lazy_eval_tools_func=mk_limit_list, n_workers=1
         )
 
 def add_draw_option(wrps, draw_option=''):
@@ -368,10 +371,10 @@ def plot_calc_intersect(grps):
                 th_graph = w.graph
         if exp_graph and th_graph:
             expintersect = calc_intersection(exp_graph, th_graph)
-            setattr(g, 'exp_mass_excl', expintersect)
+            setattr(g[0], 'exp_mass_excl', expintersect)
         if obs_graph and th_graph:
             obsintersect = calc_intersection(obs_graph, th_graph)
-            setattr(g, 'obs_mass_excl', obsintersect)
+            setattr(g[0], 'obs_mass_excl', obsintersect)
         yield g
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
@@ -384,46 +387,22 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
 def mk_tc(dir_limit='Limits', mk_limit_list=None):
 # setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
-    return varial.tools.ToolChain(dir_limit, 
+    return varial.tools.ToolChainParallel(dir_limit, 
         [
         mk_limit_chain(mk_limit_list=mk_limit_list),
         # varial.tools.ToolChain('LimitTriangle',[
-        #     TriangleLimitPlots(
+        #     TriangleMassLimitPlots(
         #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
         #         ),
         #     varial.plotter.Plotter(
-        #         input_result_path='../TriangleLimitPlots',
+        #         input_result_path='../TriangleMassLimitPlots',
         #         plot_setup=plot_setup_triangle,
         #         save_name_func=lambda w: 'M-'+str(w.mass)
         #         ),
         #     ]),
-        # varial.tools.ToolChain('LimitsWithGraphs',[
-        #     LimitGraphs(
-        #         limit_path='../../Ind_Limits/Limit*/*/Limit*',
-        #         plot_obs=False,
-        #         plot_1sigmabands=False,
-        #         plot_2sigmabands=False,
-        #         ),
-        #     varial.plotter.Plotter(
-        #         name='LimitCurvesCompared',
-        #         input_result_path='../LimitGraphs',
-        #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-        #         # plot_setup=plot_setup,
-        #         hook_loaded_histos=limit_curve_loader_hook,
-        #         plot_grouper=lambda ws: varial.gen.group(
-        #                 ws, key_func=lambda w: w.save_name),
-        #         # save_name_func=varial.plotter.save_by_name_with_hash
-        #         save_name_func=lambda w: w.save_name,
-        #         plot_setup=lambda w: plot_setup_graphs(w,
-        #             th_x=common_sensitivity.theory_masses,
-        #             th_y=common_sensitivity.theory_cs),
-        #         canvas_decorators=[varial.rendering.Legend(x_pos=0.5, y_pos=0.5, label_width=0.2, label_height=0.07)],
-        #         save_lin_log_scale=True
-        #         ),
-        #     ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
-        ])
+        ], n_workers=1)
 
 # tc = varial.tools.ToolChain("", [tc])
 

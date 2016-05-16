@@ -366,9 +366,15 @@ def getFinalVarCombinedMore(base):
             os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
         ),
-        'baseline_control_plots': (
+        'baseline_control_plots_leps': (
             os.path.join(base, 'BaseLineSelection/primary_muon_pt_lin' + ext),
             os.path.join(base, 'BaseLineSelection/primary_electron_pt_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
+        ),
+        'baseline_control_plots': (
+            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
         ),
@@ -558,7 +564,7 @@ def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoConte
     return varial.extensions.tex.TexContent(
         lim_dict,
         tab_dict,
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.60\textwidth]{%s}',
         name=name,
     )
 

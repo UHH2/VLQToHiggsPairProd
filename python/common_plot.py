@@ -414,10 +414,19 @@ mod_dict = {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'ST_rebin_flex' : {
+            'y_max_log_fct' : 1000.,
             'set_leg_2_col' : True
             },
-    'HT' : {'rebin' : [0., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
+    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
             'title' : 'H_{T} [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'HT_rebin_flex' : {
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
             'set_leg_2_col' : True
@@ -462,9 +471,15 @@ mod_dict = {
     'n_higgs_tags_1b_med' : {
             'title' : 'N(type-I Higgs tags)',
             'y_max_log_fct' : 1000.,
+            'set_leg_2_col' : True
             },
     'n_higgs_tags_2b_med' : {
             'title' : 'N(type-II Higgs tags)',
+            # 'y_max_log_fct' : 1000.,
+            },
+    'n_ak4' : {
+            'y_max_log_fct' : 10000.,
+            'set_leg_2_col' : True
             # 'y_max_log_fct' : 1000.,
             },
 
@@ -473,11 +488,11 @@ mod_dict = {
 
 
 def rebin_st_and_nak4(wrps):
-    st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
-    ht_bounds = [0., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
-    subl_jet_pt_bounds = range(0, 600, 100) + [700, 1000, 1500]
-    foll_jet_pt_bounds = range(0, 200, 33) + [300, 400, 1000]
-    nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
+    # st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    # ht_bounds = [0., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    # subl_jet_pt_bounds = range(0, 600, 100) + [700, 1000, 1500]
+    # foll_jet_pt_bounds = range(0, 200, 33) + [300, 400, 1000]
+    # nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
     for w in wrps:
         if not isinstance(w.histo, TH2):
             mod_wrp_dict = mod_dict.get(w.name, None)
