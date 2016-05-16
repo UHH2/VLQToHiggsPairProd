@@ -355,22 +355,22 @@ def getFinalVarCombinedMore(base):
         'baseline_control_plots_all': (
             os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
             os.path.join(base, 'BaseLineSelection/met_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_log' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
             os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
         ),
         'baseline_control_plots_met': (
             os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
             os.path.join(base, 'BaseLineSelection/met_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_log' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_log' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
         ),
         'baseline_control_plots': (
             os.path.join(base, 'BaseLineSelection/primary_muon_pt_lin' + ext),
             os.path.join(base, 'BaseLineSelection/primary_electron_pt_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_rebin_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_rebin_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
         ),
         'baseline_control_plots_ht_nak4': (
             os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
@@ -378,7 +378,7 @@ def getFinalVarCombinedMore(base):
         ),
         'baseline_control_plots_hhiggsvar': (
             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
         ),
         'nminus1_plots': (
             os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),

@@ -433,41 +433,41 @@ mod_dict = {
             'title' : 'groomed type-II Higgs tag mass [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
             },
     'primary_electron_pt' : {
-            # 'rebin' : 15,
             'title' : 'Primary Electron p_{T} [GeV]',
-            # 'y_min_gr_zero' : 0.02,
-            # 'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
             },
     'primary_muon_pt' : {
-            # 'rebin' : 15,
             'title' : 'Primary Muon p_{T} [GeV]',
-            # 'y_min_gr_zero' : 0.02,
-            # 'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
             },
     'pt_ld_ak4_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} leading AK4 Jet [GeV]',
-            # 'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            'set_leg_2_col' : True
+            'set_leg_2_col' : True,
+            'y_max_fct' : 1.3,
             },
     'pt_ld_ak8_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} leading AK8 Jet [GeV]',
-            # 'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            # 'leg_pos',
+            'set_leg_2_col' : True,
+            'y_max_fct' : 1.3,
+            },
+    'n_additional_btags_medium' : {
+            'title' : 'N(AK4 b tags)',
+            'y_max_log_fct' : 1000.,
             'set_leg_2_col' : True
             },
+    'n_higgs_tags_1b_med' : {
+            'title' : 'N(type-I Higgs tags)',
+            'y_max_log_fct' : 1000.,
+            },
+    'n_higgs_tags_2b_med' : {
+            'title' : 'N(type-II Higgs tags)',
+            # 'y_max_log_fct' : 1000.,
+            },
+
 }
 
 
@@ -496,7 +496,7 @@ def rebin_st_and_nak4(wrps):
                 w = op.rebin_nbins_max(w, 60)
         yield w
 
-def set_leg_2_col(rnd):
+def leg_2_col(rnd):
     rnd.legend.SetNColumns(2)
     n_entries = len(rnd.legend.GetListOfPrimitives())
     x_pos   = rnd.dec_par.get('x_pos', varial.settings.defaults_Legend['x_pos'])
@@ -523,8 +523,9 @@ def mod_post_canv(grps):
             y_max_log_fct = mod_wrp_dict.get('y_max_log_fct', None)
             if y_max_log_fct:
                 setattr(g.renderers[0], 'y_max_log', y_max * y_max_log_fct)
+            set_leg_2_col = mod_wrp_dict.get('set_leg_2_col', None)
             if set_leg_2_col:
-                set_leg_2_col(g)
+                leg_2_col(g)
         if not any(w.is_data for w in g.renderers):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         yield g
