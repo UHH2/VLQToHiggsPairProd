@@ -14,22 +14,22 @@ import pprint
 iteration = [1]
 
 core_histos = {
-    'ST'                            : ('S_{T}',                               65, 0, 6500),
+    'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
     'n_ak8'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
-    'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet',               100, 0., 2000.),
-    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet',               100, 0., 2000.),
-    'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet',             80, 0., 1600.),
-    'HT'                            : ('H_{T}',                               65, 0, 6500),
-    'met'                           : ('missing E_{T}',                              50, 0., 1000.),
-    'primary_lepton_pt'             : ('Primary Lepton p_{T}',               50, 0., 1200.),
+    'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
+    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               100, 0., 2000.),
+    'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
+    'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
+    'met'                           : ('missing E_{T} [GeV]',                              50, 0., 1000.),
+    'primary_lepton_pt'             : ('Primary Lepton p_{T} [GeV]',               50, 0., 1200.),
     'n_additional_btags_medium'     : ('N(b-tags)',                             8, -.5, 7.5),
-    'primary_muon_pt'               : ('Primary Muon p_{T}',                 50, 0., 1200.),
-    'primary_electron_pt'           : ('Primary Electron p_{T}',             50, 0., 1200.),
+    'primary_muon_pt'               : ('Primary Muon p_{T} [GeV]',                 50, 0., 1200.),
+    'primary_electron_pt'           : ('Primary Electron p_{T} [GeV]',             50, 0., 1200.),
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
-    'nomass_boost_1b_mass'           : ('mass sj',           60, 0., 300.),
-    'nomass_boost_2b_mass'           : ('mass sj',           60, 0., 300.),
+    'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
+    'nomass_boost_2b_mass'           : ('groomed type-II Higgs tag mass [GeV]',           60, 0., 300.),
     'nobtag_boost_mass_nsjbtags'           : ('N sjbtags medium',           6, -0.5, 5.5),
 }
 

@@ -92,16 +92,16 @@ def loader_hook_excl(wrps):
     wrps = common_plot.mod_legend(wrps)
     wrps = varial.generators.gen_add_wrp_info(
         wrps, category=lambda w: w.in_file_path.split('/')[0])
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        finalstate = get_final_state,
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
-    wrps = gen.gen_add_wrp_info(
-        wrps,
-        sample = subtract_finalstate,
-        # variable=lambda w: w.in_file_path.split('/')[-1]
-        )
+    # wrps = gen.gen_add_wrp_info(
+    #     wrps,
+    #     finalstate = get_final_state,
+    #     # variable=lambda w: w.in_file_path.split('/')[-1]
+    #     )
+    # wrps = gen.gen_add_wrp_info(
+    #     wrps,
+    #     sample = subtract_finalstate,
+    #     # variable=lambda w: w.in_file_path.split('/')[-1]
+    #     )
     # wrps = common_plot.merge_samples(wrps)
     wrps = vlq_common.label_axes(wrps)
     # wrps = final_state_scaling(wrps, dict_factors)
@@ -113,9 +113,11 @@ def loader_hook_scale_excl(wrps, brs=None):
         return None
     wrps = loader_hook_excl(wrps)
     wrps = final_state_scaling(wrps, brs)
-    wrps = gen.sort(wrps, key_list=['category', 'sample'])
-    wrps = list(wrps)
-    # for w in wrps: print w.in_file_path, w.sample, w.category, w.file_path
+    wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.category, w.sys_info, w.sample))
+    # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=True)
+    # wrps = list(wrps)
+    # for w in wrps: print w.file_path, w.category, w.sys_info,  w.sample
     # wrps = common_plot.merge_finalstates_channels(wrps, [
     #     'thbw',
     #     'thth',

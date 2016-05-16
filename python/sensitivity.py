@@ -37,7 +37,7 @@ br_list = []
 # bw_max = 1
 bw_max = 1
 for bw_br in [i/10. for i in xrange(0, int(bw_max*10)+2, 2)]:
-    tz_max = 1.0-bw_br-0.2
+    tz_max = 1.0-bw_br
     # tz_max = 0.8
     for tz_br in [ii/10. for ii in xrange(0, int(tz_max*10)+2, 2)]:
         th_br = 1-bw_br-tz_br
@@ -148,10 +148,10 @@ def loader_hook_sys(brs):
     def temp(wrps):
         hook = loader_hook(brs)
         wrps = hook(wrps)
-        wrps = varial.gen.gen_add_wrp_info(
-            wrps,
-            sys_type=lambda w: w.file_path.split('/')[-2],
-        )
+        # wrps = varial.gen.gen_add_wrp_info(
+        #     wrps,
+        #     sys_type=lambda w: w.file_path.split('/')[-2],
+        # )
         return wrps
     return temp
 
@@ -205,7 +205,7 @@ def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
         name='ThetaLimit',
         # input_path= '../HistoLoader',
         cat_key=lambda w: w.category,
-        sys_key=lambda w: w.sys_type,
+        sys_key=lambda w: w.sys_info,
         # name= 'ThetaLimitsSplit'+str(ind),
         asymptotic=varial.settings.asymptotic,
         brs=brs,
@@ -287,7 +287,7 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
         name='ThetaLimit',
         # input_path= '../HistoLoader',
         cat_key=lambda w: w.category,
-        sys_key=lambda w: w.sys_type,
+        sys_key=lambda w: w.sys_info,
         # name= 'ThetaLimitsSplit'+str(ind),
         asymptotic=varial.settings.asymptotic,
         brs=brs,

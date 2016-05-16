@@ -264,17 +264,11 @@ def mod_legend_no_thth(wrps):
 
 def mod_title(wrps):
     for w in wrps:
-        # print w.histo.GetXaxis.GetTitle()
-        if w.histo.GetXaxis().GetTitle() == 'N sjbtags medium':
-            w.histo.GetXaxis().SetTitle('N(subjet b-tags)')
-        if w.histo.GetXaxis().GetTitle() == 'mass sj':
-            w.histo.GetXaxis().SetTitle('groomed AK8 jet mass [GeV]')
-        if w.histo.GetXaxis().GetTitle() == 'ST':
-            w.histo.GetXaxis().SetTitle('ST [GeV]')
-        if w.histo.GetXaxis().GetTitle() == 'HT':
-            w.histo.GetXaxis().SetTitle('HT [GeV]')
-        if w.histo.GetXaxis().GetTitle() == 'N(non-overlapping medium b-tags)':
-            w.histo.GetXaxis().SetTitle('N(AK4 b-tags)')
+        mod_wrp_dict = mod_dict.get(w.name, None)
+        if mod_wrp_dict:
+            new_title = mod_wrp_dict.get('title', None)
+            if new_title:
+                w.histo.GetXaxis().SetTitle(new_title)
         if 'topjet' in w.histo.GetXaxis().GetTitle():
             title = w.histo.GetXaxis().GetTitle()
             w.histo.GetXaxis().SetTitle(title.replace('topjet', 'AK8 jet'))
@@ -415,6 +409,66 @@ def add_sample_integrals(canvas_builders):
 #         ))
 #         yield cnv
 
+mod_dict = {
+    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
+            'title' : 'S_{T} [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'HT' : {'rebin' : [0., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
+            'title' : 'H_{T} [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'nomass_boost_1b_mass' : {'rebin' : 30,
+            'title' : 'groomed type-I Higgs tag mass [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'nomass_boost_2b_mass' : {'rebin' : 15,
+            'title' : 'groomed type-II Higgs tag mass [GeV]',
+            'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'primary_electron_pt' : {
+            # 'rebin' : 15,
+            'title' : 'Primary Electron p_{T} [GeV]',
+            # 'y_min_gr_zero' : 0.02,
+            # 'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'primary_muon_pt' : {
+            # 'rebin' : 15,
+            'title' : 'Primary Muon p_{T} [GeV]',
+            # 'y_min_gr_zero' : 0.02,
+            # 'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'pt_ld_ak4_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} leading AK4 Jet [GeV]',
+            # 'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'pt_ld_ak8_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} leading AK8 Jet [GeV]',
+            # 'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+}
 
 
 
@@ -426,76 +480,19 @@ def rebin_st_and_nak4(wrps):
     nak4_bounds = list(x - 0.5 for x in xrange(0, 7))+[13.5]
     for w in wrps:
         if not isinstance(w.histo, TH2):
-            if w.in_file_path.endswith('ST'):
-                new_w = op.rebin_nbins_max(w, 20)
-                # new_w = op.rebin(w, st_bounds, True)
-                new_w.name = 'ST_rebin'
-                new_w.in_file_path = w.in_file_path.replace('ST', 'ST_rebin')
-                yield new_w
-                # new_w = op.rebin_nbins_max(w, 20)
-                new_w_flex = op.rebin(w, st_bounds, True)
-                new_w_flex.name = 'ST_rebin_flex'
-                new_w_flex.in_file_path = w.in_file_path.replace('ST', 'ST_rebin_flex')
-                yield new_w_flex
-            if w.in_file_path.endswith('pt_ld_ak4_jet'):
-                new_w = op.rebin_nbins_max(w, 15)
-                # new_w = op.rebin(w, st_bounds, True)
-                new_w.name = 'pt_ld_ak4_jet_rebin'
-                new_w.in_file_path = w.in_file_path.replace('pt_ld_ak4_jet', 'pt_ld_ak4_jet_rebin')
-                yield new_w
-            elif w.in_file_path.endswith('pt_subld_ak4_jet'):
-                new_w_flex = op.rebin(w, subl_jet_pt_bounds, True)
-                new_w_flex.name = 'pt_subld_ak4_jet_rebin'
-                new_w_flex.in_file_path = w.in_file_path.replace('pt_subld_ak4_jet', 'pt_subld_ak4_jet_rebin')
-                yield new_w_flex
-            elif w.in_file_path.endswith('ak4_jet'):
-                new_w_flex = op.rebin(w, foll_jet_pt_bounds, True)
-                new_w_flex.name = w.name+'_rebin'
-                new_w_flex.in_file_path = w.in_file_path.replace('ak4_jet', 'ak4_jet_rebin')
-                yield new_w_flex
-            if w.in_file_path.endswith('pt_ld_ak8_jet'):
-                new_w = op.rebin_nbins_max(w, 15)
-                # new_w = op.rebin(w, st_bounds, True)
-                new_w.name = 'pt_ld_ak8_jet_rebin'
-                new_w.in_file_path = w.in_file_path.replace('pt_ld_ak8_jet', 'pt_ld_ak8_jet_rebin')
-                yield new_w
-            elif w.in_file_path.endswith('pt_subld_ak8_jet'):
-                new_w_flex = op.rebin(w, subl_jet_pt_bounds, True)
-                new_w_flex.name = 'pt_subld_ak8_jet_rebin'
-                new_w_flex.in_file_path = w.in_file_path.replace('pt_subld_ak8_jet', 'pt_subld_ak8_jet_rebin')
-                yield new_w_flex
-            if w.in_file_path.endswith('/HT') and not isinstance(w.histo, TH2):
-                new_w = op.rebin_nbins_max(w, 20)
-                # new_w = op.rebin(w, st_bounds, True)
-                new_w.name = 'HT_rebin'
-                new_w.in_file_path = w.in_file_path.replace('HT', 'HT_rebin')
-                yield new_w
-                # new_w = op.rebin_nbins_max(w, 20)
-                new_w_flex = op.rebin(w, ht_bounds, True)
-                new_w_flex.name = 'HT_rebin_flex'
-                new_w_flex.in_file_path = w.in_file_path.replace('HT', 'HT_rebin_flex')
-                yield new_w_flex
-            if w.in_file_path.endswith('/ht_gen_reco') and not isinstance(w.histo, TH2):
-                new_w = op.rebin_nbins_max(w, 20)
-                # new_w = op.rebin(w, st_bounds, True)
-                new_w.name = 'ht_gen_reco_rebin'
-                new_w.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin')
-                yield new_w
-                # new_w = op.rebin_nbins_max(w, 20)
-                new_w_flex = op.rebin(w, st_bounds, True)
-                new_w_flex.name = 'ht_gen_reco_rebin_flex'
-                new_w_flex.in_file_path = w.in_file_path.replace('ht_gen_reco', 'ht_gen_reco_rebin_flex')
-                yield new_w_flex
-            if w.in_file_path.endswith('n_ak4'):
-                new_w = op.rebin(w, nak4_bounds, True)
-                new_w.name = 'n_ak4_rebin'
-                new_w.in_file_path = w.in_file_path.replace('n_ak4', 'n_ak4_rebin')
-                yield new_w 
-            if w.in_file_path.endswith('primary_lepton_pt'):
-                w = op.rebin(w, list(x * 30 for x in xrange(0, 31)), True)
-            if (w.in_file_path.endswith('_jet') or w.in_file_path.endswith('mass_sj')):
-                w = op.rebin_nbins_max(w, 30)
-            else:
+            mod_wrp_dict = mod_dict.get(w.name, None)
+            rebin_ind = False
+            if mod_wrp_dict:
+                rebin_fct = mod_wrp_dict.get('rebin', None)
+                if (isinstance(rebin_fct, list)):
+                    new_w_flex = op.rebin(w, rebin_fct, True)
+                    new_w_flex.name = w.name+'_rebin_flex'
+                    new_w_flex.in_file_path = w.in_file_path.replace(w.name, w.name+'_rebin_flex')
+                    yield new_w_flex
+                elif (isinstance(rebin_fct, int)):
+                    w = op.rebin_nbins_max(w, rebin_fct)
+                    rebin_ind = True
+            if not rebin_ind:
                 w = op.rebin_nbins_max(w, 60)
         yield w
 
@@ -515,35 +512,27 @@ def set_leg_2_col(rnd):
 def mod_post_canv(grps):
     for g in grps:
         _, y_max = g.y_bounds
-        if g.name == 'mass_sj':
-            g.y_min_gr_zero = 0.4
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'pt_ld_ak4_jet':
-            g.y_min_gr_zero = 2.0
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'pt_ld_ak8_jet':
-            g.y_min_gr_zero = 2.0
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'n_sjbtags_medium':
-            g.y_min_gr_zero = 40.0
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'n_additional_btags_medium':
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'n_higgs_tags_1b_med':
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'n_higgs_tags_2b_med':
-            g.first_drawn.SetMaximum(y_max * 1.3)
-        if g.name == 'ST' or g.name == 'ST_rebin' or g.name == 'ST_rebin_flex':
-            setattr(g.renderers[0], 'y_max_log', y_max * 1000.)
-            set_leg_2_col(g)
+        mod_wrp_dict = mod_dict.get(w.name, None)
+        if mod_wrp_dict:
+            y_min_gr_zero = mod_wrp_dict.get('y_min_gr_zero', None)
+            if y_min_gr_zero:
+                g.y_min_gr_zero = y_min_gr_zero
+            y_max_fct = mod_wrp_dict.get('y_max_fct', None)
+            if y_max_fct:
+                g.first_drawn.SetMaximum(y_max * y_max_fct)
+            y_max_log_fct = mod_wrp_dict.get('y_max_log_fct', None)
+            if y_max_log_fct:
+                setattr(g.renderers[0], 'y_max_log', y_max * y_max_log_fct)
+            if set_leg_2_col:
+                set_leg_2_col(g)
         if not any(w.is_data for w in g.renderers):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         yield g
 
-def mod_pre_canv(grps):
-    for g in grps:
-        if g.name == 'mass_sj':
-            g.dec_par['y_pos'] = 0.7
-        yield g
+# def mod_pre_canv(grps):
+#     for g in grps:
+#         if g.name == 'mass_sj':
+#             g.dec_par['y_pos'] = 0.7
+#         yield g
 
 

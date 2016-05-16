@@ -34,8 +34,8 @@ settings.sys_error_fill = 3002
 settings.tot_error_color = (923, 1.)
 settings.tot_error_fill = 3002
 
-settings.defaults_BottomPlot['y_min'] = -2.5
-settings.defaults_BottomPlot['y_max'] = 2.5
+settings.defaults_BottomPlot['y_min'] = -2.
+settings.defaults_BottomPlot['y_max'] = 2.
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 

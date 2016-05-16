@@ -359,6 +359,7 @@ def loader_hook_merge_regions(wrps):
 def loader_hook_merge_lep_channels(wrps):
     # wrps = merge_regions(wrps)
     wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
+    wrps = common_plot.mod_title(wrps)
     wrps = common_plot.mod_legend_no_thth(wrps)
     wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps)
@@ -482,11 +483,11 @@ def plotter_factory_stack(**args):
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         kws['save_lin_log_scale'] = True
         kws['hook_canvas_post_build'] = canvas_setup_post
-        kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
+        # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
         kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
-            varial.rendering.TextBox(textbox=TLatex(0.25, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
-            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.7]{2.7 fb^{-1} (13 TeV)}")),
+            varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
+            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)
