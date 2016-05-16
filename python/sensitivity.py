@@ -35,11 +35,11 @@ br_list = []
 
 # only br_th = 100% for now
 # bw_max = 1
-bw_max = 0
-for bw_br in [i/10. for i in range(0, int(bw_max*10)+2, 2)]:
-    # tz_max = 1.0-bw_br
-    tz_max = 0
-    for tz_br in [ii/10. for ii in range(0, int(tz_max*10)+2, 2)]:
+bw_max = 1
+for bw_br in [i/10. for i in xrange(0, int(bw_max*10)+2, 2)]:
+    tz_max = 1.0-bw_br-0.2
+    # tz_max = 0.8
+    for tz_br in [ii/10. for ii in xrange(0, int(tz_max*10)+2, 2)]:
         th_br = 1-bw_br-tz_br
         # print bw_br, th_br, tz_br
         br_list.append({
@@ -74,11 +74,11 @@ signals_to_use = [
 
 final_states_to_use = [
     '_thth',
-    # '_thtz',
-    # '_thbw',
-    # '_noH_tztz',
-    # '_noH_tzbw',
-    # '_noH_bwbw',
+    '_thtz',
+    '_thbw',
+    '_noH_tztz',
+    '_noH_tzbw',
+    '_noH_bwbw',
 ]
 
 datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015CD']

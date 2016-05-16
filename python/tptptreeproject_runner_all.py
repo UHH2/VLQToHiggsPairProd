@@ -11,6 +11,7 @@ import glob
 import sys
 import pprint
 import varial.analysis as analysis
+from ROOT import TLatex
 
 import common_plot
 import plot as plot
@@ -312,7 +313,7 @@ ht_reweight_wjets_w_top_pt_reweight = '({0}+{1}*HT)'.format(p0_wjets_from0_w_top
 # parton_ht_reweight = '({0}+{1}*parton_ht)'.format(p0_from0_no_top_pt_reweight_0, p1_from0_no_top_pt_reweight_0)
 top_pt_reweight = '(weight_ttbar/0.9910819)'
 
-path_ttbar_scale_files = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection_onlyTTbarScaleVar/'
+path_ttbar_scale_files = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection_onlyTTbarScaleVar/Files_and_Plots/'
 
 def add_all_with_weight_uncertainties(dict_weight_uncerts):
     def add_uncerts(base_path, weights):
@@ -322,9 +323,9 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
             sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, final_regions, weights)
             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, final_regions, weights, weight_name, weight_dict)
-            # sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, final_regions, weights)
             sys_tps += treeproject_tptp.add_jec_uncerts(base_path, final_regions, weights)
-            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
+            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, final_regions, weights)
             return sys_tps
         return tmp
     return add_uncerts
@@ -681,23 +682,23 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     tc = [
             treeproject_tptp.mk_tp(base_path, final_regions, weights),
             treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
-            # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-            #     all_regions
-            # )),                                             
-            plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
-                        pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
-                        ),                                             
-            plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
-                        pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                        filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'),   
-                        plotter_factory=plot.plotter_factory_uncerts()),                                             
-            plot.mk_toolchain('HistogramsNormToInt', plot.less_samples_to_plot_only_th, 
-                        pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
-                        + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                        plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int)),
+            sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
+                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+                all_regions
+            )),                                             
+            # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
+            #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
+            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
+            #             ),                                             
+            # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
+            #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
+            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+            #             filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'),   
+            #             plotter_factory=plot.plotter_factory_uncerts()),                                             
+            # plot.mk_toolchain('HistogramsNormToInt', plot.less_samples_to_plot_only_th, 
+            #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
+            #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+            #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int)),
             # plot.mk_toolchain('HistogramsNoData', plot.less_samples_to_plot_only_th, 
             #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
