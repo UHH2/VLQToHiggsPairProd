@@ -309,9 +309,9 @@ def merge_final_states(wrps):
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
-    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
-    wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
-    wrps = list(wrps)
+    # # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    # wrps = list(wrps)
     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
     # wrps = common_plot.mod_legend_eff_counts(wrps)
     return wrps
@@ -380,8 +380,6 @@ def loader_hook_compare_finalstates(wrps):
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
     # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
-    wrps = list(wrps)
-    for w in wrps: print w.in_file_path, w.sys_info, w.sample
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)

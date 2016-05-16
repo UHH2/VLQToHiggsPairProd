@@ -343,9 +343,41 @@ def plot_setup_triangle(grps):
     # print grps.grps[0].type
     return grps
 
+
+
+def calc_intersection(graph1, graph2):
+    for x in xrange(700, 1800, 10):
+        y11 = graph1.Eval(x)
+        y21 = graph2.Eval(x)
+        y12 = graph1.Eval(x+10)
+        y22 = graph2.Eval(x+10)
+        if (y11 > y21 and y12 < y22) or (y11 < y21 and y12 > y22) or y11 == y21:
+            return x
+
+def plot_calc_intersect(grps):
+    for g in grps:
+        exp_graph = None
+        obs_graph = None
+        th_graph = None
+        for w in g:
+            if hasattr(w, 'is_exp'):
+                exp_graph = w.graph
+            if hasattr(w, 'is_obs'):
+                obs_graph = w.graph
+            if hasattr(w, 'is_th'):
+                th_graph = w.graph
+        if exp_graph and th_graph:
+            expintersect = calc_intersection(exp_graph, th_graph)
+            setattr(g, 'exp_mass_excl', expintersect)
+        if obs_graph and th_graph:
+            obsintersect = calc_intersection(obs_graph, th_graph)
+            setattr(g, 'obs_mass_excl', obsintersect)
+        yield g
+
 def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
     grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2)
+    grps = plot_calc_intersect(grps)
     # print list(grps)
     return grps
 

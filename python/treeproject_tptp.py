@@ -343,7 +343,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights):
     # sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     sys_tps_pdf += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev, sample=s, load_aliases=False) for s in samples_no_data)
     return [
-        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        # varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),

@@ -120,7 +120,7 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
                     plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
                         th_x=common_sensitivity.theory_masses,
                         th_y=common_sensitivity.theory_cs),
-                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.75, label_width=0.2, label_height=0.05),
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
                             varial.rendering.TextBox(textbox=TLatex(0.18, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
                             varial.rendering.TextBox(textbox=TLatex(0.7, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
                         # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
@@ -757,16 +757,6 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass', 'nomass_boost_2b_mass']),
                 hook_loaded_histos=plot.loader_hook_merge_regions,
             ),
-            # varial.plotter.Plotter(
-            #     name='HistogramsMergeLeptonChannels',
-            #     stack=True,
-            #     input_result_path='../HistoLoader',
-            #     hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-            #     hook_canvas_post_build= common_plot.add_sample_integrals,
-            #     stack_grouper=lambda ws: gen.group(ws, key_func=lambda w: w.region+'__'+w.name),
-            #     save_name_func=lambda w: w._renderers[0].region+'_'+w.name
-            #     ),
-            # ]),
             plot.mk_toolchain('HistogramsMerged',
                 plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                 pattern=None, input_result_path='../HistoLoader'),
@@ -776,7 +766,16 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # plot.mk_toolchain('HistogramsMergedNoData', filter_keyfunc=lambda w: not w.is_data,
             #     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
             #     pattern=None, input_result_path='../HistoLoader')
-            plot.mk_toolchain('HistogramsCompFinalStates', pattern=None, input_result_path='../HistoLoader',
+            ]),
+        varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
+            varial.tools.HistoLoader(
+                pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
+                    'Region_Comb' not in w.in_file_path and\
+                    any(w.in_file_path.endswith(f) for f in ['nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass', 'nomass_boost_2b_mass']),
+                hook_loaded_histos=plot.loader_hook_merge_regions,
+            ),
+            plot.mk_toolchain('HistogramsMerged', pattern=None, input_result_path='../HistoLoader',
                         filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
                         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
                         )
@@ -801,7 +800,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         # # tex_content.mk_autoContentSystematicCRPlots(os.path.join(output_dir, name)+'/HistogramsNormToInt', 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+name),
         # tex_content.mk_autoContentSignalControlRegionCombined(os.path.join(output_dir, name)+'/MergeChannels/HistogramsMergeLeptonChannels', 'WithDataFinalRegionsCombined_'+name),
         tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMerged/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
-        tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsCompFinalStates/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
+        tex_content.mk_autoContentHiggsVarCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHistsCombFinalStates/HistogramsMerged/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
         # tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMergedNoUncerts/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
         # tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMergedNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
         # # tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
@@ -836,7 +835,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     # #             ]
     tc_tex_pas = [
         tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMerged/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name, size='0.45'),
-        tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsCompFinalStates/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
+        tex_content.mk_autoContentHiggsVarCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHistsCombFinalStates/HistogramsMerged/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
         # tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMergedNoUncerts/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
         # tex_content.mk_autoContentSignalControlRegionCombinedMore(os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMergedNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
         tex_content.mk_autoContentControlRegion(os.path.join(output_dir, name)+'/Histograms/StackedAll', os.path.join(output_dir, name)+'/MergeChannelsMoreHists/HistogramsMerged/StackedAll', 'El45', 'Mu45', 'WithDataSidebandRegions_'+name),

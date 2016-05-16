@@ -394,6 +394,26 @@ def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalC
         name=name,
     )
 
+#########################################################
+#====== TREEPROJECT MORE OUTPUT COMBINED CHANNELS =======
+#########################################################
+
+def getHiggsVarCombinedMore(base):
+    # print base
+    return {
+        'baseline_control_plots_hhiggsvar': (
+            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+        ),
+    }.items()
+
+def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
+    return varial.extensions.tex.TexContent(
+        dict(getHiggsVarCombinedMore(base)),
+        include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
+        name=name,
+    )
+
 
 #########################################################
 #============= TREEPROJECT OUTPUT LIMITS ================
