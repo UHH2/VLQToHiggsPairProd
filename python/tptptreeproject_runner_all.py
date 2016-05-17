@@ -91,14 +91,14 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
         for ind, brs_ in enumerate(br_list):
             # if ind > 5: break
             tc = []
-            tc.append(varial.tools.ToolChainParallel(
-                'ThetaLimits', list(varial.tools.ToolChain(
-                    sig,
-                    sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig(list_region,
-                        'ST', sig),
-                    sig, selection='ThetaLimits', sys_pat=sys_pat))
-                for sig in sensitivity.signals_to_use)
-            ))
+            # tc.append(varial.tools.ToolChainParallel(
+            #     'ThetaLimits', list(varial.tools.ToolChain(
+            #         sig,
+            #         sensitivity.mk_limit_tc_single(brs_, sensitivity.select_single_sig(list_region,
+            #             'ST', sig),
+            #         sig, selection='ThetaLimits', sys_pat=sys_pat))
+            #     for sig in sensitivity.signals_to_use)
+            # ))
             tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
                 limits.LimitGraphs(
                     limit_path='../../ThetaLimits/*/ThetaLimit',
@@ -120,6 +120,7 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
                     plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
                         th_x=common_sensitivity.theory_masses,
                         th_y=common_sensitivity.theory_cs),
+                    keep_content_as_result=True,
                     canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
                             varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
                             varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
@@ -698,12 +699,12 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         weights = treeproject_tptp.sample_weights_def
     uncerts = uncertainties or []
     tc = [
-            treeproject_tptp.mk_tp(base_path, final_regions, weights),
+            # treeproject_tptp.mk_tp(base_path, final_regions, weights),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, weights)),
-            sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-                list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-                all_regions
-            )),                                             
+            # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
+            #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+            #     all_regions
+            # )),                                             
             # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
             #             pattern=[output_dir+'/%s/TreeProjector/*.root'%name]
             #             + list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts)
@@ -746,7 +747,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     #             ]
     tc += [
         # mk_merge_ch_tc(output_dir, name, uncerts),
-        # # mk_ind_eff_tc(output_dir, name, uncerts),
+        # mk_ind_eff_tc(output_dir, name, uncerts),
         # varial.tools.ToolChain('MergeChannelsMoreHists', [
         #     varial.tools.HistoLoader(
         #         pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
@@ -768,19 +769,22 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         #     #     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
         #     #     pattern=None, input_result_path='../HistoLoader')
         #     ]),
-        # varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
-        #     varial.tools.HistoLoader(
-        #         pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
-        #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
-        #             'Region_Comb' not in w.in_file_path and\
-        #             any(w.in_file_path.endswith(f) for f in ['nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass', 'nomass_boost_2b_mass']),
-        #         hook_loaded_histos=plot.loader_hook_merge_regions,
-        #     ),
-        #     plot.mk_toolchain('HistogramsMerged', pattern=None, input_result_path='../HistoLoader',
-        #                 filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-        #                 plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
-        #                 )
-        #     ]),
+        varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
+            varial.tools.HistoLoader(
+                pattern=[output_dir+'/%s/TreeProjector/*.root'%name]+list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
+                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
+                    'Region_Comb' not in w.in_file_path and\
+                    all(f not in w.in_file_path for f in ['SidebandTTJetsRegion_El45', 'SidebandTTJetsRegion_Mu45', 'SidebandWPlusJetsRegion_El45', 'SidebandWPlusJetsRegion_Mu45']) and\
+                    any(w.in_file_path.endswith(f) for f in ['nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass', 'nomass_boost_2b_mass']),
+                hook_loaded_histos=plot.loader_hook_merge_regions,
+            ),
+            plot.mk_toolchain('HistogramsMerged', pattern=None, input_result_path='../HistoLoader',
+                        filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                        plotter_factory=plot.plotter_factory_stack(
+                                hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                                hook_canvas_post_build=lambda w: plot.canvas_setup_post(common_plot.mod_shift_leg(w)))
+                        )
+            ]),
         # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
         #     list(output_dir+'/%s/SysTreeProjectors/%s*/*.root'%(name, i) for i in uncerts),
         #     all_regions
@@ -813,12 +817,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         # # tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/IndEfficiencies/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
     ]
     # if name == 'TopPtAndHTReweighting':
-    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name,
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])
-    #     ]
+    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex += [tex_content.mk_autoContentLimitsLarge(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # else:
-    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions',
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex += [tex_content.mk_autoContentLimitsLarge(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
 
     # # tc_tex += [tex_content.mk_autoContentCompSystPlots(
     # #             list(os.path.join(output_dir, name)+'/HistogramsComp_'+uc_name for uc_name in ['ScaleVar', 'PDF', 'TTbarScale', 'Exp']),
@@ -845,12 +848,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         # # # tex_content.mk_autoEffCount(os.path.join(output_dir, name)+'/MergeChannels/CountTable/count_table_content.tex', name='CountTable_'+name),
     ]
     # if name == 'TopPtAndHTReweighting':
-    #     tc_tex_pas += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name,
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])
-    #     ]
+    #     tc_tex_pas += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex_pas += [tex_content.mk_autoContentLimitsLarge(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # else:
-    #     tc_tex_pas += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions',
-    #         mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex_pas += [tex_content.mk_autoContentLimits(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+    #     tc_tex_pas += [tex_content.mk_autoContentLimitsLarge(os.path.join(output_dir, name), 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # tc += [
     #     varial.tools.ToolChain('AN-Tex', [
     #         varial.tools.ToolChain('Tex', tc_tex),
@@ -860,7 +862,6 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     #         varial.tools.ToolChain('TexPas', tc_tex_pas),
     #         varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../TexPas/*', ignore=('.svn', '*.html'), use_rsync=True),
     #         ])
-
     # ]
     return varial.tools.ToolChain(name, tc)
 
@@ -869,8 +870,8 @@ def run_treeproject_and_plot(base_path, output_dir):
         output_dir,
         [
             git.GitAdder(),
-            # make_tp_plot_chain('NoReweighting', base_path, output_dir, 
-            #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+            make_tp_plot_chain('NoReweighting', base_path, output_dir, 
+                add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
             # make_tp_plot_chain('TopPtReweighting', base_path, output_dir,
             #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
             #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
@@ -889,20 +890,20 @@ def run_treeproject_and_plot(base_path, output_dir):
             #     },
             #     uncertainties=all_uncerts+['ht_reweight']
             #     ),
-            make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir,
-                add_uncert_func=add_all_with_weight_uncertainties({
-                    'ht_reweight' : {
-                        'TTbar' : ht_reweight_ttbar_w_top_pt_reweight,
-                        'WJets' : ht_reweight_wjets_w_top_pt_reweight
-                        },
-                    'top_pt_reweight' : {'TTbar' : top_pt_reweight}
-                    }),
-                mod_sample_weights={
-                    'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight+'*'+ht_reweight_ttbar_w_top_pt_reweight,
-                    'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_w_top_pt_reweight,
-                },
-                uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
-                ),
+            # make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir,
+            #     add_uncert_func=add_all_with_weight_uncertainties({
+            #         'ht_reweight' : {
+            #             'TTbar' : ht_reweight_ttbar_w_top_pt_reweight,
+            #             'WJets' : ht_reweight_wjets_w_top_pt_reweight
+            #             },
+            #         'top_pt_reweight' : {'TTbar' : top_pt_reweight}
+            #         }),
+            #     mod_sample_weights={
+            #         'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight+'*'+ht_reweight_ttbar_w_top_pt_reweight,
+            #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_w_top_pt_reweight,
+            #     },
+            #     uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
+            #     ),
             varial.tools.WebCreator(),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 

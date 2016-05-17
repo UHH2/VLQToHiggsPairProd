@@ -14,6 +14,8 @@ import varial.plotter
 import varial.rendering
 import varial.settings
 import varial.operations
+import varial.util as util
+from ROOT import TLatex
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots
@@ -310,9 +312,9 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
             hook_loaded_histos=loader_hook_sys(brs)
         )
         plotter_postfit = varial.tools.Plotter(
-            filter_keyfunc=lambda w: '700' in w.sample 
-                                     or '900' in w.sample 
-                                     or not w.is_signal,
+            # filter_keyfunc=lambda w: '700' in w.sample 
+            #                          or '900' in w.sample 
+            #                          or not w.is_signal,
             plot_grouper=lambda ws: varial.gen.group(
                 ws, key_func=lambda w: w.category),
             plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
@@ -340,11 +342,13 @@ def add_draw_option(wrps, draw_option=''):
             wrp.draw_option = draw_option
         yield wrp
 
-def plot_setup_triangle(grps):
-    grps = (add_draw_option(ws, 'colz text') for ws in grps)
-    grps = (gen.apply_markercolor(ws, colors=[1]) for ws in grps)
-    # print grps.grps[0].type
-    return grps
+def plot_setup_triangle(opt):
+    def tmp(grps):
+        grps = (add_draw_option(ws, opt) for ws in grps)
+        grps = (gen.apply_markercolor(ws, colors=[1]) for ws in grps)
+        # print grps.grps[0].type
+        return grps
+    return tmp
 
 
 
@@ -384,25 +388,67 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     # print list(grps)
     return grps
 
+class DrawLess700(util.Decorator):
+    """
+    Draw Textbox.
+
+    Instanciate with textbox argument:
+    ``tb = TextBox(textbox=ROOT.TLatex(0.5, 0.5, 'My Box'))``.
+    """
+
+    def configure(self):
+        self.decoratee.configure()
+        rnd = self.renderers[0]
+        rnd = rnd.histo
+        self.list_coords = []
+        for x_bin in xrange(rnd.GetNbinsX()+1):
+            for y_bin in xrange(rnd.GetNbinsY()+1):
+                cont = rnd.GetBinContent(x_bin, y_bin)
+                if cont > 0. and cont < 1.:
+                    x = rnd.GetXaxis().GetBinCenter(x_bin)
+                    y = rnd.GetYaxis().GetBinCenter(y_bin)
+                    self.list_coords.append((x, y))
+
+    def do_final_cosmetics(self):
+        self.decoratee.do_final_cosmetics()
+        boxes = TLatex()
+        boxes.SetTextSize(0.024)
+        boxes.SetTextAlign(22)
+        for x, y in self.list_coords:
+            boxes.DrawLatex(x, y, '< 700')
+        # self.dec_par['textbox'].SetNDC()
+        # self.dec_par['textbox'].Draw()
+
 def mk_tc(dir_limit='Limits', mk_limit_list=None):
 # setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
-    return varial.tools.ToolChainParallel(dir_limit, 
+    return varial.tools.ToolChain(dir_limit, 
         [
         mk_limit_chain(mk_limit_list=mk_limit_list),
-        # varial.tools.ToolChain('LimitTriangle',[
-        #     TriangleMassLimitPlots(
-        #         limit_rel_path='../Ind_Limits/Limit*/TpTpThetaLimits'
-        #         ),
-        #     varial.plotter.Plotter(
-        #         input_result_path='../TriangleMassLimitPlots',
-        #         plot_setup=plot_setup_triangle,
-        #         save_name_func=lambda w: 'M-'+str(w.mass)
-        #         ),
-        #     ]),
+        varial.tools.ToolChain('LimitTriangle',[
+            TriangleMassLimitPlots(
+                limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
+                ),
+            varial.plotter.Plotter(
+                name='PlotterBox',
+                input_result_path='../TriangleMassLimitPlots',
+                plot_setup=plot_setup_triangle('col text'),
+                save_name_func=lambda w: w.save_name,
+                canvas_decorators=[DrawLess700,
+                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                ),
+            varial.plotter.Plotter(
+                name='PlotterCont',
+                input_result_path='../TriangleMassLimitPlots',
+                plot_setup=plot_setup_triangle('contz'),
+                save_name_func=lambda w: w.save_name,
+                canvas_decorators=()
+                ),
+            ]),
         # varial.tools.WebCreator()
         # varial.tools.CopyTool()
-        ], n_workers=1)
+        ])
 
 # tc = varial.tools.ToolChain("", [tc])
 

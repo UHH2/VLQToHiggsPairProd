@@ -50,6 +50,96 @@ normfactors_wrong = {
     'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
 }
 
+norm_reg_dict = {
+    'BaseLineSelection' : 5,
+    'SidebandRegion' : 5,
+    'SignalRegion1b' : 5,
+    'SignalRegion2b' : 1,
+}
+
+mod_dict = {
+    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
+            'title' : 'S_{T} [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'ST_rebin_flex' : {
+            'y_max_log_fct' : 1000.,
+            'set_leg_2_col' : True
+            },
+    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
+            'title' : 'H_{T} [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'HT_rebin_flex' : {
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            'set_leg_2_col' : True
+            },
+    'nomass_boost_1b_mass' : {'rebin' : 30,
+            'title' : 'groomed type-I Higgs tag mass [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
+    'nomass_boost_2b_mass' : {'rebin' : 15,
+            'title' : 'groomed type-II Higgs tag mass [GeV]',
+            'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            'scale' : 0.2
+            },
+    'primary_electron_pt' : {
+            'title' : 'Primary Electron p_{T} [GeV]',
+            },
+    'primary_muon_pt' : {
+            'title' : 'Primary Muon p_{T} [GeV]',
+            },
+    'pt_ld_ak4_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} leading AK4 Jet [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'set_leg_2_col' : True,
+            'y_max_fct' : 1.5,
+            },
+    'pt_ld_ak8_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} leading AK8 Jet [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'set_leg_2_col' : True,
+            'y_max_fct' : 1.5,
+            },
+    'n_additional_btags_medium' : {
+            'title' : 'N(AK4 b tags)',
+            'y_max_log_fct' : 1000.,
+            'set_leg_2_col' : True
+            },
+    'n_higgs_tags_1b_med' : {
+            'title' : 'N(type-I Higgs tags)',
+            'y_max_log_fct' : 1000.,
+            'set_leg_2_col' : True
+            },
+    'n_higgs_tags_2b_med' : {
+            'title' : 'N(type-II Higgs tags)',
+            # 'y_max_log_fct' : 1000.,
+            },
+    'n_ak4' : {
+            'y_max_log_fct' : 10000.,
+            'set_leg_2_col' : True
+            # 'y_max_log_fct' : 1000.,
+            },
+    'nobtag_boost_mass_nsjbtags' : {
+            'title' : 'N(subjet b tags)',
+            'y_max_log_fct' : 10000.,
+            # 'set_leg_2_col' : True
+            # 'y_max_log_fct' : 1000.,
+            },
+
+}
+
 
 
 
@@ -143,7 +233,7 @@ def scale_signal(wrp, fct=1.):
         if fct >= 5:
             fct = int(fct)
             if fct % 5 > 2:
-                fct += fct % 5
+                fct += (5 - fct % 5)
             else: fct -= fct % 5
         elif fct >= 1.:
             fct = int(fct)
@@ -157,7 +247,7 @@ def scale_signal(wrp, fct=1.):
             op.add_wrp_info(wrp, scl_fct=lambda _: fct)
         wrp.histo.Scale(fct)
         op.add_wrp_info(wrp, is_scaled=lambda w: True)
-        if fct > 1:
+        if fct >= 1:
             wrp.legend +=' (%.2g pb)' % fct
         elif fct < 1:
             wrp.legend +=' (%.1g pb)' % fct
@@ -200,12 +290,14 @@ def norm_stack_to_integral(grps):
 
 def norm_to_fix_xsec(wrps):
     for w in wrps:
-        if w.is_signal and 'SignalRegion2b' in w.in_file_path:
-            scale_signal(w, 1.)            
-        # elif w.is_signal and 'SignalRegion1b' in w.in_file_path and w.in_file_path.endswith('ST'):
-        #     scale_signal(w, 5.)            
-        elif w.is_signal:
-            scale_signal(w, 5.) 
+        if w.is_signal:
+            base_fct = next(norm_reg_dict[g] for g in norm_reg_dict.keys() if g in w.in_file_path)
+            mod_wrp_dict = mod_dict.get(w.name, None)
+            if mod_wrp_dict:
+                mult_fct = mod_wrp_dict.get('scale', None)
+                if mult_fct:
+                    base_fct *= mult_fct
+            scale_signal(w, base_fct)            
         yield w
 
 
@@ -217,49 +309,42 @@ def mod_legend(wrps):
             w.legend = 'data'
         if w.legend.startswith('TpTp'):
             w.legend = 'TT M'+w.legend[7:]
-        # if w.legend.endswith('_thth'):
-            # w.legend = w.legend[:-5] + ' tH only'
-            # w.legend = w.legend[:-5]
-        # if w.legend.endswith('_thX'):
-        #     w.legend = w.legend[:-4] + ' tH+X'
-        # if w.legend.endswith('_other'):
-        #     w.legend = w.legend[:-6] + ' other'
-        # if w.legend.endswith('_incl'):
-        #     w.legend = w.legend[:-5] + ' incl.'
         if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
             w.legend = 'DY + jets'
         if w.legend == 'WJets':
             w.legend = 'W + jets'
         if w.legend == 'SingleTop':
-            w.legend = 'Single T'
+            w.legend = 'Single t'
+        if w.legend == 'TTbar':
+            w.legend = 'ttbar '
         yield w
 
 def mod_legend_eff_counts(wrps):
     for w in wrps:
         if w.legend.endswith('_thth'):
-            w.legend = w.legend[:-5] + ' tHtH'
+            w.legend = w.legend[:-5] + ' #rightarrow tHtH'
         if w.legend.endswith('_thtz'):
-            w.legend = w.legend[:-5] + ' tHtZ'
+            w.legend = w.legend[:-5] + ' #rightarrow tHtZ'
         if w.legend.endswith('_thbw'):
-            w.legend = w.legend[:-5] + ' tHbW'
+            w.legend = w.legend[:-5] + ' #rightarrow tHbW'
         if w.legend.endswith('_tztz'):
-            w.legend = w.legend[:-9] + ' tZtZ'
+            w.legend = w.legend[:-9] + ' #rightarrow tZtZ'
         if w.legend.endswith('_tzbw'):
-            w.legend = w.legend[:-9] + ' tZbW'
+            w.legend = w.legend[:-9] + ' #rightarrow tZbW'
         if w.legend.endswith('_bwbw'):
-            w.legend = w.legend[:-9] + ' bWbW'
+            w.legend = w.legend[:-9] + ' #rightarrow bWbW'
         if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-4] + ' tH+X'
+            w.legend = w.legend[:-4] + ' #rightarrow tH+X'
         if w.legend.endswith('_other'):
-            w.legend = w.legend[:-6] + ' other'
+            w.legend = w.legend[:-6] + ' #rightarrow other'
         if w.legend.endswith('_incl'):
-            w.legend = w.legend[:-5] + ' incl.'
+            w.legend = w.legend[:-5] + ' #rightarrow incl.'
         yield w
 
 def mod_legend_no_thth(wrps):
     for w in wrps:
         if w.legend.endswith('_thth') or w.legend.endswith(' tHtH'):
-            w.legend = w.legend[:-5]
+            w.legend = w.legend[:-5] + '  #rightarrow tHtH'
         yield w
 
 def mod_title(wrps):
@@ -409,82 +494,6 @@ def add_sample_integrals(canvas_builders):
 #         ))
 #         yield cnv
 
-mod_dict = {
-    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
-            'title' : 'S_{T} [GeV]',
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
-            },
-    'ST_rebin_flex' : {
-            'y_max_log_fct' : 1000.,
-            'set_leg_2_col' : True
-            },
-    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
-            'title' : 'H_{T} [GeV]',
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            'set_leg_2_col' : True
-            },
-    'HT_rebin_flex' : {
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            'set_leg_2_col' : True
-            },
-    'nomass_boost_1b_mass' : {'rebin' : 30,
-            'title' : 'groomed type-I Higgs tag mass [GeV]',
-            'y_min_gr_zero' : 0.4,
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
-            },
-    'nomass_boost_2b_mass' : {'rebin' : 15,
-            'title' : 'groomed type-II Higgs tag mass [GeV]',
-            'y_min_gr_zero' : 0.02,
-            'y_max_log_fct' : 1000.,
-            },
-    'primary_electron_pt' : {
-            'title' : 'Primary Electron p_{T} [GeV]',
-            },
-    'primary_muon_pt' : {
-            'title' : 'Primary Muon p_{T} [GeV]',
-            },
-    'pt_ld_ak4_jet' : {
-            'rebin' : 30,
-            'title' : 'p_{T} leading AK4 Jet [GeV]',
-            'y_max_log_fct' : 1000.,
-            'set_leg_2_col' : True,
-            'y_max_fct' : 1.3,
-            },
-    'pt_ld_ak8_jet' : {
-            'rebin' : 30,
-            'title' : 'p_{T} leading AK8 Jet [GeV]',
-            'y_max_log_fct' : 1000.,
-            'set_leg_2_col' : True,
-            'y_max_fct' : 1.3,
-            },
-    'n_additional_btags_medium' : {
-            'title' : 'N(AK4 b tags)',
-            'y_max_log_fct' : 1000.,
-            'set_leg_2_col' : True
-            },
-    'n_higgs_tags_1b_med' : {
-            'title' : 'N(type-I Higgs tags)',
-            'y_max_log_fct' : 1000.,
-            'set_leg_2_col' : True
-            },
-    'n_higgs_tags_2b_med' : {
-            'title' : 'N(type-II Higgs tags)',
-            # 'y_max_log_fct' : 1000.,
-            },
-    'n_ak4' : {
-            'y_max_log_fct' : 10000.,
-            'set_leg_2_col' : True
-            # 'y_max_log_fct' : 1000.,
-            },
-
-}
-
 
 
 def rebin_st_and_nak4(wrps):
@@ -519,9 +528,9 @@ def leg_2_col(rnd):
     width   = rnd.dec_par.get('label_width', varial.settings.defaults_Legend['label_width'])
     height  = rnd.dec_par.get('label_height', varial.settings.defaults_Legend['label_height']) * n_entries / 2.
     rnd.legend.SetX1(x_pos - 3*width/2.)
-    rnd.legend.SetY1(y_pos - 0.2*height)
+    rnd.legend.SetY1(y_pos - 0.1*height)
     rnd.legend.SetX2(x_pos + width/2.)
-    rnd.legend.SetY2(y_pos + 0.8*height)
+    rnd.legend.SetY2(y_pos + 0.9*height)
 
 
 def mod_post_canv(grps):
@@ -545,10 +554,18 @@ def mod_post_canv(grps):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         yield g
 
-# def mod_pre_canv(grps):
-#     for g in grps:
-#         if g.name == 'mass_sj':
-#             g.dec_par['y_pos'] = 0.7
-#         yield g
+def mod_shift_leg(grps):
+    for g in grps:
+        # if g.name == 'mass_sj':
+        n_entries = len(g.legend.GetListOfPrimitives())
+        x_pos   = 0.7
+        y_pos   = 0.72
+        width   = 0.33
+        height  = 0.035 * n_entries
+        g.legend.SetX1(x_pos - width/2.)
+        g.legend.SetY1(y_pos - height/2.)
+        g.legend.SetX2(x_pos + width/2.)
+        g.legend.SetY2(y_pos + height/2.)
+        yield g
 
 

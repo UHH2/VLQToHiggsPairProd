@@ -434,8 +434,32 @@ def getLimPlotsAll(base):
             os.path.join(base, 'LimitsAllUncertsOnlyMu/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
+        'triangle_lim_both_box': (
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_exp_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+        ),
+        'triangle_plus_single_lim': (
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+        ),
+        'Postfit-all': (
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
+        ),
+    }
+
+def getSingleLimPlotLarge(base):
+    # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    return {
         'Limits_comb_only': (
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+        ),
+        'triangle_lim_obs_box': (
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+        ),
+        'triangle_lim_exp_box': (
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_exp_lin' + ext),
         ),
         'Postfit-M0700': (
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
@@ -444,11 +468,6 @@ def getLimPlotsAll(base):
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
         ),
         'Postfit-M1700': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
-        ),
-        'Postfit-all': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
         ),
     }
@@ -564,7 +583,19 @@ def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoConte
     return varial.extensions.tex.TexContent(
         lim_dict,
         tab_dict,
-        include_str=r'\includegraphics[width=0.60\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name=name,
+    )
+
+def mk_autoContentLimitsLarge(base, el_channel=None, mu_channel=None, name='AutoContentLimits', mass_points=None, get_sys_tab=True):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    lim_dict = getSingleLimPlotLarge(base)
+    tab_dict = dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)) if get_sys_tab else {}
+    return varial.extensions.tex.TexContent(
+        lim_dict,
+        tab_dict,
+        include_str=r'\includegraphics[width=0.6\textwidth]{%s}',
         name=name,
     )
 

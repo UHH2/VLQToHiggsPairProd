@@ -2,6 +2,7 @@ from varial import settings
 from varial.sample import Sample
 import varial.analysis as analysis
 import UHH2.VLQSemiLepPreSel.vlq_settings
+import ROOT
 
 settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
@@ -10,7 +11,7 @@ settings.__setattr__('merge_decay_channels', True)
 settings.__setattr__('plot_obs', True)
 settings.__setattr__('fix_presel_sample', False)
 settings.__setattr__('do_norm_plot', False)
-settings.__setattr__('flex_sig_norm', True)
+settings.__setattr__('flex_sig_norm', False)
 settings.__setattr__('cutflow_precision', {})
 settings.__setattr__('eff_precision', {})
 
@@ -41,9 +42,9 @@ settings.defaults_BottomPlot['y_max'] = 2.
 
 settings.defaults_Legend.update({
     'x_pos': 0.75,
-    'y_pos': 0.7,
-    'label_width': 0.22,
-    'label_height': 0.04,
+    'y_pos': 0.72,
+    'label_width': 0.25,
+    'label_height': 0.035,
     'opt': 'f',
     'opt_data': 'p',
     'reverse': True,
@@ -73,22 +74,41 @@ settings.root_style.SetPadRightMargin(0.1)
 #     'ST': 434, # Orange
 #     'QCD': 870,   # Light blue
 # }
+signals = {'TpTp_M-800' : ROOT.kGreen,
+    'TpTp_M-1200' : ROOT.kBlue,
+    'TpTp_M-1600' : ROOT.kRed
+    }
+final_states = final_states = ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']
+
+for s, c in signals.iteritems():
+    settings.colors.update(dict((s + f, c) for f in final_states))
+    settings.colors.update({s+'_thX' : ROOT.kOrange, s+'_other' : ROOT.kAzure})
+
+
 
 settings.colors.update({
     'Background' : 920,
     'nominal' : 1,
     'plus' : 2,
     'minus' : 3,
+    'TTbar': 632 - 7,
+    'WJets': 400-9,
+    'ZJets': 432-9,
+    'DYJets': 432-9,
+    'DYJetsToLL': 432-9,
+    'SingleT': 416-9,
+    'SingleTop': 416-9,
+    'QCD': 851,
     # 'QCD' : 867,
     # 'TTbar': 632,
     # 'WJets': 878,
     # 'ZJets': 596,
     # 'TpTp_M-800_thX' : 800, # Yellow
-    'TpTp_M-800_thX' : 634,
-    'TpTp_M-800_other' : 616,
-    # 'TpTp_M-1600_thX' : 797, # Orange
-    'TpTp_M-1600_thX' : 418, # Green
-    'TpTp_M-1600_other' : 593,
+    # 'TpTp_M-800_thX' : 634,
+    # 'TpTp_M-800_other' : 616,
+    # # 'TpTp_M-1600_thX' : 797, # Orange
+    # 'TpTp_M-1600_thX' : 418, # Green
+    # 'TpTp_M-1600_other' : 593,
     # 'TpTp_M800': 416,
     # 'TpTp_M1000_thth': 800,
     # 'TpTp_M1000_thtz': 400,   # Yellow
