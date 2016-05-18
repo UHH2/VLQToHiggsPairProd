@@ -57,6 +57,18 @@ norm_reg_dict = {
     'SignalRegion2b' : 1,
 }
 
+def get_style(target=''):
+    if target == 'PAS':
+        return [varial.rendering.BottomPlotRatioSplitErr,
+            varial.rendering.Legend,
+            varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
+            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
+            ]
+    else:
+        return [varial.rendering.BottomPlotRatioSplitErr,
+            varial.rendering.Legend,
+            ]
+
 mod_dict = {
     'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.],
             'title' : 'S_{T} [GeV]',
@@ -133,7 +145,7 @@ mod_dict = {
             },
     'nobtag_boost_mass_nsjbtags' : {
             'title' : 'N(subjet b tags)',
-            'y_max_log_fct' : 10000.,
+            'y_max_log_fct' : 1000.,
             # 'set_leg_2_col' : True
             # 'y_max_log_fct' : 1000.,
             },
@@ -322,29 +334,29 @@ def mod_legend(wrps):
 def mod_legend_eff_counts(wrps):
     for w in wrps:
         if w.legend.endswith('_thth'):
-            w.legend = w.legend[:-5] + ' #rightarrow tHtH'
+            w.legend = w.legend[:-5] + '#rightarrow tHtH'
         if w.legend.endswith('_thtz'):
-            w.legend = w.legend[:-5] + ' #rightarrow tHtZ'
+            w.legend = w.legend[:-5] + '#rightarrow tHtZ'
         if w.legend.endswith('_thbw'):
-            w.legend = w.legend[:-5] + ' #rightarrow tHbW'
+            w.legend = w.legend[:-5] + '#rightarrow tHbW'
         if w.legend.endswith('_tztz'):
-            w.legend = w.legend[:-9] + ' #rightarrow tZtZ'
+            w.legend = w.legend[:-9] + '#rightarrow tZtZ'
         if w.legend.endswith('_tzbw'):
-            w.legend = w.legend[:-9] + ' #rightarrow tZbW'
+            w.legend = w.legend[:-9] + '#rightarrow tZbW'
         if w.legend.endswith('_bwbw'):
-            w.legend = w.legend[:-9] + ' #rightarrow bWbW'
+            w.legend = w.legend[:-9] + '#rightarrow bWbW'
         if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-4] + ' #rightarrow tH+X'
+            w.legend = w.legend[:-4] + '#rightarrow tH+X'
         if w.legend.endswith('_other'):
-            w.legend = w.legend[:-6] + ' #rightarrow other'
+            w.legend = w.legend[:-6] + '#rightarrow other'
         if w.legend.endswith('_incl'):
-            w.legend = w.legend[:-5] + ' #rightarrow incl.'
+            w.legend = w.legend[:-5] + '#rightarrow incl.'
         yield w
 
 def mod_legend_no_thth(wrps):
     for w in wrps:
         if w.legend.endswith('_thth') or w.legend.endswith(' tHtH'):
-            w.legend = w.legend[:-5] + '  #rightarrow tHtH'
+            w.legend = w.legend[:-5] + '#rightarrow tHtH'
         yield w
 
 def mod_title(wrps):
@@ -419,17 +431,22 @@ def add_sample_integrals(canvas_builders):
             sys_up = sys_sum[1] + diff
             sys_down = sys_sum[1] - diff
             sys_sum = (sys_up, -sys_down)
-        return [(wrp.legend, bkg_sum + sys_sum)]
+        return [(wrp.sample, bkg_sum + sys_sum)]
 
     def integral_stack_wrp(wrp):
         for hist in wrp.obj.GetHists():
             fct = 1.
             if hasattr(wrp, 'scl_fct'):
                 fct = wrp.scl_fct
-            tmp = util.integral_and_error(hist)
-            if len(tmp) == 2:
-                tmp = (tmp[0]/fct, tmp[1]/fct)
-            yield hist.GetTitle(), tmp
+            sum_tmp = util.integral_and_error(hist)
+            sys_tmp = getattr(wrp, hist.GetTitle()+'__sys', (sum_tmp[0], 0.))
+            if len(sum_tmp) == 2:
+                diff = sys_tmp[0] - sum_tmp[0]
+                sys_up = sys_tmp[1] + diff
+                sys_down = sys_tmp[1] - diff
+                sys_tmp = (sys_up, -sys_down)
+                sum_tmp = (sum_tmp[0]/fct, sum_tmp[1]/fct, sys_tmp[0]/fct, sys_tmp[1]/fct)
+            yield hist.GetTitle(), sum_tmp
         bkg_sum = util.integral_and_error(wrp.histo)
         # if len(bkg_sum) == 2:
             # bkg_sum = (bkg_sum[0]*2, bkg_sum[1]*2)
@@ -454,10 +471,10 @@ def add_sample_integrals(canvas_builders):
     for cnv in canvas_builders:
         # TODO when rendering goes generator
         cnv.renderers[0].__dict__.update(dict(
-            ('Integral___' + legend, integ)
+            ('Integral___' + sample, integ)
             for r in cnv.renderers
             if isinstance(r, rnd.HistoRenderer)  # applies also to StackRnd.
-            for legend, integ in integral(r)
+            for sample, integ in integral(r)
         ))
         yield cnv
 
@@ -556,6 +573,21 @@ def mod_post_canv(grps):
 
 def mod_shift_leg(grps):
     for g in grps:
+        # if g.name == 'mass_sj':
+        n_entries = len(g.legend.GetListOfPrimitives())
+        x_pos   = 0.7
+        y_pos   = 0.72
+        width   = 0.33
+        height  = 0.035 * n_entries
+        g.legend.SetX1(x_pos - width/2.)
+        g.legend.SetY1(y_pos - height/2.)
+        g.legend.SetX2(x_pos + width/2.)
+        g.legend.SetY2(y_pos + height/2.)
+        yield g
+
+def mod_no_2D_leg(grps):
+    for g in grps:
+        g.legend.SetNColumns(1)
         # if g.name == 'mass_sj':
         n_entries = len(g.legend.GetListOfPrimitives())
         x_pos   = 0.7

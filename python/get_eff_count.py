@@ -58,6 +58,7 @@ def sort_cats(sort_list):
 
 
 
+
 class EffNumTable(varial.tools.Tool):
     def __init__(self, input_blocks, get_region, calc_eff=False, name=None):
         super(EffNumTable, self).__init__(name)

@@ -210,14 +210,14 @@ def getSystCRPlots(chan, base):
     # print base
     return {
         chan+'_ak4jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak4_jet_rebin_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak4_jet_rebin_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_third_ak4_jet_rebin_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_third_ak4_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_log' % chan + ext,
         ),
         chan+'_ak8jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak8_jet_rebin_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak8_jet_rebin_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_ld_ak8_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak8_jet_log' % chan + ext,
         ),
         chan+'_stplusjets': (
             p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
