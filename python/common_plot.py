@@ -57,8 +57,8 @@ norm_reg_dict = {
     'SignalRegion2b' : 1,
 }
 
-def get_style(target=''):
-    if target == 'PAS':
+def get_style():
+    if varial.settings.style == 'PAS':
         return [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
             varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),

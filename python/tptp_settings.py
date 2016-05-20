@@ -15,6 +15,7 @@ settings.__setattr__('flex_sig_norm', False)
 settings.__setattr__('cutflow_precision', {})
 settings.__setattr__('eff_precision', {})
 settings.__setattr__('lookup_aliases', True)
+settings.__setattr__('style', 'AN')
 
 settings.cutflow_precision.update({
     'TpTp_M-0700' : "%17.1f",
@@ -153,7 +154,7 @@ settings.colors.update({
 
 # analysis.all_samples = dict((s.name, s) for s in smpls)
 
-settings.stacking_order = ['TTBar', 'WJets', 'DYJets', 'DYJetsToLL', 'SingleT', 'SingleTop', 'QCD']
+settings.stacking_order = ['TTBar', 'WJets', 'SingleT', 'SingleTop', 'DYJets', 'DYJetsToLL', 'QCD']
 
 # default_colors = [632, 814, 596, 870, 434, 840, 902, 797, 800, 891, 401, 800,
 #                   838, 420, 403, 893, 881, 804, 599, 615, 831, 403, 593, 872]

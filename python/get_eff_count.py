@@ -226,3 +226,124 @@ class EffNumTable(varial.tools.Tool):
 
 
 
+
+
+class NumTableNew(varial.tools.Tool):
+    def __init__(self, input_blocks, get_region, name=None):
+        super(NumTableNew, self).__init__(name)
+        self.input_blocks = input_blocks
+        self.regions = get_region
+
+    def get_precision(self, num):
+        if num >= 1.0:
+            return "%17.1f"
+        elif num > 0:
+            ex_dim = abs(floor(log10(num)))
+            add_prec = 0
+            if num*10**ex_dim < 2.:
+                add_prec = 1
+            prec = int(ex_dim+add_prec)
+            prec = "%17."+str(prec)+"f"
+            return prec
+        else:
+            return "%17d"
+
+    def create_block(self, sample_dict):
+        pass
+        
+
+    def run(self):
+        
+        self.regions = dict((r, f(self.cwd)) for r, f in self.regions.iteritems())
+
+        lines = []
+        lines.append(r"\begin{tabular}{|l "
+            + len(self.regions)*"| r "
+            + r"|}\hline")
+        lines.append("process / category & " + r" & ".join(r[0] for r in self.regions.keys())
+            + r"\\ \hline")
+        # if not self.calc_eff:
+        for smpl_dict in self.input_blocks:
+            lines += self.create_block(smpl_dict)
+            lines.append(r"\hline")
+        
+        lines.append(r"\end{tabular}")
+
+        lines = '\n'.join(lines)
+        with open(self.cwd+'count_table_content.tex', 'w') as f:
+            f.write(lines)
+
+
+class EffTable(NumTableNew):
+    def __init__(self, input_blocks, get_region, norm_fct, name=None):
+        super(EffTable, self).__init__(input_blocks, get_region, name)
+        self.norm_fct = norm_fct
+
+    def create_block(self, sample_dict):
+
+        lines = []
+        for s, s_func in sample_dict.iteritems():
+            # filt_smpls = list(itertools.ifilter(fs, res))
+            line = s + " "
+            if isinstance(self.norm_fct, dict): 
+                baseline_count = self.norm_fct[s]
+            else:
+                baseline_count = self.norm_fct
+            baseline_count = baseline_count/100.
+            for r, r_dict in self.regions.iteritems():
+                line += "&$ "
+                info = None
+                for key, val in r_dict.iteritems():
+                    if s_func(key):
+                        info = val
+                # info = self.get_info(r, s, filt_smpls, fr, res, key_word)
+                if not info:
+                    self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
+                    continue
+                if 'data' in s:
+                    prec = "%17d"
+                else:
+                    prec = self.get_precision(info[1]/baseline_count)
+                line += prec % info[0]/baseline_count + r" \%% \pm " + prec % info[1]/baseline_count + r" \%%"
+                if len(info) == 4:
+                    syst_string = "^{+"+prec+r" \%%}_{"+prec+r" \%%}"
+                    line += syst_string % (info[2]/baseline_count, info[3]/baseline_count)
+                line += " $"
+            line += r" \\"
+            lines.append(line)
+        return lines
+
+class CountTable(NumTableNew):
+    def __init__(self, input_blocks, get_region, name=None):
+        super(CountTable, self).__init__(input_blocks, get_region, name)
+
+    def create_block(self, sample_dict):
+
+        pprint.pprint(self.regions)
+
+        lines = []
+        for s, s_func in sample_dict.iteritems():
+            # filt_smpls = list(itertools.ifilter(fs, res))
+            line = s + " "
+            for r, r_dict in self.regions.iteritems():
+                line += "&$ "
+                info = None
+                for key, val in r_dict.iteritems():
+                    if s_func(key):
+                        info = val
+                # info = self.get_info(r, s, filt_smpls, fr, res, key_word)
+                if not info:
+                    self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
+                    continue
+                if 'data' in s:
+                    prec = "%17d"
+                else:
+                    prec = self.get_precision(info[1])
+                line += prec % info[0] + r" \pm " + prec % info[1]
+                if len(info) == 4:
+                    syst_string = "^{+"+prec+"}_{"+prec+"}"
+                    line += syst_string % (info[2], info[3])
+                line += " $"
+            line += r" \\"
+            lines.append(line)
+        return lines
