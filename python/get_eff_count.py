@@ -254,16 +254,18 @@ class NumTableNew(varial.tools.Tool):
 
     def run(self):
         
-        self.regions = dict((r, f(self.cwd)) for r, f in self.regions.iteritems())
+        self.regions = list((r, f(self.cwd)) for r, f in self.regions)
+        self.regions = sorted(self.regions, key=sort_cats(order_cats))
 
         lines = []
         lines.append(r"\begin{tabular}{|l "
             + len(self.regions)*"| r "
             + r"|}\hline")
-        lines.append("process / category & " + r" & ".join(r[0] for r in self.regions.keys())
+        lines.append("process / category & " + r" & ".join(r for r, _ in self.regions)
             + r"\\ \hline")
         # if not self.calc_eff:
         for smpl_dict in self.input_blocks:
+            smpl_dict = sorted(smpl_dict, key=sort_cats(order_smpls))
             lines += self.create_block(smpl_dict)
             lines.append(r"\hline")
         
@@ -282,17 +284,23 @@ class EffTable(NumTableNew):
     def create_block(self, sample_dict):
 
         lines = []
-        for s, s_func in sample_dict.iteritems():
+        for s, s_func in sample_dict:
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
-            if isinstance(self.norm_fct, dict): 
-                baseline_count = self.norm_fct[s]
+            if isinstance(self.norm_fct, list):
+                for smpl, fct in self.norm_fct:
+                    if smpl in s:
+                        baseline_count = fct
             else:
                 baseline_count = self.norm_fct
             baseline_count = baseline_count/100.
-            for r, r_dict in self.regions.iteritems():
+            for r, r_dict in self.regions:
                 line += "&$ "
                 info = None
+                # info = list(itertools.ifilter(s_func, r_dict))
+                # if len(info) != 1:
+                #     self.message('WARNING! Not exactly one key word found for sample {0} and region {1}'.format(s, r))
+                # info = info[0][]
                 for key, val in r_dict.iteritems():
                     if s_func(key):
                         info = val
@@ -304,10 +312,10 @@ class EffTable(NumTableNew):
                     prec = "%17d"
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
-                line += prec % info[0]/baseline_count + r" \%% \pm " + prec % info[1]/baseline_count + r" \%%"
+                line += prec % (info[0]/baseline_count) + r" \%% \pm " + prec % (info[1]/baseline_count) + r" \%%"
                 if len(info) == 4:
                     syst_string = "^{+"+prec+r" \%%}_{"+prec+r" \%%}"
-                    line += syst_string % (info[2]/baseline_count, info[3]/baseline_count)
+                    line += syst_string % ((info[2]/baseline_count), (info[3]/baseline_count))
                 line += " $"
             line += r" \\"
             lines.append(line)
@@ -319,13 +327,11 @@ class CountTable(NumTableNew):
 
     def create_block(self, sample_dict):
 
-        pprint.pprint(self.regions)
-
         lines = []
-        for s, s_func in sample_dict.iteritems():
+        for s, s_func in sample_dict:
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
-            for r, r_dict in self.regions.iteritems():
+            for r, r_dict in self.regions:
                 line += "&$ "
                 info = None
                 for key, val in r_dict.iteritems():

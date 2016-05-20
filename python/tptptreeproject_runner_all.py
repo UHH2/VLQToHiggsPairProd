@@ -343,9 +343,9 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
             sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights)
             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict)
-            sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights)
+            # sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights)
             sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights)
-            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights)
+            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights)
             return sys_tps
         return tmp
     return add_uncerts
@@ -407,58 +407,52 @@ def get_dict(hist_path, var):
         return res[var]
     return tmp
 
-table_block_signal = {
-    r'TT M0700 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-0700_thth' in w,
-    r'TT M0900 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-0900_thth' in w,
-    r'TT M1100 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-1100_thth' in w,
-    r'TT M1300 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-1300_thth' in w,
-    r'TT M1500 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-1500_thth' in w,
-    r'TT M1700 $\rightarrow$ tHtH' : lambda w: 'Integral___TpTp_M-1700_thth' in w,
-}
+table_block_signal = [
+    (r'TT M0700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w),
+    (r'TT M0900 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w),
+    (r'TT M1100 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w),
+    (r'TT M1300 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w),
+    (r'TT M1500 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w),
+    (r'TT M1700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w),
+]
 
-table_block_background = {
-    'ttbar' : lambda w: 'Integral___TTbar' in w,
-    'W+Jets' : lambda w: 'Integral___WJets' in w,
-    'Z+Jets' : lambda w: 'Integral___DYJets' in w,
-    'QCD' : lambda w: 'Integral___QCD' in w,
-    'Single t' : lambda w: 'Integral___SingleTop' in w,
-}
+table_block_background = [
+    ('ttbar', lambda w: 'Integral___TTbar' in w),
+    ('W+Jets', lambda w: 'Integral___WJets' in w),
+    ('Z+Jets', lambda w: 'Integral___DYJets' in w),
+    ('QCD', lambda w: 'Integral___QCD' in w),
+    ('Single t', lambda w: 'Integral___SingleTop' in w),
+]
 
-norm_factors = {
-    'TT M0700 tHtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 tHbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 tZtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 tZbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 bWbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0900 tHtH' : (1./common_plot.normfactors['TpTp_M-0900'])*lumi,
-    'TT M1100 tHtH' : (1./common_plot.normfactors['TpTp_M-1100'])*lumi,
-    'TT M1300 tHtH' : (1./common_plot.normfactors['TpTp_M-1300'])*lumi,
-    'TT M1500 tHtH' : (1./common_plot.normfactors['TpTp_M-1500'])*lumi,
-    'TT M1700 tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi,
-    'TT M0700 $\rightarrow$ tHtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 $\rightarrow$ tHbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 $\rightarrow$ tZtZ' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 $\rightarrow$ tZbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 $\rightarrow$ bWbW' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0700 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-0700'])*lumi,
-    'TT M0900 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-0900'])*lumi,
-    'TT M1100 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-1100'])*lumi,
-    'TT M1300 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-1300'])*lumi,
-    'TT M1500 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-1500'])*lumi,
-    'TT M1700 $\rightarrow$ tHtH' : (1./common_plot.normfactors['TpTp_M-1700'])*lumi
-}
+norm_factors = [
+    ('TT M0700', (1./common_plot.normfactors['TpTp_M-0700'])*lumi),
+    ('TT M0900', (1./common_plot.normfactors['TpTp_M-0900'])*lumi),
+    ('TT M1100', (1./common_plot.normfactors['TpTp_M-1100'])*lumi),
+    ('TT M1300', (1./common_plot.normfactors['TpTp_M-1300'])*lumi),
+    ('TT M1500', (1./common_plot.normfactors['TpTp_M-1500'])*lumi),
+    ('TT M1700', (1./common_plot.normfactors['TpTp_M-1700'])*lumi),
+]
 
-table_category_block = {
-    'Sideband' : get_dict('../HistogramsMerged/StackedAll/SidebandRegion' , 'ST'),
-    'H1B category' : get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST'),
-    'H2B category' : get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST'),
-} if varial.settings.style == 'PAS' else {
-    'Preselection' : get_dict('../HistogramsMerged/StackedAll/BaseLineSelection' , 'ST'),
-    'Sideband' : get_dict('../HistogramsMerged/StackedAll/SidebandRegion' , 'ST'),
-    'H1B category' : get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST'),
-    'H2B category' : get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST'),
-}
+table_category_block = [
+    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
+    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+] if varial.settings.style == 'PAS' else [
+    ('Preselection', get_dict('../HistogramsMerged/StackedAll/BaseLineSelection', 'ST')),
+    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST')),
+    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+]
+
+table_category_block_comp_fs = [
+    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
+    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+] if varial.settings.style == 'PAS' else [
+    ('Preselection', get_dict('../HistogramsMerged/StackedAll/BaseLineSelection', 'ST')),
+    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST')),
+    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+]
 
 def mk_merge_ch_tc(output_dir, name, uncerts):
     return varial.tools.ToolChain('MergeChannels', [
@@ -855,21 +849,26 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 CountTable([
                         table_block_signal,
                         table_block_background,
-                        {r'\textbf{Total Background}' : lambda w: 'Integral___bkg_sum' in w},
-                        {r'\textbf{data}' : lambda w: 'Integral___Run2015CD' in w},
+                        [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                        [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                     ],
                     table_category_block,
                     name='CountTable'
                     ),
-                # EffTable([
-                #         table_block_signal,
-                #         table_block_background,
-                #         {r'\textbf{Total Background}' : lambda w: 'Integral___bkg_sum' in w},
-                #         {r'\textbf{data}' : lambda w: 'Integral___Run2015CD' in w},
-                #     ],
-                #     table_category_block,
-                #     name='CountTable'
-                #     ),
+                EffTable([
+                        table_block_signal,
+                    ],
+                    table_category_block,
+                    norm_factors,
+                    name='EffTable'
+                    ),
+                EffTable([
+                        table_block_signal,
+                    ],
+                    table_category_block_comp_fs,
+                    norm_factors,
+                    name='EffTableCompFS'
+                    ),
                 ]),
             # varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
             #     varial.tools.HistoLoader(
