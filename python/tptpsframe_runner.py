@@ -44,10 +44,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    'jec_up'        : {'jecsmear_direction':'up'},
-    'jec_down'      : {'jecsmear_direction':'down'},
-    'jer_up'        : {'jersmear_direction':'up'},
-    'jer_down'      : {'jersmear_direction':'down'},
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -223,8 +223,9 @@ def mk_sframe_tools_and_plot(argv):
         varial.settings.sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
-        samples_to_plot = plot.samples_to_plot_pre
+        samples_to_plot = plot.less_samples_to_plot_pre
         varial.settings.fix_presel_sample = True
+        filter_func = lambda w: 'Nm1Selection' in w.in_file_path
         # varial.settings.merge_decay_channels = True
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
@@ -234,34 +235,41 @@ def mk_sframe_tools_and_plot(argv):
         varial.settings.sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
-        samples_to_plot = plot.samples_to_plot_only_th
+        samples_to_plot = plot.less_samples_to_plot_only_th
+        filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) and\
+                                all(f not in w.in_file_path for f in ['El45Tight', 'MuElComb']) and\
+                                any(f in w.in_file_path for f in ['MuonHists', 'ElectronHists', 'JetHists', 'SlimmedAk8Jets', 'EventHists', 'FirstAk8SoftDropSlimmed'])
         # varial.settings.merge_decay_channels = False
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
         exit(-1)
 
     def sf_batch_tc():
-        hadd = Hadd(
-            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-            basenames=basenames,
-            add_aliases_to_analysis=False,
-            samplename_func=plot.get_samplename,
-            # overwrite=False
-            )
-        plots = varial.tools.ToolChainParallel(
-            'Plots',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
-                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in samples_to_plot) and ('Baseline' in w.in_file_path))
-        )
-        plots_comp_fs = varial.tools.ToolChainParallel(
-            'PlotsCompFinalStates',
-            lazy_eval_tools_func=plot.mk_plots_and_cf(
-                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.samples_to_plot_final\
-                    if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0700', 'TpTp_M-1300', 'TpTp_M-1700']))\
-                    and ('Baseline' in w.in_file_path),
-                plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
-            )
-        )
+        plot_chain = []
+        # plot_chain += [Hadd(
+        #     src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+        #     basenames=basenames,
+        #     add_aliases_to_analysis=False,
+        #     samplename_func=plot.get_samplename,
+        #     # overwrite=False
+        # )]
+        plot_chain += [varial.tools.ToolChainParallel(
+                    'Plots',
+                    lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
+                        # filter_keyfunc=lambda w: 'Baseline' in w.in_file_path
+                        filter_keyfunc=filter_func
+                        )
+                )]
+        if options.selection == 'final':
+            plot_chain += [varial.tools.ToolChainParallel(
+                        'PlotsCompFinalStates',
+                        lazy_eval_tools_func=plot.mk_plots_and_cf(
+                            datasets=plot.less_samples,
+                            filter_keyfunc=lambda w: all(g not in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])\
+                                and filter_func(w),
+                            plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
+                        )
+                    )]
         tc_list = []
         for uncert in varial.settings.sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -275,16 +283,11 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    sf_batch,
-                    # varial.tools.ToolChain(
-                    #     'Plots',
-                    #     [
-                    #         hadd,
-                    #         plots,
-                    #         plots_comp_fs,
-                    #         # varial.tools.WebCreator(no_tool_check=True)
-                    #     ]
-                    # )
+                    # sf_batch,
+                    varial.tools.ToolChain(
+                        'Plots',
+                        plot_chain
+                    )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -359,4 +362,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

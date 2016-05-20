@@ -42,16 +42,20 @@ settings.defaults_BottomPlot['y_max'] = 2.
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
+if settings.style != 'AN':
+    settings.defaults_Legend.update({
+        'x_pos': 0.7,
+        'y_pos': 0.72,
+        'label_width': 0.3,
+        'label_height': 0.035,
+        'opt': 'f',
+        'opt_data': 'p',
+        'reverse': True,
+    })
+
 settings.defaults_Legend.update({
-    'x_pos': 0.7,
-    'y_pos': 0.72,
-    'label_width': 0.3,
-    'label_height': 0.035,
-    'opt': 'f',
-    'opt_data': 'p',
-    'reverse': True,
-    'sort_legend' : lambda w: 'TT ' in w[1]
-})
+        'sort_legend' : lambda w: 'TT ' in w[1]
+    })
 
 settings.stacking_order = [
     'TTbar',
@@ -62,11 +66,12 @@ settings.stacking_order = [
 ]
 
 settings.box_text_size = 0.03
-settings.canvas_size_x = 618
-settings.canvas_size_y = 494
-settings.root_style.SetPadTopMargin(0.125)
-settings.root_style.SetPadBottomMargin(0.125)
-settings.root_style.SetPadRightMargin(0.1)
+if settings.style != 'AN':
+    settings.canvas_size_x = 618
+    settings.canvas_size_y = 494
+    settings.root_style.SetPadTopMargin(0.125)
+    settings.root_style.SetPadBottomMargin(0.125)
+    settings.root_style.SetPadRightMargin(0.1)
 
 # from vlq_settings
 # settings.colors = {

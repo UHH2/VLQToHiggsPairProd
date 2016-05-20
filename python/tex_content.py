@@ -23,8 +23,8 @@ muchannel_final = 'Muon'
 elchannel_final = 'Electron'
 
 #########################################################
-#=========== PRESELECTION N MINUS 1 PLOTS ===============
-#=========== PRESELECTION CUTFLOW PLOTS =================
+############ PRESELECTION N MINUS 1 PLOTS ###############
+############ PRESELECTION CUTFLOW PLOTS #################
 #########################################################
 # p_nm1 = p_prebase + '%s/Nm1Selection/'
 
@@ -34,14 +34,14 @@ def get4sel(chan, base):
     return {
         chan+'_twoDeeCut': (
             p + 'twod_cut_hist_noIso_QCD_log' + ext,
-            p + 'twod_cut_hist_noIso_TpTp_M-1300_log' + ext,
+            p + 'twod_cut_hist_noIso_TpTp_M-1200_log' + ext,
             p + 'twod_cut_hist_noIso_px_log' + ext,
             p + 'twod_cut_hist_noIso_py_log' + ext,
         ),
         chan+'_firstblock': (            
             p + 'ST_lin' + ext,
             p + 'n_ak8_lin' + ext,
-            p + 'n_ak4_lin' + ext,
+            p + 'n_ak4_log' + ext,
             p + 'primary_lepton_pt_lin' + ext,
         ),
     }.items()
@@ -75,13 +75,13 @@ def mk_autoContentPreSelectionNm1(base, el_channel=None, mu_channel=None):
     )
 
 #########################################################
-#=========== FINAL SELECTION CONTROL PLOTS ==============
+############ FINAL SELECTION CONTROL PLOTS #############=
 #########################################################
 
 def get4obj(chan, base):
     histos_all = 'pt_lin', 'eta_lin', 'phi_lin', 'number_lin'
     histos_first = 'pt_1_lin', 'eta_1_lin', 'phi_1_lin', 'number_lin'
-    jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_lin'
+    jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_log'
     p = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
     return {
         chan+'_muons'     : map((p+'MuonHists/{}'+ext).format, histos_first),
@@ -96,7 +96,7 @@ def get4obj(chan, base):
             ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
         ),
         chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
-            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_log', 'MET_own_lin', )
+            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_flex_log', 'MET_own_lin', )
         ),
     }.items()
 
@@ -109,9 +109,10 @@ def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
         name='AutoContentObjects',
     )
 
-
 #########################################################
-#=========== FINAL SELECTION HIGGS TAG PLOTS ============
+####################### DEPRECATED ######################
+#########################################################
+############ FINAL SELECTION HIGGS TAG PLOTS ############
 #########################################################
 
 # --TODO: implement Nm1 Plots after higgs-tags! esp. add. b-tag plots, N(higgs tags plots)
@@ -143,7 +144,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 
 
 #########################################################
-#======== FINAL SELECTION HT REWEIGHTING PLOTS ==========
+######### FINAL SELECTION HT REWEIGHTING PLOTS #########=
 #########################################################
 
 # def get4sb(chan, base):
@@ -169,7 +170,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 #     )
 
 #########################################################
-#========= TREEPROJECT OUTPUT NO DATA PLOTS =============
+########## TREEPROJECT OUTPUT NO DATA PLOTS #############
 #########################################################
 
 # def getNoDataFinalVar(chan, base):
@@ -202,7 +203,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 #     )
 
 #########################################################
-#====== TREEPROJECT OUTPUT SYSTEMATIC CR PLOTS ==========
+####### TREEPROJECT OUTPUT SYSTEMATIC CR PLOTS ##########
 #########################################################
 
 def getSystCRPlots(chan, base):
@@ -251,7 +252,7 @@ def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name
     )
 
 #########################################################
-#== TREEPROJECT OUTPUT SYSTEMATIC COMPARISON PLOTS ======
+### TREEPROJECT OUTPUT SYSTEMATIC COMPARISON PLOTS ######
 #########################################################
 
 def getCompSystPlots(chan, base):
@@ -273,7 +274,7 @@ def mk_autoContentCompSystPlots(base, el_channel=None, mu_channel=None, name='Au
     )
 
 #########################################################
-#========= TREEPROJECT OUTPUT N MINUS 1 PLOTS ===========
+########## TREEPROJECT OUTPUT N MINUS 1 PLOTS ###########
 #########################################################
 
 def getFinalVar(chan, base):
@@ -311,7 +312,7 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, na
     )
 
 #########################################################
-#========= TREEPROJECT OUTPUT COMBINED CHANNELS =========
+########## TREEPROJECT OUTPUT COMBINED CHANNELS #########
 #########################################################
 
 def getCRSplitComb(base_split, base_comb, el_chan, mu_chan):
@@ -337,7 +338,7 @@ def mk_autoContentControlRegion(base_split, base_comb, el_chan, mu_chan, name='A
     )
 
 #########################################################
-#====== TREEPROJECT MORE OUTPUT COMBINED CHANNELS =======
+####### TREEPROJECT MORE OUTPUT COMBINED CHANNELS #######
 #########################################################
 
 def getFinalVarCombinedMore(base):
@@ -386,6 +387,12 @@ def getFinalVarCombinedMore(base):
             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
         ),
+        'baseline_control_plots_hhiggsvar_more': (
+            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
+            # os.path.join(base, 'BaseLineSelection/pt_log' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+        ),
         'nminus1_plots': (
             os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
@@ -401,7 +408,7 @@ def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalC
     )
 
 #########################################################
-#====== TREEPROJECT MORE OUTPUT COMBINED CHANNELS =======
+####### TREEPROJECT MORE OUTPUT COMBINED CHANNELS #######
 #########################################################
 
 def getHiggsVarCombinedMore(base):
@@ -422,8 +429,8 @@ def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegio
 
 
 #########################################################
-#============= TREEPROJECT OUTPUT LIMITS ================
-#=========== TREEPROJECT OUTPUT SYSTEMATICS =============
+############## TREEPROJECT OUTPUT LIMITS ################
+############ TREEPROJECT OUTPUT SYSTEMATICS #############
 #########################################################
 
 def getLimPlotsAll(base):
@@ -602,7 +609,7 @@ def mk_autoContentLimitsLarge(base, el_channel=None, mu_channel=None, name='Auto
 
 
 #########################################################
-#=========== TREEPROJECT OUTPUT EFF COUNTS ==============
+############ TREEPROJECT OUTPUT EFF COUNTS ##############
 #########################################################
 
 def getEffCount(filepath, mod=None):

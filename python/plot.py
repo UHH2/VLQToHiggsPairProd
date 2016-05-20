@@ -172,6 +172,7 @@ more_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in
 less_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in less_signals)
 
 samples_to_plot_pre = other_samples_to_plot + signals_to_plot
+less_samples_to_plot_pre = other_samples_to_plot + less_signals
 
 get_samplename = vlq_common.get_samplename
 
@@ -244,7 +245,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
         stack=True,
         input_result_path='../CutflowHistos',
         save_log_scale=True,
-        canvas_decorators=[varial.rendering.Legend]
+        canvas_decorators=common_plot.get_style()
     )
 
     # cutflow_normed_plots = varial.tools.Plotter(
@@ -271,9 +272,6 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 #=======FOR ALL PLOTS=======
 
 
-
-
-
 def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
@@ -281,10 +279,10 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
     wrps = gen.gen_make_th2_projections(wrps)
-    wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
-    # if varial.settings.merge_decay_channels:
-    #     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
-    #     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # # if varial.settings.merge_decay_channels:
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=False)
+        # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     # wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_other']), wrps)
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
@@ -332,8 +330,6 @@ def loader_hook_merge_regions(wrps):
         res = wrp.in_file_path.split('/')[0]
         if len(res.split('_')) > 1:
             res = res.split('_')[0]
-        else:
-            res = res[:-4]
         return res 
 
     def get_sys_info(wrp):
@@ -381,8 +377,8 @@ def loader_hook_merge_lep_channels(wrps):
 
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    # wrps = common_loader_hook(wrps)
-    # wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
+    wrps = common_loader_hook(wrps)
+    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     # wrps = gen.gen_make_th2_projections(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
@@ -476,8 +472,8 @@ def stack_setup_norm_sig(grps):
     return grps
 
 def stack_setup_norm_all_to_intgr(grps):
-    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
-    grps = common_plot.norm_stack_to_integral(grps)
+    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=False)
+    # grps = common_plot.norm_stack_to_integral(grps)
     return grps
 
 def plotter_factory_stack(**args):

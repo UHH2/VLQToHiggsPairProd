@@ -11,7 +11,7 @@ import varial.operations as op
 import varial.wrappers
 import varial.util as util
 
-from ROOT import THStack, TH2
+from ROOT import THStack, TH2, TLatex
 
 normfactors = {
     # 'TpTp' : 20.,
@@ -51,6 +51,7 @@ normfactors_wrong = {
 }
 
 norm_reg_dict = {
+    'Baseline' : 5,
     'BaseLineSelection' : 5,
     'SidebandRegion' : 5,
     'SignalRegion1b' : 5,
@@ -67,6 +68,7 @@ def get_style():
     else:
         return [varial.rendering.BottomPlotRatioSplitErr,
             varial.rendering.Legend,
+            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
             ]
 
 mod_dict = {
@@ -91,6 +93,13 @@ mod_dict = {
             # 'leg_pos',
             'set_leg_2_col' : True
             },
+    'mass_sj' : {'rebin' : 30,
+            'title' : 'groomed Higgs tag mass [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            # 'leg_pos',
+            # 'set_leg_2_col' : True
+            },
     'nomass_boost_1b_mass' : {'rebin' : 30,
             'title' : 'groomed type-I Higgs tag mass [GeV]',
             'y_min_gr_zero' : 0.4,
@@ -109,6 +118,13 @@ mod_dict = {
             },
     'primary_muon_pt' : {
             'title' : 'Primary Muon p_{T} [GeV]',
+            },
+    'pt' : {
+            'rebin' : 30,
+            'title' : 'p_{T} leading Higgs tag [GeV]',
+            'y_max_log_fct' : 1000.,
+            # 'set_leg_2_col' : True,
+            'y_max_fct' : 1.5,
             },
     'pt_ld_ak4_jet' : {
             'rebin' : 30,
@@ -144,6 +160,12 @@ mod_dict = {
             # 'y_max_log_fct' : 1000.,
             },
     'nobtag_boost_mass_nsjbtags' : {
+            'title' : 'N(subjet b tags)',
+            'y_max_log_fct' : 1000.,
+            # 'set_leg_2_col' : True
+            # 'y_max_log_fct' : 1000.,
+            },
+    'n_sjbtags_medium' : {
             'title' : 'N(subjet b tags)',
             'y_max_log_fct' : 1000.,
             # 'set_leg_2_col' : True
@@ -303,7 +325,10 @@ def norm_stack_to_integral(grps):
 def norm_to_fix_xsec(wrps):
     for w in wrps:
         if w.is_signal:
-            base_fct = next(norm_reg_dict[g] for g in norm_reg_dict.keys() if g in w.in_file_path)
+            base_fct = 20.
+            for r, f in norm_reg_dict.iteritems():
+                if r in w.in_file_path:
+                    base_fct = f
             mod_wrp_dict = mod_dict.get(w.name, None)
             if mod_wrp_dict:
                 mult_fct = mod_wrp_dict.get('scale', None)
@@ -354,9 +379,13 @@ def mod_legend_eff_counts(wrps):
         yield w
 
 def mod_legend_no_thth(wrps):
+    if varial.settings.style != 'AN':
+        arr = '#rightarrow tHtH'
+    else:
+        arr = ''
     for w in wrps:
         if w.legend.endswith('_thth') or w.legend.endswith(' tHtH'):
-            w.legend = w.legend[:-5] + '#rightarrow tHtH'
+            w.legend = w.legend[:-5] + arr
         yield w
 
 def mod_title(wrps):
@@ -538,16 +567,17 @@ def rebin_st_and_nak4(wrps):
         yield w
 
 def leg_2_col(rnd):
-    rnd.legend.SetNColumns(2)
-    n_entries = len(rnd.legend.GetListOfPrimitives())
-    x_pos   = rnd.dec_par.get('x_pos', varial.settings.defaults_Legend['x_pos'])
-    y_pos   = rnd.dec_par.get('y_pos', varial.settings.defaults_Legend['y_pos'])
-    width   = rnd.dec_par.get('label_width', varial.settings.defaults_Legend['label_width'])
-    height  = rnd.dec_par.get('label_height', varial.settings.defaults_Legend['label_height']) * n_entries / 2.
-    rnd.legend.SetX1(x_pos - 3*width/2.)
-    rnd.legend.SetY1(y_pos - 0.1*height)
-    rnd.legend.SetX2(x_pos + width/2.)
-    rnd.legend.SetY2(y_pos + 0.9*height)
+    if varial.settings.style != 'AN':
+        rnd.legend.SetNColumns(2)
+        n_entries = len(rnd.legend.GetListOfPrimitives())
+        x_pos   = rnd.dec_par.get('x_pos', varial.settings.defaults_Legend['x_pos'])
+        y_pos   = rnd.dec_par.get('y_pos', varial.settings.defaults_Legend['y_pos'])
+        width   = rnd.dec_par.get('label_width', varial.settings.defaults_Legend['label_width'])
+        height  = rnd.dec_par.get('label_height', varial.settings.defaults_Legend['label_height']) * n_entries / 2.
+        rnd.legend.SetX1(x_pos - 3*width/2.)
+        rnd.legend.SetY1(y_pos - 0.1*height)
+        rnd.legend.SetX2(x_pos + width/2.)
+        rnd.legend.SetY2(y_pos + 0.9*height)
 
 
 def mod_post_canv(grps):

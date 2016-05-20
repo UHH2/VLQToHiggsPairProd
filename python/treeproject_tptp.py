@@ -32,6 +32,8 @@ core_histos = {
     'primary_electron_pt'           : ('Primary Electron p_{T} [GeV]',             50, 0., 1200.),
     'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'noboost_mass_1b_pt'           : ('p_{T} type-I Higgs tag mass [GeV]',           100, 0., 2000.),
+    'noboost_mass_2b_pt'           : ('p_{T} type-II Higgs tag mass [GeV]',           100, 0., 2000.),
     'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
     'nomass_boost_2b_mass'           : ('groomed type-II Higgs tag mass [GeV]',           60, 0., 300.),
     'nobtag_boost_mass_nsjbtags'           : ('N sjbtags medium',           6, -0.5, 5.5),

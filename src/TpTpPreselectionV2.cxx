@@ -48,7 +48,7 @@ public:
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
         shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 45, 0, 4500, 800)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 15, -.5, 14.5, 3)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
