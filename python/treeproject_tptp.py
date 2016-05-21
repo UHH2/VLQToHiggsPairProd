@@ -160,7 +160,7 @@ sample_weights_def.update(dict((f, 'weight') for f in signal_samples))
 
 # import tptp_selections_treeproject as sel
 
-params = {
+all_params = {
     'histos': more_histos,
     'treename': 'AnalysisTree',
 }
@@ -187,12 +187,12 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='
     )
 
     return TreeProjector(
-        filenames, params, sec_sel_weight, 
+        filenames, all_params, sec_sel_weight, 
         # suppress_job_submission=True, 
         name=name,
     )
 
-def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data):
+def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
     jercs = list(
         (
@@ -209,7 +209,7 @@ def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no
                 (sample, list(f for f in glob.glob(pat) if (sample in f and 'Scale' not in f)))
                 for sample in samples
             ), 
-            sys_params, 
+            params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name=name,
@@ -218,7 +218,7 @@ def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     )
     # return tmp
 
-def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights, samples=samples_no_data):
+def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
     files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleUp_*.root')
     files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleDown_*.root')
@@ -235,14 +235,14 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
     return [
         TreeProjector(
             dict_up_files, 
-            sys_params, 
+            params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name='ttbar_scale__plus',
         ),
         TreeProjector(
             dict_down_files, 
-            sys_params, 
+            params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name='ttbar_scale__minus',
@@ -250,7 +250,7 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
     ]
     # return tmp
 
-def add_generic_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data):
+def add_generic_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -305,7 +305,7 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
     return list(
         TreeProjector(
             filenames,
-            sys_params, 
+            params, 
             ssw,
             add_aliases_to_analysis=False,
             name=name,
@@ -315,7 +315,7 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
     # return tmp
 
 
-def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data):
+def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -344,7 +344,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     sys_tps_pdf = list(
         TreeProjector(
             filenames, 
-            sys_params, 
+            params, 
             ssw,
             add_aliases_to_analysis=False,
             name=name,
@@ -363,7 +363,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     # return tmp
 
 
-def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data):
+def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -389,7 +389,7 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
     sys_tps_scalevar = list(
         TreeProjector(
             filenames, 
-            sys_params, 
+            params, 
             ssw,
             add_aliases_to_analysis=False,
             name=name,
@@ -407,7 +407,7 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
     # return tmp
 
 
-def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data):
+def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -425,7 +425,7 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
     return list(
         TreeProjector(
             filenames,
-            sys_params, 
+            params, 
             ssw,
             add_aliases_to_analysis=False,
             name=name,

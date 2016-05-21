@@ -258,6 +258,7 @@ def norm_to_int(wrps, use_bin_width=False):
         integr = w.histo.Integral(option)
         w.histo.Scale(1./integr)
         if not w.is_signal and not w.is_data:
+            w.sample = "Background"
             w.legend = "Background"
         yield w
 
