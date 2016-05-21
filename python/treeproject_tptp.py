@@ -17,6 +17,14 @@ st_only = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
 }
 
+st_plus_jets = {
+    'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
+    'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
+    'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
+    # 'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
+    'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
+}
+
 core_histos = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
@@ -30,13 +38,13 @@ core_histos = {
     'n_additional_btags_medium'     : ('N(b-tags)',                             8, -.5, 7.5),
     'primary_muon_pt'               : ('Primary Muon p_{T} [GeV]',                 50, 0., 1200.),
     'primary_electron_pt'           : ('Primary Electron p_{T} [GeV]',             50, 0., 1200.),
-    'n_higgs_tags_1b_med'           : ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
-    'n_higgs_tags_2b_med'           : ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med'           : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med'           : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
     'noboost_mass_1b_pt'           : ('p_{T} type-I Higgs tag mass [GeV]',           100, 0., 2000.),
     'noboost_mass_2b_pt'           : ('p_{T} type-II Higgs tag mass [GeV]',           100, 0., 2000.),
     'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
     'nomass_boost_2b_mass'           : ('groomed type-II Higgs tag mass [GeV]',           60, 0., 300.),
-    'nobtag_boost_mass_nsjbtags'           : ('N sjbtags medium',           6, -0.5, 5.5),
+    'nobtag_boost_mass_nsjbtags'           : ('N(subjet b-tags)',           6, -0.5, 5.5),
 }
 
 more_histos = {
@@ -108,6 +116,24 @@ signals = [
     'TpTp_M-1800',
 ]
 
+signals_important = [
+    'TpTp_M-0800',
+    'TpTp_M-1000',
+    'TpTp_M-1200',
+    'TpTp_M-1600',
+]
+
+signals_rest = [
+    'TpTp_M-0700',
+    'TpTp_M-0900',
+    'TpTp_M-1100',
+    'TpTp_M-1300',
+    'TpTp_M-1400',
+    'TpTp_M-1500',
+    'TpTp_M-1700',
+    'TpTp_M-1800',
+]
+
 final_states = [
     '_thth',
     '_thtz',
@@ -126,6 +152,9 @@ background_samples = [
 ]
 
 signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals))
+signal_samples_important = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals_important))
+signal_samples_rest = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals_rest))
+signal_samples_reduced = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in ['TpTp_M-0800', 'TpTp_M-1600']))
 
 samples_w_data = background_samples + signal_samples + ['Run2015CD']
 samples_no_data = background_samples + signal_samples
@@ -167,6 +196,11 @@ all_params = {
 
 st_only_params = {
     'histos': st_only,
+    'treename': 'AnalysisTree',
+}
+
+st_plus_jets_params = {
+    'histos': st_plus_jets,
     'treename': 'AnalysisTree',
 }
 
@@ -315,7 +349,7 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
     # return tmp
 
 
-def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=st_only_params):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -354,7 +388,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     # sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
     sys_tps_pdf += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev, sample=s, load_aliases=False) for s in samples)
     return [
-        # varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
+        varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
@@ -460,8 +494,8 @@ def mk_sys_tps(mk_sys_func, name='SysTreeProjectors'):
         iteration[0] += 1
         tp.iteration = 10 * iteration[0]  # batch tp's should not interfere
 
-    return varial.tools.ToolChain(
-        name, sys_tps
+    return varial.tools.ToolChainParallel(
+        name, sys_tps, n_workers=1
     )
 
 
@@ -542,9 +576,9 @@ class GenUncertUpDown(varial.tools.Tool):
                 category=lambda w: w.in_file_path.split('/')[0])
             sigs = dict((s.sample+'_'+s.name+'_'+s.category, s.histo) for s in sigs)
             for w in wrps:
-                if w.histo.Integral():
+                if w.histo.Integral() and w.sample+'_'+w.name+'_'+w.category in sigs.keys():
                     w.histo.Scale(sigs[w.sample+'_'+w.name+'_'+w.category].Integral() / w.histo.Integral())
-                yield w
+                    yield w
 
         from itertools import groupby
 

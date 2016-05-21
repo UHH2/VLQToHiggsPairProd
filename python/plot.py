@@ -506,7 +506,8 @@ def plotter_factory_uncerts(**args):
         kws['save_lin_log_scale'] = True
         # kws['save_name_func'] = lambda w: w.save_name
         kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
-        kws['canvas_decorators'] = [varial.rendering.BottomPlotRatioSplitErr,
+        kws['canvas_decorators'] = [
+            common_plot.BottomPlotUncertRatio,
             varial.rendering.Legend,
             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
             ]

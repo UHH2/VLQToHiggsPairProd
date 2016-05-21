@@ -346,7 +346,12 @@ def mod_legend(wrps):
         if w.is_data:
             w.legend = 'data'
         if w.legend.startswith('TpTp'):
-            w.legend = 'TT M'+w.legend[7:]
+            suf = ''
+            if any(f in w.legend for f in ['th', 'tz', 'bw']):
+                suf = w.legend[-5:]
+            mass = float(w.legend[7:11])/1000.
+            w.legend = 'T#bar{T} (%.1f TeV)' % mass
+            w.legend += suf
         if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
             w.legend = 'DY + jets'
         if w.legend == 'WJets':
@@ -354,23 +359,23 @@ def mod_legend(wrps):
         if w.legend == 'SingleTop':
             w.legend = 'Single t'
         if w.legend == 'TTbar':
-            w.legend = 'ttbar '
+            w.legend = 't#bar{t}'
         yield w
 
 def mod_legend_eff_counts(wrps):
     for w in wrps:
         if w.legend.endswith('_thth'):
-            w.legend = w.legend[:-5] + '#rightarrow tHtH'
+            w.legend = w.legend[:-5] + '#rightarrow tH#bar{t}H'
         if w.legend.endswith('_thtz'):
-            w.legend = w.legend[:-5] + '#rightarrow tHtZ'
+            w.legend = w.legend[:-5] + '#rightarrow tH#bar{t}Z'
         if w.legend.endswith('_thbw'):
-            w.legend = w.legend[:-5] + '#rightarrow tHbW'
+            w.legend = w.legend[:-5] + '#rightarrow tH#bar{b}W'
         if w.legend.endswith('_tztz'):
-            w.legend = w.legend[:-9] + '#rightarrow tZtZ'
+            w.legend = w.legend[:-9] + '#rightarrow tZ#bar{t}Z'
         if w.legend.endswith('_tzbw'):
-            w.legend = w.legend[:-9] + '#rightarrow tZbW'
+            w.legend = w.legend[:-9] + '#rightarrow tZ#bar{b}W'
         if w.legend.endswith('_bwbw'):
-            w.legend = w.legend[:-9] + '#rightarrow bWbW'
+            w.legend = w.legend[:-9] + '#rightarrow bW#bar{b}W'
         if w.legend.endswith('_thX'):
             w.legend = w.legend[:-4] + '#rightarrow tH+X'
         if w.legend.endswith('_other'):
@@ -631,4 +636,81 @@ def mod_no_2D_leg(grps):
         g.legend.SetY2(y_pos + height/2.)
         yield g
 
+class BottomPlotUncertRatio(varial.rendering.BottomPlot):
+    """Same as BottomPlotRatio, but split MC and data uncertainties."""
 
+    def check_renderers(self):
+        n_hists = len(self.renderers)
+
+        # if 'TH2' in self.renderers[0].type:
+        #     return False
+
+        if n_hists != 3:
+            raise RuntimeError('ERROR BottomPlotControlSignalRatio can only be created '
+                               'with exactly three histograms!')
+        return n_hists == 3
+
+    def define_bottom_hist(self):
+        def plus_minus_key(w):
+            if w.sys_info.endswith('__plus'):
+                return 2
+            elif w.sys_info.endswith('__minus'):
+                return 1
+            else:
+                return 0
+
+        rnds = self.renderers
+        rnds = sorted(rnds, key=plus_minus_key) 
+        nom_histo = rnds[0].histo.Clone()
+        div_hist_down = rnds[1].histo.Clone()
+        div_hist_up = rnds[2].histo.Clone()
+        div_hist_down.Add(nom_histo, -1)
+        div_hist_up.Add(nom_histo, -1)
+        div_hist_down.Divide(nom_histo)
+        div_hist_up.Divide(nom_histo)
+        for i in xrange(1, nom_histo.GetNbinsX() + 1):
+            if nom_histo.GetBinContent(i) == 0. and\
+             div_hist_up.GetBinContent(i) == 0. and\
+             div_hist_down.GetBinContent(i) == 0.:
+                nom_histo.SetBinError(i, 0.) 
+                div_hist_down.SetBinContent(i, 0.)
+                div_hist_up.SetBinContent(i, 0.)
+            if nom_histo.GetBinContent(i):
+                nom_histo.SetBinError(i, nom_histo.GetBinError(i)/nom_histo.GetBinContent(i)) 
+            nom_histo.SetBinContent(i, 0.) 
+            div_hist_down.SetBinError(i, 0.)
+            div_hist_up.SetBinError(i, 0.)
+        div_hist_down.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+        div_hist_up.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+        nom_histo.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+        varial.settings.stat_error_style(nom_histo)
+        div_hist_up.SetLineColor(varial.settings.colors['plus'])
+        div_hist_down.SetLineColor(varial.settings.colors['minus'])
+        if abs(div_hist_up.GetMaximum()) > abs(div_hist_down.GetMinimum()):
+            self.bottom_hist = div_hist_up
+            self.bottom_hist_sec = div_hist_down
+        else:
+            self.bottom_hist = div_hist_down
+            self.bottom_hist_sec = div_hist_up
+        self.bottom_hist_mc_err = nom_histo
+
+
+    def draw_full_plot(self):
+        """Draw mc error histo below data ratio."""
+        super(BottomPlotUncertRatio, self).draw_full_plot()
+        if not self.dec_par['renderers_check_ok']:
+            return
+        self.second_pad.cd()
+        n_bins = self.bottom_hist.GetNbinsX()
+        mini = min(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins)) - .1
+        maxi = max(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins)) + .1
+        y_range = max(abs(mini), abs(maxi))
+        y_min, y_max = -y_range, y_range
+        self.bottom_hist.GetYaxis().SetRangeUser(y_min, y_max)
+        self.bottom_hist.SetMarkerSize(0)
+        self.bottom_hist.GetYaxis().SetTitleSize(0.10)
+        self.bottom_hist_sec.SetMarkerSize(0)
+        self.bottom_hist.Draw('E0')
+        self.bottom_hist_sec.Draw('sameE0')
+        self.bottom_hist_mc_err.Draw('sameE2')
+        self.main_pad.cd()
