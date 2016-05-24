@@ -291,9 +291,9 @@ def getFinalVar(chan, base):
             p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_log' % chan + ext,
         ),
         chan+'_st': (
+            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
             p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
             p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
         ),
         chan+'_st_sigonly': (
             p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
@@ -379,6 +379,14 @@ def getFinalVarCombinedMore(base):
             os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
             os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
         ),
+        'baseline_control_plots_withHiggsTag': (
+            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+        ),
         'baseline_control_plots_ht_nak4': (
             os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
@@ -393,8 +401,13 @@ def getFinalVarCombinedMore(base):
             os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
         ),
-        'nminus1_plots': (
+        'nminus1_plots_withak4btag': (
             os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
+            os.path.join(base, 'BaseLineSelection/n_higgs_tags_2b_med_log' + ext),
+        ),
+        'nminus1_plots': (
+            # os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
             os.path.join(base, 'BaseLineSelection/n_higgs_tags_2b_med_log' + ext),
         ),

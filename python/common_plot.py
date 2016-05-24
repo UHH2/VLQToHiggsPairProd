@@ -79,6 +79,7 @@ mod_dict = {
             # 'set_leg_2_col' : True
             },
     'ST_rebin_flex' : {
+            'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             'set_leg_2_col' : True
             },
@@ -89,6 +90,7 @@ mod_dict = {
             'set_leg_2_col' : True
             },
     'HT_rebin_flex' : {
+            'title' : 'H_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
             'set_leg_2_col' : True

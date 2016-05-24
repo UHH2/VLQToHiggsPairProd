@@ -369,7 +369,7 @@ def add_all_without_weight_uncertainties(base_path, regions, weights, samples, p
         sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights, samples, params)
-        # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
+        sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
         return sys_tps
     return tmp
 
@@ -471,13 +471,19 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
 
     tc_tp = [
-            # treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
-            #     name='SysTreeProjectorsBkg'),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
             treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-                samples=treeproject_tptp.signal_samples, params=treeproject_tptp.st_only_params),
-                name='SysTreeProjectorsSig'),
+                samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsBkg'),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.signal_samples, params=treeproject_tptp.st_only_params),
+            #     name='SysTreeProjectorsSig'),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
+            #     name='SysTreeProjectorsSigImportant'),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.signal_samples_rest, params=treeproject_tptp.st_only_params),
+            #     name='SysTreeProjectorsSigRest'),
     ]
 
     sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors*' % name
@@ -735,26 +741,26 @@ def run_treeproject_and_plot(base_path, output_dir):
         [
             git.GitAdder(),
             varial.tools.ToolChainParallel('RunAnalysis', [
-                # make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
-                #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
+                    add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
                 # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
                 #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
                 #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
                 #     uncertainties=all_uncerts+['top_pt_reweight']
                 #     ),
-                make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
-                    add_uncert_func=add_all_with_weight_uncertainties({
-                        'ht_reweight' : {
-                            'TTbar' : ht_reweight_ttbar_no_top_pt_reweight,
-                            'WJets' : ht_reweight_wjets_no_top_pt_reweight
-                            }
-                        }),
-                    mod_sample_weights={
-                        'TTbar' : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
-                        'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
-                    },
-                    uncertainties=all_uncerts+['ht_reweight']
-                    ),
+                # make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
+                #     add_uncert_func=add_all_with_weight_uncertainties({
+                #         'ht_reweight' : {
+                #             'TTbar' : ht_reweight_ttbar_no_top_pt_reweight,
+                #             'WJets' : ht_reweight_wjets_no_top_pt_reweight
+                #             }
+                #         }),
+                #     mod_sample_weights={
+                #         'TTbar' : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
+                #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
+                #     },
+                #     uncertainties=all_uncerts+['ht_reweight']
+                #     ),
                 # make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
                 #     add_uncert_func=add_all_with_weight_uncertainties({
                 #         'ht_reweight' : {
