@@ -236,6 +236,12 @@ def getSystCRPlots(chan, base):
             p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
             p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
         ),
+        chan+'_pt_plus_njets': (
+            p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
+        ),
         chan+'_stht': (
             p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
             p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
@@ -289,6 +295,15 @@ def getFinalVar(chan, base):
         chan+'_Nm1htag': (
             p + 'SidebandRegion_%s/n_higgs_tags_1b_med_log' % chan + ext,
             p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_log' % chan + ext,
+        ),
+        chan+'_baseline_tag_plots': (
+            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
+            p + 'BaseLineSelection_%s/n_higgs_tags_1b_med_log' % chan + ext,
+            p + 'BaseLineSelection_%s/n_higgs_tags_2b_med_log' % chan + ext,
+        ),
+        chan+'_baseline_htag_plots': (
+            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
+            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
         ),
         chan+'_st': (
             p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,

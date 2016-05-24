@@ -183,7 +183,7 @@ def mk_limit_list_syst(sys_pat=None, list_region=all_regions):
 baseline_selection = [
     'gendecay_accept          == 1',
     'n_ak8                    >= 2',
-    'ST                       > 800'
+    'ST                       > 800',
 ]
 
 baseline_selection_btag = baseline_selection + [
@@ -198,28 +198,31 @@ comb_lep_chan = [
 
 sr2b_channel = baseline_selection_btag + [
     'n_higgs_tags_2b_med    >= 1',
+    'n_additional_btags_medium  >= 1',
 ]
 
 sr1b_channel = baseline_selection_btag + [
     'n_higgs_tags_2b_med    == 0',
     'n_higgs_tags_1b_med    >= 1',
+    'n_additional_btags_medium  >= 1',
 ]
 
 sb_channel = baseline_selection_btag + [
     'n_higgs_tags_1b_med        == 0',
-    'met                        >= 100'
+    'met                        >= 100',
+    'n_additional_btags_medium  >= 1',
 ]
 
 sb_ttbar_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  >= 2',
-    'met                        >= 100'
+    'met                        >= 100',
 ]
 
 sb_wjets_channel = baseline_selection + [
     'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  == 0',
-    'met                        >= 100'
+    'met                        >= 100',
 ]
 
 
@@ -239,8 +242,8 @@ mu_channel = [
 ]
 
 final_regions_all = (
-    ('BaseLineSelection_El45', baseline_selection_btag+el_channel),
-    ('BaseLineSelection_Mu45', baseline_selection_btag+mu_channel),
+    ('BaseLineSelection_El45', baseline_selection+el_channel),
+    ('BaseLineSelection_Mu45', baseline_selection+mu_channel),
     # ('SidebandTTJetsRegion_Comb', comb_lep_chan     + sb_ttbar_channel),
     # ('SidebandWPlusJetsRegion_Comb', comb_lep_chan  + sb_wjets_channel),
     ('SignalRegion2b_El45', sr2b_channel + el_channel),
@@ -256,8 +259,8 @@ final_regions_all = (
 )
 
 final_regions_syst = (
-    ('BaseLineSelection_El45', baseline_selection_btag+el_channel),
-    ('BaseLineSelection_Mu45', baseline_selection_btag+mu_channel),
+    ('BaseLineSelection_El45', baseline_selection+el_channel),
+    ('BaseLineSelection_Mu45', baseline_selection+mu_channel),
     # ('SidebandTTJetsRegion_Comb', comb_lep_chan     + sb_ttbar_channel),
     # ('SidebandWPlusJetsRegion_Comb', comb_lep_chan  + sb_wjets_channel),
     ('SignalRegion2b_El45', sr2b_channel + el_channel),
@@ -436,25 +439,26 @@ norm_factors = [
 ]
 
 table_category_block = [
-    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+    ('0H category', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
     ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
     ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
 ] if varial.settings.style == 'PAS' else [
     ('Preselection', get_dict('../HistogramsMerged/StackedAll/BaseLineSelection', 'ST')),
-    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+    ('0H category', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
     ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST')),
     ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
 ]
 
-table_category_block_comp_fs = [
-    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
-    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
-] if varial.settings.style == 'PAS' else [
-    ('Preselection', get_dict('../HistogramsMerged/StackedAll/BaseLineSelection', 'ST')),
-    ('Sideband', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
-    ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST')),
-    ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
-]
+# table_category_block_comp_fs = [
+#     ('0H category', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+#     ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
+#     ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+# ] if varial.settings.style == 'PAS' else [
+#     ('Preselection', get_dict('../HistogramsMerged/StackedAll/BaseLineSelection', 'ST')),
+#     ('0H category', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
+#     ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b' , 'ST')),
+#     ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
+# ]
 
 
 # varial.settings.lookup_aliases = False
@@ -471,19 +475,19 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
 
     tc_tp = [
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-                samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
-                name='SysTreeProjectorsBkg'),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
+            #     name='SysTreeProjectorsBkg'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.signal_samples, params=treeproject_tptp.st_only_params),
             #     name='SysTreeProjectorsSig'),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            #     samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
-            #     name='SysTreeProjectorsSigImportant'),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            #     samples=treeproject_tptp.signal_samples_rest, params=treeproject_tptp.st_only_params),
-            #     name='SysTreeProjectorsSigRest'),
+            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+                samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
+                name='SysTreeProjectorsSigImportant'),
+            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+                samples=treeproject_tptp.signal_samples_rest, params=treeproject_tptp.st_only_params),
+                name='SysTreeProjectorsSigRest'),
     ]
 
     sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors*' % name
@@ -615,7 +619,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     EffTable([
             #             table_block_signal,
             #         ],
-            #         table_category_block_comp_fs,
+            #         table_category_block,
             #         norm_factors,
             #         name='EffTableCompFS'
             #         ),
@@ -741,26 +745,26 @@ def run_treeproject_and_plot(base_path, output_dir):
         [
             git.GitAdder(),
             varial.tools.ToolChainParallel('RunAnalysis', [
-                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
-                    add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
+                # make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
+                #     add_uncert_func=add_all_without_weight_uncertainties, uncertainties=all_uncerts),
                 # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
                 #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
                 #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
                 #     uncertainties=all_uncerts+['top_pt_reweight']
                 #     ),
-                # make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
-                #     add_uncert_func=add_all_with_weight_uncertainties({
-                #         'ht_reweight' : {
-                #             'TTbar' : ht_reweight_ttbar_no_top_pt_reweight,
-                #             'WJets' : ht_reweight_wjets_no_top_pt_reweight
-                #             }
-                #         }),
-                #     mod_sample_weights={
-                #         'TTbar' : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
-                #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
-                #     },
-                #     uncertainties=all_uncerts+['ht_reweight']
-                #     ),
+                make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
+                    add_uncert_func=add_all_with_weight_uncertainties({
+                        'ht_reweight' : {
+                            'TTbar' : ht_reweight_ttbar_no_top_pt_reweight,
+                            'WJets' : ht_reweight_wjets_no_top_pt_reweight
+                            }
+                        }),
+                    mod_sample_weights={
+                        'TTbar' : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
+                        'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
+                    },
+                    uncertainties=all_uncerts+['ht_reweight']
+                    ),
                 # make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
                 #     add_uncert_func=add_all_with_weight_uncertainties({
                 #         'ht_reweight' : {
