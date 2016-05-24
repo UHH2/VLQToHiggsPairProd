@@ -419,13 +419,10 @@ class DrawLess700(util.Decorator):
         # self.dec_par['textbox'].SetNDC()
         # self.dec_par['textbox'].Draw()
 
-def mk_tc(dir_limit='Limits', mk_limit_list=None):
+def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=False):
 # setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
-    return varial.tools.ToolChain(dir_limit, 
-        [
-        mk_limit_chain(mk_limit_list=mk_limit_list),
-        varial.tools.ToolChain('LimitTriangle',[
+    triangle_tc = varial.tools.ToolChain('LimitTriangle',[
             TriangleMassLimitPlots(
                 limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
                 ),
@@ -446,9 +443,17 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
                 canvas_decorators=()
                 ),
             ]),
-        # varial.tools.WebCreator()
-        # varial.tools.CopyTool()
-        ])
+    if mk_triangle:
+        return varial.tools.ToolChain(dir_limit, 
+            [
+            mk_limit_chain(mk_limit_list=mk_limit_list),
+            triangle_tc
+            ])
+    else:
+        return varial.tools.ToolChain(dir_limit, 
+            [
+            mk_limit_chain(mk_limit_list=mk_limit_list),
+            ])
 
 # tc = varial.tools.ToolChain("", [tc])
 

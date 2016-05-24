@@ -258,6 +258,38 @@ def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name
     )
 
 #########################################################
+###### TREEPROJECT OUTPUT SYS. UNC. COMP. PLOTS #########
+#########################################################
+
+def getSystCompPlots(chan, process, base):
+    p = os.path.join(base, 'StackedAll/')
+    # print base
+    return {
+        chan+'_exp_comp': (
+            p + 'BaseLineSelection_%s/ST__%s__btag_bc_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__btag_udsg_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__jec_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+        ),
+        chan+'_theo_comp': (
+            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__top_pt_reweight_log' % (chan, process) + ext,
+            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+        ),
+    }.items()
+
+def mk_compSystematicPlots(base, process, el_channel=None, mu_channel=None, name='AutoContentSystematicCRPlots'):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    return varial.extensions.tex.TexContent(
+        dict(getSystCompPlots(muchannel, process, base) + getSystCompPlots(elchannel, process, base)),
+        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        name=name,
+    )
+
+#########################################################
 ### TREEPROJECT OUTPUT SYSTEMATIC COMPARISON PLOTS ######
 #########################################################
 
@@ -477,11 +509,11 @@ def getLimPlotsAll(base):
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
         ),
-        'Postfit-all': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
-        ),
+        # 'Postfit-all': (
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
+        # ),
     }
 
 def getSingleLimPlotLarge(base):
@@ -496,15 +528,15 @@ def getSingleLimPlotLarge(base):
         'triangle_lim_exp_box': (
             os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_exp_lin' + ext),
         ),
-        'Postfit-M0700': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
-        ),
-        'Postfit-M1200': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
-        ),
-        'Postfit-M1700': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
-        ),
+        # 'Postfit-M0700': (
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
+        # ),
+        # 'Postfit-M1200': (
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
+        # ),
+        # 'Postfit-M1700': (
+        #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
+        # ),
     }
 
 def getLimPlotsSingle(base, prefix=''):
@@ -516,7 +548,35 @@ def getLimPlotsSingle(base, prefix=''):
     }
     return tmp_dict
 
+def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix=''):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    lim_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
+    return varial.extensions.tex.TexContent(
+        lim_dict,
+        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        name=name,
+    )
+
+def mk_autoContentLimitsLarge(base, el_channel=None, mu_channel=None, name='AutoContentLimits'):
+    muchannel = mu_channel or mu_channel_def
+    elchannel = el_channel or el_channel_def
+    lim_dict = getSingleLimPlotLarge(base)
+    return varial.extensions.tex.TexContent(
+        lim_dict,
+        include_str=r'\includegraphics[width=0.6\textwidth]{%s}',
+        name=name,
+    )
+
 import varial.extensions.limits as limits
+
+def getPostfitLarge(base, mass_points):
+    # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
+    return dict(
+        ('Postfit-%s' % m, (
+                 os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_%s/PostFit/cnv_post_fit_TpTp_M-0700' % m + ext),
+             )) for m in mass_points
+        )
 
 def my_mod_sys_table(table):
     def find_column_string(line, name):
@@ -578,7 +638,7 @@ def find_sig_line(table, signal_ind):
 
 
 def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
-    p_lim = os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/{0}/ThetaLimit')
+    p_lim = os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_{0}/ThetaLimit')
     new_files = []
     # if mod:
     for region in ['SidebandRegion', 'SignalRegion1b', 'SignalRegion2b']:
@@ -610,27 +670,15 @@ def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
             new_files[2],
     }.items()
 
-def mk_autoContentLimits(base, el_channel=None, mu_channel=None, name='AutoContentLimits', prefix='', mass_points=None, get_sys_tab=True):
+def mk_autoContentSysTabs(base, el_channel=None, mu_channel=None, name='AutoContentSysTabs', prefix='', mass_points=None):
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
-    lim_dict = getLimPlotsSingle(base, prefix) if prefix else getLimPlotsAll(base)
-    tab_dict = dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)) if get_sys_tab else {}
+    lim_dict = getPostfitLarge(base, mass_points)
+    tab_dict = dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points))
     return varial.extensions.tex.TexContent(
         lim_dict,
         tab_dict,
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
-        name=name,
-    )
-
-def mk_autoContentLimitsLarge(base, el_channel=None, mu_channel=None, name='AutoContentLimits', mass_points=None, get_sys_tab=True):
-    muchannel = mu_channel or mu_channel_def
-    elchannel = el_channel or el_channel_def
-    lim_dict = getSingleLimPlotLarge(base)
-    tab_dict = dict(getSysTab(muchannel, base, mass_points) + getSysTab(elchannel, base, mass_points)) if get_sys_tab else {}
-    return varial.extensions.tex.TexContent(
-        lim_dict,
-        tab_dict,
-        include_str=r'\includegraphics[width=0.6\textwidth]{%s}',
         name=name,
     )
 
