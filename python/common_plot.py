@@ -72,7 +72,7 @@ def get_style():
             ]
 
 mod_dict = {
-    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6000.],
+    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
@@ -83,7 +83,7 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             'set_leg_2_col' : True
             },
-    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6000.],
+    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'H_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
@@ -648,6 +648,7 @@ class BottomPlotUncertRatio(varial.rendering.BottomPlot):
         #     return False
 
         if n_hists != 3:
+            print self.renderers
             raise RuntimeError('ERROR BottomPlotControlSignalRatio can only be created '
                                'with exactly three histograms!')
         return n_hists == 3

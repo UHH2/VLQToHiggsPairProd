@@ -126,7 +126,9 @@ signals_important = [
 signals_rest = [
     'TpTp_M-0700',
     'TpTp_M-0900',
+    'TpTp_M-1000',
     'TpTp_M-1100',
+    'TpTp_M-1200',
     'TpTp_M-1300',
     'TpTp_M-1400',
     'TpTp_M-1500',
@@ -192,21 +194,25 @@ sample_weights_def.update(dict((f, 'weight') for f in signal_samples))
 all_params = {
     'histos': more_histos,
     'treename': 'AnalysisTree',
+    'nm1' : False,
 }
 
 st_only_params = {
     'histos': st_only,
     'treename': 'AnalysisTree',
+    'nm1' : False,
 }
 
 st_plus_jets_params = {
     'histos': st_plus_jets,
     'treename': 'AnalysisTree',
+    'nm1' : False,
 }
 
 sys_params = {
     'histos': core_histos,
     'treename': 'AnalysisTree',
+    'nm1' : False,
 }
 
 
@@ -515,14 +521,18 @@ class GenUncertHistoSquash(varial.tools.Tool):
     def run(self):
         pdf_paths = glob.glob(self.cwd + '../*_weight*')
         # pdf_paths.remove(self.cwd + '../'+self.name)
-        uncert_histos = (
-            w
-            for p in pdf_paths
-            for w in varial.diskio.bulk_load_histograms(
-                        # varial.gen.dir_content(p+'/%s'%self.rel_path))
-                        varial.gen.dir_content(p+'/%s'%self.rel_path, self.load_aliases))
-                        # varial.gen.dir_content(p+'/%s.root'%self.sample))
-        )
+        try:
+            uncert_histos = (
+                w
+                for p in pdf_paths
+                for w in varial.diskio.bulk_load_histograms(
+                            # varial.gen.dir_content(p+'/%s'%self.rel_path))
+                            varial.gen.dir_content(p+'/%s'%self.rel_path, self.load_aliases))
+                            # varial.gen.dir_content(p+'/%s.root'%self.sample))
+            )
+        except RuntimeError as e:
+            self.message(e)
+            return
         uncert_histos = varial.gen.gen_add_wrp_info(uncert_histos, 
             category=lambda w: w.in_file_path.split('/')[0],
             # variable=lambda w: w.in_file_path.split('/')[1])

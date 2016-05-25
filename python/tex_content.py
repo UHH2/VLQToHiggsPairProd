@@ -278,6 +278,17 @@ def getSystCompPlots(chan, process, base):
             p + 'BaseLineSelection_%s/ST__%s__top_pt_reweight_log' % (chan, process) + ext,
             # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
         ),
+        chan+'_theo_no_top_pt_comp': (
+            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
+            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+        ),
+        chan+'_theo_no_reweight_comp': (
+            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+        ),
     }.items()
 
 def mk_compSystematicPlots(base, process, el_channel=None, mu_channel=None, name='AutoContentSystematicCRPlots'):

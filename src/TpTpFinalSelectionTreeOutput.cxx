@@ -238,10 +238,17 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // 9.910819e-01 = 0.9910819 as calculated with TpTpTTbarWeight.cxx
     // In the end, the overall weight that you apply thus needs to be multiplied by 1./0.9919819
 
-    if (version.find("TTbar") != string::npos || version.find("TTjets") != string::npos) {
+    if (version.find("TT") != string::npos) {
         other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen"));
         other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.268084, -0.000390272, 3000., "weight_htrew_tt"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
     }
+    if (version.find("WJets") != string::npos) {
+        other_modules.emplace_back(new HTReweighting(ctx, 1.146709, -0.00026451, 3000., "weight_htrew_wjets"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.201648, -0.000250984, 3000., "weight_htrew_wjets_toppt"));
+    }
+
 
 
     auto ak8_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK8PFchs_MC 
