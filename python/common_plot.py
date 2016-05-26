@@ -705,9 +705,11 @@ class BottomPlotUncertRatio(varial.rendering.BottomPlot):
             return
         self.second_pad.cd()
         n_bins = self.bottom_hist.GetNbinsX()
-        mini = min(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins)) - .1
-        maxi = max(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins)) + .1
+        mini = min(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins))
+        maxi = max(self.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins))
         y_range = max(abs(mini), abs(maxi))
+        y_range = min(y_range, 2.)
+        y_range += .1*y_range
         y_min, y_max = -y_range, y_range
         self.bottom_hist.GetYaxis().SetRangeUser(y_min, y_max)
         self.bottom_hist.SetMarkerSize(0)

@@ -47,6 +47,8 @@
 <!ENTITY Data_SingleEle SYSTEM     "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleEle_Run2015CD.xml">
 
 <!ENTITY MC_TTbar SYSTEM            "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.TTbar.xml">
+<!ENTITY MC_TTbar_ScaleUp SYSTEM            "../NewSamples-76X-v1/Preselection_onlyTTbarScaleVar/Xml-Files/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleUp.xml">
+<!ENTITY MC_TTbar_ScaleDown SYSTEM            "../NewSamples-76X-v1/Preselection_onlyTTbarScaleVar/Xml-Files/uhh2.AnalysisModuleRunner.MC.TTbar_ScaleDown.xml">
 
 <!ENTITY MC_WJets_LNu_HT100To200   SYSTEM  "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT100To200.xml">
 <!ENTITY MC_WJets_LNu_HT200To400   SYSTEM  "../NewSamples-76X-v1/Preselection-v9/Xml-files/uhh2.AnalysisModuleRunner.MC.WJets_LNu_HT200To400.xml">
@@ -407,13 +409,13 @@
         &MC_WJets_LNu_HT1200To2500;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <InputData Lumi="6475422" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT2500ToInf" Cacheable="True">
         &MC_WJets_LNu_HT2500ToInf;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -421,13 +423,13 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
     
-    <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="True">
+    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="True">
         &MC_TTbar_ScaleUp;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -512,7 +514,7 @@
             <Item Name="mu_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
 
-            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelecion-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
+            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelection-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
             <Item Name="BTagCalibration" Value="&SOURCEDIR;../common/data/CSVv2.csv" />
 
             <!-- specific to analysis -->

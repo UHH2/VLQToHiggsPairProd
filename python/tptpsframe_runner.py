@@ -44,10 +44,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
+    'jec_up'        : {'jecsmear_direction':'up'},
+    'jec_down'      : {'jecsmear_direction':'down'},
+    'jer_up'        : {'jersmear_direction':'up'},
+    'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -236,9 +236,9 @@ def mk_sframe_tools_and_plot(argv):
         basenames = plot.basenames_final
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_only_th
-        filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) and\
-                                all(f not in w.in_file_path for f in ['El45Tight', 'MuElComb']) and\
-                                any(f in w.in_file_path for f in ['MuonHists', 'ElectronHists', 'JetHists', 'SlimmedAk8Jets', 'EventHists', 'FirstAk8SoftDropSlimmed'])
+        filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) #and\
+                                # all(f not in w.in_file_path for f in ['El45Tight', 'MuElComb']) and\
+                                # any(f in w.in_file_path for f in ['MuonHists', 'ElectronHists', 'JetHists', 'SlimmedAk8Jets', 'EventHists', 'FirstAk8SoftDropSlimmed'])
         # varial.settings.merge_decay_channels = False
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
@@ -246,13 +246,13 @@ def mk_sframe_tools_and_plot(argv):
 
     def sf_batch_tc():
         plot_chain = []
-        # plot_chain += [Hadd(
-        #     src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
-        #     basenames=basenames,
-        #     add_aliases_to_analysis=False,
-        #     samplename_func=plot.get_samplename,
-        #     # overwrite=False
-        # )]
+        plot_chain += [Hadd(
+            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+            basenames=basenames,
+            add_aliases_to_analysis=False,
+            samplename_func=plot.get_samplename,
+            # overwrite=False
+        )]
         plot_chain += [varial.tools.ToolChainParallel(
                     'Plots',
                     lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
@@ -283,11 +283,11 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
-                    varial.tools.ToolChain(
-                        'Plots',
-                        plot_chain
-                    )
+                    sf_batch,
+                    # varial.tools.ToolChain(
+                    #     'Plots',
+                    #     plot_chain
+                    # )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -352,7 +352,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_final(options.outputdir+tex_base),
+                # mk_tex_tc_final(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
@@ -362,4 +362,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
