@@ -20,7 +20,7 @@ from varial.extensions import git, limits
 
 
 varial.settings.max_num_processes = 24
-varial.settings.max_open_root_files = 5000
+varial.settings.max_open_root_files = 200
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -436,6 +436,7 @@ def add_only_weight_uncertainties(dict_weight_uncerts):
 
 def add_all_without_weight_uncertainties(base_path, regions, weights, samples, params):
     pdf_params = params if params == treeproject_tptp.st_only_params else treeproject_tptp.st_plus_jets_params
+    print pdf_params
     def tmp():
         sys_tps = []
         sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
@@ -466,10 +467,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
 
     tc_tp = [
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-                samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
-                name='SysTreeProjectorsBkg'),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
+            #     name='SysTreeProjectorsBkg'),
             treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
                 samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
                 name='SysTreeProjectorsSigImportant'),
@@ -741,8 +742,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('PlotAndSens', lazy_eval_tools_func=mk_tc_plot_sens, n_workers=1),
-            varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
+            # varial.tools.ToolChainParallel('PlotAndSens', lazy_eval_tools_func=mk_tc_plot_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', tc_tex_pas, n_workers=1),
 
         ])
@@ -770,11 +771,6 @@ def run_treeproject_and_plot(base_path, output_dir):
                     add_uncert_func=add_all_without_weight_uncertainties,
                     # uncertainties=all_uncerts
                     ),
-                # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
-                #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-                #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-                #     uncertainties=all_uncerts+['top_pt_reweight']
-                #     ),
                 make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
                     add_uncert_func=add_all_with_weight_uncertainties({
                         'ht_reweight' : {
@@ -789,6 +785,11 @@ def run_treeproject_and_plot(base_path, output_dir):
                     },
                     # uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
                     ),
+                # # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
+                # #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+                # #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+                # #     uncertainties=all_uncerts+['top_pt_reweight']
+                # #     ),
 
                 ], n_workers=1),
             varial.tools.WebCreator(),
