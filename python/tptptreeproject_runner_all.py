@@ -20,7 +20,7 @@ from varial.extensions import git, limits
 
 
 varial.settings.max_num_processes = 24
-varial.settings.max_open_root_files = 200
+varial.settings.max_open_root_files = 1000
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -54,7 +54,7 @@ import treeproject_tptp
 import sensitivity
 import common_sensitivity
 import tex_content
-from get_eff_count import EffNumTable, CountTable, EffTable
+from get_eff_count import CountTable, EffTable # EffNumTable, 
 
 varial.settings.plot_obs = True
 varial.settings.asymptotic = False
@@ -328,12 +328,12 @@ def get_dict(hist_path, var):
     return tmp
 
 table_block_signal = [
-    (r'TT M0700 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (0.7 TeV)' in w),
-    (r'TT M0900 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (0.9 TeV)' in w),
-    (r'TT M1100 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (1.1 TeV)' in w),
-    (r'TT M1300 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (1.3 TeV)' in w),
-    (r'TT M1500 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (1.5 TeV)' in w),
-    (r'TT M1700 $\rightarrow$ tHtH', lambda w: 'Integral___T#bar{T} (1.7 TeV)' in w),
+    (r'TT M0700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700' in w),
+    (r'TT M0900 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900' in w),
+    (r'TT M1100 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100' in w),
+    (r'TT M1300 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300' in w),
+    (r'TT M1500 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500' in w),
+    (r'TT M1700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700' in w),
 ]
 
 table_block_background = [
@@ -436,7 +436,6 @@ def add_only_weight_uncertainties(dict_weight_uncerts):
 
 def add_all_without_weight_uncertainties(base_path, regions, weights, samples, params):
     pdf_params = params if params == treeproject_tptp.st_only_params else treeproject_tptp.st_plus_jets_params
-    print pdf_params
     def tmp():
         sys_tps = []
         sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
@@ -471,9 +470,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectorsBkg'),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-                samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
-                name='SysTreeProjectorsSigImportant'),
+            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+            #     samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
+            #     name='SysTreeProjectorsSigImportant'),
             treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
                 samples=treeproject_tptp.signal_samples_rest, params=treeproject_tptp.st_only_params),
                 name='SysTreeProjectorsSigRest'),
@@ -491,10 +490,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         sys_list = set(sys.split('__')[0] for d in glob.glob(sys_path) for sys in os.listdir(d))
         uncerts = uncertainties or sys_list
         return [
-                sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-                    list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                    all_regions
-                )),
+                # sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
+                #     list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                #     all_regions
+                # )),
                 # # sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
                 # #     list(sys_path+'/%s*/*.root'% i for i in uncerts),
                 # #     ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45']
@@ -657,7 +656,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoContentSignalControlRegionCombinedMore(path+'/MergeChannelsMoreHists/HistogramsMergedNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
             tex_content.mk_autoContentLimits(path, 'El45', 'Mu45', 'LimitPlots_'+name),
             tex_content.mk_autoContentLimitsLarge(path, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
-            tex_content.mk_autoContentSysTabs(path, 'El45', 'Mu45', 'SysTabs_'+name, mass_points=['M-0800', 'M-1200', 'M-1600']),
+            # tex_content.mk_autoContentSysTabs(path, 'El45', 'Mu45', 'SysTabs_'+name, mass_points=['M-0800', 'M-1200', 'M-1600']),
             ######## TABLES ########
             # tex_content.mk_autoEffCount(path+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
             # tex_content.mk_autoEffCount(path+'/MergeChannels/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
@@ -785,11 +784,11 @@ def run_treeproject_and_plot(base_path, output_dir):
                     },
                     # uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
                     ),
-                # # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
-                # #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-                # #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-                # #     uncertainties=all_uncerts+['top_pt_reweight']
-                # #     ),
+                make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
+                    add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+                    mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+                    # uncertainties=all_uncerts+['top_pt_reweight']
+                    ),
 
                 ], n_workers=1),
             varial.tools.WebCreator(),

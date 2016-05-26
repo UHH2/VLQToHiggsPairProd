@@ -126,9 +126,9 @@ signals_important = [
 signals_rest = [
     'TpTp_M-0700',
     'TpTp_M-0900',
-    'TpTp_M-1000',
+    # 'TpTp_M-1000',
     'TpTp_M-1100',
-    'TpTp_M-1200',
+    # 'TpTp_M-1200',
     'TpTp_M-1300',
     'TpTp_M-1400',
     'TpTp_M-1500',
