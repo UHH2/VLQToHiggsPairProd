@@ -73,7 +73,8 @@ def get_style():
             ]
 
 mod_dict = {
-    'ST' : {'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
+    'ST' : {
+            'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
@@ -84,9 +85,17 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'copy_for_log' : True,
-            'set_leg_2_col_log' : True
+            'set_leg_1_col_log' : {
+                'x_pos': 0.7,
+                'y_pos': 0.75,
+                'label_width': 0.25,
+                'label_height': 0.027,
+                'box_text_size' : 0.025
+                }
+            # 'set_leg_2_col_log' : True
             },
-    'HT' : {'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
+    'HT' : {
+            'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'H_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
@@ -98,30 +107,35 @@ mod_dict = {
             # 'leg_pos',
             'set_leg_2_col_log' : True
             },
-    'mass_sj' : {'rebin' : 30,
+    'mass_sj' : {
+            'rebin' : 30,
             'title' : 'groomed Higgs tag mass [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
             # 'set_leg_2_col_log' : True
             },
-    'nomass_boost_1b_mass' : {'rebin' : 30,
+    'nomass_boost_1b_mass' : {
+            'rebin' : 30,
             'title' : 'groomed type-I Higgs tag mass [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             # 'leg_pos',
             # 'set_leg_2_col_log' : True
             },
-    'nomass_boost_2b_mass' : {'rebin' : 15,
+    'nomass_boost_2b_mass' : {
+            'rebin' : 15,
             'title' : 'groomed type-II Higgs tag mass [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.2
             },
     'primary_electron_pt' : {
+            'rebin' : 25,
             'title' : 'Primary Electron p_{T} [GeV]',
             },
     'primary_muon_pt' : {
+            'rebin' : 25,
             'title' : 'Primary Muon p_{T} [GeV]',
             },
     'pt' : {
@@ -144,6 +158,23 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             # 'set_leg_2_col_log' : True,
             'y_max_fct' : 1.5,
+            'y_max_log_fct' : 1000.,
+            'set_leg_1_col_lin' : {
+                'x_pos': 0.7,
+                'y_pos': 0.75,
+                'label_width': 0.25,
+                'label_height': 0.027,
+                'box_text_size' : 0.025
+                },
+            'set_leg_1_col_log' : {
+                'x_pos': 0.7,
+                'y_pos': 0.75,
+                'label_width': 0.25,
+                'label_height': 0.027,
+                'box_text_size' : 0.025
+                },
+            'copy_for_log' : True,
+            'y_min_gr_zero' : 0.1,
             },
     'n_additional_btags_medium' : {
             'title' : 'N(AK4 b tags)',
@@ -577,18 +608,30 @@ def rebin_st_and_nak4(wrps):
                 w = op.rebin_nbins_max(w, 60)
         yield w
 
-def leg_2_col(rnd, dict_leg=varial.settings.defaults_Legend):
+# def leg_2_col(rnd, dict_leg=varial.settings.defaults_Legend):
+#     if varial.settings.style != 'AN':
+#         dict_leg.update({'n_col' : 2})
+#         leg_mod(rnd, dict_leg)
+
+def leg_mod(rnd, dict_leg=varial.settings.defaults_Legend, n_col=1):
     if varial.settings.style != 'AN':
-        rnd.legend.SetNColumns(2)
+        rnd.legend.SetNColumns(n_col)
+        rnd.legend.SetTextSize(dict_leg.get('box_text_size', varial.settings.box_text_size))
         n_entries = len(rnd.legend.GetListOfPrimitives())
         x_pos   = dict_leg['x_pos']
         y_pos   = dict_leg['y_pos']
         width   = dict_leg['label_width']
-        height  = dict_leg['label_height'] * n_entries / 2.
-        rnd.legend.SetX1(x_pos - 3*width/2.)
-        rnd.legend.SetY1(y_pos - 0.1*height)
-        rnd.legend.SetX2(x_pos + width/2.)
-        rnd.legend.SetY2(y_pos + 0.9*height)
+        height  = dict_leg['label_height'] * n_entries / float(n_col)
+        if n_col ==  2:
+            rnd.legend.SetX1(x_pos - 3*width/2.)
+            rnd.legend.SetY1(y_pos - 0.1*height)
+            rnd.legend.SetX2(x_pos + width/2.)
+            rnd.legend.SetY2(y_pos + 0.9*height)
+        else:
+            rnd.legend.SetX1(x_pos - width/2.)
+            rnd.legend.SetY1(y_pos - height/2.)
+            rnd.legend.SetX2(x_pos + width/2.)
+            rnd.legend.SetY2(y_pos + height/2.)
 
 default_canv_attr = {
     'y_min_gr_zero' : 1e-9,
@@ -596,38 +639,50 @@ default_canv_attr = {
     'y_max_log_fct' : 1.,
     'set_leg_2_col_lin' : False,
     'set_leg_2_col_log' : False,
+    'set_leg_1_col_lin' : False,
+    'set_leg_1_col_log' : False,
 }
 
-def mod_post_canv_new(grps):
-    for g in grps:
-        g.renderers[0].name += '_'+g.renderers[0].scale
-        _, y_max = g.y_bounds
-        canv_attr = dict(default_canv_attr)
-        mod_wrp_dict = mod_dict.get(g.name, None)
-        if not any(w.is_data for w in g.renderers):
-            g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
-        if mod_wrp_dict:
-            canv_attr.update(mod_wrp_dict)
-        if g.renderers[0].scale == 'lin':
-            g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
-            if canv_attr['set_leg_2_col_lin']:
-                if isinstance(canv_attr['set_leg_2_col_lin'], dict):
-                    leg_2_col(g, canv_attr['set_leg_2_col_lin'])
-                else:
-                    leg_2_col(g)
-        elif g.renderers[0].scale == 'log':
-            if isinstance(g.first_drawn, TH2):
-                g.main_pad.SetLogz(1)
-            else:
-                g.main_pad.SetLogy(1)
-            g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
-            g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
-            if canv_attr['set_leg_2_col_log']:
-                if isinstance(canv_attr['set_leg_2_col_log'], dict):
-                    leg_2_col(g, canv_attr['set_leg_2_col_log'])
-                else:
-                    leg_2_col(g)
-        yield g
+# def mod_post_canv_new(grps):
+#     for g in grps:
+#         g.renderers[0].name += '_'+g.renderers[0].scale
+#         _, y_max = g.y_bounds
+#         canv_attr = dict(default_canv_attr)
+#         mod_wrp_dict = mod_dict.get(g.name, None)
+#         if not any(w.is_data for w in g.renderers):
+#             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
+#         if mod_wrp_dict:
+#             canv_attr.update(mod_wrp_dict)
+#         if g.renderers[0].scale == 'lin':
+#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
+#             if canv_attr['set_leg_2_col_lin']:
+#                 if isinstance(canv_attr['set_leg_2_col_lin'], dict):
+#                     leg_mod(g, canv_attr['set_leg_2_col_lin'], n_col=2)
+#                 else:
+#                     leg_mod(g, n_col=2)
+#             if canv_attr['set_leg_1_col_lin']:
+#                 if isinstance(canv_attr['set_leg_1_col_lin'], dict):
+#                     leg_mod(g, canv_attr['set_leg_1_col_lin'])
+#                 else:
+#                     leg_mod(g)
+#         elif g.renderers[0].scale == 'log':
+#             if isinstance(g.first_drawn, TH2):
+#                 g.main_pad.SetLogz(1)
+#             else:
+#                 g.main_pad.SetLogy(1)
+#             g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
+#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
+#             if canv_attr['set_leg_2_col_log']:
+#                 if isinstance(canv_attr['set_leg_2_col_log'], dict):
+#                     leg_mod(g, canv_attr['set_leg_2_col_log'], n_col=2)
+#                 else:
+#                     leg_mod(g, n_col=2)
+#             if canv_attr['set_leg_1_col_log']:
+#                 if isinstance(canv_attr['set_leg_1_col_log'], dict):
+#                     leg_mod(g, canv_attr['set_leg_1_col_log'])
+#                 else:
+#                     leg_mod(g)
+#         yield g
 
 
 def mod_post_canv(grps):
@@ -639,6 +694,7 @@ def mod_post_canv(grps):
         mod_wrp_dict = mod_dict.get(g.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
+        g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
         if g.renderers[0].scale == 'lin':
             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
             if canv_attr['set_leg_2_col_lin']:
@@ -646,15 +702,24 @@ def mod_post_canv(grps):
                     leg_2_col(g, canv_attr['set_leg_2_col_lin'])
                 else:
                     leg_2_col(g)
+            if canv_attr['set_leg_1_col_lin']:
+                if isinstance(canv_attr['set_leg_1_col_lin'], dict):
+                    leg_mod(g, canv_attr['set_leg_1_col_lin'])
+                else:
+                    leg_mod(g)
         elif g.renderers[0].scale == 'log':
             g.renderers[0].name += '_leg'
-            g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
             if canv_attr['set_leg_2_col_log']:
                 if isinstance(canv_attr['set_leg_2_col_log'], dict):
                     leg_2_col(g, canv_attr['set_leg_2_col_log'])
                 else:
                     leg_2_col(g)
+            if canv_attr['set_leg_1_col_log']:
+                if isinstance(canv_attr['set_leg_1_col_log'], dict):
+                    leg_mod(g, canv_attr['set_leg_1_col_log'])
+                else:
+                    leg_mod(g)
         yield g
 
 

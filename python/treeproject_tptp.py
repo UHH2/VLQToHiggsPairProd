@@ -45,18 +45,18 @@ core_histos = {
     'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
     'nomass_boost_2b_mass'           : ('groomed type-II Higgs tag mass [GeV]',           60, 0., 300.),
     'nobtag_boost_mass_nsjbtags'           : ('N(subjet b-tags)',           6, -0.5, 5.5),
+    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             80, 0., 1600.),
+    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
 }
 
 more_histos = {
     'ak4_jets_btagged_dR_higgs_tags_1b_med'              : ('#Delta R(AK4 b-tag, Higgs tag)',             50, 0., 5.),
-    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             80, 0., 1600.),
-    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
     'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     # 'gen_ht'                            : ('Gen HT',                               65, 0, 6500),
     # 'parton_ht'                            : ('Parton HT',                               65, 0, 6500),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
     'gendecay_accept'               : ('GenDecay Accept',                  2, -.5, 1.5),
-    'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
     # 'n_higgs_tags_1b_med_cleaned_dr': ('N(Higgs-Tags, 1 med b)',           5, -.5, 4.5),
     # 'n_higgs_tags_2b_med_cleaned_dr': ('N(Higgs-Tags, 2 med b)',           5, -.5, 4.5),
     'n_jets_no_overlap'             : ('N(non-overlapping Ak4 jets)',      12, -.5, 11.5),

@@ -37,8 +37,9 @@ settings.sys_error_fill = 3002
 settings.tot_error_color = (923, 1.)
 settings.tot_error_fill = 3002
 
-settings.defaults_BottomPlot['y_min'] = -2.
-settings.defaults_BottomPlot['y_max'] = 2.
+settings.defaults_BottomPlot['y_min'] = -1.2
+settings.defaults_BottomPlot['y_max'] = 1.2
+settings.defaults_BottomPlot['draw_opt'] = 'E0'
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
@@ -49,12 +50,12 @@ if settings.style != 'AN':
         'label_width': 0.3,
         'label_height': 0.035,
         'opt': 'f',
-        'opt_data': 'p',
+        'opt_data': 'pl',
         'reverse': True,
     })
 
 settings.defaults_Legend.update({
-        'sort_legend' : lambda w: 'TT ' in w[1]
+        'sort_legend' : lambda w: 'TT ' in w[1],
     })
 
 settings.stacking_order = [
