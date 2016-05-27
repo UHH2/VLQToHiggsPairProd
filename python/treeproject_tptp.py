@@ -548,6 +548,7 @@ class GenUncertHistoSquash(varial.tools.Tool):
         # for p in uncert_histos: print list((g.file_path, g.in_file_path) for g in p)
         uncert_histos = (self.squash_func(h) for h in uncert_histos)
         self.result = list(uncert_histos)
+        varial.diskio.close_open_root_files()
         os.system('touch %s/webcreate_denial' % self.cwd)
 
 
@@ -632,6 +633,7 @@ class GenUncertUpDown(varial.tools.Tool):
         alia = varial.gen.gen_add_wrp_info(alia, 
             sample=lambda a: os.path.basename(os.path.splitext(a.file_path)[0]))
         self.result = list(alia)
+        varial.diskio.close_open_root_files()
         os.system('touch %s/aliases.in.result' % self.cwd)
         os.system('touch %s/webcreate_denial' % self.cwd)
 

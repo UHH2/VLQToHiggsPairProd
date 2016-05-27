@@ -15,7 +15,7 @@ settings.__setattr__('flex_sig_norm', False)
 settings.__setattr__('cutflow_precision', {})
 settings.__setattr__('eff_precision', {})
 settings.__setattr__('lookup_aliases', True)
-settings.__setattr__('style', 'AN')
+settings.__setattr__('style', 'PAS')
 
 settings.cutflow_precision.update({
     'TpTp_M-0700' : "%17.1f",

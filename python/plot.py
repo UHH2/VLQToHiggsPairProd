@@ -272,6 +272,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 #=======FOR ALL PLOTS=======
 
 
+
 def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
@@ -287,7 +288,6 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
-    wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
 
@@ -476,15 +476,23 @@ def stack_setup_norm_all_to_intgr(grps):
     # grps = common_plot.norm_stack_to_integral(grps)
     return grps
 
+def plot_grouper_by_in_file_path_mod(wrps, separate_th2=True):
+    if separate_th2:
+        wrps = varial.plotter.rename_th2(wrps)
+    wrps = common_plot.copy_wrp_for_log(wrps)
+    wrps = sorted(wrps, key=lambda w: w.scale+'___'+w.in_file_path)
+    return gen.group(wrps, key_func=lambda w: w.scale+'___'+w.in_file_path)
+
 def plotter_factory_stack(**args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = loader_hook_finalstates_excl
+        kws['plot_grouper'] = plot_grouper_by_in_file_path_mod
         kws['plot_setup'] = stack_setup_norm_sig
         kws['stack_setup'] = stack_setup_norm_sig
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-        kws['save_lin_log_scale'] = True
+        # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = canvas_setup_post
         # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
         kws['canvas_decorators'] = common_plot.get_style()
@@ -503,7 +511,7 @@ def plotter_factory_uncerts(**args):
         kws['plot_setup'] = plot_setup_uncerts
         # kws['stack_setup'] = stack_setup_norm_sig
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-        kws['save_lin_log_scale'] = True
+        # kws['y_axis_scale'] = 'lin'
         # kws['save_name_func'] = lambda w: w.save_name
         # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [
