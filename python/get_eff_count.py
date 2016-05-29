@@ -235,17 +235,17 @@ class NumTableNew(varial.tools.Tool):
 
     def get_precision(self, num):
         if num >= 1.0:
-            return "%17.1f"
+            return "{0:17.1f}"
         elif num > 0:
             ex_dim = abs(floor(log10(num)))
             add_prec = 0
             if num*10**ex_dim < 2.:
                 add_prec = 1
             prec = int(ex_dim+add_prec)
-            prec = "%17."+str(prec)+"f"
+            prec = "{0:17."+str(prec)+"f}"
             return prec
         else:
-            return "%17d"
+            return "{0:17.0f}"
 
     def create_block(self, sample_dict):
         pass
@@ -308,13 +308,12 @@ class EffTable(NumTableNew):
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
                 if 'data' in s:
-                    prec = "%17d"
+                    prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
-                line += prec % (info[0]/baseline_count) + r" \%% \pm " + prec % (info[1]/baseline_count) + r" \%%"
+                line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
                 if len(info) == 4:
-                    syst_string = "^{+"+prec+r" \%%}_{"+prec+r" \%%}"
-                    line += syst_string % ((info[2]/baseline_count), (info[3]/baseline_count))
+                    line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
                 line += " $"
             line += r" \\"
             lines.append(line)
@@ -341,13 +340,12 @@ class CountTable(NumTableNew):
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
                 if 'data' in s:
-                    prec = "%17d"
+                    prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1])
-                line += prec % info[0] + r" \pm " + prec % info[1]
+                line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
                 if len(info) == 4:
-                    syst_string = "^{+"+prec+"}_{"+prec+"}"
-                    line += syst_string % (info[2], info[3])
+                    line += "^{+"+prec.format(info[2])+"}_{"+prec.format(info[3])+"}"
                 line += " $"
             line += r" \\"
             lines.append(line)

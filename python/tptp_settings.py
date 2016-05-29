@@ -15,7 +15,7 @@ settings.__setattr__('flex_sig_norm', False)
 settings.__setattr__('cutflow_precision', {})
 settings.__setattr__('eff_precision', {})
 settings.__setattr__('lookup_aliases', True)
-settings.__setattr__('style', 'PAS')
+settings.__setattr__('style', 'AN')
 
 settings.cutflow_precision.update({
     'TpTp_M-0700' : "%17.1f",
@@ -43,16 +43,17 @@ settings.defaults_BottomPlot['draw_opt'] = 'E0'
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
-if settings.style != 'AN':
-    settings.defaults_Legend.update({
-        'x_pos': 0.7,
-        'y_pos': 0.72,
-        'label_width': 0.3,
-        'label_height': 0.035,
-        'opt': 'f',
-        'opt_data': 'pl',
-        'reverse': True,
-    })
+# if settings.style != 'AN':
+settings.defaults_Legend.update({
+    'x_pos': 0.7,
+    'y_pos': 0.75,
+    'label_width': 0.25,
+    'label_height': 0.027,
+    'box_text_size' : 0.025,
+    'opt': 'f',
+    'opt_data': 'pl',
+    'reverse': True,
+})
 
 settings.defaults_Legend.update({
         'sort_legend' : lambda w: 'TT ' in w[1],
@@ -66,13 +67,13 @@ settings.stacking_order = [
     'QCD',
 ]
 
-settings.box_text_size = 0.03
-if settings.style != 'AN':
-    settings.canvas_size_x = 618
-    settings.canvas_size_y = 494
-    settings.root_style.SetPadTopMargin(0.125)
-    settings.root_style.SetPadBottomMargin(0.125)
-    settings.root_style.SetPadRightMargin(0.1)
+settings.box_text_size = 0.025
+# if settings.style != 'AN':
+settings.canvas_size_x = 618
+settings.canvas_size_y = 494
+settings.root_style.SetPadTopMargin(0.125)
+settings.root_style.SetPadBottomMargin(0.125)
+settings.root_style.SetPadRightMargin(0.1)
 
 # from vlq_settings
 # settings.colors = {

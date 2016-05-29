@@ -345,7 +345,6 @@ def loader_hook_merge_regions(wrps):
     key = lambda w: '{0}___{1}___{2}___{3}'.format(get_base_selection(w), w.sample, get_sys_info(w), w.variable)
 
     wrps = common_loader_hook(wrps)
-    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = gen.gen_make_th2_projections(wrps)
     # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
@@ -360,7 +359,8 @@ def loader_hook_merge_regions(wrps):
 
 def loader_hook_merge_lep_channels(wrps):
     # wrps = merge_regions(wrps)
-    wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
+    # wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
+    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     wrps = common_plot.mod_title(wrps)
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
@@ -379,6 +379,7 @@ def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
+    # wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     # wrps = gen.gen_make_th2_projections(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)

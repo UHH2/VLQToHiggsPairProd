@@ -32,7 +32,7 @@ categories_final = [
         'El45Tight_Baseline',
         # 'El45MVALoose_Baseline',
         # 'El45MVATight_Baseline',
-        'MuElComb_Baseline',
+        # 'MuElComb_Baseline',
         ]
 
 categories_pre = [ #"NoSelection",
@@ -215,12 +215,14 @@ def mk_sframe_tools_and_plot(argv):
 
     count = '-1'
 
+    sys_uncerts = []
+
     if options.selection == 'pre':
         sframe_cfg = sframe_cfg_pre
         setup_for_ind_run = setup_for_presel
         categories = categories_pre
         analysis_module = 'TpTpPreselectionV2'
-        varial.settings.sys_uncerts = no_sys_uncerts
+        sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_pre
@@ -232,13 +234,13 @@ def mk_sframe_tools_and_plot(argv):
         setup_for_ind_run = setup_for_finalsel
         categories = categories_final
         analysis_module = 'TpTpFinalSelectionTreeOutput'
-        varial.settings.sys_uncerts = sys_uncerts_final
+        sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_only_th
-        filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) #and\
+        filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) and\
+                                all(f not in w.in_file_path for f in ['Ak8JetsCleaned', 'Ak8JetsUnCleaned', 'FirstAk8SoftDropSlimmed'])
                                 # all(f not in w.in_file_path for f in ['El45Tight', 'MuElComb']) and\
-                                # any(f in w.in_file_path for f in ['MuonHists', 'ElectronHists', 'JetHists', 'SlimmedAk8Jets', 'EventHists', 'FirstAk8SoftDropSlimmed'])
         # varial.settings.merge_decay_channels = False
     else:
         print "Provide correct 'selection' option ('pre' or 'final')!"
@@ -260,34 +262,35 @@ def mk_sframe_tools_and_plot(argv):
                         filter_keyfunc=filter_func
                         )
                 )]
-        if options.selection == 'final':
-            plot_chain += [varial.tools.ToolChainParallel(
-                        'PlotsCompFinalStates',
-                        lazy_eval_tools_func=plot.mk_plots_and_cf(
-                            datasets=plot.less_samples,
-                            filter_keyfunc=lambda w: all(g not in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])\
-                                and filter_func(w),
-                            plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
-                        )
-                    )]
+        # if options.selection == 'final':
+        #     plot_chain += [varial.tools.ToolChainParallel(
+        #                 'PlotsCompFinalStates',
+        #                 lazy_eval_tools_func=plot.mk_plots_and_cf(
+        #                     datasets=plot.less_samples,
+        #                     filter_keyfunc=lambda w: all(g not in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])\
+        #                         and filter_func(w),
+        #                     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
+        #                 )
+        #             )]
         tc_list = []
-        for uncert in varial.settings.sys_uncerts:
+        for uncert in sys_uncerts:
             sf_batch = MySFrameBatch(
                 cfg_filename=sframe_cfg,
                 # xml_tree_callback=set_uncert_func(uncert),
                 xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
                     uncert_name=uncert, categories=categories),
                 name='SFrame',
+                add_aliases_to_analysis= False,
                 # name='SFrame_' + uncert,
                 halt_on_exception=False,
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
                     sf_batch,
-                    # varial.tools.ToolChain(
-                    #     'Plots',
-                    #     plot_chain
-                    # )
+                    varial.tools.ToolChain(
+                        'Plots',
+                        plot_chain
+                    )
                     ]))
             else:
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
@@ -309,7 +312,7 @@ def mk_sframe_tools_and_plot(argv):
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True)
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('*.svn', '*.html'), use_rsync=True)
         ])
 
     def mk_tex_tc_final(base):
@@ -319,14 +322,14 @@ def mk_sframe_tools_and_plot(argv):
                 [
                     # mk_autoContentSignalControlRegion(p_postbase),
                     tex_content.mk_autoContentControlPlots(base+'Plots', 'El45_Baseline', 'Mu45_Baseline'),
-                    tex_content.mk_autoContentFinalSelectionHiggsVar(base+'Plots', 'El45_Baseline', 'Mu45_Baseline'),
-                    tex_content.mk_autoContentFinalSelectionHiggsVar(base+'PlotsCompFinalStates', 'El45_Baseline', 'Mu45_Baseline', name='HiggsVarCompFinalState'),
+                    # tex_content.mk_autoContentFinalSelectionHiggsVar(base+'Plots', 'El45_Baseline', 'Mu45_Baseline'),
+                    # tex_content.mk_autoContentFinalSelectionHiggsVar(base+'PlotsCompFinalStates', 'El45_Baseline', 'Mu45_Baseline', name='HiggsVarCompFinalState'),
                     # tex_content.mk_autoContentPreSelectionNm1(base, 'El45_Baseline', 'Mu45_Baseline'),
                     # tex_content.mk_autoContentJetPtReweight(base),
                     # mk_autoContentLimits(p_postbase)
                 ]
             ),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=('*.svn', '*.html'), use_rsync=True),
             # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../Tex/*', ignore=('.svn'), use_rsync=True, name='CopyToolPAS')
         ])            
 
@@ -352,7 +355,7 @@ def mk_sframe_tools_and_plot(argv):
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
-                # mk_tex_tc_final(options.outputdir+tex_base),
+                mk_tex_tc_final(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
@@ -362,4 +365,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

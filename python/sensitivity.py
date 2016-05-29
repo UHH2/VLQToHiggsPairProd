@@ -92,43 +92,26 @@ datasets_not_to_use = [
     'ak4_jetpt__plus/TpTp',
 ]
 
-def select_files(categories=None, var=''):
-    def tmp(wrp):
-        file_path = wrp.file_path
-        in_file_path = wrp.in_file_path
-        # print "before selecting: "+wrp.file_path
-        # print file_path
-        if (file_path.endswith('.root')
-                # and 'DATA' not in file_path\
-                # and in_file_path.endswith('PostSelection/ST')
-                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
-                and in_file_path.endswith(var)
-                and any(a in wrp.file_path for a in datasets_to_use)
-                and all(a not in wrp.file_path for a in datasets_not_to_use)
-                and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
-            # print wrp
-            return True
-    return tmp
-
-def select_single_sig(categories=None, var='', signal=''):
-    def tmp(wrp):
-        file_path = wrp.file_path
-        in_file_path = wrp.in_file_path
-        # print "before selecting: "+wrp.file_path
-        # print file_path
-        if (file_path.endswith('.root')
-                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
-                and in_file_path.endswith(var)
-                and (any(a in wrp.file_path for a in back_plus_data)
-                    or any(signal+f in wrp.file_path for f in final_states_to_use))
-                and all(a not in wrp.file_path for a in datasets_not_to_use)
-                and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
-            # print wrp
-            return True
-    return tmp
+# def select_files(categories=None, var=''):
+#     def tmp(wrp):
+#         file_path = wrp.file_path
+#         in_file_path = wrp.in_file_path
+#         # print "before selecting: "+wrp.file_path
+#         # print file_path
+#         if (file_path.endswith('.root')
+#                 # and 'DATA' not in file_path\
+#                 # and in_file_path.endswith('PostSelection/ST')
+#                 and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
+#                 and in_file_path.endswith(var)
+#                 and any(a in wrp.file_path for a in datasets_to_use)
+#                 and all(a not in wrp.file_path for a in datasets_not_to_use)
+#                 and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
+#             # print wrp
+#             return True
+#     return tmp
 
 def rebin_st(wrps):
-    st_bounds = st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500.]
+    st_bounds = st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.]
     for w in wrps:
         if w.in_file_path.endswith('ST'):
             # w = varial.operations.rebin_nbins_max(w, 15)
@@ -271,10 +254,45 @@ def scale_bkg_postfit(wrps, theta_res_path):
 #     else:
 #         return [loader, plotter, limits, plot_limits]
 
-def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
+def select_no_sig(list_region):
+    def tmp(wrp):
+        # print "before selecting: "+wrp.file_path
+        # print file_path
+        # print name
+        if (wrp.file_path.endswith('.root')
+                # and name in wrp.file_path
+                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
+                and wrp.in_file_path.endswith('ST')
+                and (any(a in wrp.file_path for a in back_plus_data)
+                    # or any(signal+f in wrp.file_path for f in final_states_to_use)
+                    )
+                and all(a not in wrp.file_path for a in datasets_not_to_use)
+                and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
+            # print wrp
+            return True
+    return tmp
 
+def select_single_sig(signal, list_region):
+    def tmp(wrp):
+        # print "before selecting: "+wrp.file_path
+        # print file_path
+        # print name
+        if (wrp.file_path.endswith('.root')
+                # and name in wrp.file_path
+                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
+                and wrp.in_file_path.endswith('ST')
+                and (any(a in wrp.file_path for a in back_plus_data)
+                    or any(signal+f in wrp.file_path for f in final_states_to_use))
+                and all(a not in wrp.file_path for a in datasets_not_to_use)
+                and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
+            # print wrp
+            return True
+    return tmp
+
+def mk_limit_tc_single(brs, filter_keyfunc, signal='', sys_pat=None, selection='', pattern=None, dict_uncerts=None):
     loader = varial.tools.HistoLoader(
         name='HistoLoader',
+        pattern=pattern,
         # pattern=file_stack_split(),
         # pattern=,
         filter_keyfunc=filter_keyfunc,
@@ -296,35 +314,48 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal, selection='', sys_pat=''):
         # name= 'ThetaLimitsSplit'+str(ind),
         asymptotic=varial.settings.asymptotic,
         brs=brs,
-        model_func= lambda w: model_vlqpair.get_model(w, [signal]),
+        model_func= lambda w: model_vlqpair.get_model(w, signal, dict_uncerts),
         selection=selection
         # do_postfit=False,
     )
     if sys_pat:
+        sys_loader = varial.tools.HistoLoader(
+            name='HistoLoaderSys',
+            filter_keyfunc=filter_keyfunc,
+            pattern=sys_pat,
+            hook_loaded_histos=loader_hook(brs)
+        )
         postfit = ThetaPostFitPlot(
             name='PostFit',
             input_path='../ThetaLimit'
         )
-        sys_loader = varial.tools.HistoLoader(
-            name='HistoLoaderSys',
-            filter_keyfunc=lambda w: filter_keyfunc(w),
-            pattern=sys_pat,
-            hook_loaded_histos=loader_hook_sys(brs)
-        )
-        plotter_postfit = varial.tools.Plotter(
-            # filter_keyfunc=lambda w: '700' in w.sample 
-            #                          or '900' in w.sample 
-            #                          or not w.is_signal,
-            plot_grouper=lambda ws: varial.gen.group(
-                ws, key_func=lambda w: w.category),
-            plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-            save_name_func=lambda w: w.category,
-            hook_canvas_post_build=varial.gen.add_sample_integrals,
-            hook_loaded_histos=lambda w: scale_bkg_postfit(
-                w, '../Limit'+name),
-            # name='PostFitPlot',
-        )
-        return [loader, plotter, sys_loader, limits, postfit] # , plotter_postfit
+        corr_mat = CorrelationMatrix(
+            input_path='../ThetaLimit',
+            proc_name=signal
+            )
+        corr_plotter = varial.plotter.Plotter(
+            name='CorrelationPlot',
+            input_result_path='../CorrelationMatrix',
+            plot_setup=lambda w: add_draw_option(w, 'col text'),
+            # save_name_func=lambda w: w.save_name,
+            canvas_decorators=[
+                        varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                        varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+            )
+        # plotter_postfit = varial.tools.Plotter(
+        #     # filter_keyfunc=lambda w: '700' in w.sample 
+        #     #                          or '900' in w.sample 
+        #     #                          or not w.is_signal,
+        #     plot_grouper=lambda ws: varial.gen.group(
+        #         ws, key_func=lambda w: w.category),
+        #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+        #     save_name_func=lambda w: w.category,
+        #     hook_canvas_post_build=varial.gen.add_sample_integrals,
+        #     hook_loaded_histos=lambda w: scale_bkg_postfit(
+        #         w, '../Limit'+name),
+        #     # name='PostFitPlot',
+        # )
+        return [loader, plotter, sys_loader, limits, postfit] #, corr_mat, corr_plotter # , plotter_postfit
     else:
         return [loader, plotter, limits]
 
@@ -419,41 +450,44 @@ class DrawLess700(util.Decorator):
         # self.dec_par['textbox'].SetNDC()
         # self.dec_par['textbox'].Draw()
 
-def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=False):
+def mk_tc(dir_limit='Limits', mk_limit_list=None):
 # setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
-    triangle_tc = varial.tools.ToolChain('LimitTriangle',[
-            TriangleMassLimitPlots(
-                limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
-                ),
-            varial.plotter.Plotter(
-                name='PlotterBox',
-                input_result_path='../TriangleMassLimitPlots',
-                plot_setup=plot_setup_triangle('col text'),
-                save_name_func=lambda w: w.save_name,
-                canvas_decorators=[DrawLess700,
-                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
-                ),
-            varial.plotter.Plotter(
-                name='PlotterCont',
-                input_result_path='../TriangleMassLimitPlots',
-                plot_setup=plot_setup_triangle('contz'),
-                save_name_func=lambda w: w.save_name,
-                canvas_decorators=()
-                ),
-            ]),
-    if mk_triangle:
-        return varial.tools.ToolChain(dir_limit, 
-            [
-            mk_limit_chain(mk_limit_list=mk_limit_list),
-            triangle_tc
-            ])
-    else:
-        return varial.tools.ToolChain(dir_limit, 
-            [
-            mk_limit_chain(mk_limit_list=mk_limit_list),
-            ])
+    return varial.tools.ToolChain(dir_limit, [
+        mk_limit_chain(mk_limit_list=mk_limit_list),
+        varial.tools.ToolChain('LimitTriangle',[
+                TriangleMassLimitPlots(
+                    limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
+                    ),
+                varial.plotter.Plotter(
+                    name='PlotterBoxExp',
+                    input_result_path='../TriangleMassLimitPlots',
+                    filter_keyfunc=lambda w: 'exp' in w.save_name,
+                    plot_setup=plot_setup_triangle('col text'),
+                    save_name_func=lambda w: w.save_name,
+                    canvas_decorators=[DrawLess700,
+                                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+                                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                    ),
+                varial.plotter.Plotter(
+                    name='PlotterBoxObs',
+                    input_result_path='../TriangleMassLimitPlots',
+                    filter_keyfunc=lambda w: 'obs' in w.save_name,
+                    plot_setup=plot_setup_triangle('col text'),
+                    save_name_func=lambda w: w.save_name,
+                    canvas_decorators=[DrawLess700,
+                                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                    ),
+                varial.plotter.Plotter(
+                    name='PlotterCont',
+                    input_result_path='../TriangleMassLimitPlots',
+                    plot_setup=plot_setup_triangle('contz'),
+                    save_name_func=lambda w: w.save_name,
+                    canvas_decorators=()
+                    ),
+                ]),
+    ])
 
 # tc = varial.tools.ToolChain("", [tc])
 

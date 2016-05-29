@@ -70,7 +70,7 @@ def mk_autoContentPreSelectionNm1(base, el_channel=None, mu_channel=None):
         dict(get4sel(muchannel, base) + get4sel(elchannel, base)),
         # dict(get4sel(muchannel, base) + get4sel(elchannel, base) + img_2d_px),
         dict(get4cf(muchannel, base) + get4cf(elchannel, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name='AutoContentSelection',
     )
 
@@ -78,34 +78,54 @@ def mk_autoContentPreSelectionNm1(base, el_channel=None, mu_channel=None):
 ############ FINAL SELECTION CONTROL PLOTS #############=
 #########################################################
 
-def get4obj(chan, base):
-    histos_all = 'pt_lin', 'eta_lin', 'phi_lin', 'number_lin'
-    histos_first = 'pt_1_lin', 'eta_1_lin', 'phi_1_lin', 'number_lin'
-    jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_log'
-    p = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
-    return {
-        chan+'_muons'     : map((p+'MuonHists/{}'+ext).format, histos_first),
-        chan+'_electrons' : map((p+'ElectronHists/{}'+ext).format, histos_first),
-        chan+'_jets'      : map((p+'JetHists/{}'+ext).format, jet_histos),
-        chan+'_ak8_jets'  : map((p+'SlimmedAk8Jets/{}'+ext).format, histos_all),
-        # chan+'_higg_jets' : map((p+'HiggsJetsAfterSel/{}'+ext).format, histos),
-        chan+'_jet_pts'   : map((p+'JetHists/{}'+ext).format, 
-            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', 'pt_4_lin', )
-        ),
-        chan+'_ak8jet_pts'   : map((p+'SlimmedAk8Jets/{}'+ext).format, 
-            ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
-        ),
-        chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
-            ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_flex_log', 'MET_own_lin', )
-        ),
-    }.items()
-
 def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
+
+    def get4obj(chan, base):
+        histos_all = 'pt_lin', 'eta_lin', 'phi_lin', 'number_lin'
+        histos_first = 'pt_1_lin', 'eta_1_lin', 'phi_1_lin', 'number_lin'
+        jet_histos = 'pt_jet_lin', 'eta_jet_lin', 'phi_jet_lin', 'number_log'
+        p = os.path.join(base+'/StackedAll', chan, 'PostSelection/')
+        return {
+            chan+'_muons'     : map((p+'MuonHists/{}'+ext).format, histos_first),
+            chan+'_electrons' : map((p+'ElectronHists/{}'+ext).format, histos_first),
+            chan+'_jets'      : map((p+'JetHists/{}'+ext).format, jet_histos),
+            chan+'_ak8_jets'  : map((p+'SlimmedAk8Jets/{}'+ext).format, histos_all),
+            # chan+'_higg_jets' : map((p+'HiggsJetsAfterSel/{}'+ext).format, histos),
+            chan+'_jet_pts'   : map((p+'JetHists/{}'+ext).format, 
+                ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', 'pt_4_lin', )
+            ),
+            chan+'_ak8jet_pts'   : map((p+'SlimmedAk8Jets/{}'+ext).format, 
+                ('pt_1_lin', 'pt_2_lin', 'pt_3_lin', )
+            ),
+            chan+'_event'     : map((p+'EventHists/{}'+ext).format, 
+                ('N_PrimVertices_lin', 'N_TrueInteractions_lin', 'ST_rebin_flex_log', 'MET_own_lin', )
+            ),
+            chan+'_primvert'     : map((p+'EventHists/{}'+ext).format, 
+                ('N_PrimVertices_lin', 'N_TrueInteractions_lin')
+            ),
+            chan+'_gen'     : map((p+'GenHists/{}'+ext).format, 
+                ('tprime_pt_all_lin', 'higgs_to_bb_pt_all_lin', 'higgs_to_bb_dRDecay_all_lin')
+            ),
+            chan+'_gen_plus_dr'     : map((p+'GenHists/{}'+ext).format, 
+                ('tprime_pt_all_lin', 'higgs_to_bb_pt_all_lin', 'tprime_dRDecay_all_lin', 'higgs_to_bb_dRDecay_all_lin')
+            ),
+        }.items()
+
+    def getCombChan(muchannel, elchannel, base):
+        p = base+'/StackedAll/{}/PostSelection/'
+        return {
+            'Comb_recoprimvert'     : ( 
+                p.format(muchannel)+'EventHists/N_PrimVertices_lin' + ext,
+                p.format(elchannel)+'EventHists/N_PrimVertices_lin' + ext
+            ),
+            }.items()
+
+
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
-        dict(get4obj(muchannel, base) + get4obj(elchannel, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        dict(get4obj(muchannel, base) + get4obj(elchannel, base) + getCombChan(muchannel, elchannel, base)),
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name='AutoContentObjects',
     )
 
@@ -116,30 +136,30 @@ def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
 #########################################################
 
 # --TODO: implement Nm1 Plots after higgs-tags! esp. add. b-tag plots, N(higgs tags plots)
-def getHiggsVar(chan, base):
-    p = os.path.join(base+'/StackedAll', chan, 'PostSelection/FirstAk8SoftDropSlimmed/')
-    return {
-        chan+'_Nm1Var_htag': (
-            p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
-            p + 'Noboost_mass_1b/pt_log' + ext,
-            p + 'Nomass_boost_1b/mass_sj_lin' + ext,
-            p + 'Nomass_boost_2b/mass_sj_lin' + ext,
-        ),
-        chan+'_Nm1Var_htag_only_massbtag': (
-            p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
-            p + 'Nomass_boost_2b/mass_sj_lin' + ext,
-        ),
-    }.items()
+# def getHiggsVar(chan, base):
+#     p = os.path.join(base+'/StackedAll', chan, 'PostSelection/FirstAk8SoftDropSlimmed/')
+#     return {
+#         chan+'_Nm1Var_htag': (
+#             p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
+#             p + 'Noboost_mass_1b/pt_log' + ext,
+#             p + 'Nomass_boost_1b/mass_sj_lin' + ext,
+#             p + 'Nomass_boost_2b/mass_sj_lin' + ext,
+#         ),
+#         chan+'_Nm1Var_htag_only_massbtag': (
+#             p + 'Nobtag_boost_mass/n_sjbtags_medium_log' + ext,
+#             p + 'Nomass_boost_2b/mass_sj_lin' + ext,
+#         ),
+#     }.items()
 
-def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None, muel_comb=None, name='AutoContentFinalSelectionHiggsVar'):
-    muchannel = mu_channel or mu_channel_def
-    elchannel = el_channel or el_channel_def
-    muelcomb = muel_comb or muel_comb_def
-    return varial.extensions.tex.TexContent(
-        dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base) + getHiggsVar(muelcomb, base)),
-        include_str=r'\includegraphics[width=0.38\textwidth]{%s}',
-        name=name,
-    )
+# def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None, muel_comb=None, name='AutoContentFinalSelectionHiggsVar'):
+#     muchannel = mu_channel or mu_channel_def
+#     elchannel = el_channel or el_channel_def
+#     muelcomb = muel_comb or muel_comb_def
+#     return varial.extensions.tex.TexContent(
+#         dict(getHiggsVar(muchannel, base) + getHiggsVar(elchannel, base) + getHiggsVar(muelcomb, base)),
+#         include_str=r'\includegraphics[width=0.38\textwidth]{%s}',
+#         name=name,
+#     )
 
 
 
@@ -165,7 +185,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 #     elchannel = el_channel or el_channel_def
 #     return varial.extensions.tex.TexContent(
 #         dict(get4sb(muchannel, base) + get4sb(elchannel, base)),
-#         include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+#         include_str=r'\includegraphics[width=0.   \textwidth]{%s}',
 #         name='AutoContentJetPtReweight',
 #     )
 
@@ -198,7 +218,7 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 #     elchannel = el_channel or el_channel_def
 #     return varial.extensions.tex.TexContent(
 #         dict(getNoDataFinalVar(muchannel, base) + getNoDataFinalVar(elchannel, base)),
-#         include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+#         include_str=r'\includegraphics[width=0.   \textwidth]{%s}',
 #         name='AutoContentNoDataFinalRegions',
 #     )
 
@@ -206,54 +226,55 @@ def mk_autoContentFinalSelectionHiggsVar(base, el_channel=None, mu_channel=None,
 ####### TREEPROJECT OUTPUT SYSTEMATIC CR PLOTS ##########
 #########################################################
 
-def getSystCRPlots(chan, base):
-    p = os.path.join(base, 'StackedAll/')
-    # print base
-    return {
-        chan+'_ak4jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_third_ak4_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_fourth_ak4_jet_log' % chan + ext,
-        ),
-        chan+'_ak8jetpt': (
-            p + 'SidebandRegion_%s/pt_ld_ak8_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak8_jet_log' % chan + ext,
-        ),
-        chan+'_stplusjets': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
-        ),
-        chan+'_eventvar': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/primary_lepton_pt_log' % chan + ext,
-            p + 'SidebandRegion_%s/met_log' % chan + ext,
-        ),
-        chan+'_njets': (
-            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
-        ),
-        chan+'_pt_plus_njets': (
-            p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
-        ),
-        chan+'_stht': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
-        )
-    }.items()
-
 def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name='AutoContentSystematicCRPlots'):
+
+    def getSystCRPlots(chan, base):
+        p = os.path.join(base, 'StackedAll/')
+        # print base
+        return {
+            chan+'_ak4jetpt': (
+                p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/pt_third_ak4_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/pt_fourth_ak4_jet_log' % chan + ext,
+            ),
+            chan+'_ak8jetpt': (
+                p + 'SidebandRegion_%s/pt_ld_ak8_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/pt_subld_ak8_jet_log' % chan + ext,
+            ),
+            chan+'_stplusjets': (
+                p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
+            ),
+            chan+'_eventvar': (
+                p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
+                p + 'SidebandRegion_%s/primary_lepton_pt_log' % chan + ext,
+                p + 'SidebandRegion_%s/met_log' % chan + ext,
+            ),
+            chan+'_njets': (
+                p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
+            ),
+            chan+'_pt_plus_njets': (
+                p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_ak4_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_ak8_log' % chan + ext,
+            ),
+            chan+'_stht': (
+                p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SidebandRegion_%s/HT_rebin_flex_log' % chan + ext,
+            )
+        }.items()
+
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getSystCRPlots(muchannel, base) + getSystCRPlots(elchannel, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 
@@ -261,42 +282,43 @@ def mk_autoContentSystematicCRPlots(base, el_channel=None, mu_channel=None, name
 ###### TREEPROJECT OUTPUT SYS. UNC. COMP. PLOTS #########
 #########################################################
 
-def getSystCompPlots(chan, process, base):
-    p = os.path.join(base, 'StackedAll/')
-    # print base
-    return {
-        chan+'_exp_comp': (
-            p + 'BaseLineSelection_%s/ST__%s__btag_bc_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__btag_udsg_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__jec_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
-        ),
-        chan+'_theo_comp': (
-            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__top_pt_reweight_log' % (chan, process) + ext,
-            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
-        ),
-        chan+'_theo_no_top_pt_comp': (
-            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
-            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
-        ),
-        chan+'_theo_no_reweight_comp': (
-            p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
-            p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
-            # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
-        ),
-    }.items()
-
 def mk_compSystematicPlots(base, process, el_channel=None, mu_channel=None, name='AutoContentSystematicCRPlots'):
+
+    def getSystCompPlots(chan, process, base):
+        p = os.path.join(base, 'StackedAll/')
+        # print base
+        return {
+            chan+'_exp_comp': (
+                p + 'BaseLineSelection_%s/ST__%s__btag_bc_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__btag_udsg_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__jec_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+            ),
+            chan+'_theo_comp': (
+                p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__top_pt_reweight_log' % (chan, process) + ext,
+                # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+            ),
+            chan+'_theo_no_top_pt_comp': (
+                p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__ht_reweight_log' % (chan, process) + ext,
+                # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+            ),
+            chan+'_theo_no_reweight_comp': (
+                p + 'BaseLineSelection_%s/ST__%s__ScaleVar_log' % (chan, process) + ext,
+                p + 'BaseLineSelection_%s/ST__%s__PDF_log' % (chan, process) + ext,
+                # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (chan, process) + ext,
+            ),
+        }.items()
+
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getSystCompPlots(muchannel, process, base) + getSystCompPlots(elchannel, process, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 
@@ -304,21 +326,22 @@ def mk_compSystematicPlots(base, process, el_channel=None, mu_channel=None, name
 ### TREEPROJECT OUTPUT SYSTEMATIC COMPARISON PLOTS ######
 #########################################################
 
-def getCompSystPlots(chan, base):
-    # p = os.path.join(base, 'StackedAll/')
-    # print base
-    return {
-        chan+'_stcomp': list(
-            p + '/StackedAll/SidebandRegion_%s/ST_rebin_flex_log' % chan + ext for p in base
-        )
-    }.items()
-
 def mk_autoContentCompSystPlots(base, el_channel=None, mu_channel=None, name='AutoContentCompSystPlots'):
+
+    def getCompSystPlots(chan, base):
+        # p = os.path.join(base, 'StackedAll/')
+        # print base
+        return {
+            chan+'_stcomp': list(
+                p + '/StackedAll/SidebandRegion_%s/ST_rebin_flex_log' % chan + ext for p in base
+            )
+        }.items()
+
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
         dict(getCompSystPlots(muchannel, base) + getCompSystPlots(elchannel, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 
@@ -326,46 +349,57 @@ def mk_autoContentCompSystPlots(base, el_channel=None, mu_channel=None, name='Au
 ########## TREEPROJECT OUTPUT N MINUS 1 PLOTS ###########
 #########################################################
 
-def getFinalVar(chan, base):
-    p = os.path.join(base, 'StackedAll/')
-    # print base
-    return {
-        chan+'_Nm1ak4btag': (
-            p + 'SignalRegion1b_%s/n_additional_btags_medium_log' % chan + ext,
-            p + 'SignalRegion2b_%s/n_additional_btags_medium_log' % chan + ext,
-            p + 'SidebandRegion_%s/n_additional_btags_medium_log' % chan + ext,
-        ),
-        chan+'_Nm1htag': (
-            p + 'SidebandRegion_%s/n_higgs_tags_1b_med_log' % chan + ext,
-            p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_log' % chan + ext,
-        ),
-        chan+'_baseline_tag_plots': (
-            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
-            p + 'BaseLineSelection_%s/n_higgs_tags_1b_med_log' % chan + ext,
-            p + 'BaseLineSelection_%s/n_higgs_tags_2b_med_log' % chan + ext,
-        ),
-        chan+'_baseline_htag_plots': (
-            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
-            p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
-        ),
-        chan+'_st': (
-            p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
-        ),
-        chan+'_st_sigonly': (
-            p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
-            p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
-            # p + 'SidebandRegion_%s/ST_log' % chan + ext,
-        ),
-    }.items()
-
 def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, name='AutoContentSignalControlRegion'):
+
+    def getFinalVar(chan, base):
+        p = os.path.join(base, 'StackedAll/')
+        # print base
+        return {
+            chan+'_Nm1ak4btag': (
+                p + 'SignalRegion1b_%s/n_additional_btags_medium_log' % chan + ext,
+                p + 'SignalRegion2b_%s/n_additional_btags_medium_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_additional_btags_medium_log' % chan + ext,
+            ),
+            chan+'_Nm1htag': (
+                p + 'SidebandRegion_%s/n_higgs_tags_1b_med_log' % chan + ext,
+                p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_log' % chan + ext,
+            ),
+            chan+'_baseline_tag_plots': (
+                p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
+                p + 'BaseLineSelection_%s/n_higgs_tags_1b_med_log' % chan + ext,
+                p + 'BaseLineSelection_%s/n_higgs_tags_2b_med_log' % chan + ext,
+            ),
+            chan+'_baseline_htag_plots': (
+                p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
+                p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
+            ),
+            chan+'_st': (
+                p + 'SidebandRegion_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
+            ),
+            chan+'_st_sigonly': (
+                p + 'SignalRegion1b_%s/ST_rebin_flex_log' % chan + ext,
+                p + 'SignalRegion2b_%s/ST_rebin_flex_log' % chan + ext,
+                # p + 'SidebandRegion_%s/ST_log' % chan + ext,
+            ),
+        }.items()
+
+    def getCombVar(muchan, elchan, base):
+        p = os.path.join(base, 'StackedAll/')
+        # print base
+        return {
+           'Comb_dRak4btagHcand': (
+                p + 'BaseLineSelection_%s/ak4_jets_btagged_dR_higgs_tags_1b_med_log' % muchan + ext,
+                p + 'BaseLineSelection_%s/ak4_jets_btagged_dR_higgs_tags_1b_med_log' % elchan + ext,
+            ),
+        }.items()
+
     muchannel = mu_channel or mu_channel_def
     elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
-        dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        dict(getFinalVar(muchannel, base) + getFinalVar(elchannel, base) + getCombVar(muchannel, elchannel, base)),
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 
@@ -373,25 +407,26 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, na
 ########## TREEPROJECT OUTPUT COMBINED CHANNELS #########
 #########################################################
 
-def getCRSplitComb(base_split, base_comb, el_chan, mu_chan):
-    # print base
-    return {
-        'st_split_comb': (
-            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
-            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
-            os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
-        ),
-        'st_split': (
-            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
-            os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
-            # os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
-        ),
-    }.items()
-
 def mk_autoContentControlRegion(base_split, base_comb, el_chan, mu_chan, name='AutoContentSignalControlRegionCombined'):
+
+    def getCRSplitComb(base_split, base_comb, el_chan, mu_chan):
+        # print base
+        return {
+            'st_split_comb': (
+                os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
+                os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
+                os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
+            ),
+            'st_split': (
+                os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % mu_chan + ext),
+                os.path.join(base_split, 'SidebandRegion_%s/ST_rebin_flex_log' % el_chan + ext),
+                # os.path.join(base_comb, 'SidebandRegion/ST_rebin_flex_log' + ext),
+            ),
+        }.items()
+
     return varial.extensions.tex.TexContent(
         dict(getCRSplitComb(base_split, base_comb, el_chan, mu_chan)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 
@@ -399,81 +434,117 @@ def mk_autoContentControlRegion(base_split, base_comb, el_chan, mu_chan, name='A
 ####### TREEPROJECT MORE OUTPUT COMBINED CHANNELS #######
 #########################################################
 
-def getFinalVarCombinedMore(base):
-    # print base
-    return {
-        'all_st': (
-            os.path.join(base, 'SidebandRegion/ST_rebin_flex_log' + ext),
-            os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
-            os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
-        ),
-        'st_sigonly': (
-            os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
-            os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
-        ),
-        'baseline_control_plots_all': (
-            os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/met_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
-        ),
-        'baseline_control_plots_met': (
-            os.path.join(base, 'BaseLineSelection/primary_lepton_pt_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/met_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
-        ),
-        'baseline_control_plots_leps': (
-            os.path.join(base, 'BaseLineSelection/primary_muon_pt_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/primary_electron_pt_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
-        ),
-        'baseline_control_plots': (
-            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
-        ),
-        'baseline_control_plots_withHiggsTag': (
-            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak4_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/pt_ld_ak8_jet_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
-        ),
-        'baseline_control_plots_ht_nak4': (
-            os.path.join(base, 'BaseLineSelection/HT_rebin_flex_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_ak4_log' + ext),
-        ),
-        'baseline_control_plots_hhiggsvar': (
-            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
-        ),
-        'baseline_control_plots_hhiggsvar_more': (
-            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-            # os.path.join(base, 'BaseLineSelection/pt_log' + ext),
-            os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
-            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
-        ),
-        'nminus1_plots_withak4btag': (
-            os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_higgs_tags_2b_med_log' + ext),
-        ),
-        'nminus1_plots': (
-            # os.path.join(base, 'BaseLineSelection/n_additional_btags_medium_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_higgs_tags_1b_med_log' + ext),
-            os.path.join(base, 'BaseLineSelection/n_higgs_tags_2b_med_log' + ext),
-        ),
-    }.items()
+def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.45'):
 
-def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
+    def getFinalVarCombinedMore(base, cat):
+        # print base
+        return {
+            # cat+'_baseline_control_plots_all': (
+            #     os.path.join(base, cat+'/primary_lepton_pt_lin' + ext),
+            #     os.path.join(base, cat+'/met_lin' + ext),
+            #     os.path.join(base, cat+'/pt_ld_ak4_jet_lin' + ext),
+            #     os.path.join(base, cat+'/pt_ld_ak8_jet_lin' + ext),
+            #     os.path.join(base, cat+'/HT_rebin_flex_log' + ext),
+            #     os.path.join(base, cat+'/n_ak4_log' + ext),
+            # ),
+            cat+'_control_plots_jets': (
+                os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_ld_ak8_jet_leg_log' + ext),
+            ),
+            cat+'_control_plots_ak4jets': (
+                os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_third_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_fourth_ak4_jet_leg_log' + ext),
+            ),
+            cat+'_control_plots_ak8jets': (
+                os.path.join(base, cat+'/pt_ld_ak8_jet_leg_log' + ext),
+                os.path.join(base, cat+'/pt_subld_ak8_jet_leg_log' + ext),
+            ),
+            cat+'_control_plots_njets': (
+                os.path.join(base, cat+'/n_ak4_leg_log' + ext),
+                os.path.join(base, cat+'/n_ak8_leg_log' + ext),
+            ),
+            cat+'_control_plots_leps': (
+                os.path.join(base, cat+'/primary_muon_pt_log' + ext),
+                os.path.join(base, cat+'/primary_electron_pt_log' + ext),
+                os.path.join(base, cat+'/met_leg_log' + ext),
+            ),
+            cat+'_control_plots_event': (
+                os.path.join(base, cat+'/n_ak4_leg_log' + ext),
+                os.path.join(base, cat+'/n_ak8_leg_log' + ext),
+                os.path.join(base, cat+'/HT_rebin_flex_leg_log' + ext),
+                os.path.join(base, cat+'/ST_rebin_flex_leg_log' + ext),
+            ),
+            cat+'_control_plots_stht': (
+                os.path.join(base, cat+'/HT_rebin_flex_leg_log' + ext),
+                os.path.join(base, cat+'/ST_rebin_flex_leg_log' + ext),
+            ),
+            # cat+'_control_plots_withHiggsTag': (
+            #     os.path.join(base, cat+'/HT_rebin_flex_log' + ext),
+            #     os.path.join(base, cat+'/n_ak4_log' + ext),
+            #     os.path.join(base, cat+'/pt_ld_ak4_jet_lin' + ext),
+            #     os.path.join(base, cat+'/pt_ld_ak8_jet_lin' + ext),
+            #     os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
+            #     os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+            # ),
+            # cat+'_control_plots_ht_nak4': (
+            #     os.path.join(base, cat+'/HT_rebin_flex_log' + ext),
+            #     os.path.join(base, cat+'/n_ak4_log' + ext),
+            # ),
+            cat+'_control_plots_hhiggsvar': (
+                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
+                os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+            ),
+            cat+'_control_plots_hhiggsvar_more': (
+                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
+                # os.path.join(base, cat+'/pt_log' + ext),
+                os.path.join(base, cat+'/nomass_boost_1b_mass_lin' + ext),
+                os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+            ),
+            cat+'_nminus1_plots_withak4btag': (
+                os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_1b_med_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_2b_med_log' + ext),
+            ),
+            cat+'_n_ak4btags': (
+                os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
+            ),
+            cat+'_htag_plots': (
+                # os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_1b_med_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_2b_med_log' + ext),
+            ),
+            cat+'_more_higgsvar': (
+                os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
+                os.path.join(base, 'BaseLineSelection/noboost_mass_1b_pt_lin' + ext),
+                os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
+                os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+            ),
+        }.items()
+
+
+    def getCatcompare(base):
+        # print base
+        return {
+            'all_st': (
+                os.path.join(base, 'SidebandRegion/ST_rebin_flex_log' + ext),
+                os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
+                os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
+            ),
+            'st_sigonly': (
+                os.path.join(base, 'SignalRegion1b/ST_rebin_flex_log' + ext),
+                os.path.join(base, 'SignalRegion2b/ST_rebin_flex_log' + ext),
+            ),
+        }.items()
+
+
     return varial.extensions.tex.TexContent(
-        dict(getFinalVarCombinedMore(base)),
+        dict(getFinalVarCombinedMore(base, 'BaseLineSelection') +
+            getFinalVarCombinedMore(base, 'SidebandTTJetsRegion') +
+            getFinalVarCombinedMore(base, 'SidebandWPlusJetsRegion') +
+            getCatcompare(base)),
         include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
         name=name,
     )
@@ -489,9 +560,15 @@ def getHiggsVarCombinedMore(base):
             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
         ),
+        'baseline_more_higgsvar': (
+            os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
+            os.path.join(base, 'BaseLineSelection/noboost_mass_1b_pt_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
+            os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+        ),
     }.items()
 
-def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
+def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.45'):
     return varial.extensions.tex.TexContent(
         dict(getHiggsVarCombinedMore(base)),
         include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
@@ -513,12 +590,12 @@ def getLimPlotsAll(base):
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
         'triangle_lim_both_box': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_exp_lin' + ext),
-            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxExp/lim_exp_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
         ),
         'triangle_plus_single_lim': (
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
-            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
         ),
         # 'Postfit-all': (
         #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
@@ -534,10 +611,10 @@ def getSingleLimPlotLarge(base):
             os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
         ),
         'triangle_lim_obs_box': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_obs_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
         ),
         'triangle_lim_exp_box': (
-            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBox/lim_exp_lin' + ext),
+            os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxExp/lim_exp_lin' + ext),
         ),
         # 'Postfit-M0700': (
         #     os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
@@ -585,7 +662,7 @@ def getPostfitLarge(base, mass_points):
     # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
     return dict(
         ('Postfit-%s' % m, (
-                 os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_%s/PostFit/cnv_post_fit_TpTp_M-0700' % m + ext),
+                 os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_%s/PostFit/cnv_post_fit_TpTp_%s' % (m, m) + ext),
              )) for m in mass_points
         )
 
@@ -596,7 +673,7 @@ def my_mod_sys_table(table):
         return indizes
 
     def remove_column(line, indizes):
-        if r'\hline' in line:
+        if r'\hline' in line or '\end{tabular}' in line:
             return line
         columns = line.split(' & ')
         # print columns
@@ -666,7 +743,7 @@ def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
             else:
                 new_table += sig + '\n'
         new_table += r'\hline'+'\n'
-        new_table += r'\end{tabular}\\'
+        new_table += r'\end{tabular}'
         with open(filename.replace('.tex', '_mod.tex'), 'w') as f:
             # print mod(cont)
             f.write(mod(new_table))
@@ -715,7 +792,7 @@ def getEffCount(filepath, mod=None):
 def mk_autoEffCount(filepath, mod=None, name='AutoEffCount'):
     return varial.extensions.tex.TexContent(
         plain_files=dict(getEffCount(filepath, mod)),
-        include_str=r'\includegraphics[width=0.41\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0. \textwidth]{%s}',
         name=name,
     )
 

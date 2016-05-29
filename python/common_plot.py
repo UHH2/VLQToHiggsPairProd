@@ -55,6 +55,8 @@ norm_reg_dict = {
     'Baseline' : 5,
     'BaseLineSelection' : 5,
     'SidebandRegion' : 5,
+    'SidebandTTJetsRegion' : 5,
+    'SidebandWPlusJetsRegion' : 5,
     'SignalRegion1b' : 5,
     'SignalRegion2b' : 1,
 }
@@ -73,139 +75,177 @@ def get_style():
             ]
 
 mod_dict = {
+
+
+
+    ##### GEN VARIABLES ######
+    'higgs_to_bb_pt_all_lin' : {
+            'title' : 'p_{T}(Higgs) [GeV]',
+            'y_max_fct' : 1.2,
+            },
+    'higgs_to_bb_dRDecay_all_lin' : {
+            'title' : '#Delta R(b, b)_{Higgs}',
+            'y_max_fct' : 1.2,
+            },
+    'tprime_pt_all' : {
+            'title' : 'p_{T}(T quark) [GeV]',
+            'y_max_fct' : 1.2,
+            },
+    'tprime_dRDecay_all' : {
+            'title' : '#Delta R(t, H)_{T quark}',
+            'y_max_fct' : 1.2,
+            },
+
+    ##### GENERAL VARIABLES ######
     'ST' : {
             'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'S_{T} [GeV]',
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col' : True
+            'y_max_log_fct' : 10000.,
+            'y_min_gr_zero' : 1e-3,
             },
     'ST_rebin_flex' : {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 1000.,
-            'y_min_gr_zero' : 1e-3,
-            'copy_for_log' : True,
-            'set_leg_1_col_log' : {
-                'x_pos': 0.7,
-                'y_pos': 0.75,
-                'label_width': 0.25,
-                'label_height': 0.027,
-                'box_text_size' : 0.025
-                }
-            # 'set_leg_2_col_log' : True
+            'y_min_gr_zero' : 2e-3,
             },
     'HT' : {
             'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'H_{T} [GeV]',
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            'set_leg_2_col_log' : True
+            'y_max_log_fct' : 10000.,
+            'y_min_gr_zero' : 1e-3,
             },
     'HT_rebin_flex' : {
             'title' : 'H_{T} [GeV]',
             'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            'set_leg_2_col_log' : True
-            },
-    'mass_sj' : {
-            'rebin' : 30,
-            'title' : 'groomed Higgs tag mass [GeV]',
-            'y_min_gr_zero' : 0.4,
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col_log' : True
-            },
-    'nomass_boost_1b_mass' : {
-            'rebin' : 30,
-            'title' : 'groomed type-I Higgs tag mass [GeV]',
-            'y_min_gr_zero' : 0.4,
-            'y_max_log_fct' : 1000.,
-            # 'leg_pos',
-            # 'set_leg_2_col_log' : True
-            },
-    'nomass_boost_2b_mass' : {
-            'rebin' : 15,
-            'title' : 'groomed type-II Higgs tag mass [GeV]',
-            'y_min_gr_zero' : 0.02,
-            'y_max_log_fct' : 1000.,
-            'scale' : 0.2
+            'y_min_gr_zero' : 2e-3,
             },
     'primary_electron_pt' : {
             'rebin' : 25,
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
             'title' : 'Primary Electron p_{T} [GeV]',
             },
     'primary_muon_pt' : {
             'rebin' : 25,
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
             'title' : 'Primary Muon p_{T} [GeV]',
             },
-    'pt' : {
-            'rebin' : 30,
-            'title' : 'p_{T} leading Higgs tag [GeV]',
+    'primary_lepton_pt' : {
+            'rebin' : 25,
             'y_max_log_fct' : 1000.,
-            # 'set_leg_2_col_log' : True,
+            'y_min_gr_zero' : 0.1,
+            'title' : 'Primary Lepton p_{T} [GeV]',
+            },
+    'met' : {
+            'rebin' : 30,
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
             'y_max_fct' : 1.5,
             },
     'pt_ld_ak4_jet' : {
             'rebin' : 30,
-            'title' : 'p_{T} leading AK4 Jet [GeV]',
+            'title' : 'p_{T} (1st AK4 Jet) [GeV]',
             'y_max_log_fct' : 1000.,
-            # 'set_leg_2_col_log' : True,
+            'y_min_gr_zero' : 0.1,
+            'y_max_fct' : 1.5,
+            },
+    'pt_subld_ak4_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} (2nd AK4 Jet) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
             'y_max_fct' : 1.5,
             },
     'pt_ld_ak8_jet' : {
             'rebin' : 30,
-            'title' : 'p_{T} leading AK8 Jet [GeV]',
+            'title' : 'p_{T} (1st AK8 Jet) [GeV]',
             'y_max_log_fct' : 1000.,
-            # 'set_leg_2_col_log' : True,
             'y_max_fct' : 1.5,
             'y_max_log_fct' : 1000.,
-            'set_leg_1_col_lin' : {
-                'x_pos': 0.7,
-                'y_pos': 0.75,
-                'label_width': 0.25,
-                'label_height': 0.027,
-                'box_text_size' : 0.025
-                },
-            'set_leg_1_col_log' : {
-                'x_pos': 0.7,
-                'y_pos': 0.75,
-                'label_width': 0.25,
-                'label_height': 0.027,
-                'box_text_size' : 0.025
-                },
-            'copy_for_log' : True,
             'y_min_gr_zero' : 0.1,
             },
+    'n_ak4' : {
+            'title' : 'N(AK4 jets)',
+            'y_max_log_fct' : 10000.,
+            'y_min_gr_zero' : 2e-2,
+            },
+    'n_ak8' : {
+            'title' : 'N(AK8 jets)',
+            'y_max_log_fct' : 1000000.,
+            'y_min_gr_zero' : 2e-3,
+            },
+    'ak4_jets_btagged_dR_higgs_tags_1b_med' : {
+            # 'y_max_log_fct' : 10000.,
+            'y_min_gr_zero' : 2e-1,
+            'set_leg_2_col_lin' : True
+            },
+
+    ##### HIGGS TAG VARIABLES ######
+    'mass_sj' : {
+            'rebin' : 30,
+            'title' : 'M_{soft-drop}(Higgs tag) [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            },
+    'n_sjbtags_medium' : {
+            'title' : 'N(subjet b tags)',
+            'y_max_log_fct' : 1000.,
+            },
+    # 'pt' : {
+    #         'rebin' : 30,
+    #         'title' : 'p_{T} leading Higgs tag [GeV]',
+    #         'y_max_log_fct' : 1000.,
+    #         'y_max_fct' : 1.5,
+    #         },
+    'nomass_boost_1b_mass' : {
+            'rebin' : 30,
+            'title' : 'M_{soft-drop}(type-I Higgs tag) [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            },
+    'nomass_boost_2b_mass' : {
+            'rebin' : 15,
+            'title' : 'M_{soft-drop}(type-II Higgs tag) [GeV]',
+            'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            'scale' : 0.2
+            },
+    'nobtag_boost_mass_nsjbtags' : {
+            'title' : 'N(subjet b tags)',
+            'y_min_gr_zero' : 10,
+            },
+    'noboost_mass_1b_pt' : {
+            'title' : 'p_{T}(type-I Higgs tag) [GeV]',
+            'y_max_log_fct' : 1000.,            'y_min_gr_zero' : 1e-3,
+            'scale' : 0.2
+            },
+    'noboost_mass_2b_pt' : {
+            'title' : 'p_{T}(type-II Higgs tag) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
+            'scale' : 0.2
+            },
+
+
+    ##### FINAL CATEGORY VARIABLES ######
     'n_additional_btags_medium' : {
             'title' : 'N(AK4 b tags)',
             'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
             'set_leg_2_col_log' : True
             },
     'n_higgs_tags_1b_med' : {
             'title' : 'N(type-I Higgs tags)',
             'y_max_log_fct' : 1000.,
-            'set_leg_2_col_log' : True
+            'y_min_gr_zero' : 3e-3,
+            # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_2b_med' : {
+            'y_max_log_fct' : 1000.,
             'title' : 'N(type-II Higgs tags)',
-            # 'y_max_log_fct' : 1000.,
-            },
-    'n_ak4' : {
-            'y_max_log_fct' : 10000.,
-            'set_leg_2_col_log' : True
-            # 'y_max_log_fct' : 1000.,
-            },
-    'nobtag_boost_mass_nsjbtags' : {
-            'title' : 'N(subjet b tags)',
-            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
             # 'set_leg_2_col_log' : True
-            # 'y_max_log_fct' : 1000.,
-            },
-    'n_sjbtags_medium' : {
-            'title' : 'N(subjet b tags)',
-            'y_max_log_fct' : 1000.,
-            # 'set_leg_2_col_log' : True
-            # 'y_max_log_fct' : 1000.,
             },
 
 }
@@ -382,9 +422,7 @@ def mod_legend(wrps):
         if w.is_data:
             w.legend = 'data'
         if w.legend.startswith('TpTp'):
-            suf = ''
-            if any(f in w.legend for f in ['th', 'tz', 'bw']):
-                suf = w.legend[-5:]
+            suf = w.legend[11:]
             mass = float(w.legend[7:11])/1000.
             w.legend = 'T#bar{T} (%.1f TeV)' % mass
             w.legend += suf
@@ -614,24 +652,24 @@ def rebin_st_and_nak4(wrps):
 #         leg_mod(rnd, dict_leg)
 
 def leg_mod(rnd, dict_leg=varial.settings.defaults_Legend, n_col=1):
-    if varial.settings.style != 'AN':
-        rnd.legend.SetNColumns(n_col)
-        rnd.legend.SetTextSize(dict_leg.get('box_text_size', varial.settings.box_text_size))
-        n_entries = len(rnd.legend.GetListOfPrimitives())
-        x_pos   = dict_leg['x_pos']
-        y_pos   = dict_leg['y_pos']
-        width   = dict_leg['label_width']
-        height  = dict_leg['label_height'] * n_entries / float(n_col)
-        if n_col ==  2:
-            rnd.legend.SetX1(x_pos - 3*width/2.)
-            rnd.legend.SetY1(y_pos - 0.1*height)
-            rnd.legend.SetX2(x_pos + width/2.)
-            rnd.legend.SetY2(y_pos + 0.9*height)
-        else:
-            rnd.legend.SetX1(x_pos - width/2.)
-            rnd.legend.SetY1(y_pos - height/2.)
-            rnd.legend.SetX2(x_pos + width/2.)
-            rnd.legend.SetY2(y_pos + height/2.)
+    # if varial.settings.style != 'AN':
+    rnd.legend.SetNColumns(n_col)
+    rnd.legend.SetTextSize(dict_leg.get('box_text_size', varial.settings.box_text_size))
+    n_entries = len(rnd.legend.GetListOfPrimitives())
+    x_pos   = dict_leg['x_pos']
+    y_pos   = dict_leg['y_pos']
+    width   = dict_leg['label_width']
+    height  = dict_leg['label_height'] * n_entries / float(n_col)
+    if n_col ==  2:
+        rnd.legend.SetX1(x_pos - 3*width/2.)
+        rnd.legend.SetY1(y_pos - 0.1*height)
+        rnd.legend.SetX2(x_pos + width/2.)
+        rnd.legend.SetY2(y_pos + 0.9*height)
+    else:
+        rnd.legend.SetX1(x_pos - width/2.)
+        rnd.legend.SetY1(y_pos - height/2.)
+        rnd.legend.SetX2(x_pos + width/2.)
+        rnd.legend.SetY2(y_pos + height/2.)
 
 default_canv_attr = {
     'y_min_gr_zero' : 1e-9,
@@ -689,19 +727,21 @@ def mod_post_canv(grps):
     for g in grps:
         if not any(w.is_data for w in g.renderers):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
-        _, y_max = g.y_bounds
+        y_min, y_max = g.y_bounds
         canv_attr = dict(default_canv_attr)
         mod_wrp_dict = mod_dict.get(g.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
-        g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
+        if y_max > 1.:
+            g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
+            g.y_min_gr_zero = canv_attr['y_min_gr_zero']
         if g.renderers[0].scale == 'lin':
             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
             if canv_attr['set_leg_2_col_lin']:
                 if isinstance(canv_attr['set_leg_2_col_lin'], dict):
-                    leg_2_col(g, canv_attr['set_leg_2_col_lin'])
+                    leg_mod(g, canv_attr['set_leg_2_col_lin'], n_col=2)
                 else:
-                    leg_2_col(g)
+                    leg_mod(g, n_col=2)
             if canv_attr['set_leg_1_col_lin']:
                 if isinstance(canv_attr['set_leg_1_col_lin'], dict):
                     leg_mod(g, canv_attr['set_leg_1_col_lin'])
@@ -712,9 +752,9 @@ def mod_post_canv(grps):
             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
             if canv_attr['set_leg_2_col_log']:
                 if isinstance(canv_attr['set_leg_2_col_log'], dict):
-                    leg_2_col(g, canv_attr['set_leg_2_col_log'])
+                    leg_mod(g, canv_attr['set_leg_2_col_log'], n_col=2)
                 else:
-                    leg_2_col(g)
+                    leg_mod(g, n_col=2)
             if canv_attr['set_leg_1_col_log']:
                 if isinstance(canv_attr['set_leg_1_col_log'], dict):
                     leg_mod(g, canv_attr['set_leg_1_col_log'])
@@ -728,7 +768,7 @@ def copy_wrp_for_log(wrps):
         w = op.add_wrp_info(w, scale=lambda _: 'lin')
         mod_wrp_dict = mod_dict.get(w.name, None)
         if mod_wrp_dict:
-            copy_for_log = mod_wrp_dict.get('copy_for_log', False)
+            copy_for_log = mod_wrp_dict.get('y_max_log_fct', 1.) != 1.
             if copy_for_log:
                 new_w = op.copy(w)
                 new_w = op.add_wrp_info(new_w, scale=lambda _: 'log')
@@ -853,6 +893,7 @@ class BottomPlotUncertRatio(varial.rendering.BottomPlot):
         y_range += .1*y_range
         y_min, y_max = -y_range, y_range
         self.bottom_hist.GetYaxis().SetRangeUser(y_min, y_max)
+        self.bottom_hist.GetYaxis().SetNoExponent()
         self.bottom_hist.SetMarkerSize(0)
         self.bottom_hist.GetYaxis().SetTitleSize(0.10)
         self.bottom_hist_sec.SetMarkerSize(0)

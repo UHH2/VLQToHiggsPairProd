@@ -28,7 +28,7 @@ st_plus_jets = {
 core_histos = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
-    'n_ak8'                         : ('N(Ak8 Jets)',                      8, -.5, 7.5),
+    'n_ak8'                         : ('N(Ak8 Jets)',                      11, -.5, 10.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
     'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               100, 0., 2000.),
     'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
@@ -47,12 +47,12 @@ core_histos = {
     'nobtag_boost_mass_nsjbtags'           : ('N(subjet b-tags)',           6, -0.5, 5.5),
     'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             80, 0., 1600.),
     'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
 }
 
 more_histos = {
     'ak4_jets_btagged_dR_higgs_tags_1b_med'              : ('#Delta R(AK4 b-tag, Higgs tag)',             50, 0., 5.),
-    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     # 'gen_ht'                            : ('Gen HT',                               65, 0, 6500),
     # 'parton_ht'                            : ('Parton HT',                               65, 0, 6500),
     # 'n_ak8_cleaned_dr'              : ('N(Ak8 Jets)',                      8, -.5, 7.5),
@@ -278,14 +278,14 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
             params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
-            name='ttbar_scale__plus',
+            name='PSScale__plus',
         ),
         TreeProjector(
             dict_down_files, 
             params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
-            name='ttbar_scale__minus',
+            name='PSScale__minus',
         )
     ]
     # return tmp
