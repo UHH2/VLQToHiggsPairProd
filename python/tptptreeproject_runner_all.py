@@ -107,21 +107,21 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
         for ind, brs_ in enumerate(br_list):
             # if ind > 5: break
             tc = []
-            # tc.append(varial.tools.ToolChainParallel(
-            #     'ThetaLimits', list(varial.tools.ToolChain(
-            #         sig,
-            #         sensitivity.mk_limit_tc_single(
-            #             brs_,
-            #             sensitivity.select_single_sig(sig, list_region),
-            #             # select_no_sig(),
-            #             sig,
-            #             selection='ThetaLimits',
-            #             sys_pat=sys_pat,
-            #             pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
-            #             dict_uncerts = dict_uncerts,
-            #         ))
-            #     for sig in sensitivity.signals_to_use)
-            # ))
+            tc.append(varial.tools.ToolChainParallel(
+                'ThetaLimits', list(varial.tools.ToolChain(
+                    sig,
+                    sensitivity.mk_limit_tc_single(
+                        brs_,
+                        sensitivity.select_single_sig(sig, list_region),
+                        # select_no_sig(),
+                        sig,
+                        selection='ThetaLimits',
+                        sys_pat=sys_pat,
+                        pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
+                        dict_uncerts = dict_uncerts,
+                    ))
+                for sig in sensitivity.signals_to_use)
+            ))
             tc.append(varial.tools.ToolChain(
                 'ThetaLimitsNoSig', 
                 sensitivity.mk_limit_tc_single(
@@ -133,66 +133,66 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
                     dict_uncerts = dict_uncerts,
                 ))
             )
-            # tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
-            #     limits.LimitGraphs(
-            #         limit_path='../../ThetaLimits/*/ThetaLimit',
-            #         plot_obs=varial.settings.plot_obs,
-            #         plot_1sigmabands=True,
-            #         plot_2sigmabands=True,
-            #         axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
-            #         ),
-            #     varial.plotter.Plotter(
-            #         name='LimitCurvesCompared',
-            #         input_result_path='../LimitGraphs',
-            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-            #         # plot_setup=plot_setup,
-            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-            #         plot_grouper=lambda ws: varial.gen.group(
-            #                 ws, key_func=lambda w: w.save_name),
-            #         # save_name_func=varial.plotter.save_by_name_with_hash
-            #         save_name_func=lambda w: w.save_name,
-            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-            #             th_x=common_sensitivity.theory_masses,
-            #             th_y=common_sensitivity.theory_cs),
-            #         keep_content_as_result=True,
-            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            #             ],
-            #         # save_lin_log_scale=True
-            #         ),
-            #     ]))
-            # tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
-            #     limits.LimitGraphs(
-            #         limit_path='../../ThetaLimits/*/ThetaLimit',
-            #         plot_obs=False,
-            #         plot_1sigmabands=True,
-            #         plot_2sigmabands=True,
-            #         axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
-            #         ),
-            #     varial.plotter.Plotter(
-            #         name='LimitCurvesCompared',
-            #         input_result_path='../LimitGraphs',
-            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-            #         # plot_setup=plot_setup,
-            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-            #         plot_grouper=lambda ws: varial.gen.group(
-            #                 ws, key_func=lambda w: w.save_name),
-            #         # save_name_func=varial.plotter.save_by_name_with_hash
-            #         save_name_func=lambda w: w.save_name,
-            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-            #             th_x=common_sensitivity.theory_masses,
-            #             th_y=common_sensitivity.theory_cs),
-            #         keep_content_as_result=True,
-            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            #             ],
-            #         # save_lin_log_scale=True
-            #         ),
-            #     ]))
+            tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
+                limits.LimitGraphs(
+                    limit_path='../../ThetaLimits/*/ThetaLimit',
+                    plot_obs=varial.settings.plot_obs,
+                    plot_1sigmabands=True,
+                    plot_2sigmabands=True,
+                    axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
+                    ),
+                varial.plotter.Plotter(
+                    name='LimitCurvesCompared',
+                    input_result_path='../LimitGraphs',
+                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                    # plot_setup=plot_setup,
+                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+                    plot_grouper=lambda ws: varial.gen.group(
+                            ws, key_func=lambda w: w.save_name),
+                    # save_name_func=varial.plotter.save_by_name_with_hash
+                    save_name_func=lambda w: w.save_name,
+                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+                        th_x=common_sensitivity.theory_masses,
+                        th_y=common_sensitivity.theory_cs),
+                    keep_content_as_result=True,
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        ],
+                    # save_lin_log_scale=True
+                    ),
+                ]))
+            tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
+                limits.LimitGraphs(
+                    limit_path='../../ThetaLimits/*/ThetaLimit',
+                    plot_obs=False,
+                    plot_1sigmabands=True,
+                    plot_2sigmabands=True,
+                    axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
+                    ),
+                varial.plotter.Plotter(
+                    name='LimitCurvesCompared',
+                    input_result_path='../LimitGraphs',
+                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                    # plot_setup=plot_setup,
+                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+                    plot_grouper=lambda ws: varial.gen.group(
+                            ws, key_func=lambda w: w.save_name),
+                    # save_name_func=varial.plotter.save_by_name_with_hash
+                    save_name_func=lambda w: w.save_name,
+                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+                        th_x=common_sensitivity.theory_masses,
+                        th_y=common_sensitivity.theory_cs),
+                    keep_content_as_result=True,
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        ],
+                    # save_lin_log_scale=True
+                    ),
+                ]))
             limit_list.append(
                 varial.tools.ToolChain('Limit'+str(ind), tc))
         return limit_list
@@ -408,6 +408,14 @@ table_category_block = [
     ('H2B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion2b', 'ST')),
 ]
 
+def get_table_category_block_split(chan):
+    return [
+        ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection_%s' % chan, 'ST')),
+        ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion_%s' % chan, 'ST')),
+        ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b_%s' % chan , 'ST')),
+        ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b_%s' % chan, 'ST')),
+    ]
+
 # table_category_block_comp_fs = [
 #     ('0H category', get_dict('../HistogramsMerged/StackedAll/SidebandRegion', 'ST')),
 #     ('H1B category', get_dict('../HistogramsMerged/StackedAll/SignalRegion1b', 'ST')),
@@ -536,23 +544,24 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
     def mk_tc_sens():
         uncerts = uncertainties or get_sys_dir()
-        return [sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-                    output_dir,
-                    name,
-                    list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                    all_regions,
-                    br_list=br_list,
-                    dict_uncerts={'TTbar' : 1.50, 'WJets' : 1.50} if name == 'NoReweighting' else None
+        lim_all_reg = [sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
+            output_dir,
+            name,
+            list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+            all_regions,
+            br_list=br_list,
+            dict_uncerts={'TTbar' : 1.50, 'WJets' : 1.50} if name == 'NoReweighting' else None
+            ))]
+        lim_split_reg = [
+            sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
+                list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45']
                 )),
-                # sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
-                #     list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                #     ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45']
-                # )),
-                # sensitivity.mk_tc('LimitsAllUncertsOnlyMu', mk_limit_list_syst(
-                #     list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                #     ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45']
-                # )),
-        ]
+            sensitivity.mk_tc('LimitsAllUncertsOnlyMu', mk_limit_list_syst(
+                list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45']
+                ))]
+        return lim_all_reg+lim_split_reg if name == 'HTReweighting' else lim_all_reg
 
     def mk_tc_plot():
         uncerts = uncertainties or get_sys_dir()
@@ -626,12 +635,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                                     plot_setup=plot.stack_setup_norm_all_to_intgr)),
                     ]),
                 
-                ]
 
 
-    ######### DEPRECATED #########
 
-    ####### MERGE LEPTON CHANNELS, COMBINE FINAL STATES ########
+                ####### MERGE LEPTON CHANNELS, COMBINE FINAL STATES ########
                 
                 # varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
                 #     varial.tools.HistoLoader(
@@ -657,43 +664,87 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 #         )
                 #     ]),
 
-                # ####### TABLES ########
+                ####### TABLES ########
 
-                # varial.tools.ToolChain('MergeChannelsTables', [
-                #     varial.tools.HistoLoader(
-                #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]+list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
-                #             'Region_Comb' not in w.in_file_path and\
-                #             any(w.in_file_path.endswith(f) for f in ['ST']),
-                #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                #     ),
-                #     plot.mk_toolchain('HistogramsMerged',
-                #         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                #         pattern=None, input_result_path='../HistoLoader'),
-                #     CountTable([
-                #             table_block_signal,
-                #             table_block_background,
-                #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                #             [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                #         ],
-                #         table_category_block,
-                #         name='CountTable'
-                #         ),
-                #     EffTable([
-                #             table_block_signal,
-                #         ],
-                #         table_category_block,
-                #         norm_factors,
-                #         name='EffTable'
-                #         ),
-                #     EffTable([
-                #             table_block_signal_fs,
-                #         ],
-                #         table_category_block,
-                #         norm_factors,
-                #         name='EffTableCompFS'
-                #         ),
-                #     ]),
+                varial.tools.ToolChain('MergeChannelsTables', [
+                    varial.tools.HistoLoader(
+                        pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]+list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                            'Region_Comb' not in w.in_file_path and\
+                            any(w.in_file_path.endswith(f) for f in ['ST']),
+                        hook_loaded_histos=plot.loader_hook_merge_regions,
+                    ),
+                    plot.mk_toolchain('HistogramsMerged',
+                        plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                        pattern=None, input_result_path='../HistoLoader'),
+                    CountTable([
+                            table_block_signal,
+                            table_block_background,
+                            [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                            [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                        ],
+                        table_category_block,
+                        name='CountTable'
+                        ),
+                    EffTable([
+                            table_block_signal,
+                        ],
+                        table_category_block,
+                        norm_factors,
+                        name='EffTable'
+                        ),
+                    EffTable([
+                            table_block_signal_fs,
+                        ],
+                        table_category_block,
+                        norm_factors,
+                        name='EffTableCompFS'
+                        ),
+                    ]),
+
+                varial.tools.ToolChain('TablesSplitLepton', [
+                    plot.mk_toolchain('Histograms', plot.more_samples, 
+                            pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                            + list(sys_path+'/%s*/*.root'% i for i in uncerts)
+                            ),  
+                    CountTable([
+                            table_block_signal,
+                            table_block_background,
+                            [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                            [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                        ],
+                        get_table_category_block_split('Mu45'),
+                        name='CountTableMu45'
+                        ),
+                    CountTable([
+                            table_block_signal,
+                            table_block_background,
+                            [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                            [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                        ],
+                        get_table_category_block_split('El45'),
+                        name='CountTableEl45'
+                        ),
+                    EffTable([
+                            table_block_signal,
+                        ],
+                        get_table_category_block_split('Mu45'),
+                        norm_factors,
+                        name='EffTableMu45'
+                        ),
+                    EffTable([
+                            table_block_signal,
+                        ],
+                        get_table_category_block_split('El45'),
+                        norm_factors,
+                        name='EffTableEl45'
+                        ),
+
+                    ]),
+
+                ]
+
+    ######### DEPRECATED #########
 
     # for uc_name, uncert_list in plot_uncerts.iteritems():
     #     if all(i in sys_list for i in uncert_list):
@@ -712,6 +763,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     ############ FOR AN ###########
     ###############################
     path_sens = os.path.join(output_dir, name+'/Limit')
+    path_sens_old = os.path.join(output_dir, name+'/PlotAndSens')
     path_an = os.path.join(output_dir, name+'/PlotAN')
     path_pas = os.path.join(output_dir, name+'/PlotPAS')
     def mk_tc_an():
@@ -728,15 +780,17 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoContentSignalControlRegionCombinedMore(path_an+'/MergeChannelsMoreHists/HistogramsNormToInt/StackedAll', 'NormedSystPlotsCombinedMore_'+name),
             tex_content.mk_autoContentLimits(path_sens, 'El45', 'Mu45', 'LimitPlots_'+name),
             tex_content.mk_autoContentLimitsLarge(path_sens, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
+            tex_content.mk_autoContentLimits(path_sens_old, 'El45', 'Mu45', 'LimitPlotsOld_'+name),
+            tex_content.mk_autoContentLimitsLarge(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
             tex_content.mk_autoContentSysTabs(path_sens, 'El45', 'Mu45', 'SysTabs_'+name, mass_points=['M-0800', 'M-1200', 'M-1600']),
             ######## TABLES ########
-            # tex_content.mk_autoEffCount(path_an+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/MergeChannels/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/MergeChannels/CountTable/count_table_content.tex', name='CountTable_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/IndEfficiencies/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/IndEfficiencies/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/IndEfficiencies/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
-            # tex_content.mk_autoEffCount(path_an+'/IndEfficiencies/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/EffTable/count_table_content.tex', name='EffTable_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/CountTable/count_table_content.tex', name='CountTable_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
 
             ######### DEPRECATED #########
             # tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannels/HistogramsMergeLeptonChannels', 'WithDataFinalRegionsCombined_'+name),
@@ -813,8 +867,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
-            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', tc_tex_pas, n_workers=1),
