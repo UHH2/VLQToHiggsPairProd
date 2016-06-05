@@ -434,7 +434,7 @@ def mk_autoContentControlRegion(base_split, base_comb, el_chan, mu_chan, name='A
 ####### TREEPROJECT MORE OUTPUT COMBINED CHANNELS #######
 #########################################################
 
-def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.45'):
+def mk_autoContentSignalControlRegionCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
 
     def getFinalVarCombinedMore(base, cat):
         # print base
@@ -568,7 +568,7 @@ def getHiggsVarCombinedMore(base):
         ),
     }.items()
 
-def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.45'):
+def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegionCombined', size='0.41'):
     return varial.extensions.tex.TexContent(
         dict(getHiggsVarCombinedMore(base)),
         include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
@@ -581,54 +581,81 @@ def mk_autoContentHiggsVarCombinedMore(base, name='AutoContentSignalControlRegio
 ####### TREEPROJECT COMPARE REWEIGHTING METHODS #########
 #########################################################
 
-def mk_autoCompareReweightingMethods(base, categories, name='AutoContentSignalControlRegionCombined', size='0.45'):
+def mk_autoCompareReweightingMethods(base, categories, name='AutoContentSignalControlRegionCombined', size='0.41'):
 
-    def getHistsFiles(base, cats, regions):
+    regions = ('SidebandTTJetsRegion', 'SidebandWPlusJetsRegion')
+    def getHistsFiles():
         # print base
-        int_path = '/PlotAN/MergeChannelsMoreHistsCombFinalStates/HistogramsMerged/StackedAll/'
+        int_path = '/PlotAN/MergeChannelsMoreHists/HistogramsMerged/StackedAll/'
         comp_dict = {}
         for reg in regions:
             comp_dict.update({
-            reg+'pt_ld_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_ld_ak4_jet_leg_log' + ext) for cat in cats),
-            reg+'pt_subld_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_subld_ak4_jet_leg_log' + ext) for cat in cats),
-            reg+'pt_third_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_third_ak4_jet_leg_log' + ext) for cat in cats),
-            reg+'pt_fourth_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_fourth_ak4_jet_leg_log' + ext) for cat in cats),
-            reg+'pt_ld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_ld_ak8_jet_leg_log' + ext) for cat in cats),
-            reg+'pt_subld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_subld_ak8_jet_leg_log' + ext) for cat in cats),
-            reg+'primary_muon_pt' : list(
-                os.path.join(base, cat+int_path+reg+'/primary_muon_pt_log' + ext) for cat in cats),
-            reg+'primary_electron_pt' : list(
-                os.path.join(base, cat+int_path+reg+'/primary_electron_pt_log' + ext) for cat in cats),
-            reg+'met' : list(
-                os.path.join(base, cat+int_path+reg+'/met_leg_log' + ext) for cat in cats),
-            reg+'n_ak4' : list(
-                os.path.join(base, cat+int_path+reg+'/n_ak4_leg_log' + ext) for cat in cats),
-            reg+'n_ak8' : list(
-                os.path.join(base, cat+int_path+reg+'/n_ak8_leg_log' + ext) for cat in cats),
-            reg+'HT_rebin_flex' : list(
-                os.path.join(base, cat+int_path+reg+'/HT_rebin_flex_leg_log' + ext) for cat in cats),
-            reg+'ST_rebin_flex' : list(
-                os.path.join(base, cat+int_path+reg+'/ST_rebin_flex_leg_log' + ext) for cat in cats),
-            reg+'nobtag_boost_mass_nsjbtags' : list(
-                os.path.join(base, cat+int_path+reg+'/nobtag_boost_mass_nsjbtags_log' + ext) for cat in cats),
-            reg+'noboost_mass_1b_pt' : list(
-                os.path.join(base, cat+int_path+reg+'/noboost_mass_1b_pt_lin' + ext) for cat in cats),
-            reg+'nomass_boost_1b_mass' : list(
-                os.path.join(base, cat+int_path+reg+'/nomass_boost_1b_mass_lin' + ext) for cat in cats),
-            reg+'nomass_boost_2b_mass' : list(
-                os.path.join(base, cat+int_path+reg+'/nomass_boost_2b_mass_lin' + ext) for cat in cats),
+            reg+'_pt_ld_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_ld_ak4_jet_leg_log' + ext) for cat in categories),
+            reg+'_pt_subld_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_subld_ak4_jet_leg_log' + ext) for cat in categories),
+            reg+'_pt_third_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_third_ak4_jet_leg_log' + ext) for cat in categories),
+            reg+'_pt_fourth_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_fourth_ak4_jet_leg_log' + ext) for cat in categories),
+            reg+'_pt_ld_ak8_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_ld_ak8_jet_leg_log' + ext) for cat in categories),
+            reg+'_pt_subld_ak8_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/pt_subld_ak8_jet_leg_log' + ext) for cat in categories),
+            reg+'_primary_muon_pt' : list(
+                os.path.join(base, cat+int_path+reg+'/primary_muon_pt_log' + ext) for cat in categories),
+            reg+'_primary_electron_pt' : list(
+                os.path.join(base, cat+int_path+reg+'/primary_electron_pt_log' + ext) for cat in categories),
+            reg+'_met' : list(
+                os.path.join(base, cat+int_path+reg+'/met_leg_log' + ext) for cat in categories),
+            reg+'_n_ak4' : list(
+                os.path.join(base, cat+int_path+reg+'/n_ak4_leg_log' + ext) for cat in categories),
+            reg+'_n_ak8' : list(
+                os.path.join(base, cat+int_path+reg+'/n_ak8_leg_log' + ext) for cat in categories),
+            reg+'_HT_rebin_flex' : list(
+                os.path.join(base, cat+int_path+reg+'/HT_rebin_flex_leg_log' + ext) for cat in categories),
+            reg+'_ST_rebin_flex' : list(
+                os.path.join(base, cat+int_path+reg+'/ST_rebin_flex_leg_log' + ext) for cat in categories),
+            })
+        comp_dict.update({
+            'BaseLineSelection_nobtag_boost_mass_nsjbtags' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext) for cat in categories),
+            'BaseLineSelection_noboost_mass_1b_pt' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/noboost_mass_1b_pt_lin' + ext) for cat in categories),
+            'BaseLineSelection_nomass_boost_1b_mass' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_1b_mass_lin' + ext) for cat in categories),
+            'BaseLineSelection_nomass_boost_2b_mass' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_2b_mass_lin' + ext) for cat in categories),
             })
         return comp_dict.items()
 
 
     return varial.extensions.tex.TexContent(
-        dict(getHistsFiles(base, categories, ('SidebandTTJetsRegion', 'SidebandWPlusJetsRegion'))),
+        dict(getHistsFiles()),
+        include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
+        name=name,
+    )
+
+
+#########################################################
+####### TREEPROJECT COMPARE REWEIGHTING METHODS #########
+#########################################################
+
+def mk_autoComparePostfitPlots(base, categories, name='AutoContentSignalControlRegionCombined', size='0.41'):
+
+    def getHistsFiles():
+        # print base
+        plot_path = '/Limit/LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimitsNoSig/PostFit/cnv_post_fit_'
+        comp_dict = {}
+        comp_dict.update({
+        'comp_postfit_plot' : list(
+            os.path.join(base, cat+plot_path + ext) for cat in categories),
+        })
+        return comp_dict.items()
+
+
+    return varial.extensions.tex.TexContent(
+        dict(getHistsFiles()),
         include_str=r'\includegraphics[width='+size+r'\textwidth]{%s}',
         name=name,
     )

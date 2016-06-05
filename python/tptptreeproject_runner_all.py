@@ -711,7 +711,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     ###############################
     ############ FOR AN ###########
     ###############################
-    path_sens = os.path.join(output_dir, name+'/PlotAndSens')
+    path_sens = os.path.join(output_dir, name+'/Limit')
     path_an = os.path.join(output_dir, name+'/PlotAN')
     path_pas = os.path.join(output_dir, name+'/PlotPAS')
     def mk_tc_an():
@@ -828,10 +828,10 @@ def run_treeproject_and_plot(base_path, output_dir):
             git.GitAdder(),
             varial.tools.ToolChainParallel('RunAnalysis', [
 
-                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
-                    add_uncert_func=add_all_without_weight_uncertainties,
-                    # uncertainties=all_uncerts
-                    ),
+                # make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
+                #     add_uncert_func=add_all_without_weight_uncertainties,
+                #     # uncertainties=all_uncerts
+                #     ),
                 make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
                     add_uncert_func=add_all_with_weight_uncertainties({
                         'ht_reweight' : {
@@ -846,32 +846,35 @@ def run_treeproject_and_plot(base_path, output_dir):
                     # br_list=br_list_all,
                     # uncertainties=all_uncerts+['ht_reweight']
                     ),
-                make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
-                    add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-                    mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-                    # uncertainties=all_uncerts+['top_pt_reweight']
-                    ),
-                make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
-                    add_uncert_func=add_all_with_weight_uncertainties({
-                        'ht_reweight' : {
-                            'TTbar' : ht_reweight_ttbar_w_top_pt_reweight,
-                            'WJets' : ht_reweight_wjets_w_top_pt_reweight
-                            },
-                        'top_pt_reweight' : {'TTbar' : top_pt_reweight}
-                        }),
-                    mod_sample_weights={
-                        'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight+'*'+ht_reweight_ttbar_w_top_pt_reweight,
-                        'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_w_top_pt_reweight,
-                    },
-                    # uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
-                    ),
+                # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
+                #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+                #     mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+                #     # uncertainties=all_uncerts+['top_pt_reweight']
+                #     ),
+                # make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
+                #     add_uncert_func=add_all_with_weight_uncertainties({
+                #         'ht_reweight' : {
+                #             'TTbar' : ht_reweight_ttbar_w_top_pt_reweight,
+                #             'WJets' : ht_reweight_wjets_w_top_pt_reweight
+                #             },
+                #         'top_pt_reweight' : {'TTbar' : top_pt_reweight}
+                #         }),
+                #     mod_sample_weights={
+                #         'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight+'*'+ht_reweight_ttbar_w_top_pt_reweight,
+                #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_w_top_pt_reweight,
+                #     },
+                #     # uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
+                #     ),
 
                 ], n_workers=1),
             varial.tools.WebCreator(),
+            varial.tools.ToolChain('ReweightingComparision', [
+                tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
+                tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),
+                ]),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../ReweightingComparision/*', ignore=('*.svn', '*.html'), use_rsync=True),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
-            tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingMethods'),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/CompareReweightingMethods/', src='../CompareReweightingMethods/*', ignore=('*.svn', '*.html'), use_rsync=True)
 
             # varial.tools.PrintToolTree(),
             # tex_content.tc,
