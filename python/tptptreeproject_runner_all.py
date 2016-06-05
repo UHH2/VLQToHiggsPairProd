@@ -107,21 +107,21 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
         for ind, brs_ in enumerate(br_list):
             # if ind > 5: break
             tc = []
-            tc.append(varial.tools.ToolChainParallel(
-                'ThetaLimits', list(varial.tools.ToolChain(
-                    sig,
-                    sensitivity.mk_limit_tc_single(
-                        brs_,
-                        sensitivity.select_single_sig(sig, list_region),
-                        # select_no_sig(),
-                        sig,
-                        selection='ThetaLimits',
-                        sys_pat=sys_pat,
-                        pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
-                        dict_uncerts = dict_uncerts,
-                    ))
-                for sig in sensitivity.signals_to_use)
-            ))
+            # tc.append(varial.tools.ToolChainParallel(
+            #     'ThetaLimits', list(varial.tools.ToolChain(
+            #         sig,
+            #         sensitivity.mk_limit_tc_single(
+            #             brs_,
+            #             sensitivity.select_single_sig(sig, list_region),
+            #             # select_no_sig(),
+            #             sig,
+            #             selection='ThetaLimits',
+            #             sys_pat=sys_pat,
+            #             pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
+            #             dict_uncerts = dict_uncerts,
+            #         ))
+            #     for sig in sensitivity.signals_to_use)
+            # ))
             tc.append(varial.tools.ToolChain(
                 'ThetaLimitsNoSig', 
                 sensitivity.mk_limit_tc_single(
@@ -133,66 +133,66 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
                     dict_uncerts = dict_uncerts,
                 ))
             )
-            tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
-                limits.LimitGraphs(
-                    limit_path='../../ThetaLimits/*/ThetaLimit',
-                    plot_obs=varial.settings.plot_obs,
-                    plot_1sigmabands=True,
-                    plot_2sigmabands=True,
-                    axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
-                    ),
-                varial.plotter.Plotter(
-                    name='LimitCurvesCompared',
-                    input_result_path='../LimitGraphs',
-                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-                    # plot_setup=plot_setup,
-                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-                    plot_grouper=lambda ws: varial.gen.group(
-                            ws, key_func=lambda w: w.save_name),
-                    # save_name_func=varial.plotter.save_by_name_with_hash
-                    save_name_func=lambda w: w.save_name,
-                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-                        th_x=common_sensitivity.theory_masses,
-                        th_y=common_sensitivity.theory_cs),
-                    keep_content_as_result=True,
-                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-                        ],
-                    # save_lin_log_scale=True
-                    ),
-                ]))
-            tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
-                limits.LimitGraphs(
-                    limit_path='../../ThetaLimits/*/ThetaLimit',
-                    plot_obs=False,
-                    plot_1sigmabands=True,
-                    plot_2sigmabands=True,
-                    axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
-                    ),
-                varial.plotter.Plotter(
-                    name='LimitCurvesCompared',
-                    input_result_path='../LimitGraphs',
-                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-                    # plot_setup=plot_setup,
-                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-                    plot_grouper=lambda ws: varial.gen.group(
-                            ws, key_func=lambda w: w.save_name),
-                    # save_name_func=varial.plotter.save_by_name_with_hash
-                    save_name_func=lambda w: w.save_name,
-                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-                        th_x=common_sensitivity.theory_masses,
-                        th_y=common_sensitivity.theory_cs),
-                    keep_content_as_result=True,
-                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-                        ],
-                    # save_lin_log_scale=True
-                    ),
-                ]))
+            # tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
+            #     limits.LimitGraphs(
+            #         limit_path='../../ThetaLimits/*/ThetaLimit',
+            #         plot_obs=varial.settings.plot_obs,
+            #         plot_1sigmabands=True,
+            #         plot_2sigmabands=True,
+            #         axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
+            #         ),
+            #     varial.plotter.Plotter(
+            #         name='LimitCurvesCompared',
+            #         input_result_path='../LimitGraphs',
+            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+            #         # plot_setup=plot_setup,
+            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+            #         plot_grouper=lambda ws: varial.gen.group(
+            #                 ws, key_func=lambda w: w.save_name),
+            #         # save_name_func=varial.plotter.save_by_name_with_hash
+            #         save_name_func=lambda w: w.save_name,
+            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+            #             th_x=common_sensitivity.theory_masses,
+            #             th_y=common_sensitivity.theory_cs),
+            #         keep_content_as_result=True,
+            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            #             ],
+            #         # save_lin_log_scale=True
+            #         ),
+            #     ]))
+            # tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
+            #     limits.LimitGraphs(
+            #         limit_path='../../ThetaLimits/*/ThetaLimit',
+            #         plot_obs=False,
+            #         plot_1sigmabands=True,
+            #         plot_2sigmabands=True,
+            #         axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
+            #         ),
+            #     varial.plotter.Plotter(
+            #         name='LimitCurvesCompared',
+            #         input_result_path='../LimitGraphs',
+            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+            #         # plot_setup=plot_setup,
+            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+            #         plot_grouper=lambda ws: varial.gen.group(
+            #                 ws, key_func=lambda w: w.save_name),
+            #         # save_name_func=varial.plotter.save_by_name_with_hash
+            #         save_name_func=lambda w: w.save_name,
+            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+            #             th_x=common_sensitivity.theory_masses,
+            #             th_y=common_sensitivity.theory_cs),
+            #         keep_content_as_result=True,
+            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            #             ],
+            #         # save_lin_log_scale=True
+            #         ),
+            #     ]))
             limit_list.append(
                 varial.tools.ToolChain('Limit'+str(ind), tc))
         return limit_list
@@ -626,7 +626,12 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                                     plot_setup=plot.stack_setup_norm_all_to_intgr)),
                     ]),
                 
-                ####### MERGE LEPTON CHANNELS, COMBINE FINAL STATES ########
+                ]
+
+
+    ######### DEPRECATED #########
+
+    ####### MERGE LEPTON CHANNELS, COMBINE FINAL STATES ########
                 
                 # varial.tools.ToolChain('MergeChannelsMoreHistsCombFinalStates', [
                 #     varial.tools.HistoLoader(
@@ -689,14 +694,6 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 #         name='EffTableCompFS'
                 #         ),
                 #     ]),
-                
-
-
-                ]
-
-
-    ######### DEPRECATED #########
-
 
     # for uc_name, uncert_list in plot_uncerts.iteritems():
     #     if all(i in sys_list for i in uncert_list):
@@ -816,8 +813,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
-            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
-            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', tc_tex_pas, n_workers=1),
@@ -831,6 +828,10 @@ def run_treeproject_and_plot(base_path, output_dir):
             git.GitAdder(),
             varial.tools.ToolChainParallel('RunAnalysis', [
 
+                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
+                    add_uncert_func=add_all_without_weight_uncertainties,
+                    # uncertainties=all_uncerts
+                    ),
                 make_tp_plot_chain('HTReweighting', base_path, output_dir+'/RunAnalysis',
                     add_uncert_func=add_all_with_weight_uncertainties({
                         'ht_reweight' : {
@@ -845,9 +846,10 @@ def run_treeproject_and_plot(base_path, output_dir):
                     # br_list=br_list_all,
                     # uncertainties=all_uncerts+['ht_reweight']
                     ),
-                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
-                    add_uncert_func=add_all_without_weight_uncertainties,
-                    # uncertainties=all_uncerts
+                make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
+                    add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
+                    mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
+                    # uncertainties=all_uncerts+['top_pt_reweight']
                     ),
                 make_tp_plot_chain('TopPtAndHTReweighting', base_path, output_dir+'/RunAnalysis',
                     add_uncert_func=add_all_with_weight_uncertainties({
@@ -863,17 +865,13 @@ def run_treeproject_and_plot(base_path, output_dir):
                     },
                     # uncertainties=all_uncerts+['ht_reweight', 'top_pt_reweight']
                     ),
-                make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
-                    add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {'TTbar' : top_pt_reweight}}),
-                    mod_sample_weights={'TTbar' : treeproject_tptp.base_weight+'*'+top_pt_reweight},
-                    # uncertainties=all_uncerts+['top_pt_reweight']
-                    ),
 
                 ], n_workers=1),
             varial.tools.WebCreator(),
-            git.GitTagger(commit_prefix='In {0}'.format(output_dir))
+            git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
-            # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../Tex/*', ignore=(), use_rsync=True)
+            tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingMethods'),
+            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/CompareReweightingMethods/', src='../CompareReweightingMethods/*', ignore=('*.svn', '*.html'), use_rsync=True)
 
             # varial.tools.PrintToolTree(),
             # tex_content.tc,
