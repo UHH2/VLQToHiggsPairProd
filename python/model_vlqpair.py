@@ -38,11 +38,11 @@ def get_model(hist_dir, final_states, dict_uncerts=None):
     # for process, factor in branching_ratios:
     #     model.scale_predictions(factor, process, observable)
     # model.add_lognormal_uncertainty('ttbar_rate', math.log(1.15), 'TTbar')
-    # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts_['TTbar']), 'TTbar')
+    model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts_['TTbar']), 'TTbar')
     model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts_['QCD']), 'QCD')
     # model.add_lognormal_uncertainty('wjets_rate', math.log(1.15), 'WJets')
-    # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts_['WJets']), 'WJets')
-    # model.add_lognormal_uncertainty('zjets_rate', math.log(dict_uncerts_['DYJets']), 'DYJets')
+    model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts_['WJets']), 'WJets')
+    model.add_lognormal_uncertainty('zjets_rate', math.log(dict_uncerts_['DYJets']), 'DYJets')
     model.add_lognormal_uncertainty('singlet_rate', math.log(dict_uncerts_['SingleTop']), 'SingleTop')
     for smpl in background_samples:
         model.add_lognormal_uncertainty('luminosity', math.log(1.027), smpl)

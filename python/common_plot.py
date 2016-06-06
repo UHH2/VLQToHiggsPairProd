@@ -76,7 +76,14 @@ def get_style():
 
 mod_dict = {
 
-
+    'twod_cut_hist_noIso_px' : {
+            'y_max_log_fct' : 10.,
+            'y_min_gr_zero' : 10,
+            },
+    'twod_cut_hist_noIso_py' : {
+            'y_max_log_fct' : 100.,
+            'y_min_gr_zero' : 0.1,
+            },
 
     ##### GEN VARIABLES ######
     'higgs_to_bb_pt_all_lin' : {

@@ -176,29 +176,29 @@ less_samples_to_plot_pre = other_samples_to_plot + less_signals
 
 get_samplename = vlq_common.get_samplename
 
-varial.settings.pretty_names.update({
-    'no sel._tex' : 'no sel.',
-    'trigger_accept_el45_tex' : 'trigger',
-    'trigger_accept_mu45_tex' : 'trigger',
-    'primary_lepton_pt_tex' : 'p_T(Lepton)',
-    'primary_electron_pt_tex' : 'p_T(Electron)',
-    'primary_muon_pt_tex' : 'p_T(Muon)',
-    'pt_ld_ak4_jet_tex' : 'p_T(1st AK4 jet)',
-    'pt_subld_ak4_jet_tex' : 'p_T(2nd AK4 jet)',
-    '2D cut_tex' : '2D cut',
-    'ST_tex' : 'ST',
-    'n_ak4_tex' : 'N(AK4 jets)',
-    'n_ak8_tex' : 'N(AK8 jets)',
-    'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
-    'output/input_tex' : 'output/input',
-    'TpTp_M-0700' : 'TT M0700',
-    'TpTp_M-1000' : 'TT M1000',
-    'TpTp_M-1300' : 'TT M1300',
-    'TpTp_M-1700' : 'TT M1700',
-    'DYJetsToLL' : 'DY + jets',
-    'SingleTop' : 'Single T',
-    'WJets' : 'W + jets'
-} )
+# varial.settings.pretty_names.update({
+#     'no sel._tex' : 'no sel.',
+#     'trigger_accept_el45_tex' : 'trigger',
+#     'trigger_accept_mu45_tex' : 'trigger',
+#     'primary_lepton_pt_tex' : 'p_T(Lepton)',
+#     'primary_electron_pt_tex' : 'p_T(Electron)',
+#     'primary_muon_pt_tex' : 'p_T(Muon)',
+#     'pt_ld_ak4_jet_tex' : 'p_T(1st AK4 jet)',
+#     'pt_subld_ak4_jet_tex' : 'p_T(2nd AK4 jet)',
+#     '2D cut_tex' : '2D cut',
+#     'ST_tex' : 'ST',
+#     'n_ak4_tex' : 'N(AK4 jets)',
+#     'n_ak8_tex' : 'N(AK8 jets)',
+#     'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
+#     'output/input_tex' : 'output/input',
+#     'TpTp_M-0700' : 'TT M0700',
+#     'TpTp_M-1000' : 'TT M1000',
+#     'TpTp_M-1300' : 'TT M1300',
+#     'TpTp_M-1700' : 'TT M1700',
+#     'DYJetsToLL' : 'DY + jets',
+#     'SingleTop' : 'Single T',
+#     'WJets' : 'W + jets'
+# } )
 
 
 def common_loader_hook(wrps):
