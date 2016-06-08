@@ -30,8 +30,11 @@ core_histos = {
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
     'n_ak8'                         : ('N(Ak8 Jets)',                      11, -.5, 10.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
-    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               100, 0., 2000.),
+    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
+    'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               120, 0., 2400.),
+    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             100, 0., 2000.),
     'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
     'met'                           : ('missing E_{T} [GeV]',                              50, 0., 1000.),
     'primary_lepton_pt'             : ('Primary Lepton p_{T} [GeV]',               50, 0., 1200.),
@@ -45,9 +48,6 @@ core_histos = {
     'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
     'nomass_boost_2b_mass'           : ('groomed type-II Higgs tag mass [GeV]',           60, 0., 300.),
     'nobtag_boost_mass_nsjbtags'           : ('N(subjet b-tags)',           6, -0.5, 5.5),
-    'pt_subld_ak8_jet'              : ('p_{T} subleading Ak8 Jet',             80, 0., 1600.),
-    'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
-    'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'n_ak8_higgs_cand'              : ('N(Higgs Candidates)',              8, -.5, 7.5),
 }
 

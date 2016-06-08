@@ -3,6 +3,8 @@
 import os
 import time
 import glob
+import cPickle
+import pprint
 
 import theta_auto
 
@@ -18,7 +20,7 @@ import varial.util as util
 from ROOT import TLatex
 from varial.sample import Sample
 from varial.extensions.limits import *
-from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots
+from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots, label_axes
 
 import common_sensitivity
 import common_plot
@@ -110,18 +112,22 @@ datasets_not_to_use = [
 #             return True
 #     return tmp
 
-def rebin_st(wrps):
-    st_bounds = st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.]
+st_bounds = [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.]
+
+def rebin_st(wrps, bounds):
     for w in wrps:
         if w.in_file_path.endswith('ST'):
             # w = varial.operations.rebin_nbins_max(w, 15)
-            w = varial.operations.rebin(w, st_bounds, False)
+            if isinstance(bounds, list):
+                w = varial.operations.rebin(w, bounds, False)
+            elif isinstance(bounds, int):
+                w = varial.operations.rebin_nbins_max(w, bounds)
         yield w
 
-def loader_hook(brs):
+def loader_hook(brs, bounds=st_bounds):
     def temp(wrps):
         wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
-        wrps = rebin_st(wrps)
+        wrps = rebin_st(wrps, bounds)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct=common_plot.normfactors,
             # norm_all=(3000./552.67)
@@ -129,16 +135,30 @@ def loader_hook(brs):
         return wrps
     return temp
 
-def loader_hook_sys(brs):
-    def temp(wrps):
-        hook = loader_hook(brs)
-        wrps = hook(wrps)
-        # wrps = varial.gen.gen_add_wrp_info(
-        #     wrps,
-        #     sys_type=lambda w: w.file_path.split('/')[-2],
-        # )
-        return wrps
-    return temp
+def loader_hook_postfit(wrps):
+    wrps = common_plot.add_wrp_info(wrps)
+    wrps = varial.generators.gen_add_wrp_info(
+        wrps, category=lambda w: w.name.split('__')[0],
+        is_data=lambda w: w.name.split('__')[1] == 'DATA',
+        sample=lambda w: w.name.split('__')[1],
+        legend=lambda w: w.name.split('__')[1],
+        )
+    wrps = common_plot.mod_legend(wrps)
+    wrps = label_axes(wrps)
+    wrps = common_plot.mod_title(wrps)
+    wrps = sorted(wrps, key=lambda w: w.category)
+    return wrps
+
+# def loader_hook_sys(brs):
+#     def temp(wrps):
+#         hook = loader_hook(brs)
+#         wrps = hook(wrps)
+#         # wrps = varial.gen.gen_add_wrp_info(
+#         #     wrps,
+#         #     sys_type=lambda w: w.file_path.split('/')[-2],
+#         # )
+#         return wrps
+#     return temp
 
 
 
@@ -152,21 +172,6 @@ def limit_curve_loader_hook(brs):
         wrps = gen.sort(wrps, key_list=['save_name'])
         return wrps
     return tmp
-
-
-def scale_bkg_postfit(wrps, theta_res_path):
-    theta_res = varial.ana.lookup_result(theta_res_path)
-    try:
-        r, _ = theta_res.postfit_vals['TpTp_M-0700']['bkg_rate'][0]
-    except KeyError:
-        r = 0
-
-    for w in wrps:
-        if w.sample == 'Bkg':
-            w.sample = 'BkgPostFit'
-            w.legend = 'Bkg. post-fit'
-            w.histo.Scale(1+r)
-        yield w
 
 # maybe pack this up into a list of individual tool chains so that HistoLoader is the first
 # tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
@@ -289,14 +294,35 @@ def select_single_sig(signal, list_region):
             return True
     return tmp
 
-def mk_limit_tc_single(brs, filter_keyfunc, signal='', sys_pat=None, selection='', pattern=None, dict_uncerts=None):
+
+
+def scale_bkg_postfit(wrps, theta_res_path, signal):
+    theta_res = varial.ana.lookup_result(theta_res_path)
+    try:
+        postfit_vals = cPickle.loads(theta_res.postfit_vals)
+        postfit_vals = postfit_vals[signal]
+        pprint.pprint(postfit_vals)
+        r, _ = postfit_vals[signal]['bkg_rate'][0]
+    except KeyError:
+        r = 0
+
+    for w in wrps:
+        # if w.sample == 'Bkg':
+        #     w.sample = 'BkgPostFit'
+        #     w.legend = 'Bkg. post-fit'
+        #     w.histo.Scale(1+r)
+        yield w
+
+
+def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model, **kws):
+    load_dict = {
+        'hook_loaded_histos' : loader_hook(brs)
+    }
+    load_dict.update(**kws)
     loader = varial.tools.HistoLoader(
         name='HistoLoader',
         pattern=pattern,
-        # pattern=file_stack_split(),
-        # pattern=,
-        filter_keyfunc=filter_keyfunc,
-        hook_loaded_histos=loader_hook(brs)
+        **load_dict
     )
     plotter = varial.tools.Plotter(
         name='Plotter',
@@ -304,7 +330,8 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal='', sys_pat=None, selection='
         plot_grouper=lambda ws: varial.gen.group(
             ws, key_func=lambda w: w.category),
         plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-        save_name_func=lambda w: w.category
+        save_name_func=lambda w: w.category,
+        hook_canvas_post_build=varial.gen.add_sample_integrals,
     )
     limits = TpTpThetaLimits(
         name='ThetaLimit',
@@ -314,16 +341,15 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal='', sys_pat=None, selection='
         # name= 'ThetaLimitsSplit'+str(ind),
         asymptotic=varial.settings.asymptotic,
         brs=brs,
-        model_func= lambda w: model_vlqpair.get_model(w, signal, dict_uncerts),
+        model_func=lambda w: model_func(w, signal),
         selection=selection
         # do_postfit=False,
     )
     if sys_pat:
         sys_loader = varial.tools.HistoLoader(
             name='HistoLoaderSys',
-            filter_keyfunc=filter_keyfunc,
             pattern=sys_pat,
-            hook_loaded_histos=loader_hook(brs)
+            **load_dict
         )
         postfit = ThetaPostFitPlot(
             name='PostFit',
@@ -342,20 +368,26 @@ def mk_limit_tc_single(brs, filter_keyfunc, signal='', sys_pat=None, selection='
                         varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
             )
-        # plotter_postfit = varial.tools.Plotter(
-        #     # filter_keyfunc=lambda w: '700' in w.sample 
-        #     #                          or '900' in w.sample 
-        #     #                          or not w.is_signal,
-        #     plot_grouper=lambda ws: varial.gen.group(
-        #         ws, key_func=lambda w: w.category),
-        #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-        #     save_name_func=lambda w: w.category,
-        #     hook_canvas_post_build=varial.gen.add_sample_integrals,
-        #     hook_loaded_histos=lambda w: scale_bkg_postfit(
-        #         w, '../Limit'+name),
-        #     # name='PostFitPlot',
-        # )
-        return [loader, plotter, sys_loader, limits, postfit] #, corr_mat, corr_plotter # , plotter_postfit
+        post_loader = varial.tools.HistoLoader(
+            name='HistoLoaderPost',
+            pattern='../ThetaLimit/Theta*.root',
+            filter_keyfunc=lambda w: 'MLE' in w.file_path or w.name.endswith('DATA'),
+            lookup_aliases=False,
+        )
+        plotter_postfit = varial.tools.Plotter(
+            name='PostFitPlotter',
+            input_result_path='../HistoLoaderPost',
+            hook_loaded_histos=loader_hook_postfit,
+            plot_grouper=lambda ws: varial.gen.group(
+                ws, key_func=lambda w: w.category),
+            plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+            save_name_func=lambda w: w.category,
+            hook_canvas_post_build=varial.gen.add_sample_integrals,
+            # hook_loaded_histos=lambda w: scale_bkg_postfit(
+            #     w, '../ThetaLimit', signal),
+            # name='PostFitPlot',
+        )
+        return [loader, plotter, sys_loader, limits, postfit, post_loader, plotter_postfit] #, corr_mat, corr_plotter # , plotter_postfit
     else:
         return [loader, plotter, limits]
 
@@ -455,38 +487,38 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None):
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
     return varial.tools.ToolChain(dir_limit, [
         mk_limit_chain(mk_limit_list=mk_limit_list),
-        varial.tools.ToolChain('LimitTriangle',[
-                TriangleMassLimitPlots(
-                    limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
-                    ),
-                varial.plotter.Plotter(
-                    name='PlotterBoxExp',
-                    input_result_path='../TriangleMassLimitPlots',
-                    filter_keyfunc=lambda w: 'exp' in w.save_name,
-                    plot_setup=plot_setup_triangle('col text'),
-                    save_name_func=lambda w: w.save_name,
-                    canvas_decorators=[DrawLess700,
-                                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
-                                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
-                    ),
-                varial.plotter.Plotter(
-                    name='PlotterBoxObs',
-                    input_result_path='../TriangleMassLimitPlots',
-                    filter_keyfunc=lambda w: 'obs' in w.save_name,
-                    plot_setup=plot_setup_triangle('col text'),
-                    save_name_func=lambda w: w.save_name,
-                    canvas_decorators=[DrawLess700,
-                                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
-                    ),
-                varial.plotter.Plotter(
-                    name='PlotterCont',
-                    input_result_path='../TriangleMassLimitPlots',
-                    plot_setup=plot_setup_triangle('contz'),
-                    save_name_func=lambda w: w.save_name,
-                    canvas_decorators=()
-                    ),
-                ]),
+        # varial.tools.ToolChain('LimitTriangle',[
+        #         TriangleMassLimitPlots(
+        #             limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
+        #             ),
+        #         varial.plotter.Plotter(
+        #             name='PlotterBoxExp',
+        #             input_result_path='../TriangleMassLimitPlots',
+        #             filter_keyfunc=lambda w: 'exp' in w.save_name,
+        #             plot_setup=plot_setup_triangle('col text'),
+        #             save_name_func=lambda w: w.save_name,
+        #             canvas_decorators=[DrawLess700,
+        #                         varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+        #                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+        #             ),
+        #         varial.plotter.Plotter(
+        #             name='PlotterBoxObs',
+        #             input_result_path='../TriangleMassLimitPlots',
+        #             filter_keyfunc=lambda w: 'obs' in w.save_name,
+        #             plot_setup=plot_setup_triangle('col text'),
+        #             save_name_func=lambda w: w.save_name,
+        #             canvas_decorators=[DrawLess700,
+        #                         varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+        #                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+        #             ),
+        #         varial.plotter.Plotter(
+        #             name='PlotterCont',
+        #             input_result_path='../TriangleMassLimitPlots',
+        #             plot_setup=plot_setup_triangle('contz'),
+        #             save_name_func=lambda w: w.save_name,
+        #             canvas_decorators=()
+        #             ),
+        #         ]),
     ])
 
 # tc = varial.tools.ToolChain("", [tc])

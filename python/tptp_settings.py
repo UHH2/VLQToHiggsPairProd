@@ -60,12 +60,12 @@ settings.pretty_names.update({
     'sfmu_trg' : 'SF mu trigger',
     'sfel_id' : 'SF el ID',
     'sfel_trg' : 'SF el trigger',
-    'ScaleVar' : 'Q^2 scale variations',
+    'ScaleVar' : 'Q^{2} scale variations',
     'PDF' : 'PDF',
     'ttbar_scale' : 'PS scale variations',
     'PSScale' : 'PS scale variations',
-    'top_pt_reweight' : 'top-p_T reweighting',
-    'ht_reweight' : 'H_T-reweighting',
+    'top_pt_reweight' : 'top-p_{T} reweighting',
+    'ht_reweight' : 'H_{T}-reweighting',
 } )
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
