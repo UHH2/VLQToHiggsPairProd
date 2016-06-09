@@ -181,7 +181,6 @@ mod_dict = {
     'pt_ld_ak8_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} (1st AK8 Jet) [GeV]',
-            'y_max_log_fct' : 1000.,
             'y_max_fct' : 1.5,
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 0.1,
@@ -189,7 +188,6 @@ mod_dict = {
     'pt_subld_ak8_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} (2nd AK8 Jet) [GeV]',
-            'y_max_log_fct' : 1000.,
             'y_max_fct' : 1.5,
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 0.1,

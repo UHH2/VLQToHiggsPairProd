@@ -17,7 +17,8 @@ import varial.rendering
 import varial.settings
 import varial.operations
 import varial.util as util
-from ROOT import TLatex
+from ROOT import TLatex, gStyle, TColor
+import ROOT
 from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots, label_axes
@@ -45,7 +46,6 @@ for bw_br in [i/10. for i in xrange(0, int(bw_max*10)+2, 2)]:
     # tz_max = 0.8
     for tz_br in [ii/10. for ii in xrange(0, int(tz_max*10)+2, 2)]:
         th_br = 1-bw_br-tz_br
-        # print bw_br, th_br, tz_br
         br_list.append({
             'bw' : bw_br,
             'th' : th_br,
@@ -98,8 +98,6 @@ datasets_not_to_use = [
 #     def tmp(wrp):
 #         file_path = wrp.file_path
 #         in_file_path = wrp.in_file_path
-#         # print "before selecting: "+wrp.file_path
-#         # print file_path
 #         if (file_path.endswith('.root')
 #                 # and 'DATA' not in file_path\
 #                 # and in_file_path.endswith('PostSelection/ST')
@@ -108,7 +106,6 @@ datasets_not_to_use = [
 #                 and any(a in wrp.file_path for a in datasets_to_use)
 #                 and all(a not in wrp.file_path for a in datasets_not_to_use)
 #                 and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
-#             # print wrp
 #             return True
 #     return tmp
 
@@ -149,23 +146,17 @@ def loader_hook_postfit(wrps):
     wrps = sorted(wrps, key=lambda w: w.category)
     return wrps
 
-# def loader_hook_sys(brs):
-#     def temp(wrps):
-#         hook = loader_hook(brs)
-#         wrps = hook(wrps)
-#         # wrps = varial.gen.gen_add_wrp_info(
-#         #     wrps,
-#         #     sys_type=lambda w: w.file_path.split('/')[-2],
-#         # )
-#         return wrps
-#     return temp
+# def loader_hook_triangle(wrps):
+#     for w in wrps:
+#         if isinstance(w, wrappers.HistoWrapper):
+#             w.histo.GetZaxis().SetRangeUser(-100, 100)
+#         yield wrps
 
 
 
 def limit_curve_loader_hook(brs):
     def tmp(wrps):
         # wrps = list(wrps)
-        # print wrps
         # wrps = gen.gen_add_wrp_info(wrps, save_name=lambda w: 'tH%.0ftZ%.0fbW%.0f'\
         #    % (brs['th']*100, brs['tz']*100, brs['bw']*100))
         wrps = gen.gen_add_wrp_info(wrps, brs=lambda w: brs)
@@ -173,97 +164,8 @@ def limit_curve_loader_hook(brs):
         return wrps
     return tmp
 
-# maybe pack this up into a list of individual tool chains so that HistoLoader is the first
-# tool and ThetaLimitsBranchingRatios runs afterwards (input_path would then be s.th. like
-# input_path='..')
-
-# def mk_limit_tc(brs, filter_keyfunc, sys_pat=''):
-
-#     loader = varial.tools.HistoLoader(
-#         name='HistoLoader',
-#         # pattern=file_stack_split(),
-#         # pattern=,
-#         filter_keyfunc=filter_keyfunc,
-#         hook_loaded_histos=loader_hook(brs)
-#     )
-#     plotter = varial.tools.Plotter(
-#         name='Plotter',
-#         input_result_path='../HistoLoader',
-#         plot_grouper=lambda ws: varial.gen.group(
-#             ws, key_func=lambda w: w.category),
-#         plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-#         save_name_func=lambda w: w.category
-#     )
-#     limits = TpTpThetaLimits(
-#         name='ThetaLimit',
-#         # input_path= '../HistoLoader',
-#         cat_key=lambda w: w.category,
-#         sys_key=lambda w: w.sys_info,
-#         # name= 'ThetaLimitsSplit'+str(ind),
-#         asymptotic=varial.settings.asymptotic,
-#         brs=brs,
-#         model_func= lambda w: model_vlqpair.get_model(w, signals_to_use),
-#         # do_postfit=False,
-#     )
-#     postfit = ThetaPostFitPlot(
-#         name='PostFit',
-#         input_path='../ThetaLimit')
-#     # plotter_postfit = varial.tools.Plotter(
-#     #     filter_keyfunc=lambda w: '700' in w.sample 
-#     #                              or '900' in w.sample 
-#     #                              or not w.is_signal,
-#     #     plot_grouper=lambda ws: varial.gen.group(
-#     #         ws, key_func=lambda w: w.category),
-#     #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-#     #     save_name_func=lambda w: w.category,
-#     #     hook_canvas_post_build=varial.gen.add_sample_integrals,
-#     #     hook_loaded_histos=lambda w: scale_bkg_postfit(
-#     #         w, '../Limit'+name),
-#     #     name='PostFit',
-#     # )
-#     plot_limits = varial.tools.ToolChain('LimitsWithGraphs',[
-#             LimitGraphs(
-#                 limit_path='../../ThetaLimit',
-#                 plot_obs=varial.settings.plot_obs,
-#                 plot_1sigmabands=True,
-#                 plot_2sigmabands=True,
-#                 ),
-#             varial.plotter.Plotter(
-#                 name='LimitCurvesCompared',
-#                 input_result_path='../LimitGraphs',
-#                 # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-#                 # plot_setup=plot_setup,
-#                 hook_loaded_histos=limit_curve_loader_hook,
-#                 plot_grouper=lambda ws: varial.gen.group(
-#                         ws, key_func=lambda w: w.save_name),
-#                 # save_name_func=varial.plotter.save_by_name_with_hash
-#                 save_name_func=lambda w: w.save_name,
-#                 plot_setup=lambda w: plot_setup_graphs(w,
-#                     th_x=common_sensitivity.theory_masses,
-#                     th_y=common_sensitivity.theory_cs),
-#                 canvas_decorators=[
-#                     # varial.rendering.Legend(x_pos=0.85, y_pos=0.5, label_width=0.2, label_height=0.07),
-#                     # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-#                     ],
-#                 save_lin_log_scale=True
-#                 ),
-#             ])
-#     if sys_pat:
-#         sys_loader = varial.tools.HistoLoader(
-#             name='HistoLoaderSys',
-#             filter_keyfunc=lambda w: filter_keyfunc(w) and 'ak4_pt' not in w.file_path,
-#             pattern=sys_pat,
-#             hook_loaded_histos=loader_hook_sys(brs)
-#         )
-#         return [loader, sys_loader, plotter, limits, plot_limits, postfit] # , plotter_postfit
-#     else:
-#         return [loader, plotter, limits, plot_limits]
-
 def select_no_sig(list_region):
     def tmp(wrp):
-        # print "before selecting: "+wrp.file_path
-        # print file_path
-        # print name
         if (wrp.file_path.endswith('.root')
                 # and name in wrp.file_path
                 and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
@@ -273,15 +175,11 @@ def select_no_sig(list_region):
                     )
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
                 and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
-            # print wrp
             return True
     return tmp
 
 def select_single_sig(signal, list_region):
     def tmp(wrp):
-        # print "before selecting: "+wrp.file_path
-        # print file_path
-        # print name
         if (wrp.file_path.endswith('.root')
                 # and name in wrp.file_path
                 and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
@@ -290,7 +188,6 @@ def select_single_sig(signal, list_region):
                     or any(signal+f in wrp.file_path for f in final_states_to_use))
                 and all(a not in wrp.file_path for a in datasets_not_to_use)
                 and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
-            # print wrp
             return True
     return tmp
 
@@ -362,11 +259,13 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
         corr_plotter = varial.plotter.Plotter(
             name='CorrelationPlot',
             input_result_path='../CorrelationMatrix',
-            plot_setup=lambda w: add_draw_option(w, 'col text'),
+            plot_setup=plot_setup_corr_matrix('colz text'),
+            # hook_loaded_histos=loader_hook_triangle,
             # save_name_func=lambda w: w.save_name,
             canvas_decorators=[
-                        varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                        varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                        # varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                        varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        ]
             )
         post_loader = varial.tools.HistoLoader(
             name='HistoLoaderPost',
@@ -387,7 +286,7 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
             #     w, '../ThetaLimit', signal),
             # name='PostFitPlot',
         )
-        return [loader, plotter, sys_loader, limits, postfit, post_loader, plotter_postfit] #, corr_mat, corr_plotter # , plotter_postfit
+        return [loader, plotter, sys_loader, limits, postfit, post_loader, plotter_postfit, corr_mat, corr_plotter] #, corr_mat, corr_plotter # , plotter_postfit
     else:
         return [loader, plotter, limits]
 
@@ -405,11 +304,18 @@ def add_draw_option(wrps, draw_option=''):
             wrp.draw_option = draw_option
         yield wrp
 
+def plot_setup_corr_matrix(opt):
+    gStyle.SetPalette(1) # kBird
+    gStyle.SetPaintTextFormat('.2f')
+    def tmp(grps):
+        grps = (add_draw_option(ws, opt) for ws in grps)
+        return grps
+    return tmp
+
 def plot_setup_triangle(opt):
     def tmp(grps):
         grps = (add_draw_option(ws, opt) for ws in grps)
         grps = (gen.apply_markercolor(ws, colors=[1]) for ws in grps)
-        # print grps.grps[0].type
         return grps
     return tmp
 
@@ -448,7 +354,6 @@ def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
     grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2)
     grps = plot_calc_intersect(grps)
-    # print list(grps)
     return grps
 
 class DrawLess700(util.Decorator):
@@ -482,51 +387,49 @@ class DrawLess700(util.Decorator):
         # self.dec_par['textbox'].SetNDC()
         # self.dec_par['textbox'].Draw()
 
-def mk_tc(dir_limit='Limits', mk_limit_list=None):
+def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True):
 # setattr(lim_wrapper, 'save_name', 'tH%.0ftZ%.0fbW%.0f'\
         #    % (wrp.brs['th']*100, wrp.brs['tz']*100, wrp.brs['bw']*100))
-    return varial.tools.ToolChain(dir_limit, [
-        mk_limit_chain(mk_limit_list=mk_limit_list),
-        # varial.tools.ToolChain('LimitTriangle',[
-        #         TriangleMassLimitPlots(
-        #             limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
-        #             ),
-        #         varial.plotter.Plotter(
-        #             name='PlotterBoxExp',
-        #             input_result_path='../TriangleMassLimitPlots',
-        #             filter_keyfunc=lambda w: 'exp' in w.save_name,
-        #             plot_setup=plot_setup_triangle('col text'),
-        #             save_name_func=lambda w: w.save_name,
-        #             canvas_decorators=[DrawLess700,
-        #                         varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
-        #                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
-        #             ),
-        #         varial.plotter.Plotter(
-        #             name='PlotterBoxObs',
-        #             input_result_path='../TriangleMassLimitPlots',
-        #             filter_keyfunc=lambda w: 'obs' in w.save_name,
-        #             plot_setup=plot_setup_triangle('col text'),
-        #             save_name_func=lambda w: w.save_name,
-        #             canvas_decorators=[DrawLess700,
-        #                         varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-        #                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
-        #             ),
-        #         varial.plotter.Plotter(
-        #             name='PlotterCont',
-        #             input_result_path='../TriangleMassLimitPlots',
-        #             plot_setup=plot_setup_triangle('contz'),
-        #             save_name_func=lambda w: w.save_name,
-        #             canvas_decorators=()
-        #             ),
-        #         ]),
-    ])
+    tc = [mk_limit_chain(mk_limit_list=mk_limit_list)]
+    if mk_triangle:
+        tc.append(varial.tools.ToolChain('LimitTriangle',[
+            TriangleMassLimitPlots(
+                limit_rel_path='../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'
+                ),
+            varial.plotter.Plotter(
+                name='PlotterBoxExp',
+                input_result_path='../TriangleMassLimitPlots',
+                filter_keyfunc=lambda w: 'exp' in w.save_name,
+                plot_setup=plot_setup_triangle('col text'),
+                save_name_func=lambda w: w.save_name,
+                canvas_decorators=[DrawLess700,
+                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                ),
+            varial.plotter.Plotter(
+                name='PlotterBoxObs',
+                input_result_path='../TriangleMassLimitPlots',
+                filter_keyfunc=lambda w: 'obs' in w.save_name,
+                plot_setup=plot_setup_triangle('col text'),
+                save_name_func=lambda w: w.save_name,
+                canvas_decorators=[DrawLess700,
+                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                ),
+            varial.plotter.Plotter(
+                name='PlotterCont',
+                input_result_path='../TriangleMassLimitPlots',
+                plot_setup=plot_setup_triangle('contz'),
+                save_name_func=lambda w: w.save_name,
+                canvas_decorators=()
+                ),
+            ]))
+    return varial.tools.ToolChain(dir_limit, tc)
 
 # tc = varial.tools.ToolChain("", [tc])
 
 if __name__ == '__main__':
     time.sleep(1)
-    # print analysis.cwd
-    # print mk_tc()
     varial.tools.Runner(mk_tc())
     # os.chdir(dir_limit)
     # # varial.tools.WebCreator().run()

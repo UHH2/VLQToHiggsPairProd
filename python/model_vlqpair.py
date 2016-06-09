@@ -16,9 +16,9 @@ background_samples = [
 dict_uncerts = {
 'TTbar' : 1.10,
 'WJets' : 1.10,
-'QCD' : 1.50,
-'DYJets' : 1.50,
-'SingleTop' : 1.50,
+'QCD' : 1.5,
+'DYJets' : 1.5,
+'SingleTop' : 1.5,
 }
 
 def get_model(hist_dir, final_states):
@@ -43,7 +43,7 @@ def get_model(hist_dir, final_states):
 
 def get_model_bkg_only(hist_dir, final_states):
     dict_uncerts_ = dict(dict_uncerts)
-    dict_uncerts_.update({'TTbar' : 2.00, 'WJets' : 2.0,})
+    dict_uncerts_.update({'TTbar' : 1.5, 'WJets' : 1.5,})
     model = theta_auto.build_model_from_rootfile(
         hist_dir,
         include_mc_uncertainties = True)#mc uncertainties=true
@@ -55,18 +55,18 @@ def get_model_bkg_only(hist_dir, final_states):
     else:
         model.set_signal_process_groups({'':[]})
     model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts_['TTbar']), 'TTbar')
-    model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts_['QCD']), 'QCD')
     model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts_['WJets']), 'WJets')
+    model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts_['QCD']), 'QCD')
     model.add_lognormal_uncertainty('zjets_rate', math.log(dict_uncerts_['DYJets']), 'DYJets')
     model.add_lognormal_uncertainty('singlet_rate', math.log(dict_uncerts_['SingleTop']), 'SingleTop')
-    # bkg_model_width = {'width': float('inf')}
-    # dist_dict = {'mean': 0.0,
-    #             'range': [float('-inf'), float('inf')],
-    #             'typ': 'gauss',
-    #             'width': float('inf')}
-    # model.distribution.distributions.update({
-    #     'ttbar_rate' : dist_dict,
-    #     'wjets_rate' : dist_dict})
+    bkg_model_width = {'width': float('inf')}
+    dist_dict = {'mean': 0.0,
+                'range': [float('-inf'), float('inf')],
+                'typ': 'gauss',
+                'width': float('inf')}
+    model.distribution.distributions.update({
+        'ttbar_rate' : dist_dict,
+        'wjets_rate' : dist_dict})
     for smpl in background_samples:
         model.add_lognormal_uncertainty('luminosity', math.log(1.027), smpl)
     return model

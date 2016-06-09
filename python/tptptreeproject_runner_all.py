@@ -108,22 +108,22 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
         for ind, brs_ in enumerate(br_list):
             # if ind > 5: break
             tc = []
-            # tc.append(varial.tools.ToolChainParallel(
-            #     'ThetaLimits', list(varial.tools.ToolChain(
-            #         sig,
-            #         sensitivity.mk_limit_tc_single(
-            #             brs_,
-            #             filter_keyfunc=sensitivity.select_single_sig(sig, list_region),
-            #             # select_no_sig(),
-            #             sig,
-            #             selection='ThetaLimits',
-            #             sys_pat=sys_pat,
-            #             pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
-            #         ))
-            #     for sig in sensitivity.signals_to_use)
-            # ))
+            tc.append(varial.tools.ToolChainParallel(
+                'ThetaLimits', list(varial.tools.ToolChain(
+                    sig,
+                    sensitivity.mk_limit_tc_single(
+                        brs_,
+                        sig,
+                        filter_keyfunc=sensitivity.select_single_sig(sig, list_region),
+                        selection='ThetaLimits',
+                        sys_pat=sys_pat,
+                        pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
+                        # select_no_sig(),
+                    ))
+                for sig in sensitivity.signals_to_use)
+            ))
             tc.append(varial.tools.ToolChain(
-                'ThetaLimitsNoSig2', 
+                'ThetaLimitsNoSig', 
                 sensitivity.mk_limit_tc_single(
                     brs_,
                     filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
@@ -131,69 +131,69 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
                     sys_pat=sys_pat,
                     pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
                     model_func=model_vlqpair.get_model_bkg_only,
-                    hook_loaded_histos=sensitivity.loader_hook(brs_, 30)
+                    hook_loaded_histos=sensitivity.loader_hook(brs_, 15)
                 ))
             )
-            # tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
-            #     limits.LimitGraphs(
-            #         limit_path='../../ThetaLimits/*/ThetaLimit',
-            #         plot_obs=varial.settings.plot_obs,
-            #         plot_1sigmabands=True,
-            #         plot_2sigmabands=True,
-            #         axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
-            #         ),
-            #     varial.plotter.Plotter(
-            #         name='LimitCurvesCompared',
-            #         input_result_path='../LimitGraphs',
-            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-            #         # plot_setup=plot_setup,
-            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-            #         plot_grouper=lambda ws: varial.gen.group(
-            #                 ws, key_func=lambda w: w.save_name),
-            #         # save_name_func=varial.plotter.save_by_name_with_hash
-            #         save_name_func=lambda w: w.save_name,
-            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-            #             th_x=common_sensitivity.theory_masses,
-            #             th_y=common_sensitivity.theory_cs),
-            #         keep_content_as_result=True,
-            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            #             ],
-            #         # save_lin_log_scale=True
-            #         ),
-            #     ]))
-            # tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
-            #     limits.LimitGraphs(
-            #         limit_path='../../ThetaLimits/*/ThetaLimit',
-            #         plot_obs=False,
-            #         plot_1sigmabands=True,
-            #         plot_2sigmabands=True,
-            #         axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
-            #         ),
-            #     varial.plotter.Plotter(
-            #         name='LimitCurvesCompared',
-            #         input_result_path='../LimitGraphs',
-            #         # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
-            #         # plot_setup=plot_setup,
-            #         hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
-            #         plot_grouper=lambda ws: varial.gen.group(
-            #                 ws, key_func=lambda w: w.save_name),
-            #         # save_name_func=varial.plotter.save_by_name_with_hash
-            #         save_name_func=lambda w: w.save_name,
-            #         plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
-            #             th_x=common_sensitivity.theory_masses,
-            #             th_y=common_sensitivity.theory_cs),
-            #         keep_content_as_result=True,
-            #         canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
-            #                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-            #             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            #             ],
-            #         # save_lin_log_scale=True
-            #         ),
-            #     ]))
+            tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
+                limits.LimitGraphs(
+                    limit_path='../../ThetaLimits/*/ThetaLimit',
+                    plot_obs=varial.settings.plot_obs,
+                    plot_1sigmabands=True,
+                    plot_2sigmabands=True,
+                    axis_labels=("m_{T} [GeV]", "#sigma x BR [pb]"),
+                    ),
+                varial.plotter.Plotter(
+                    name='LimitCurvesCompared',
+                    input_result_path='../LimitGraphs',
+                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                    # plot_setup=plot_setup,
+                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+                    plot_grouper=lambda ws: varial.gen.group(
+                            ws, key_func=lambda w: w.save_name),
+                    # save_name_func=varial.plotter.save_by_name_with_hash
+                    save_name_func=lambda w: w.save_name,
+                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+                        th_x=common_sensitivity.theory_masses,
+                        th_y=common_sensitivity.theory_cs),
+                    keep_content_as_result=True,
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        ],
+                    # save_lin_log_scale=True
+                    ),
+                ]))
+            tc.append(varial.tools.ToolChain('LimitsWithGraphsNoObs',[
+                limits.LimitGraphs(
+                    limit_path='../../ThetaLimits/*/ThetaLimit',
+                    plot_obs=False,
+                    plot_1sigmabands=True,
+                    plot_2sigmabands=True,
+                    axis_labels=("m_{T'} [GeV]", "#sigma x BR [pb]"),
+                    ),
+                varial.plotter.Plotter(
+                    name='LimitCurvesCompared',
+                    input_result_path='../LimitGraphs',
+                    # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
+                    # plot_setup=plot_setup,
+                    hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs_),
+                    plot_grouper=lambda ws: varial.gen.group(
+                            ws, key_func=lambda w: w.save_name),
+                    # save_name_func=varial.plotter.save_by_name_with_hash
+                    save_name_func=lambda w: w.save_name,
+                    plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
+                        th_x=common_sensitivity.theory_masses,
+                        th_y=common_sensitivity.theory_cs),
+                    keep_content_as_result=True,
+                    canvas_decorators=[varial.rendering.Legend(x_pos=.75, y_pos=0.7, label_width=0.2, label_height=0.05),
+                            varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+                        ],
+                    # save_lin_log_scale=True
+                    ),
+                ]))
             limit_list.append(
                 varial.tools.ToolChain('Limit'+str(ind), tc))
         return limit_list
@@ -561,7 +561,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
             all_regions,
             br_list=br_list,
-            ))]
+            ), )]
         lim_split_reg = [
             sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
                 output_dir,
@@ -569,14 +569,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
                 ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45'],
                 br_list=br_list_th_only,
-                )),
+                ), mk_triangle=False),
             sensitivity.mk_tc('LimitsAllUncertsOnlyMu', mk_limit_list_syst(
                 output_dir,
                 name,
                 list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
                 ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45'],
                 br_list=br_list_th_only,
-                ))]
+                ), mk_triangle=False),]
         return lim_all_reg+lim_split_reg if name == 'HTReweighting' else lim_all_reg
 
     # def mk_tc_plot(style='AN'):
