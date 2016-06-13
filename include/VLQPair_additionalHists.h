@@ -74,14 +74,15 @@ public:
                 if (it->first == "mass_sj") {
                         // assert(false);
                     assert(is_topjet);
-                    if (particle.subjets().size()){
-                        LorentzVector sum_subjets;
-                        for (Jet const & subjet : particle.subjets())
-                            sum_subjets += subjet.v4();
-                        it->second->Fill(sum_subjets.M(), w);
-                    } else {
-                        it->second->Fill(-1., w);
-                    }
+                    it->second->Fill(particle.softdropmass(), w);
+                    // if (particle.subjets().size()){
+                    //     LorentzVector sum_subjets;
+                    //     for (Jet const & subjet : particle.subjets())
+                    //         sum_subjets += subjet.v4();
+                    //     it->second->Fill(sum_subjets.M(), w);
+                    // } else {
+                    //     it->second->Fill(-1., w);
+                    // }
                 };
                 if (it->first == "tau21") {
                     assert(is_topjet);

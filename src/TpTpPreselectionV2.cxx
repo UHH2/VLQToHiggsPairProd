@@ -46,35 +46,35 @@ class TpTpPreselectionV2: public TpTpAnalysisModule {
 public:
 
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
-        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 45, 0, 4500, 800)),
+        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 800)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet_cleaned", "Pt leading Ak8 Jet", 60, 0., 1500.)),
-        // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_T", 90, 0., 900.))
+        // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_{T}", 60, 0., 1200.))
     };
 
     const vector<shared_ptr<SelectionItem>> ADDITIONAL_SEL_ITEMS {
-        shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500.)),
-        shared_ptr<SelectionItem>(new SelDatI("n_leptons", "N(Leptons)", 6, -.5, 5.5)),
-        shared_ptr<SelectionItem>(new SelDatI("is_muon", "PrimLep is muon", 2, -.5, 1.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
+        // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500.)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_leptons", "N(Leptons)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("is_muon", "PrimLep is muon", 2, -.5, 1.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 5, -.5, 4.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 5, -.5, 4.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_topjets_uncleaned", "N(Ak8 jets, uncleaned)", 7, -.5, 6.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_topjets_cleaned", "N(Ak8 jets, dR-cleaned)", 7, -.5, 6.5)),
-        shared_ptr<SelectionItem>(new SelDatF("leading_mu_pt", "Leading Muon p_T", 90, 0., 900.)),
-        shared_ptr<SelectionItem>(new SelDatF("leading_ele_pt", "Leading Electron p_T", 90, 0., 900.)),
-        shared_ptr<SelectionItem>(new SelDatF("primary_lepton_eta", "Primary Lepton eta", 60, -3., 3.)),
-        // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.)),
+        // shared_ptr<SelectionItem>(new SelDatF("leading_mu_pt", "Leading Muon p_{T}", 60, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatF("leading_ele_pt", "Leading Electron p_{T}", 60, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_eta", "Primary Lepton eta", 60, -3., 3.)),
+        // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatI("primary_lepton_charge", "N(Ak8 jets, dR-cleaned)", 7, -.5, 6.5)),
 
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet_cleaned", "Pt leading Ak8 Jet", 60, 0., 1500.)),
-        // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_T", 90, 0., 900.))
+        // shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_dRak8", "Primary Muon (dRak8) p_{T}", 60, 0., 1200.))
     };
 
     const float DR_2D_CUT_PRESEL = 0.4;
@@ -95,10 +95,6 @@ private:
 
 TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) {
 
-    pre_modules.emplace_back(new CollectionProducer<Electron>(ctx,
-                "electrons",
-                "electrons_iso"
-                ));
     // pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
     //             "topjets",
     //             "topjets_uncleaned"
@@ -157,14 +153,14 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
     // pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets_cleaned"));
     // pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets_cleaned"));
 
-    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
-                "topjets_uncleaned"
-                ));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
+    // pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    //             "topjets",
+    //             "topjets_uncleaned"
+    //             ));
+    // pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Electron>(ctx, "electrons", 0.2), "topjets"));
+    // pre_modules.emplace_back(new TopJetCleaner(ctx, MinMaxDeltaRId<Muon>(ctx, "muons", 0.2), "topjets"));
     pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets"));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets_uncleaned"));
+    // pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(200., 2.4), "topjets_uncleaned"));
 
     // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets_uncleaned", "n_topjets_uncleaned"));
     // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx, "topjets_cleaned", "n_topjets_cleaned"));
@@ -195,68 +191,84 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_isoEl27", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_iso", "Primary Muon p_T", 90, 0., 900.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt_iso", "Primary Electron p_T", 90, 0., 900.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Muon p_T", 90, 0., 900.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Electron p_T", 90, 0., 900.));
-            // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_iso", "Primary Muon p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt_iso", "Primary Electron p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Muon p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_mva_loose", "Primary Lepton p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_iso", "Primary Lepton p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt_mva_loose", "Primary Lepton p_{T}", 60, 0., 1200.));
+            // SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
         else if (cat == "IsoMuo20") {
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_isoMu20", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_muon_pt_iso", "Primary Muon p_T", 90, 0., 900., 40.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_muon_pt_iso", "Primary Muon p_{T}", 60, 0., 1200., 40.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_iso", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
         else if (cat == "IsoEle27") {
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_isoEl27", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt_iso", "Primary Electron p_T", 90, 0., 900., 40.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt_iso", "Primary Electron p_{T}", 60, 0., 1200., 40.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_iso", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
         else if (cat == "Mu45") {
             
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_muon_pt", "Primary Lepton p_T", 90, 0., 900., 47.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_muon_pt", "Primary Muon p_{T}", 60, 0., 1200., 47.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
-        }
-        else if (cat == "El45") {
-            
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt_el105", "Primary Lepton p_T", 90, 0., 900., 115.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
         else if (cat == "El105") {
             
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el105", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt", "Primary Lepton p_T", 90, 0., 900., 50.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 65.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200., 115.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_el105", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
-        else if (cat == "MuElComb") {
+        else if (cat == "El45") {
             
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900., 47.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200., 50.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 70.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5));
-            // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
-            // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
+        else if (cat == "El45mva") {
+            
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt_mva_loose", "Primary Electron p_{T}", 60, 0., 1200., 50.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 70.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_mva_loose", "Primary Lepton p_{T}", 60, 0., 1200.));
+        }
+        // else if (cat == "MuElComb") {
+            
+        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5, 1));
+        //     SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200., 47.));
+        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
+        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5));
+        //     // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
+        //     // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
+        // }
 
         for (auto const & sel_item : ADDITIONAL_SEL_ITEMS)
             SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
@@ -264,7 +276,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         // else if (cat == "Mu15_PFHT600") {
         //     other_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu15_IsoVVVL_PFHT600_v*"}, triggername));
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI(triggername, "Trigger Accept", 2, -.5, 1.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_T", 90, 0., 900., 40.));
+        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_{T}", 60, 0., 1200., 40.));
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatD("HT", "HT", 25, 0, 4500, 650));
         // }
         // else if (cat == "PFHT800") {
@@ -273,7 +285,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         //     else
         //         other_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_PFHT800_v*"}, triggername));
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI(triggername, "Trigger Accept", 2, -.5, 1.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_T", 90, 0., 900., 40.));
+        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_{T}", 60, 0., 1200., 40.));
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatD("HT", "HT", 25, 0, 4500, 850));
         // }
 
@@ -309,14 +321,14 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
         auto cf_hists = new VLQ2HTCutflow(ctx, cat+"/Cutflow", *sel_helpers.back());
 
-        string lep_pt = (cat == "IsoMuo20" || cat == "IsoEle27") ? "primary_muon_pt_iso" : "primary_lepton_pt";
+        // string lep_pt = (cat == "IsoMuo20" || cat == "IsoEle27") ? "primary_muon_pt_iso" : "primary_lepton_pt";
         // string = (split(cat, "-").size() > 1 && split(cat, "-")[1] == "uncleaned") ? "_uncleaned" : "";
         map<string, SelectedSelHists*> selected_sel_hists;
         // selected_sel_hists["NoSTCut"] = new SelectedSelHists(ctx, cat+"/NoSTCut", *sel_helpers.back(), {}, {"ST"});
         // selected_sel_hists["NoNAk8JetsCut"] = new SelectedSelHists(ctx, cat+"/NoNAk8JetsCut", *sel_helpers.back(), {}, {"n_ak8"});
-        selected_sel_hists["NoNAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk4Cut", *sel_helpers.back(), {}, {"n_ak4"});
-        selected_sel_hists["NoNAk8Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8Cut", *sel_helpers.back(), {}, {"n_ak8"});
-        selected_sel_hists["NoNAk8NAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8NAk4Cut", *sel_helpers.back(), {}, {"n_ak8", "n_ak4"});
+        // selected_sel_hists["NoNAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk4Cut", *sel_helpers.back(), {}, {"n_ak4"});
+        // selected_sel_hists["NoNAk8Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8Cut", *sel_helpers.back(), {}, {"n_ak8"});
+        // selected_sel_hists["NoNAk8NAk4Cut"] = new SelectedSelHists(ctx, cat+"/NoNAk8NAk4Cut", *sel_helpers.back(), {}, {"n_ak8", "n_ak4"});
         // selected_sel_hists["OnlyTriggerAndLeptonCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerAndLeptonCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix});
         // selected_sel_hists["OnlyTriggerLeptonAnd2DCut"] = new SelectedSelHists(ctx, cat+"/OnlyTriggerLeptonAnd2DCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix, "twoD_cut"});
         // selected_sel_hists["OnlySTCut"] = new SelectedSelHists(ctx, cat+"/OnlySTCut", *sel_helpers.back(), {triggername, "primary_muon_pt_"+iso_suffix, "twoD_cut", "ST", "HT"});
@@ -340,27 +352,31 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             sel_modules.back()->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, dr_2d, dpt_2d, "TwoDcut_Dr_noIso_el105", "TwoDcut_Dpt_noIso_el105"));
             nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, cat+"/Nm1Selection", "TwoDcut_Dr_noIso_el105", "TwoDcut_Dpt_noIso_el105", "twod_cut_hist_noIso"));
         }
+        else if (cat == "El45mva") {
+            sel_modules.back()->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, dr_2d, dpt_2d, "TwoDcut_Dr_noIso_mvaID", "TwoDcut_Dpt_noIso_mvaID"));
+            nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, cat+"/Nm1Selection", "TwoDcut_Dr_noIso_mvaID", "TwoDcut_Dpt_noIso_mvaID", "twod_cut_hist_mvaIDloose"));
+        }
         else {
             sel_modules.back()->insert_selection(pos_2d_cut, new TwoDCutSel(ctx, dr_2d, dpt_2d, "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso"));
             nm1_hists->insert_hists(pos_2d_cut, new TwoDCutHist(ctx, cat+"/Nm1Selection", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"));
         }
         cf_hists->insert_step(pos_2d_cut, "2D cut");
-        if (cat == "MuElComb") {
-            sel_modules.back()->insert_selection(pos_2d_cut-1, new TriggerAwareHandleSelection<float>(ctx, "pt_subld_ak4_jet", "trigger_accept_el45", 65., 0.));
-            sel_modules.back()->insert_selection(pos_2d_cut-1, new TriggerAwareHandleSelection<float>(ctx, "pt_ld_ak4_jet", "trigger_accept_el45", 250., 0.));
-            nm1_hists->insert_hists(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/Nm1Selection", "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
-            nm1_hists->insert_hists(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/Nm1Selection", "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
-            cf_hists->insert_step(pos_2d_cut-1, "pt_subld_ak4_jet");
-            cf_hists->insert_step(pos_2d_cut-1, "pt_ld_ak4_jet");
-            v_hists_after_sel.back().emplace_back(new HandleHist<float>(ctx, cat+"/PostSelection", "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
-            v_hists_after_sel.back().emplace_back(new HandleHist<float>(ctx, cat+"/PostSelection", "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
-        }
+        // if (cat == "MuElComb") {
+        //     sel_modules.back()->insert_selection(pos_2d_cut-1, new TriggerAwareHandleSelection<float>(ctx, "pt_subld_ak4_jet", "trigger_accept_el45", 70., 0.));
+        //     sel_modules.back()->insert_selection(pos_2d_cut-1, new TriggerAwareHandleSelection<float>(ctx, "pt_ld_ak4_jet", "trigger_accept_el45", 250., 0.));
+        //     nm1_hists->insert_hists(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/Nm1Selection", "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
+        //     nm1_hists->insert_hists(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/Nm1Selection", "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
+        //     cf_hists->insert_step(pos_2d_cut-1, "pt_subld_ak4_jet");
+        //     cf_hists->insert_step(pos_2d_cut-1, "pt_ld_ak4_jet");
+        //     v_hists_after_sel.back().emplace_back(new HandleHist<float>(ctx, cat+"/PostSelection", "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
+        //     v_hists_after_sel.back().emplace_back(new HandleHist<float>(ctx, cat+"/PostSelection", "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
+        // }
         for (auto hist : selected_sel_hists) {
             hist.second->insert_hist_and_sel(pos_2d_cut, new TwoDCutHist(ctx, cat+"/"+hist.first, "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", "twod_cut_hist_noIso"), "twoD_cut");
-            if (cat == "MuElComb") {
-                hist.second->insert_hist_and_sel(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/"+hist.first, "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.), "pt_ld_ak4_jet");
-                hist.second->insert_hist_and_sel(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/"+hist.first, "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.), "pt_subld_ak4_jet");
-            }
+            // if (cat == "MuElComb") {
+            //     hist.second->insert_hist_and_sel(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/"+hist.first, "pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.), "pt_ld_ak4_jet");
+            //     hist.second->insert_hist_and_sel(pos_2d_cut-1, new HandleHist<float>(ctx, cat+"/"+hist.first, "pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.), "pt_subld_ak4_jet");
+            // }
             hist.second->insert_additional_hist(ak8jet_hists->book_histograms(ctx, cat+"/"+hist.first));
             // hist.second->insert_additional_hist(new JetCleaningControlPlots(ctx, cat+"/"+hist.first+"/JetCleaningControlPlots", "weight_ak4_jetpt"));
             // for (auto const & hist_helper : fatjet_hists) {
@@ -381,7 +397,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         //     selected_sel_hists["NoHiggsTagCut"]->insert_additional_hist(hist_helper.book_histograms(ctx, cat+"/NoHiggsTagCut"));
         // }
         v_hists_after_sel.back().emplace_back(new OwnHistCollector(ctx, cat+"/PostSelection", type == "MC", CSVBTag(CSVBTag::WP_MEDIUM), {"ev", "mu", "el", "jet", "lumi", "cmstopjet", "ak8softdroptopjet"}));
-        v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsUnCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets_uncleaned"));
+        // v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/Ak8JetsUnCleaned", CSVBTag(CSVBTag::WP_MEDIUM), 2, "topjets_uncleaned"));
         if (version.find("TpTp") != string::npos) {
             CustomizableGenHists * gen_hists = new CustomizableGenHists(ctx, cat+"/NoSelection/GenHists");
             gen_hists->add_genhistcoll(8000001, 0, {"mass", "decay", "dRDecay", "dPhiDecay", "dEtaDecay"});

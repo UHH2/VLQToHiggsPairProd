@@ -36,10 +36,12 @@ categories_final = [
         ]
 
 categories_pre = [ #"NoSelection",
-        'IsoMuo20',
-        'IsoEle27',
+        # 'IsoMuo20',
+        # 'IsoEle27',
         'Mu45',
         'El45',
+        'El105',
+        # 'El45mva',
         ]
 
 sys_uncerts_final = {
@@ -175,10 +177,16 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype + """
 <!--
-   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+   <ConfigParse NEventsBreak="0" FileSplit="32" AutoResubmit="0" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir3"/>
 -->
 """
+# """
+# <!--
+#    <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
+#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+# -->
+# """
         if os.path.exists(self.cwd + 'workdir'):
             opt = ' -rl --exitOnQuestion'
         else:
@@ -249,7 +257,7 @@ def mk_sframe_tools_and_plot(argv):
     def sf_batch_tc():
         plot_chain = []
         plot_chain += [Hadd(
-            src_glob_path='../../SFrame/workdir/uhh2.AnalysisModuleRunner.*.root',
+            src_glob_path='../../SFrame/workdir*/uhh2.AnalysisModuleRunner.*.root',
             basenames=basenames,
             add_aliases_to_analysis=False,
             samplename_func=plot.get_samplename,
@@ -365,4 +373,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)

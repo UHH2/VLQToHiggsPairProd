@@ -29,13 +29,38 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         cout << " " << kv.first << " = " << kv.second << endl;
     }
 
+    // pre_modules.emplace_back(new CollectionProducer<Muon>(ctx,
+    //             "muons",
+    //             "muons_tight"
+    //             ));
+    // pre_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+    //             "electrons",
+    //             "electrons_tight"
+    //             ));
+    // pre_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+    //             "electrons",
+    //             "electrons_mva_tight"
+    //             ));
+    common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+                "electrons",
+                "electrons_mva_loose"
+                ));
+    common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+                "electrons",
+                "electrons_iso"
+                ));
+    common_modules.emplace_back(new CollectionProducer<Muon>(ctx,
+                "muons",
+                "muons_iso"
+                ));
+
+
+    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.1)), "electrons_mva_loose"));
+    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_Spring15_25ns_medium, PtEtaCut(20.0, 2.1)), "electrons_iso"));
+    common_modules.emplace_back(new ParticleCleaner<Muon>(ctx, AndId<Muon>(MuonIDMedium(), MuonIso(), PtEtaCut(20.0, 2.1)), "muons_iso"));
+
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu20"));
-    if (type == "MC")
-        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
-        // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu"));
-    else
-        common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
-        // common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu27_v*"}, "trigger_accept_isoMu"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_mu45"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el45"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele105_CaloIdVT_GsfTrkIdT_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el105"));
@@ -44,20 +69,31 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonEl105", "trigger_accept_el105", "trigger_accept_mu45", "prim_ele_coll_el105", "prim_mu_coll_el105", 115., 47.));
+    common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonMVALoose", "trigger_accept_el45", "trigger_accept_mu45", "prim_ele_coll_mva_loose", "prim_ele_coll_mva_loose", 50., 47., "electrons_mva_loose", "muons"));
+    common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonIso", "trigger_accept_isoEl27", "trigger_accept_isoMu20", "prim_ele_coll_iso", "prim_mu_coll_iso", 40., 40., "electrons_iso", "muons_iso"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
+    common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons_iso", "PrimaryMuonIso"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons", "PrimaryElectron"));
+    common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons_mva_loose", "PrimaryElectronMVALoose"));
+    common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons_iso", "PrimaryElectronIso"));
 
     common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLepton", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", true));
     common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLeptonEl105", "TwoDcut_Dr_noIso_el105", "TwoDcut_Dpt_noIso_el105", true));
+    common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLeptonMVALoose", "TwoDcut_Dr_noIso_mvaID", "TwoDcut_Dpt_noIso_mvaID", true));
     
-    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon", "primary_muon_pt", "primary_muon_eta", "primary_muon_charge"));
-    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryElectron", "primary_electron_pt", "primary_electron_eta", "primary_electron_charge"));
-    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt", "primary_lepton_eta", "primary_lepton_charge"));
-    common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLeptonEl105", "primary_lepton_pt_el105", "primary_lepton_eta_el105", "primary_lepton_charge_el105"));
-    // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLeptonComb", "primary_lepton_comb_pt", "primary_lepton_comb_eta", "primary_lepton_comb_charge"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLeptonEl105", "primary_lepton_pt_el105"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLeptonMVALoose", "primary_lepton_pt_mva_loose"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLeptonIso", "primary_lepton_pt_iso"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryMuon", "primary_muon_pt"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryMuonIso", "primary_muon_pt_iso"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryElectron", "primary_electron_pt"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryElectronMVALoose", "primary_electron_pt_mva_loose"));
+    common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryElectronIso", "primary_electron_pt_iso"));
+    // common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLeptonComb", "primary_lepton_comb_pt"));
     // keep the following module mainly for cross-checks, to see whether e.g. your primary lepton in the muon channel is really a muon
     common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLepton", 50., 47., "is_muon"));
-    common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLeptonEl105", 115., 47., "is_muon"));
+    // common_modules.emplace_back(new PrimaryLeptonFlavInfo(ctx, "LeadingLeptonEl105", 115., 47., "is_muon"));
     
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_noIso"));
     // common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon_dRak8", MuonId(MinMaxDeltaRId<TopJet>(ctx, "topjets", 0.1))));
@@ -69,21 +105,21 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new METProducer(ctx, "met"));
     common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_ld_ak4_jet", 1));
     common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_subld_ak4_jet", 2));
-    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_third_ak4_jet", 3));
-    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fourth_ak4_jet", 4));
-    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fifth_ak4_jet", 5));
-    common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_sixth_ak4_jet", 6));
+    // common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_third_ak4_jet", 3));
+    // common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fourth_ak4_jet", 4));
+    // common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_fifth_ak4_jet", 5));
+    // common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_sixth_ak4_jet", 6));
     common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet", 1));
-    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_subld_ak8_jet", 2));
-    common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_third_ak8_jet", 3));
-    common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
-    common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
+    // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_subld_ak8_jet", 2));
+    // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_third_ak8_jet", 3));
+    // common_modules.emplace_back(new PartPtProducer<Muon>(ctx, "muons", "leading_mu_pt", 1));
+    // common_modules.emplace_back(new PartPtProducer<Electron>(ctx, "electrons", "leading_ele_pt", 1));
     if (type == "MC") {
         common_modules.emplace_back(new PartonHT(ctx.get_handle<double>("parton_ht")));
         common_modules.emplace_back(new GenHTCalculator(ctx, "gen_ht"));
     }
-    // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "LeadingLepton", "leading_lepton_pt", "leading_lepton_eta", "leading_lepton_charge"));
-    // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso", "primary_muon_eta_noIso", "primary_muon_charge_noIso"));
+    // common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "LeadingLepton", "leading_lepton_pt"));
+    // common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryMuon_noIso", "primary_muon_pt_noIso"));
 
     // ====APPLY JULIES JET PT REWEIGHTING METHOD=====
 
@@ -232,7 +268,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
     // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
 
-    // common_modules.emplace_back(new PrimaryLeptonInfoProducer(ctx, "PrimaryLepton", "primary_lepton_pt"));
+    // common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx));
 
     // class that takes care of applying CommonModules (with JEC, jet-lepton-cleaning, MCWeight etc.),
     // produces all handles for generic quantities like n_jets, met, etc.

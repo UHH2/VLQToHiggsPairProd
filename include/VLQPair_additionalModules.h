@@ -41,6 +41,32 @@ public:
     }
 };
 
+class PrimaryLeptonPtProducer: public AnalysisModule {
+public:
+    explicit PrimaryLeptonPtProducer(Context & ctx,
+                              const string & prim_lep_hndl = "PrimaryLepton",
+                              const string & h_pt = "primary_lepton_pt"):
+        h_pt(ctx.get_handle<float>(h_pt)),
+        h_prim_lep(ctx.get_handle<FlavorParticle>(prim_lep_hndl)) {}
+
+    virtual bool process(Event & e) override {
+        float pt = -1.;
+        if (e.is_valid(h_prim_lep)) {
+            auto prim_lep = e.get(h_prim_lep);
+            if (prim_lep.pt() > 0.001) {
+                pt = prim_lep.pt();
+            }
+
+        }
+        e.set(h_pt, pt);
+        return true;
+    }
+
+private:
+    Event::Handle<float> h_pt;
+    Event::Handle<FlavorParticle> h_prim_lep;
+};  // PrimaryLeptonPtProducer
+
 // class NeutrinoParticleProducer: public AnalysisModule {
 // public:
 //     explicit NeutrinoParticleProducer(Context & ctx,
@@ -371,11 +397,11 @@ public:
         if (!pass_sj_btag)
             return false;
 
-        LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
-        if(!firsttwosubjets.isTimelike()) {
-            return false;
-        }
-        auto mjet = firsttwosubjets.M();
+        // LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+        // if(!firsttwosubjets.isTimelike()) {
+        //     return false;
+        // }
+        auto mjet = topjet.softdropmass();
         if(mjet < minmass_) return false;
         if(mjet > maxmass_) return false;
         return true;
@@ -680,11 +706,11 @@ private:
 template<typename T>
 const T * closestParticleMod(const Particle  & p, const std::vector<T> & particles){
     double deltarmin = std::numeric_limits<double>::infinity();
+    const double dr_min = 1e-4;
     const T* next=0;
     for(unsigned int i=0; i<particles.size(); ++i) {
         const T & pi = particles[i];
         double dr = uhh2::deltaR(pi, p);
-        const double dr_min = 1e-4;
         if(dr < deltarmin && dr > dr_min) {
             deltarmin = dr;
             next = &pi;
@@ -700,17 +726,18 @@ inline std::pair<float, float> set_mass_and_nsubjets(Event &, T const & part, Je
 
 template<>  
 inline std::pair<float, float> set_mass_and_nsubjets(Event & event, TopJet const & part, JetId const & id) {
-    float mass = -1., nsjbtags = -1.;
-    if (part.subjets().size() >= 2) {
-        LorentzVector sj_v4;
-        nsjbtags = 0.;
-        for (Jet const & j : part.subjets()) {
-            sj_v4 += j.v4();
-            if (id(j, event)) nsjbtags += 1.;
-        }
-        if (sj_v4.isTimelike()) 
-            mass = sj_v4.M();
+    float mass = -1., nsjbtags = 0.;
+    // if (part.subjets().size() >= 2) {
+        // LorentzVector sj_v4;
+        // nsjbtags = 0.;
+    for (Jet const & j : part.subjets()) {
+        // sj_v4 += j.v4();
+        if (id(j, event)) nsjbtags += 1.;
     }
+        // if (sj_v4.isTimelike()) 
+        //     mass = sj_v4.M();
+    // }
+    mass = part.softdropmass();
     return std::make_pair(mass, nsjbtags);
 }
 
@@ -814,6 +841,64 @@ private:
     Event::Handle<vector<TopJet>> tj_comp_hndl;
     Event::Handle<vector<Jet>> j_comp_hndl;
     Event::Handle<float> out_hndl_dRcompcoll;
+};
+
+
+template<typename T1, typename T2>
+class DeltaRProducer: public AnalysisModule {
+public:
+
+    explicit DeltaRProducer(Context & ctx,
+                                std::string const & in_name,
+                                std::string const & comp_coll,
+                                int ind1 = 1,
+                                int ind2 = -1) :
+        in_hndl(ctx.get_handle<vector<T1>>(in_name)),
+        comp_hndl_vec(ctx.get_handle<vector<T2>>(comp_coll)),
+        comp_hndl_sing(ctx.get_handle<T2>(comp_coll)),
+        ind1_(ind1),
+        ind2_(ind2)
+        // out_hndl_dR_ind(ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_"+to_string(ind2)))
+        {
+            out_hndl_dR = (ind2 < 0) ? ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_cl") :
+                                       ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_"+to_string(ind2));
+        }
+
+        
+
+    bool process(Event & event) override {
+        assert(event.is_valid(in_hndl));
+        // bool is_topjet = std::is_same<T, TopJet>::value;
+        float dR = -1.;
+        vector<T1> const & in_coll = event.get(in_hndl);
+        if (in_coll.size() >= (size_t)ind1_) {
+            T1 const & part = in_coll[(size_t)ind1_-1];
+            if (event.is_valid(comp_hndl_vec)) {
+                vector<T2> const & comp_coll = event.get(comp_hndl_vec);
+                if (ind2_ < 0) {
+                    auto const * closest_comp_part = closestParticleMod(part, comp_coll);
+                    if (closest_comp_part)
+                        dR = deltaR(part, *closest_comp_part);
+                }
+                else if (comp_coll.size() >= (size_t)ind2_) {
+                    T2 const & comp_part = comp_coll[ind2_-1];
+                    dR = deltaR(part, comp_part);
+                }
+            } else if (event.is_valid(comp_hndl_sing)) {
+                T2 const & comp_part = event.get(comp_hndl_sing);
+                dR = deltaR(part, comp_part);
+            }
+        }
+        event.set(out_hndl_dR, dR);
+        return true;
+    }
+
+private:
+    Event::Handle<vector<T1>> in_hndl;
+    Event::Handle<vector<T2>> comp_hndl_vec;
+    Event::Handle<T2> comp_hndl_sing;
+    int ind1_, ind2_;
+    Event::Handle<float> out_hndl_dR;
 };
 
 
@@ -1044,6 +1129,89 @@ public:
 private:
     ID part_id_;
     uhh2::Event::Handle<std::vector<T>> hndl_;
+};
+
+
+class HiggsMassSmear: public AnalysisModule {
+public:
+    explicit HiggsMassSmear(Context & ctx,
+                            const std::string & htags,
+                            const std::string & gentopjets = "gentopjets",
+                            bool write_out = true
+                            ):
+        h_htags    (ctx.get_handle<vector<TopJet>>(htags)),
+        h_sm_htags10    (ctx.get_handle<vector<TopJet>>(htags+"_sm10")),
+        h_sm_htags20    (ctx.get_handle<vector<TopJet>>(htags+"_sm20")),
+        h_genjets(ctx.get_handle<vector<GenTopJet>>(gentopjets))
+        {
+            if (write_out) {
+                h_sm_htags10 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm10");
+                h_sm_htags20 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm20");
+            }
+        }
+
+    virtual bool process(Event & e) override {
+        if (!e.is_valid(h_htags)) {
+            return false;
+        }
+
+        if (e.isRealData) {
+            e.set(h_sm_htags10, e.get(h_htags));
+            e.set(h_sm_htags20, e.get(h_htags));
+            return true;
+        }
+
+        vector<TopJet> new_htags10;
+        vector<TopJet> new_htags20;
+
+        for (auto const & hj : e.get(h_htags)) {
+            auto closest_genjet = closestParticle(hj, e.get(h_genjets));
+            if (closest_genjet == nullptr || deltaR(*closest_genjet, hj) > 0.3) {
+                // e.set(h_mass_10, hm);
+                // e.set(h_mass_20, hm);
+                // e.set(h_mass_diff, 0.f);
+                // e.set(h_mass_gen, 0.f);
+                // e.set(h_mass_gen_sd, 0.f);
+                return true;
+            }
+            TopJet new_hj10 = hj;  // hj is a jet, not vector
+            TopJet new_hj20 = hj;  // hj is a jet, not vector
+            float hm = hj.softdropmass();
+            
+            const auto & gen_sj = closest_genjet->subjets();
+            float gen_mass = (gen_sj.size() > 1) ?
+                                (gen_sj[0].v4() + gen_sj[1].v4()).mass() : hm;
+
+            auto mass_10 = max(0.0f, gen_mass + 1.1f * (hm - gen_mass));  // - 9.1998f
+            auto mass_20 = max(0.0f, gen_mass + 1.2f * (hm - gen_mass));  // - 9.1998f
+            new_hj10.set_softdropmass(mass_10);
+            new_hj20.set_softdropmass(mass_20);
+            new_htags10.push_back(new_hj10);
+            new_htags20.push_back(new_hj20);
+            // e.set(h_mass_gen_sd, gen_mass);
+            // e.set(h_mass_gen, closest_genjet->v4().mass());
+            // e.set(h_mass_diff, gen_mass - hm);
+            // e.set(h_mass_10, mass_10);
+            // e.set(h_mass_20, mass_20);
+
+        }
+        e.set(h_sm_htags10, new_htags10);
+        e.set(h_sm_htags20, new_htags20);
+
+        return true;
+
+
+    }
+
+    Event::Handle<vector<TopJet>> h_htags;
+    Event::Handle<vector<TopJet>> h_sm_htags10, h_sm_htags20;
+    Event::Handle<vector<GenTopJet>> h_genjets;
+    // Event::Handle<float> h_mass;
+    // Event::Handle<float> h_mass_gen;
+    // Event::Handle<float> h_mass_gen_sd;
+    // Event::Handle<float> h_mass_diff;
+    // Event::Handle<float> h_mass_10;
+    // Event::Handle<float> h_mass_20;
 };
 
 

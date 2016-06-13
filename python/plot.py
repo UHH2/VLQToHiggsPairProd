@@ -48,6 +48,8 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.DYJetsToLL',
     'MC.SingleTop',
     'MC.TTbar',
+    'MC.TTJets_ScaleUp',
+    'MC.TTJets_ScaleDown',
     'MC.TpTp_M-0700_thth', 'MC.TpTp_M-0700_thtz', 'MC.TpTp_M-0700_thbw', 'MC.TpTp_M-0700_noH_tztz', 'MC.TpTp_M-0700_noH_tzbw', 'MC.TpTp_M-0700_noH_bwbw',
     'MC.TpTp_M-0800_thth', 'MC.TpTp_M-0800_thtz', 'MC.TpTp_M-0800_thbw', 'MC.TpTp_M-0800_noH_tztz', 'MC.TpTp_M-0800_noH_tzbw', 'MC.TpTp_M-0800_noH_bwbw',
     'MC.TpTp_M-0900_thth', 'MC.TpTp_M-0900_thtz', 'MC.TpTp_M-0900_thbw', 'MC.TpTp_M-0900_noH_tztz', 'MC.TpTp_M-0900_noH_tzbw', 'MC.TpTp_M-0900_noH_bwbw',
@@ -60,6 +62,18 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1600_thth', 'MC.TpTp_M-1600_thtz', 'MC.TpTp_M-1600_thbw', 'MC.TpTp_M-1600_noH_tztz', 'MC.TpTp_M-1600_noH_tzbw', 'MC.TpTp_M-1600_noH_bwbw',
     'MC.TpTp_M-1700_thth', 'MC.TpTp_M-1700_thtz', 'MC.TpTp_M-1700_thbw', 'MC.TpTp_M-1700_noH_tztz', 'MC.TpTp_M-1700_noH_tzbw', 'MC.TpTp_M-1700_noH_bwbw',
     'MC.TpTp_M-1800_thth', 'MC.TpTp_M-1800_thtz', 'MC.TpTp_M-1800_thbw', 'MC.TpTp_M-1800_noH_tztz', 'MC.TpTp_M-1800_noH_tzbw', 'MC.TpTp_M-1800_noH_bwbw',
+    'MC.BpBp_M-0700_thth', 'MC.BpBp_M-0700_thtz', 'MC.BpBp_M-0700_thbw', 'MC.BpBp_M-0700_noH_tztz', 'MC.BpBp_M-0700_noH_tzbw', 'MC.BpBp_M-0700_noH_bwbw',
+    'MC.BpBp_M-0800_thth', 'MC.BpBp_M-0800_thtz', 'MC.BpBp_M-0800_thbw', 'MC.BpBp_M-0800_noH_tztz', 'MC.BpBp_M-0800_noH_tzbw', 'MC.BpBp_M-0800_noH_bwbw',
+    'MC.BpBp_M-0900_thth', 'MC.BpBp_M-0900_thtz', 'MC.BpBp_M-0900_thbw', 'MC.BpBp_M-0900_noH_tztz', 'MC.BpBp_M-0900_noH_tzbw', 'MC.BpBp_M-0900_noH_bwbw',
+    'MC.BpBp_M-1000_thth', 'MC.BpBp_M-1000_thtz', 'MC.BpBp_M-1000_thbw', 'MC.BpBp_M-1000_noH_tztz', 'MC.BpBp_M-1000_noH_tzbw', 'MC.BpBp_M-1000_noH_bwbw',
+    'MC.BpBp_M-1100_thth', 'MC.BpBp_M-1100_thtz', 'MC.BpBp_M-1100_thbw', 'MC.BpBp_M-1100_noH_tztz', 'MC.BpBp_M-1100_noH_tzbw', 'MC.BpBp_M-1100_noH_bwbw',
+    'MC.BpBp_M-1200_thth', 'MC.BpBp_M-1200_thtz', 'MC.BpBp_M-1200_thbw', 'MC.BpBp_M-1200_noH_tztz', 'MC.BpBp_M-1200_noH_tzbw', 'MC.BpBp_M-1200_noH_bwbw',
+    'MC.BpBp_M-1300_thth', 'MC.BpBp_M-1300_thtz', 'MC.BpBp_M-1300_thbw', 'MC.BpBp_M-1300_noH_tztz', 'MC.BpBp_M-1300_noH_tzbw', 'MC.BpBp_M-1300_noH_bwbw',
+    'MC.BpBp_M-1400_thth', 'MC.BpBp_M-1400_thtz', 'MC.BpBp_M-1400_thbw', 'MC.BpBp_M-1400_noH_tztz', 'MC.BpBp_M-1400_noH_tzbw', 'MC.BpBp_M-1400_noH_bwbw',
+    'MC.BpBp_M-1500_thth', 'MC.BpBp_M-1500_thtz', 'MC.BpBp_M-1500_thbw', 'MC.BpBp_M-1500_noH_tztz', 'MC.BpBp_M-1500_noH_tzbw', 'MC.BpBp_M-1500_noH_bwbw',
+    'MC.BpBp_M-1600_thth', 'MC.BpBp_M-1600_thtz', 'MC.BpBp_M-1600_thbw', 'MC.BpBp_M-1600_noH_tztz', 'MC.BpBp_M-1600_noH_tzbw', 'MC.BpBp_M-1600_noH_bwbw',
+    'MC.BpBp_M-1700_thth', 'MC.BpBp_M-1700_thtz', 'MC.BpBp_M-1700_thbw', 'MC.BpBp_M-1700_noH_tztz', 'MC.BpBp_M-1700_noH_tzbw', 'MC.BpBp_M-1700_noH_bwbw',
+    'MC.BpBp_M-1800_thth', 'MC.BpBp_M-1800_thtz', 'MC.BpBp_M-1800_thbw', 'MC.BpBp_M-1800_noH_tztz', 'MC.BpBp_M-1800_noH_tzbw', 'MC.BpBp_M-1800_noH_bwbw',
     ])
 
 basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
@@ -70,6 +84,8 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.DYJetsToLL',
     'MC.SingleTop',
     'MC.TTbar',
+    'MC.TTJets_ScaleUp',
+    'MC.TTJets_ScaleDown',
     'MC.TpTp_M-0700',
     'MC.TpTp_M-0800',
     'MC.TpTp_M-0900',
@@ -82,6 +98,18 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1600',
     'MC.TpTp_M-1700',
     'MC.TpTp_M-1800',
+    'MC.BpBp_M-0700',
+    'MC.BpBp_M-0800',
+    'MC.BpBp_M-0900',
+    'MC.BpBp_M-1000',
+    'MC.BpBp_M-1100',
+    'MC.BpBp_M-1200',
+    'MC.BpBp_M-1300',
+    'MC.BpBp_M-1400',
+    'MC.BpBp_M-1500',
+    'MC.BpBp_M-1600',
+    'MC.BpBp_M-1700',
+    'MC.BpBp_M-1800',
     ])
 
 normfactors_comp = {
@@ -618,10 +646,10 @@ def mk_toolchain(name, datasets=None, categories=None, **kws):
 
 import tex_content
 
-def plot_only(version='Test', src='', categories=None):
+def plot_only(version='Test', pattern='', categories=None):
     plots = varial.tools.ToolChainParallel(
         'Plots',
-        lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories)
+        lazy_eval_tools_func=mk_plots_and_cf(pattern=pattern, categories=categories)
     )
     tc = varial.tools.ToolChain(
         version,
@@ -645,7 +673,7 @@ if __name__ == '__main__':
         cats = sys.argv[3:]
     else:
         cats = None
-    all_tools = plot_only(version=final_dir, src=src_dir, categories=cats)
+    all_tools = plot_only(version=final_dir, pattern=src_dir, categories=cats)
     varial.tools.Runner(all_tools, default_reuse=False)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()
