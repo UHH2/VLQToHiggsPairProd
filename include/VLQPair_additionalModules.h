@@ -26,6 +26,7 @@ enum ParticleID {
     BottomID = 5,
     TopID = 6,
     TprimeID = 8000001,
+    BprimeID = 8000002,
     ElID = 11,
     MuID = 13,
     ZID = 23,
@@ -567,6 +568,27 @@ private:
 };
 
 
+class PrimVertProducer: public AnalysisModule {
+public:
+    explicit PrimVertProducer(Context & ctx,
+                                  const string & h_name = "n_prim_vertices"):
+        h(ctx.get_handle<int>(h_name)) {}
+
+    virtual bool process(Event & e) override {
+        if (e.pvs) {
+            e.set(h, e.pvs->size());
+            return true;
+        } else {
+            e.set(h, -1.);
+            return false;
+        }
+    }
+
+private:
+    Event::Handle<int> h;
+};  // PrimVertProducer
+
+
 // class MaxNSubjetBtagProducer: public AnalysisModule {
 // public:
 
@@ -704,14 +726,13 @@ private:
 
 
 template<typename T>
-const T * closestParticleMod(const Particle  & p, const std::vector<T> & particles){
+const T * closestParticleMod(const Particle  & p, const std::vector<T> & particles, double overlap){
     double deltarmin = std::numeric_limits<double>::infinity();
-    const double dr_min = 1e-4;
     const T* next=0;
     for(unsigned int i=0; i<particles.size(); ++i) {
         const T & pi = particles[i];
         double dr = uhh2::deltaR(pi, p);
-        if(dr < deltarmin && dr > dr_min) {
+        if(dr < deltarmin && dr > overlap) {
             deltarmin = dr;
             next = &pi;
         }
@@ -848,20 +869,24 @@ template<typename T1, typename T2>
 class DeltaRProducer: public AnalysisModule {
 public:
 
+    typedef std::function<bool (const T2 &, const uhh2::Event &)> ID;
+
     explicit DeltaRProducer(Context & ctx,
                                 std::string const & in_name,
                                 std::string const & comp_coll,
                                 int ind1 = 1,
-                                int ind2 = -1) :
+                                int ind2 = -1,
+                                double overlap = 0.8) :
         in_hndl(ctx.get_handle<vector<T1>>(in_name)),
         comp_hndl_vec(ctx.get_handle<vector<T2>>(comp_coll)),
         comp_hndl_sing(ctx.get_handle<T2>(comp_coll)),
         ind1_(ind1),
-        ind2_(ind2)
+        ind2_(ind2),
+        overlap_(overlap)
         // out_hndl_dR_ind(ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_"+to_string(ind2)))
         {
-            out_hndl_dR = (ind2 < 0) ? ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_cl") :
-                                       ctx.declare_event_output<float>(in_name+"_"+to_string(ind1)+"_"+comp_coll+"_dR_"+to_string(ind2));
+            out_hndl_dR = (ind2 < 0) ? ctx.declare_event_output<float>("dR_"+in_name+"_"+to_string(ind1)+"_"+comp_coll+"_cl") :
+                                       ctx.declare_event_output<float>("dR_"+in_name+"_"+to_string(ind1)+"_"+comp_coll+"_"+to_string(ind2));
         }
 
         
@@ -876,13 +901,17 @@ public:
             if (event.is_valid(comp_hndl_vec)) {
                 vector<T2> const & comp_coll = event.get(comp_hndl_vec);
                 if (ind2_ < 0) {
-                    auto const * closest_comp_part = closestParticleMod(part, comp_coll);
+                    auto const * closest_comp_part = closestParticleMod(part, comp_coll, overlap_);
                     if (closest_comp_part)
                         dR = deltaR(part, *closest_comp_part);
                 }
-                else if (comp_coll.size() >= (size_t)ind2_) {
-                    T2 const & comp_part = comp_coll[ind2_-1];
-                    dR = deltaR(part, comp_part);
+                else {
+                    vector<T2> clean_comp_coll = comp_coll;
+                    clean_collection(clean_comp_coll, event, ID(MinMaxDeltaRId<T1>(in_hndl, overlap_, false)));
+                    if (clean_comp_coll.size() >= (size_t)ind2_) {
+                        T2 const & comp_part = clean_comp_coll[ind2_-1];
+                        dR = deltaR(part, comp_part);
+                    }
                 }
             } else if (event.is_valid(comp_hndl_sing)) {
                 T2 const & comp_part = event.get(comp_hndl_sing);
@@ -899,6 +928,7 @@ private:
     Event::Handle<T2> comp_hndl_sing;
     int ind1_, ind2_;
     Event::Handle<float> out_hndl_dR;
+    double overlap_;
 };
 
 
@@ -1118,8 +1148,7 @@ public:
 
     bool process(uhh2::Event & event) {
         if (!event.is_valid(hndl_)) {
-            cerr << "In ParticleCleaner: Handle not valid!\n";
-            assert(false);
+            return false;
         }
         vector<T> & part_collection = event.get(hndl_);
         clean_collection(part_collection, event, part_id_);
@@ -1136,75 +1165,115 @@ class HiggsMassSmear: public AnalysisModule {
 public:
     explicit HiggsMassSmear(Context & ctx,
                             const std::string & htags,
-                            const std::string & gentopjets = "gentopjets",
-                            bool write_out = true
+                            bool write_out2 = true,
+                            bool write_out1 = true,
+                            const std::string & gentopjets = "gentopjets"
                             ):
         h_htags    (ctx.get_handle<vector<TopJet>>(htags)),
         h_sm_htags10    (ctx.get_handle<vector<TopJet>>(htags+"_sm10")),
         h_sm_htags20    (ctx.get_handle<vector<TopJet>>(htags+"_sm20")),
+        h_gen_mass    (ctx.get_handle<float>(htags+"_gen_mass")),
+        h_gen_diff_before    (ctx.get_handle<float>(htags+"_diff_before")),
+        h_gen_diff_before_sj    (ctx.get_handle<float>(htags+"_diff_before_sj")),
+        h_gen_diff_10    (ctx.get_handle<float>(htags+"_diff_10")),
+        // h_gen_diff_10_sj    (ctx.get_handle<float>(htags+"_diff_10_sj")),
+        h_gen_diff_20    (ctx.get_handle<float>(htags+"_diff_20")),
+        // h_gen_diff_20_sj    (ctx.get_handle<float>(htags+"_diff_20_sj")),
         h_genjets(ctx.get_handle<vector<GenTopJet>>(gentopjets))
         {
-            if (write_out) {
+            if (write_out1)
                 h_sm_htags10 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm10");
+            if (write_out2)
                 h_sm_htags20 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm20");
-            }
         }
 
     virtual bool process(Event & e) override {
-        if (!e.is_valid(h_htags)) {
-            return false;
-        }
+        assert(e.is_valid(h_htags));
 
         if (e.isRealData) {
             e.set(h_sm_htags10, e.get(h_htags));
             e.set(h_sm_htags20, e.get(h_htags));
+            e.set(h_gen_mass, -1.);
+            e.set(h_gen_diff_before, -1000.);
+            e.set(h_gen_diff_10, -1000.);
+            e.set(h_gen_diff_20, -1000.);
+            e.set(h_gen_diff_before_sj, -1000.);
+            // e.set(h_gen_diff_10_sj, -1000.);
+            // e.set(h_gen_diff_20_sj, -1000.);
             return true;
         }
+        float gen_mass = -1.;
+        float gen_diff_before = -1000.;
+        float gen_diff_10 = -1000.;
+        float gen_diff_20 = -1000.;
+        float gen_diff_before_sj = -1000.;
+        // float gen_diff_10_sj = -1000.;
+        // float gen_diff_20_sj = -1000.;
 
         vector<TopJet> new_htags10;
         vector<TopJet> new_htags20;
-
-        for (auto const & hj : e.get(h_htags)) {
+        vector<TopJet> const & htags = e.get(h_htags);
+        for (size_t i = 0; i < htags.size(); ++i) {
+            auto const & hj = htags[i];
             auto closest_genjet = closestParticle(hj, e.get(h_genjets));
             if (closest_genjet == nullptr || deltaR(*closest_genjet, hj) > 0.3) {
-                // e.set(h_mass_10, hm);
-                // e.set(h_mass_20, hm);
-                // e.set(h_mass_diff, 0.f);
-                // e.set(h_mass_gen, 0.f);
-                // e.set(h_mass_gen_sd, 0.f);
-                return true;
+                continue;
             }
             TopJet new_hj10 = hj;  // hj is a jet, not vector
             TopJet new_hj20 = hj;  // hj is a jet, not vector
             float hm = hj.softdropmass();
-            
+            float hm_sj = hj.softdropmass();
+            if (hj.subjets().size()){
+                LorentzVector sum_subjets;
+                for (Jet const & subjet : hj.subjets())
+                    sum_subjets += subjet.v4();
+                hm_sj = sum_subjets.M();
+            }
+
             const auto & gen_sj = closest_genjet->subjets();
-            float gen_mass = (gen_sj.size() > 1) ?
+            float gen_sj_mass = (gen_sj.size() > 1) ?
                                 (gen_sj[0].v4() + gen_sj[1].v4()).mass() : hm;
 
-            auto mass_10 = max(0.0f, gen_mass + 1.1f * (hm - gen_mass));  // - 9.1998f
-            auto mass_20 = max(0.0f, gen_mass + 1.2f * (hm - gen_mass));  // - 9.1998f
+            auto mass_10 = max(0.0f, gen_sj_mass + 1.1f * (hm - gen_sj_mass));  // - 9.1998f
+            auto mass_20 = max(0.0f, gen_sj_mass + 1.2f * (hm - gen_sj_mass));  // - 9.1998f
+            // auto mass_10_sj = max(0.0f, gen_sj_mass + 1.1f * (hm_sj - gen_sj_mass));  // - 9.1998f
+            // auto mass_20_sj = max(0.0f, gen_sj_mass + 1.2f * (hm_sj - gen_sj_mass));  // - 9.1998f
             new_hj10.set_softdropmass(mass_10);
             new_hj20.set_softdropmass(mass_20);
             new_htags10.push_back(new_hj10);
             new_htags20.push_back(new_hj20);
-            // e.set(h_mass_gen_sd, gen_mass);
-            // e.set(h_mass_gen, closest_genjet->v4().mass());
-            // e.set(h_mass_diff, gen_mass - hm);
-            // e.set(h_mass_10, mass_10);
-            // e.set(h_mass_20, mass_20);
+            if (!i) {
+                gen_mass = gen_sj_mass;
+                gen_diff_before = (hm - gen_sj_mass)/gen_sj_mass;
+                gen_diff_10 = (mass_10 - gen_sj_mass)/gen_sj_mass;
+                gen_diff_20 = (mass_20 - gen_sj_mass)/gen_sj_mass;
+                gen_diff_before_sj = (hm_sj - gen_sj_mass)/gen_sj_mass;
+                // gen_diff_10_sj = (mass_10_sj - gen_sj_mass)/gen_sj_mass;
+                // gen_diff_20_sj = (mass_20_sj - gen_sj_mass)/gen_sj_mass;
+            }
 
         }
         e.set(h_sm_htags10, new_htags10);
         e.set(h_sm_htags20, new_htags20);
+        e.set(h_gen_mass, gen_mass);
+        e.set(h_gen_diff_before, gen_diff_before);
+        e.set(h_gen_diff_10, gen_diff_10);
+        e.set(h_gen_diff_20, gen_diff_20);
+        e.set(h_gen_diff_before_sj, gen_diff_before_sj);
+        // e.set(h_gen_diff_10_sj, gen_diff_10_sj);
+        // e.set(h_gen_diff_20_sj, gen_diff_20_sj);
 
         return true;
 
 
     }
-
+private:
     Event::Handle<vector<TopJet>> h_htags;
     Event::Handle<vector<TopJet>> h_sm_htags10, h_sm_htags20;
+    Event::Handle<float> h_gen_mass;
+    Event::Handle<float> h_gen_diff_before, h_gen_diff_before_sj;
+    Event::Handle<float> h_gen_diff_10; // , h_gen_diff_10_sj
+    Event::Handle<float> h_gen_diff_20; // , h_gen_diff_20_sj
     Event::Handle<vector<GenTopJet>> h_genjets;
     // Event::Handle<float> h_mass;
     // Event::Handle<float> h_mass_gen;
@@ -1212,6 +1281,40 @@ public:
     // Event::Handle<float> h_mass_diff;
     // Event::Handle<float> h_mass_10;
     // Event::Handle<float> h_mass_20;
+};
+
+
+class AK8SoftDropCorr: public AnalysisModule {
+public:
+    explicit AK8SoftDropCorr(Context & ctx,
+                            const std::string & ak8jets
+                            ):
+        h_ak8jets (ctx.get_handle<vector<TopJet>>(ak8jets))
+        {}
+
+    virtual bool process(Event & e) override {
+        assert(e.is_valid(h_ak8jets));
+
+        for (auto & ak8jet : e.get(h_ak8jets)) {
+            // float old_mass = ak8jet.softdropmass();
+            // float sj_mass = -1.;
+            // if (ak8jet.subjets().size()){
+            //     LorentzVector sum_subjets;
+            //     for (Jet const & subjet : ak8jet.subjets())
+            //         sum_subjets += subjet.v4();
+            //     sj_mass = sum_subjets.M();
+            // }
+            float new_mass = ak8jet.softdropmass()*1/ak8jet.JEC_factor_raw();
+            ak8jet.set_softdropmass(new_mass);
+            // cout << "Old/Subjet/New: " << old_mass << " " << sj_mass << " " << ak8jet.softdropmass() << endl;
+        }
+
+        return true;
+
+
+    }
+private:
+    Event::Handle<vector<TopJet>> h_ak8jets;
 };
 
 

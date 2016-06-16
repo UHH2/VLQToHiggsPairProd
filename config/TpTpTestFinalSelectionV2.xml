@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "1000">
+<!ENTITY NEVT "10">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestFinalSelection/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
@@ -70,6 +70,19 @@
 <!ENTITY MC_TpTp_M-1600 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.xml">
 <!ENTITY MC_TpTp_M-1700 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.xml">
 <!ENTITY MC_TpTp_M-1800 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.xml">
+
+<!ENTITY MC_BpBp_M-0700 SYSTEM   "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-0700.xml">
+<!ENTITY MC_BpBp_M-0800 SYSTEM   "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-0800.xml">
+<!ENTITY MC_BpBp_M-0900 SYSTEM   "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-0900.xml">
+<!ENTITY MC_BpBp_M-1000 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1000.xml">
+<!ENTITY MC_BpBp_M-1100 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1100.xml">
+<!ENTITY MC_BpBp_M-1200 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1200.xml">
+<!ENTITY MC_BpBp_M-1300 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1300.xml">
+<!ENTITY MC_BpBp_M-1400 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1400.xml">
+<!ENTITY MC_BpBp_M-1500 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1500.xml">
+<!ENTITY MC_BpBp_M-1600 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1600.xml">
+<!ENTITY MC_BpBp_M-1700 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1700.xml">
+<!ENTITY MC_BpBp_M-1800 SYSTEM  "../NewSamples-76X-v1/Preselection-v10/Xml-files/uhh2.AnalysisModuleRunner.MC.BpBp_M-1800.xml">
 ]
 >
 
@@ -98,12 +111,12 @@
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
-
+<!-- 
     <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015CD" Cacheable="True">
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
 
@@ -179,11 +192,11 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+    <!-- <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
         &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,9 +268,9 @@
         &MC_BpBp_M-1700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
-    <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="False">
+    <!-- <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="False">
         &MC_BpBp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -489,13 +502,13 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
     
-    <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="True">
+    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="True">
         &MC_TTbar_ScaleUp;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -505,7 +518,7 @@
         &MC_TTbar_ScaleDown;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!-- <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0000to0700" Cacheable="True">
         &MC_TTbar;

@@ -3,7 +3,7 @@
 ##################################### definition of UserConfig item changes ###
 
 
-start_all_parallel = False
+start_all_parallel = True
 
 
 ############################################################### script code ###
@@ -29,7 +29,7 @@ categories_final = [
         # 'MuElComb_H2B',
         # 'MuElComb_H1B',
         # 'MuElComb_Sideband',
-        'El45Tight_Baseline',
+        # 'El45Tight_Baseline',
         # 'El45MVALoose_Baseline',
         # 'El45MVATight_Baseline',
         # 'MuElComb_Baseline',
@@ -46,10 +46,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    'jec_up'        : {'jecsmear_direction':'up'},
-    'jec_down'      : {'jecsmear_direction':'down'},
-    'jer_up'        : {'jersmear_direction':'up'},
-    'jer_down'      : {'jersmear_direction':'down'},
+    # 'jec_up'        : {'jecsmear_direction':'up'},
+    # 'jec_down'      : {'jecsmear_direction':'down'},
+    # 'jer_up'        : {'jersmear_direction':'up'},
+    # 'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -59,13 +59,22 @@ no_sys_uncerts = {
 }
   
 
-final_states_to_split_into = [
+final_states_to_split_into_tp = [
     'thth',
     'thtz',
     'thbw',
     'noH_tztz',
     'noH_tzbw',
     'noH_bwbw',
+]
+
+final_states_to_split_into_bp = [
+    'bhbh',
+    'bhbz',
+    'bhtw',
+    'noH_bzbz',
+    'noH_bztw',
+    'noH_twtw',
 ]
 
 
@@ -78,10 +87,10 @@ def do_set_cat(element_tree, catname):
             item.set('Value', catname)
             break
 
-def make_higgs_split_item(element_tree, final_states=None):
+def make_higgs_split_item(element_tree, process='TpTp', final_states=None):
     tree_cycle = element_tree.getroot().find('Cycle')
     for ind, item in enumerate(tree_cycle.findall('InputData')):
-        if 'TpTp' in item.get('Version'):
+        if process in item.get('Version'):
             for ver in final_states:
                 split_smpl = copy.deepcopy(item)
                 split_smpl.set('Version', split_smpl.get('Version')+'_'+ver)
@@ -145,7 +154,8 @@ def setup_for_finalsel(outputdir = '', allowed_datasets = None, count = '-1', an
         set_analysis_module(element_tree, analysis_module)
         set_output_dir(element_tree, outputdir)
         clean_input_data(element_tree, allowed_datasets)
-        make_higgs_split_item(element_tree, final_states_to_split_into)
+        make_higgs_split_item(element_tree, 'TpTp', final_states_to_split_into_tp)
+        make_higgs_split_item(element_tree, 'BpBp', final_states_to_split_into_bp)
         do_set_eventnumber(element_tree, count)
         set_uncert(element_tree, uncert_name)
         do_set_cat(element_tree, " ".join(categories))
@@ -175,18 +185,19 @@ else:
 class MySFrameBatch(SFrame):
 
     def configure(self):
-        self.xml_doctype = self.xml_doctype + """
+        self.xml_doctype = self.xml_doctype +"""
 <!--
-   <ConfigParse NEventsBreak="0" FileSplit="32" AutoResubmit="0" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir3"/>
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir2"/>
 -->
 """
 # """
 # <!--
-#    <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
-#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+#    <ConfigParse NEventsBreak="0" FileSplit="32" AutoResubmit="0" />
+#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir3"/>
 # -->
 # """
+
         if os.path.exists(self.cwd + 'workdir'):
             opt = ' -rl --exitOnQuestion'
         else:

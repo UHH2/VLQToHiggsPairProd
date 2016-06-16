@@ -669,8 +669,8 @@ def rebin_st_and_nak4(wrps):
                 elif (isinstance(rebin_fct, int)):
                     w = op.rebin_nbins_max(w, rebin_fct)
                     rebin_ind = True
-            if not rebin_ind:
-                w = op.rebin_nbins_max(w, 60)
+            # if not rebin_ind:
+            #     w = op.rebin_nbins_max(w, 60)
         yield w
 
 # def leg_2_col(rnd, dict_leg=varial.settings.defaults_Legend):

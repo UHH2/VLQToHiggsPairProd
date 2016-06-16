@@ -62,18 +62,18 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1600_thth', 'MC.TpTp_M-1600_thtz', 'MC.TpTp_M-1600_thbw', 'MC.TpTp_M-1600_noH_tztz', 'MC.TpTp_M-1600_noH_tzbw', 'MC.TpTp_M-1600_noH_bwbw',
     'MC.TpTp_M-1700_thth', 'MC.TpTp_M-1700_thtz', 'MC.TpTp_M-1700_thbw', 'MC.TpTp_M-1700_noH_tztz', 'MC.TpTp_M-1700_noH_tzbw', 'MC.TpTp_M-1700_noH_bwbw',
     'MC.TpTp_M-1800_thth', 'MC.TpTp_M-1800_thtz', 'MC.TpTp_M-1800_thbw', 'MC.TpTp_M-1800_noH_tztz', 'MC.TpTp_M-1800_noH_tzbw', 'MC.TpTp_M-1800_noH_bwbw',
-    'MC.BpBp_M-0700_thth', 'MC.BpBp_M-0700_thtz', 'MC.BpBp_M-0700_thbw', 'MC.BpBp_M-0700_noH_tztz', 'MC.BpBp_M-0700_noH_tzbw', 'MC.BpBp_M-0700_noH_bwbw',
-    'MC.BpBp_M-0800_thth', 'MC.BpBp_M-0800_thtz', 'MC.BpBp_M-0800_thbw', 'MC.BpBp_M-0800_noH_tztz', 'MC.BpBp_M-0800_noH_tzbw', 'MC.BpBp_M-0800_noH_bwbw',
-    'MC.BpBp_M-0900_thth', 'MC.BpBp_M-0900_thtz', 'MC.BpBp_M-0900_thbw', 'MC.BpBp_M-0900_noH_tztz', 'MC.BpBp_M-0900_noH_tzbw', 'MC.BpBp_M-0900_noH_bwbw',
-    'MC.BpBp_M-1000_thth', 'MC.BpBp_M-1000_thtz', 'MC.BpBp_M-1000_thbw', 'MC.BpBp_M-1000_noH_tztz', 'MC.BpBp_M-1000_noH_tzbw', 'MC.BpBp_M-1000_noH_bwbw',
-    'MC.BpBp_M-1100_thth', 'MC.BpBp_M-1100_thtz', 'MC.BpBp_M-1100_thbw', 'MC.BpBp_M-1100_noH_tztz', 'MC.BpBp_M-1100_noH_tzbw', 'MC.BpBp_M-1100_noH_bwbw',
-    'MC.BpBp_M-1200_thth', 'MC.BpBp_M-1200_thtz', 'MC.BpBp_M-1200_thbw', 'MC.BpBp_M-1200_noH_tztz', 'MC.BpBp_M-1200_noH_tzbw', 'MC.BpBp_M-1200_noH_bwbw',
-    'MC.BpBp_M-1300_thth', 'MC.BpBp_M-1300_thtz', 'MC.BpBp_M-1300_thbw', 'MC.BpBp_M-1300_noH_tztz', 'MC.BpBp_M-1300_noH_tzbw', 'MC.BpBp_M-1300_noH_bwbw',
-    'MC.BpBp_M-1400_thth', 'MC.BpBp_M-1400_thtz', 'MC.BpBp_M-1400_thbw', 'MC.BpBp_M-1400_noH_tztz', 'MC.BpBp_M-1400_noH_tzbw', 'MC.BpBp_M-1400_noH_bwbw',
-    'MC.BpBp_M-1500_thth', 'MC.BpBp_M-1500_thtz', 'MC.BpBp_M-1500_thbw', 'MC.BpBp_M-1500_noH_tztz', 'MC.BpBp_M-1500_noH_tzbw', 'MC.BpBp_M-1500_noH_bwbw',
-    'MC.BpBp_M-1600_thth', 'MC.BpBp_M-1600_thtz', 'MC.BpBp_M-1600_thbw', 'MC.BpBp_M-1600_noH_tztz', 'MC.BpBp_M-1600_noH_tzbw', 'MC.BpBp_M-1600_noH_bwbw',
-    'MC.BpBp_M-1700_thth', 'MC.BpBp_M-1700_thtz', 'MC.BpBp_M-1700_thbw', 'MC.BpBp_M-1700_noH_tztz', 'MC.BpBp_M-1700_noH_tzbw', 'MC.BpBp_M-1700_noH_bwbw',
-    'MC.BpBp_M-1800_thth', 'MC.BpBp_M-1800_thtz', 'MC.BpBp_M-1800_thbw', 'MC.BpBp_M-1800_noH_tztz', 'MC.BpBp_M-1800_noH_tzbw', 'MC.BpBp_M-1800_noH_bwbw',
+    'MC.BpBp_M-0700_bhbh', 'MC.BpBp_M-0700_bhbz', 'MC.BpBp_M-0700_bhtw', 'MC.BpBp_M-0700_noH_bzbz', 'MC.BpBp_M-0700_noH_bztw', 'MC.BpBp_M-0700_noH_twtw',
+    'MC.BpBp_M-0800_bhbh', 'MC.BpBp_M-0800_bhbz', 'MC.BpBp_M-0800_bhtw', 'MC.BpBp_M-0800_noH_bzbz', 'MC.BpBp_M-0800_noH_bztw', 'MC.BpBp_M-0800_noH_twtw',
+    'MC.BpBp_M-0900_bhbh', 'MC.BpBp_M-0900_bhbz', 'MC.BpBp_M-0900_bhtw', 'MC.BpBp_M-0900_noH_bzbz', 'MC.BpBp_M-0900_noH_bztw', 'MC.BpBp_M-0900_noH_twtw',
+    'MC.BpBp_M-1000_bhbh', 'MC.BpBp_M-1000_bhbz', 'MC.BpBp_M-1000_bhtw', 'MC.BpBp_M-1000_noH_bzbz', 'MC.BpBp_M-1000_noH_bztw', 'MC.BpBp_M-1000_noH_twtw',
+    'MC.BpBp_M-1100_bhbh', 'MC.BpBp_M-1100_bhbz', 'MC.BpBp_M-1100_bhtw', 'MC.BpBp_M-1100_noH_bzbz', 'MC.BpBp_M-1100_noH_bztw', 'MC.BpBp_M-1100_noH_twtw',
+    'MC.BpBp_M-1200_bhbh', 'MC.BpBp_M-1200_bhbz', 'MC.BpBp_M-1200_bhtw', 'MC.BpBp_M-1200_noH_bzbz', 'MC.BpBp_M-1200_noH_bztw', 'MC.BpBp_M-1200_noH_twtw',
+    'MC.BpBp_M-1300_bhbh', 'MC.BpBp_M-1300_bhbz', 'MC.BpBp_M-1300_bhtw', 'MC.BpBp_M-1300_noH_bzbz', 'MC.BpBp_M-1300_noH_bztw', 'MC.BpBp_M-1300_noH_twtw',
+    'MC.BpBp_M-1400_bhbh', 'MC.BpBp_M-1400_bhbz', 'MC.BpBp_M-1400_bhtw', 'MC.BpBp_M-1400_noH_bzbz', 'MC.BpBp_M-1400_noH_bztw', 'MC.BpBp_M-1400_noH_twtw',
+    'MC.BpBp_M-1500_bhbh', 'MC.BpBp_M-1500_bhbz', 'MC.BpBp_M-1500_bhtw', 'MC.BpBp_M-1500_noH_bzbz', 'MC.BpBp_M-1500_noH_bztw', 'MC.BpBp_M-1500_noH_twtw',
+    'MC.BpBp_M-1600_bhbh', 'MC.BpBp_M-1600_bhbz', 'MC.BpBp_M-1600_bhtw', 'MC.BpBp_M-1600_noH_bzbz', 'MC.BpBp_M-1600_noH_bztw', 'MC.BpBp_M-1600_noH_twtw',
+    'MC.BpBp_M-1700_bhbh', 'MC.BpBp_M-1700_bhbz', 'MC.BpBp_M-1700_bhtw', 'MC.BpBp_M-1700_noH_bzbz', 'MC.BpBp_M-1700_noH_bztw', 'MC.BpBp_M-1700_noH_twtw',
+    'MC.BpBp_M-1800_bhbh', 'MC.BpBp_M-1800_bhbz', 'MC.BpBp_M-1800_bhtw', 'MC.BpBp_M-1800_noH_bzbz', 'MC.BpBp_M-1800_noH_bztw', 'MC.BpBp_M-1800_noH_twtw',
     ])
 
 basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
@@ -572,31 +572,7 @@ def mk_plots_and_cf(categories=None, datasets=None, **kws):
     else:
         args['filter_keyfunc'] = dataset_filter
     def create():
-        plot_chain = [
-            
-            varial.plotter.RootFilePlotter(**args),
-            # varial.tools.Plotter(
-            #     'GenRecoHTComparisons',
-            #     stack=True,
-            #     input_result_path='../CutflowHistos',
-            #     save_log_scale=True,
-            #     canvas_decorators=[varial.rendering.Legend]
-            #     )
-            
-        # if compare_uncerts:
-        #     plot_chain += [varial.plotter.RootFilePlotter(
-        #         pattern=args['pattern'],
-        #         # input_result_path='../HistoLoader',
-        #         name='CompareUncerts',
-        #         filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets']) and w.in_file_path.endswith('ST'), #and 'noH' not in w.sample,
-        #         # filter_keyfunc=lambda w: any(f in w.sample for f in datasets_to_plot) and 'noH' not in w.sample,
-        #         # plotter_factory=lambda **w: plotter_factory_final(common_plot.normfactors, **w),
-        #         plotter_factory=plotter_factory_uncerts(),
-        #         # combine_files=True,
-        #         auto_legend=args['auto_legend']
-        #         # filter_keyfunc=lambda w: 'Cutflow' not in w.in_file_path
-        #         )
-        ]
+        plot_chain = [varial.plotter.RootFilePlotter(**args)]
         if categories:
             cutflow_cat = []
             for cat in categories:
@@ -615,34 +591,6 @@ def mk_toolchain(name, datasets=None, categories=None, **kws):
         name,
         lazy_eval_tools_func=mk_plots_and_cf(categories=categories, datasets=datasets, **kws)
         )
-
-# def mk_toolchain_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-#     return varial.tools.ToolChainParallel(
-#         name,
-#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, 
-#             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
-#                 varial.rendering.Legend,
-#                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-#                 ])
-#         )
-
-# def mk_toolchain_norm(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-#     # varial.settings.do_norm_plot = True
-#     return varial.tools.ToolChainParallel(
-#         name,
-#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int)
-#         )
-
-# def mk_toolchain_norm_pull(name, src, datasets, categories=None, filter_keyfunc=None, compare_uncerts=False):
-#     # varial.settings.do_norm_plot = True
-#     return varial.tools.ToolChainParallel(
-#         name,
-#         lazy_eval_tools_func=mk_plots_and_cf(src=src, categories=categories, datasets=datasets, filter_keyfunc=filter_keyfunc, compare_uncerts=compare_uncerts, hook_loaded_histos=loader_hook_norm_to_int,
-#             canvas_decorators=[varial.rendering.BottomPlotRatioPullErr,
-#                 varial.rendering.Legend,
-#                 # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-#                 ])
-#         )
 
 import tex_content
 

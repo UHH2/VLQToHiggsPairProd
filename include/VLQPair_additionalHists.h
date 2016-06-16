@@ -593,3 +593,33 @@ private:
     Event::Handle<T> h_gen_var;
     TH2F * hist;
 };
+
+
+class VarSTComparison: public Hists {
+public:
+    explicit VarSTComparison(Context & ctx,
+                         const string & dirname,
+                         const string & var_name,
+                         const string & st_name = "ST"):
+        Hists(ctx, dirname),
+        h_var(ctx.get_handle<float>(var_name)),
+        h_st(ctx.get_handle<double>(st_name)),
+        hist_2d(book<TH2F>("Comp_"+st_name+"_"+var_name,
+                        ";"+st_name+";"+var_name,
+                        65, 0., 6500., 50, 0., 5.))
+        // hist_1d(book<TH1F>("Sing_"+var_name,
+        //                 "Sing_"+var_name, 50, 0., 5.))
+        {}
+
+    virtual void fill(const Event & e) override {
+        assert(e.is_valid(h_var) && e.is_valid(h_st));
+        hist_2d->Fill(e.get(h_st), e.get(h_var), e.weight);
+        // hist_1d->Fill(e.get(h_var), e.weight);
+    }
+
+private:
+    Event::Handle<float> h_var;
+    Event::Handle<double> h_st;
+    TH2F * hist_2d;
+    // TH1F * hist_1d;
+};

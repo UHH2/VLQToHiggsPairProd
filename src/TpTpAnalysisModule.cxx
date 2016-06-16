@@ -13,6 +13,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // cout << "TestKey in the configuration was: " << testvalue << endl;
     version = ctx.get("dataset_version", "");
     type = ctx.get("dataset_type", "");
+    string make_lep_coll = ctx.get("make_lep_coll", "False");
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
 
@@ -41,18 +42,26 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     //             "electrons",
     //             "electrons_mva_tight"
     //             ));
-    common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
-                "electrons",
-                "electrons_mva_loose"
-                ));
-    common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
-                "electrons",
-                "electrons_iso"
-                ));
-    common_modules.emplace_back(new CollectionProducer<Muon>(ctx,
-                "muons",
-                "muons_iso"
-                ));
+    if (make_lep_coll == "True") {
+        common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+                    "electrons",
+                    "electrons_mva_loose",
+                    boost::none,
+                    true
+                    ));
+        common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+                    "electrons",
+                    "electrons_iso",
+                    boost::none,
+                    true
+                    ));
+        common_modules.emplace_back(new CollectionProducer<Muon>(ctx,
+                    "muons",
+                    "muons_iso",
+                    boost::none,
+                    true
+                    ));
+    }
 
 
     common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.1)), "electrons_mva_loose"));
@@ -220,14 +229,14 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
                 ));
     ak8jet_hists->add_level("Nobtag_boost_mass", "nobtag_boost_mass", vector<string>{"n", "pt", "mass_sj", "tau21", "n_sjbtags-loose", "n_sjbtags-medium"}, 1);
     
-    common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_1b_med",
-                "n_higgs_tags_1b_med"
-                ));
-    common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_2b_med",
-                "n_higgs_tags_2b_med"
-                ));
+    // common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "higgs_tags_1b_med",
+    //             "n_higgs_tags_1b_med"
+    //             ));
+    // common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+    //             "higgs_tags_2b_med",
+    //             "n_higgs_tags_2b_med"
+    //             ));
 
     common_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
         "jets",
@@ -245,20 +254,20 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         JetId(CSVBTag(CSVBTag::WP_TIGHT))
         ));
 
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "ak8_boost",
                 "ak8_higgs_cand",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS))
                 ));
 
     // ak4 jets not overlapping with higgs-candidates, collected together with higgs-candidates in one TopJet collection for applying b-tag scale factors
-    other_modules.emplace_back(new CollectionProducer<Jet>(ctx,
+    common_modules.emplace_back(new CollectionProducer<Jet>(ctx,
                 "jets",
                 "jets_no_overlap",
                 JetId(MinMaxDeltaRId<TopJet>(ctx, "ak8_higgs_cand", 0.8, false))
                 ));
 
-    other_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
+    common_modules.emplace_back(new BTagSFJetCollectionProducer(ctx,
                 "ak8_higgs_cand",
                 "jets_no_overlap",
                 "tj_btag_sf_coll"
