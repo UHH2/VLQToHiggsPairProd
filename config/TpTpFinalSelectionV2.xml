@@ -106,7 +106,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="False">
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="False">
         &Data_SingleMu;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -116,7 +116,7 @@
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
 
@@ -126,7 +126,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="1769230" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="False">
+    <InputData Lumi="1769230" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="False">
         &MC_TpTp_M-0700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -197,14 +197,14 @@
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
- -->
+
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     signal samples: B'B'
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="1812747" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-0700" Cacheable="False">
+    <InputData Lumi="1812747" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-0700" Cacheable="False">
         &MC_BpBp_M-0700;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -274,7 +274,7 @@
         &MC_BpBp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
 
@@ -309,7 +309,7 @@
     -->
 
 
-    <!-- <InputData Lumi="316.4" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt120to170_MuEnrichedPt5" Cacheable="False">
+    <InputData Lumi="316.4" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt120to170_MuEnrichedPt5" Cacheable="False">
         &MC_QCD_Pt120to170_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -349,7 +349,7 @@
         &MC_QCD_Pt1000toInf_MuEnrichedPt5;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -357,7 +357,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="574.97" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-120to170_EMEnriched" Cacheable="False">
+    <InputData Lumi="574.97" NEventsMax="&NEVT;" Type="MC" Version="QCD_Pt-120to170_EMEnriched" Cacheable="False">
         &MC_QCD_Pt-120to170_EMEnriched;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -386,7 +386,7 @@
         &MC_QCD_Pt_250toInf_bcToE;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -394,7 +394,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="14645.70" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
+    <InputData Lumi="14645.70" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0100to0200" Cacheable="False">
         &MC_DYJetsToLL_M50_HT0100to0200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -416,7 +416,7 @@
         &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,7 +424,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="18992240" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
+    <InputData Lumi="18992240" NEventsMax="&NEVT;" Type="MC" Version="SingleTop_t-channel_4f_leptonDecays" Cacheable="False">
         &MC_TtChannel;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -446,7 +446,7 @@
         &MC_TWTop;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
     <!--
@@ -455,7 +455,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="6264.6" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="False">
+    <InputData Lumi="6264.6" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="False">
         &MC_WJets_LNu_HT100To200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -495,7 +495,7 @@
         &MC_WJets_LNu_HT2500ToInf;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -503,11 +503,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
     
     <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="False">
         &MC_TTbar_ScaleUp;

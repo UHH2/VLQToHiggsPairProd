@@ -46,10 +46,10 @@ categories_pre = [ #"NoSelection",
 
 sys_uncerts_final = {
     # 'name' : {'item name': 'item value', ...},
-    # 'jec_up'        : {'jecsmear_direction':'up'},
-    # 'jec_down'      : {'jecsmear_direction':'down'},
-    # 'jer_up'        : {'jersmear_direction':'up'},
-    # 'jer_down'      : {'jersmear_direction':'down'},
+    'jec_up'        : {'jecsmear_direction':'up'},
+    'jec_down'      : {'jecsmear_direction':'down'},
+    'jer_up'        : {'jersmear_direction':'up'},
+    'jer_down'      : {'jersmear_direction':'down'},
     'nominal'       : {'jecsmear_direction':'nominal'}
     # 'jer_jec_up'    : {'jersmear_direction':'up','jecsmear_direction':'up'},
     # 'jer_jec_down'  : {'jersmear_direction':'down','jecsmear_direction':'down'},
@@ -188,7 +188,7 @@ class MySFrameBatch(SFrame):
         self.xml_doctype = self.xml_doctype +"""
 <!--
    <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir2"/>
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
 # """
@@ -384,4 +384,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

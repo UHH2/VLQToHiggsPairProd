@@ -12,7 +12,7 @@ import pprint
 # varial.settings.max_num_processes = 24
 
 
-if True:
+if False:
     TreeProjector = BatchTreeProjector
     from varial_ext.sgeworker import SGESubmitter
     import varial_ext.treeprojector as tp
@@ -37,7 +37,8 @@ core_histos = {
     'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
     'n_ak8'                         : ('N(Ak8 Jets)',                      11, -.5, 10.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
-    # 'pt_third_ak4_jet'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'jets[]'              : ('inclusive jet p_{T}',             100, 0., 2000.),
+    'jets[2]'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
     # 'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
     # 'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               120, 0., 2400.),
