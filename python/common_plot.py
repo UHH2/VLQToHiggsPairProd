@@ -522,14 +522,22 @@ def mod_title(wrps):
             w.histo.GetXaxis().SetTitle(title.replace('MET', 'missing E_{T}'))
         yield w
 
-def fix_get_samplename(wrp):
-    fname = os.path.basename(wrp.file_path)
-    if fname.startswith('uhh2'):
-        return fname.split('.')[-2]
-    else:
-        return os.path.splitext(fname)[0]
+
 
 def add_wrp_info(wrps, sig_ind=None):
+    def fix_get_samplename(wrp):
+        fname = os.path.basename(wrp.file_path)
+        if fname.startswith('uhh2'):
+            return fname.split('.')[-2]
+        else:
+            return os.path.splitext(fname)[0]
+
+    def batch_tp_infilepath(wrp):
+        filename = os.path.basename(wrp.file_path)
+        filename = filename.split('.')[0]
+        cat = filename.split('-')[2]
+        return cat+'/'+'-'.join(filename.split('-')[3:])
+
     sig_ind = sig_ind or signal_indicators
     if varial.settings.fix_presel_sample:
         get_samplename = fix_get_samplename
@@ -539,6 +547,7 @@ def add_wrp_info(wrps, sig_ind=None):
         wrps,
         sample=get_samplename,
         legend=lambda w: w.sample,
+        in_file_path=lambda w: w.in_file_path if 'jug-file' not in w.file_path else batch_tp_infilepath,
         is_signal=lambda w: any(s in w.file_path for s in sig_ind),
         is_data=lambda w: 'Run20' in w.file_path,
         variable=lambda w: w.in_file_path.split('/')[-1],

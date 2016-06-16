@@ -589,10 +589,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
                     ######## HISTOGRAMS WITH LEPTON CHANNELS SEPARATE ########
 
-                    # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts)
-                    #             ),                                             
+                    plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
+                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                                + list(sys_path+'/%s*/*.root'% i for i in uncerts)
+                                ),                                             
                     # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
@@ -686,42 +686,42 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
                     ####### TABLES ########
 
-                    varial.tools.ToolChain('MergeChannelsTables', [
-                        varial.tools.HistoLoader(
-                            pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]+list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                            filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
-                                'Region_Comb' not in w.in_file_path and\
-                                any(w.in_file_path.endswith(f) for f in ['ST']),
-                            hook_loaded_histos=plot.loader_hook_merge_regions,
-                        ),
-                        plot.mk_toolchain('HistogramsMerged',
-                            plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                            pattern=None, input_result_path='../HistoLoader'),
-                        CountTable([
-                                table_block_signal,
-                                table_block_background,
-                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                            ],
-                            get_table_category_block(),
-                            name='CountTable'
-                            ),
-                        EffTable([
-                                table_block_signal,
-                            ],
-                            get_table_category_block(),
-                            norm_factors,
-                            name='EffTable'
-                            ),
-                        EffTable([
-                                table_block_signal_fs_700,
-                                table_block_signal_fs_1700,
-                            ],
-                            get_table_category_block(),
-                            norm_factors,
-                            name='EffTableCompFS'
-                            ),
-                        ]),
+                    # varial.tools.ToolChain('MergeChannelsTables', [
+                    #     varial.tools.HistoLoader(
+                    #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]+list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                    #             'Region_Comb' not in w.in_file_path and\
+                    #             any(w.in_file_path.endswith(f) for f in ['ST']),
+                    #         hook_loaded_histos=plot.loader_hook_merge_regions,
+                    #     ),
+                    #     plot.mk_toolchain('HistogramsMerged',
+                    #         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                    #         pattern=None, input_result_path='../HistoLoader'),
+                    #     CountTable([
+                    #             table_block_signal,
+                    #             table_block_background,
+                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                    #             [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                    #         ],
+                    #         get_table_category_block(),
+                    #         name='CountTable'
+                    #         ),
+                    #     EffTable([
+                    #             table_block_signal,
+                    #         ],
+                    #         get_table_category_block(),
+                    #         norm_factors,
+                    #         name='EffTable'
+                    #         ),
+                    #     EffTable([
+                    #             table_block_signal_fs_700,
+                    #             table_block_signal_fs_1700,
+                    #         ],
+                    #         get_table_category_block(),
+                    #         norm_factors,
+                    #         name='EffTableCompFS'
+                    #         ),
+                    #     ]),
 
                     # varial.tools.ToolChain('TablesSplitLepton', [
                     #     plot.mk_toolchain('Histograms', plot.more_samples, 
@@ -897,7 +897,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     return varial.tools.ToolChain(name, [
             varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
             # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
-            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
@@ -956,7 +956,7 @@ def run_treeproject_and_plot(output_dir):
             #     tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
             #     tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),
             #     ]),
-            varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../ReweightingComparision/*', ignore=('*.svn', '*.html'), use_rsync=True),
+            # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../ReweightingComparision/*', ignore=('*.svn', '*.html'), use_rsync=True),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
 
