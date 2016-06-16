@@ -233,30 +233,30 @@ comb_lep_chan = [
 # final regions
 
 sr2b_channel = baseline_selection_btag + [
-    'n_higgs_tags_2b_med    >= 1',
+    'n_higgs_tags_2b_med_sm10    >= 1',
     'n_additional_btags_medium  >= 1',
 ]
 
 sr1b_channel = baseline_selection_btag + [
-    'n_higgs_tags_2b_med    == 0',
-    'n_higgs_tags_1b_med    >= 1',
+    'n_higgs_tags_2b_med_sm10    == 0',
+    'n_higgs_tags_1b_med_sm10    >= 1',
     'n_additional_btags_medium  >= 1',
 ]
 
 sb_channel = baseline_selection_btag + [
-    'n_higgs_tags_1b_med        == 0',
+    'n_higgs_tags_1b_med_sm10        == 0',
     'met                        >= 100',
     'n_additional_btags_medium  >= 1',
 ]
 
 sb_ttbar_channel = baseline_selection + [
-    'n_higgs_tags_1b_med        == 0',
+    'n_higgs_tags_1b_med_sm10        == 0',
     'n_additional_btags_medium  >= 2',
     'met                        >= 100',
 ]
 
 sb_wjets_channel = baseline_selection + [
-    'n_higgs_tags_1b_med        == 0',
+    'n_higgs_tags_1b_med_sm10        == 0',
     'n_additional_btags_medium  == 0',
     'met                        >= 100',
 ]
@@ -475,32 +475,34 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
         pdf_params = params if params == treeproject_tptp.st_only_params else treeproject_tptp.st_plus_jets_params
         def tmp():
             sys_tps = []
-            sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params)
-            sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
-            for weight_name, weight_dict in dict_weight_uncerts.iteritems():
-                sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
-            if 'TTbar' in samples:
-                sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights, samples, params)
-            sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
-            sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
+            sys_tps += treeproject_tptp.add_higgs_smear_uncerts(base_path, regions, weights, samples, params)
+            # sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params)
+            # sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
+            # for weight_name, weight_dict in dict_weight_uncerts.iteritems():
+            #     sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
+            # if 'TTbar' in samples:
+            #     sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights, samples, params)
+            # sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
+            # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
             return sys_tps
         return tmp
     return add_uncerts
 
-def add_only_weight_uncertainties(dict_weight_uncerts):
-    def add_uncerts(base_path, regions, weights, samples, params):
-        def tmp():
-            sys_tps = []
-            for weight_name, weight_dict in dict_weight_uncerts.iteritems():
-                sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
-            return sys_tps
-        return tmp
-    return add_uncerts
+# def add_only_weight_uncertainties(dict_weight_uncerts):
+#     def add_uncerts(base_path, regions, weights, samples, params):
+#         def tmp():
+#             sys_tps = []
+#             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
+#                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
+#             return sys_tps
+#         return tmp
+#     return add_uncerts
 
 def add_all_without_weight_uncertainties(base_path, regions, weights, samples, params):
     pdf_params = params if params == treeproject_tptp.st_only_params else treeproject_tptp.st_plus_jets_params
     def tmp():
         sys_tps = []
+        sys_tps += treeproject_tptp.add_higgs_smear_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
@@ -529,10 +531,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
 
     tc_tp = [
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.background_samples),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
-            #     name='ModSysTreeProjectorsBkg'),
+            treeproject_tptp.mk_tp(base_path, final_regions_syst, weights, samples=treeproject_tptp.background_samples+['Run2015CD']),
+            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_syst, weights,
+                samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsBkg'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
             #     name='SysTreeProjectorsSigImportant'),

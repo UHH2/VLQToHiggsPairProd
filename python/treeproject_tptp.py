@@ -26,7 +26,7 @@ st_only = {
 
 st_plus_jets = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
-    'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
+    'n_ak4'                         : ('N(Ak4 Jets)',                      20, -.5, 19.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
     # 'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
     'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
@@ -34,11 +34,11 @@ st_plus_jets = {
 
 core_histos = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
-    'n_ak4'                         : ('N(Ak4 Jets)',                      14, -.5, 13.5),
+    'n_ak4'                         : ('N(Ak4 Jets)',                      20, -.5, 19.5),
     'n_ak8'                         : ('N(Ak8 Jets)',                      11, -.5, 10.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
-    'jets[]'              : ('inclusive jet p_{T}',             100, 0., 2000.),
-    'jets[2]'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
+    'jets[].m_pt'              : ('inclusive jet p_{T}',             100, 0., 2000.),
+    'jets[2].m_pt'              : ('p_{T} third Ak4 Jet',             50, 0., 1000.),
     # 'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
     # 'pt_ld_ak8_jet'                 : ('p_{T} leading Ak8 Jet [GeV]',               120, 0., 2400.),
@@ -51,6 +51,10 @@ core_histos = {
     'primary_electron_pt'           : ('Primary Electron p_{T} [GeV]',             50, 0., 1200.),
     'n_higgs_tags_1b_med'           : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sm10'           : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sm10'           : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sm20'           : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sm20'           : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
     # 'noboost_mass_1b_pt'           : ('p_{T} type-I Higgs tag mass [GeV]',           100, 0., 2000.),
     # 'noboost_mass_2b_pt'           : ('p_{T} type-II Higgs tag mass [GeV]',           100, 0., 2000.),
     # 'nomass_boost_1b_mass'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
@@ -268,8 +272,8 @@ def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no
 
 def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
-    files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleUp_*.root')
-    files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleDown_*.root')
+    files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir*/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleUp_*.root')
+    files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir*/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleDown_*.root')
     files_nom_path = join(base_path_nominal_files, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root')
     dict_nom_files = dict(
         (sample, list(f for f in glob.glob(files_nom_path) if sample in f))
@@ -296,7 +300,31 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
             name='PSScale__minus',
         )
     ]
-    # return tmp
+
+def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+    # def tmp():
+    nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
+    filenames = dict(
+        (sample, list(f for f in glob.glob(nominal_files) if sample in f))
+        for sample in samples
+    )
+    final_regions_up = list((g, map(lambda w: w.replace('_sm10', ''), f)) for g, f in final_regions)
+    final_regions_down = list((g, map(lambda w: w.replace('_sm10', '_sm20'), f)) for g, f in final_regions)
+
+    sys_sec_sel_weight_reweight_weight = (
+        ('higgs_smear__minus', list((g, f, sample_weights) for g, f in final_regions_up)),
+        ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_down))
+    )
+    return list(
+        TreeProjector(
+            filenames,
+            params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight_reweight_weight
+    )
 
 def add_generic_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
     # def tmp():
