@@ -46,7 +46,7 @@ class TpTpPreselectionV2: public TpTpAnalysisModule {
 public:
 
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
-        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 800)),
+        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 700)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
@@ -243,8 +243,8 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200., 50.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 70.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 200.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 50.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
@@ -253,8 +253,8 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin(), new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
             SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatF("primary_electron_pt_mva_loose", "Primary Electron p_{T}", 60, 0., 1200., 50.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 250.));
-            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 70.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 200.));
+            SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+3, new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 50.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));

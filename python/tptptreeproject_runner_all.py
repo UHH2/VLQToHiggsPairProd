@@ -595,11 +595,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                                 pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                                 + list(sys_path+'/%s*/*.root'% i for i in uncerts)
                                 ),                                             
-                    # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                    #             filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets', 'TpTp_M-0800']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                    #             plotter_factory=plot.plotter_factory_uncerts()),                                             
+                    plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
+                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                                + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar', 'WJets', 'TpTp_M-0800']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                                plotter_factory=plot.plotter_factory_uncerts()),                                             
                     # plot.mk_toolchain('HistogramsNormToInt', plot.less_samples_to_plot_only_th, 
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
