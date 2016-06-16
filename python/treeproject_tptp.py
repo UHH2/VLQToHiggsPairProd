@@ -16,7 +16,7 @@ if True:
     TreeProjector = BatchTreeProjector
     from varial_ext.sgeworker import SGESubmitter
     import varial_ext.treeprojector as tp
-    SGESubmitter(500, tp.jug_work_dir_pat, tp.jug_file_search_pat).submit()
+    SGESubmitter(80, tp.jug_work_dir_pat, tp.jug_file_search_pat).submit()
 
 iteration = [1]
 

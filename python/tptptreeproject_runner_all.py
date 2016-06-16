@@ -529,7 +529,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
 
     tc_tp = [
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.background_samples),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
             #     name='ModSysTreeProjectorsBkg'),
@@ -904,7 +904,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
         ])
 
-def run_treeproject_and_plot(base_path, output_dir):
+def run_treeproject_and_plot(output_dir):
+    base_path = os.path.join(os.getcwd(), 'Files_and_Plots')
     tc = varial.tools.ToolChain(
         output_dir,
         [
@@ -951,10 +952,10 @@ def run_treeproject_and_plot(base_path, output_dir):
 
                 ], n_workers=1),
             varial.tools.WebCreator(),
-            varial.tools.ToolChain('ReweightingComparision', [
-                tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
-                tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),
-                ]),
+            # varial.tools.ToolChain('ReweightingComparision', [
+            #     tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
+            #     tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),
+            #     ]),
             varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-15-327/trunk/', src='../ReweightingComparision/*', ignore=('*.svn', '*.html'), use_rsync=True),
             git.GitTagger(commit_prefix='In {0}'.format(output_dir)),
             # mk_tex_tc_post(output_dir+'/Histograms/')(), 
@@ -970,10 +971,10 @@ def run_treeproject_and_plot(base_path, output_dir):
 varial.settings.try_reuse_results = True
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print 'Provide input_dir and output_dir!'
+    if len(sys.argv) != 2:
+        print 'Provide output_dir!'
         exit(-1)
-    varial.tools.Runner(run_treeproject_and_plot(sys.argv[1], sys.argv[2]), True)
+    varial.tools.Runner(run_treeproject_and_plot(sys.argv[1]), True)
 
 # varial.settings.rootfile_postfixes += ['.pdf']
 # varial.tools.Runner(tc, True)
