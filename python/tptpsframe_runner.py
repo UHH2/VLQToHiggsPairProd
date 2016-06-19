@@ -106,7 +106,7 @@ def clean_input_data(element_tree, allowed_datasets):
     if allowed_datasets:
         tree_cycle = element_tree.getroot().find('Cycle')
         for item in tree_cycle.findall('InputData'):
-            if item.get('Version') not in allowed_datasets:
+            if all(f not in item.get('Version') for f in allowed_datasets):
                 tree_cycle.remove(item)
 
 def set_analysis_module(element_tree, analysis_module=''):
@@ -187,14 +187,13 @@ class MySFrameBatch(SFrame):
     def configure(self):
         self.xml_doctype = self.xml_doctype +"""
 <!--
-   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+   <ConfigParse NEventsBreak="0" FileSplit="4" AutoResubmit="0" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir2"/>
 -->
 """
-# """
 # <!--
-#    <ConfigParse NEventsBreak="0" FileSplit="32" AutoResubmit="0" />
-#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir3"/>
+#    <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
+#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 # -->
 # """
 
@@ -235,10 +234,12 @@ def mk_sframe_tools_and_plot(argv):
     count = '-1'
 
     sys_uncerts = []
+    allowed_datasets = []
 
     if options.selection == 'pre':
         sframe_cfg = sframe_cfg_pre
         setup_for_ind_run = setup_for_presel
+        allowed_datasets=['BpBp', 'WJets_LNu_HT800To1200']
         categories = categories_pre
         analysis_module = 'TpTpPreselectionV2'
         sys_uncerts = no_sys_uncerts
@@ -246,7 +247,7 @@ def mk_sframe_tools_and_plot(argv):
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_pre
         varial.settings.fix_presel_sample = True
-        filter_func = lambda w: 'Nm1Selection' in w.in_file_path
+        filter_func = lambda w: any(f in w.in_file_path for f in ['Nm1Selection', 'PostSelection'])
         # varial.settings.merge_decay_channels = True
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
@@ -272,6 +273,7 @@ def mk_sframe_tools_and_plot(argv):
             basenames=basenames,
             add_aliases_to_analysis=False,
             samplename_func=plot.get_samplename,
+            filter_keyfunc=lambda w: any(f in w for f in samples_to_plot)
             # overwrite=False
         )]
         plot_chain += [varial.tools.ToolChainParallel(
@@ -297,7 +299,7 @@ def mk_sframe_tools_and_plot(argv):
                 cfg_filename=sframe_cfg,
                 # xml_tree_callback=set_uncert_func(uncert),
                 xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,
-                    uncert_name=uncert, categories=categories),
+                    uncert_name=uncert, categories=categories, allowed_datasets=allowed_datasets),
                 name='SFrame',
                 add_aliases_to_analysis= False,
                 # name='SFrame_' + uncert,
@@ -384,4 +386,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)

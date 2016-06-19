@@ -41,8 +41,13 @@
 <!ENTITY Data_JetHTPD SYSTEM        "../../common/datasets/RunII_76X_v1/DATA_JetHT.xml">
 
 <!ENTITY MC_TTbar SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbar.xml">
-<!ENTITY MC_TTbar_ScaleUp SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleUp.xml">
-<!ENTITY MC_TTbar_ScaleDown SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleDown.xml">
+<!ENTITY MC_TTJets_M_700to1000 SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TT_Mtt0700to1000.xml">
+<!ENTITY MC_TTJets_M_700to1000_ext1 SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TT_Mtt0700to1000_ext1.xml">
+<!ENTITY MC_TTJets_M_1000toInf_ext1 SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TT_Mtt1000toINFT_ext1.xml">
+<!ENTITY MC_TTJets_M_1000toInf_ext2 SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TT_Mtt1000toINFT_ext2.xml">
+
+<!ENTITY MC_TTJets_ScaleUp SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleUp.xml">
+<!ENTITY MC_TTJets_ScaleDown SYSTEM            "../../common/datasets/RunII_76X_v1/MC_TTbarScaleDown.xml">
 
 <!ENTITY MC_WJets_LNu_HT100To200   SYSTEM  "../../common/datasets/RunII_76X_v1/MC_WJetsToLNu_HT-100To200.xml">
 <!ENTITY MC_WJets_LNu_HT200To400   SYSTEM  "../../common/datasets/RunII_76X_v1/MC_WJetsToLNu_HT-200To400.xml">
@@ -470,11 +475,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="6264.6" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="True">
+    <!-- <InputData Lumi="6264.6" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT100To200" Cacheable="True">
         &MC_WJets_LNu_HT100To200;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <!-- <InputData Lumi="10958.6" NEventsMax="&NEVT;" Type="MC" Version="WJets_LNu_HT200To400" Cacheable="True">
         &MC_WJets_LNu_HT200To400;
@@ -525,13 +530,13 @@
     </InputData> -->
     
     <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="True">
-        &MC_TTbar_ScaleUp;
+        &MC_TTJets_ScaleUp;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
 
     <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleDown" Cacheable="True">
-        &MC_TTbar_ScaleDown;
+        &MC_TTJets_ScaleDown;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
@@ -540,19 +545,21 @@
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0700to1000" Cacheable="True">
-        &MC_TTbar;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
-    </InputData>
-
-    <InputData Lumi="116421" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt1000toINFT" Cacheable="True">
-        &MC_TTbar;
-        <InputTree Name="AnalysisTree" />
-        <OutputTree Name="AnalysisTree" />
     </InputData> -->
+
+    <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="True">
+        &MC_TTJets_M_700to1000;
+        &MC_TTJets_M_700to1000_ext1;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="1310352" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_1000toInf" Cacheable="True">
+        &MC_TTJets_M_1000toInf_ext1;
+        &MC_TTJets_M_1000toInf_ext2;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
@@ -608,6 +615,7 @@
             <Item Name="el_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root" />
             <Item Name="mu_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
             <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+            <Item Name="make_lep_coll" Value="true" />
 
             <Item Name="use_sframe_weight" Value="false" />
             <Item Name="category" Value="NoSelection IsoMuo20 IsoEle27 Mu45 El45 El105 El45mva" />

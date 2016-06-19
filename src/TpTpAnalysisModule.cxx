@@ -13,7 +13,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // cout << "TestKey in the configuration was: " << testvalue << endl;
     version = ctx.get("dataset_version", "");
     type = ctx.get("dataset_type", "");
-    string make_lep_coll = ctx.get("make_lep_coll", "False");
+    bool make_lep_coll = string2bool(ctx.get("make_lep_coll", "false"));
     double target_lumi = string2double(ctx.get("target_lumi"));
     // type = ctx.get("cycle_type", "PreSelection");
 
@@ -42,7 +42,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     //             "electrons",
     //             "electrons_mva_tight"
     //             ));
-    if (make_lep_coll == "True") {
+    if (make_lep_coll) {
         common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
                     "electrons",
                     "electrons_mva_loose",
@@ -52,14 +52,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
                     "electrons",
                     "electrons_iso",
-                    boost::none,
-                    true
+                    boost::none
                     ));
         common_modules.emplace_back(new CollectionProducer<Muon>(ctx,
                     "muons",
                     "muons_iso",
-                    boost::none,
-                    true
+                    boost::none
                     ));
     }
 

@@ -199,7 +199,7 @@ samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in sign
 more_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in more_signals)
 less_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in less_signals)
 
-samples_to_plot_pre = other_samples_to_plot + signals_to_plot
+samples_to_plot_pre = other_samples_to_plot + less_signals
 less_samples_to_plot_pre = other_samples_to_plot + less_signals
 
 get_samplename = vlq_common.get_samplename

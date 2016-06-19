@@ -312,8 +312,8 @@ def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=sa
     final_regions_down = list((g, map(lambda w: w.replace('_sm10', '_sm20'), f)) for g, f in final_regions)
 
     sys_sec_sel_weight_reweight_weight = (
-        ('higgs_smear__minus', list((g, f, sample_weights) for g, f in final_regions_up)),
-        ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_down))
+        ('higgs_smear__minus', list((g, f, sample_weights) for g, f in final_regions_down)),
+        ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_up))
     )
     return list(
         TreeProjector(

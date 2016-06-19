@@ -18,6 +18,7 @@
 #include "UHH2/common/include/CollectionProducer.h"
 #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/TTbarGen.h"
+#include "UHH2/common/include/TTbarGenHists.h"
 
 
 #include "UHH2/VLQSemiLepPreSel/include/EventHists.h"
@@ -443,7 +444,12 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ));
 
     // btag_sf_sr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand"));
-    btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+
+    // DISABLE WHEN CALCULATING PRODUCING THE BTAG EFFICIENCY HISTS!
+    bool create_btag_eff = string2bool(ctx.get("create_btag_eff", "false"));
+    if (!create_btag_eff)
+        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+        // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 
     other_modules.emplace_back(new HiggsMassSmear(ctx,
                 "ak8_boost",
@@ -1282,7 +1288,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             // v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_fourth_ak4_jet", "pt_fourth_ak4_genjet", "pt_fourth_ak4_jet")); 
             // v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_fifth_ak4_jet", "pt_fifth_ak4_genjet", "pt_fifth_ak4_jet")); 
             // v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_sixth_ak4_jet", "pt_sixth_ak4_genjet", "pt_sixth_ak4_jet")); 
-            v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+            
+            if (version.find("TT") != string::npos)
+                v_hists_after_sel.back().emplace_back(new TTbarGenHists(ctx, cat+"/PostSelection/TTGenHists"));
+            if (create_btag_eff)
+                v_hists_after_sel.back().emplace_back(new BTagMCEfficiencyHists(ctx, cat+"/BTagMCEfficiencyHists", CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
         }
         v_hists_after_sel.back().emplace_back(new ExtendedTopJetHists(ctx, cat+"/PostSelection/HTags", CSVBTag(CSVBTag::WP_MEDIUM), 2, "higgs_tags_1b_med"));
         for (auto const & dr_plot : deltaR_plots) {
@@ -1339,7 +1349,7 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
 
     }
 
-    btag_sf_cr->process(event);
+    // btag_sf_cr->process(event);
     
     // all hists
     for (auto & hist_vec : v_hists) {
