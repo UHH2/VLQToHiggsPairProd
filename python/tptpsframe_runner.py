@@ -284,7 +284,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
         )]
         plot_chain += [varial.tools.ToolChainParallel(
-                    'Plots',
+                    'Plots_incl',
                     lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
                         # filter_keyfunc=lambda w: 'Baseline' in w.in_file_path
                         filter_keyfunc=filter_func
