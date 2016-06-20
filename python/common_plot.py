@@ -538,6 +538,13 @@ def add_wrp_info(wrps, sig_ind=None):
                 smpl = 'TTbar'
             return smpl
 
+    def fix_ttbar_smpl(wrp):
+        smpl = vlq_common.get_samplename(wrp)
+        if smpl == 'TTbar_split' or smpl == 'TTbar_incl':
+            smpl = 'TTbar'
+        return smpl
+
+
     def batch_tp_infilepath(wrp):
         filename = os.path.basename(wrp.file_path)
         filename = filename.split('.')[0]
@@ -548,7 +555,7 @@ def add_wrp_info(wrps, sig_ind=None):
     if varial.settings.fix_presel_sample:
         get_samplename = fix_get_samplename
     else:
-        get_samplename = vlq_common.get_samplename
+        get_samplename = fix_ttbar_smpl
     return varial.generators.gen_add_wrp_info(
         wrps,
         sample=get_samplename,
