@@ -47,7 +47,8 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.WJets',
     'MC.DYJetsToLL',
     'MC.SingleTop',
-    'MC.TTbar',
+    'MC.TTbar_incl',
+    'MC.TTbar_split',
     'MC.TTJets_ScaleUp',
     'MC.TTJets_ScaleDown',
     'MC.TpTp_M-0700_thth', 'MC.TpTp_M-0700_thtz', 'MC.TpTp_M-0700_thbw', 'MC.TpTp_M-0700_noH_tztz', 'MC.TpTp_M-0700_noH_tzbw', 'MC.TpTp_M-0700_noH_bwbw',
@@ -183,7 +184,7 @@ final_states_to_plot = [
 ]
 
 other_samples_to_plot = [
-    'TTbar',
+    'TTbar_split',
     'SingleTop',
     'QCD',
     'DYJets',

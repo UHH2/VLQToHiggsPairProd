@@ -184,18 +184,25 @@ else:
 
 class MySFrameBatch(SFrame):
 
+    def __init__(self, sel_type='', **kws):
+        super(MySFrameBatch, self).__init__(**kws)
+        self.sel_type = sel_type
+
     def configure(self):
-        self.xml_doctype = self.xml_doctype +"""
+        if self.sel_type == 'pre':
+            self.xml_doctype = self.xml_doctype +"""
 <!--
-   <ConfigParse NEventsBreak="0" FileSplit="4" AutoResubmit="0" />
-   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir2"/>
+   <ConfigParse NEventsBreak="0" FileSplit="32" AutoResubmit="0" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
 -->
 """
-# <!--
-#    <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
-#    <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
-# -->
-# """
+        elif self.sel_type == 'final':
+            self.xml_doctype = self.xml_doctype +"""
+<!--
+   <ConfigParse NEventsBreak="50000" FileSplit="0" AutoResubmit="0" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+-->
+"""
 
         if os.path.exists(self.cwd + 'workdir'):
             opt = ' -rl --exitOnQuestion'
@@ -273,7 +280,7 @@ def mk_sframe_tools_and_plot(argv):
             basenames=basenames,
             add_aliases_to_analysis=False,
             samplename_func=plot.get_samplename,
-            filter_keyfunc=lambda w: any(f in w for f in samples_to_plot)
+            # filter_keyfunc=lambda w: any(f in w for f in samples_to_plot)
             # overwrite=False
         )]
         plot_chain += [varial.tools.ToolChainParallel(
@@ -296,6 +303,7 @@ def mk_sframe_tools_and_plot(argv):
         tc_list = []
         for uncert in sys_uncerts:
             sf_batch = MySFrameBatch(
+                sel_type=options.selection,
                 cfg_filename=sframe_cfg,
                 # xml_tree_callback=set_uncert_func(uncert),
                 xml_tree_callback=setup_for_ind_run(outputdir='./', count='-1', analysis_module=analysis_module,

@@ -528,9 +528,15 @@ def add_wrp_info(wrps, sig_ind=None):
     def fix_get_samplename(wrp):
         fname = os.path.basename(wrp.file_path)
         if fname.startswith('uhh2'):
-            return fname.split('.')[-2]
+            smpl = fname.split('.')[-2]
+            if smpl == 'TTbar_split' or smpl == 'TTbar_incl':
+                smpl = 'TTbar'
+            return smpl
         else:
-            return os.path.splitext(fname)[0]
+            smpl = os.path.splitext(fname)[0]
+            if smpl == 'TTbar_split' or smpl == 'TTbar_incl':
+                smpl = 'TTbar'
+            return smpl
 
     def batch_tp_infilepath(wrp):
         filename = os.path.basename(wrp.file_path)
@@ -546,7 +552,7 @@ def add_wrp_info(wrps, sig_ind=None):
     return varial.generators.gen_add_wrp_info(
         wrps,
         sample=get_samplename,
-        legend=lambda w: w.sample,
+        legend=get_samplename,
         in_file_path=lambda w: w.in_file_path if 'jug-file' not in w.file_path else batch_tp_infilepath,
         is_signal=lambda w: any(s in w.file_path for s in sig_ind),
         is_data=lambda w: 'Run20' in w.file_path,

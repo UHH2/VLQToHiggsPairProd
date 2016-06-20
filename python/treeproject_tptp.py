@@ -158,7 +158,7 @@ final_states = [
 ]
 
 background_samples = [
-    'TTbar',
+    'TTbar_incl',
     'SingleTop',
     'QCD',
     'DYJets',
@@ -191,7 +191,7 @@ base_weight = 'weight'
 # ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 sample_weights_def = {
-    'TTbar' : base_weight,
+    'TTbar_incl' : base_weight,
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
@@ -280,9 +280,9 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
         for sample in samples
     )
     dict_up_files = dict(dict_nom_files)
-    dict_up_files.update({'TTbar' : list(f for f in glob.glob(files_ttbar_scale_up))})
+    dict_up_files.update({'TTbar_incl' : list(f for f in glob.glob(files_ttbar_scale_up))})
     dict_down_files = dict(dict_nom_files)
-    dict_down_files.update({'TTbar' : list(f for f in glob.glob(files_ttbar_scale_down))})
+    dict_down_files.update({'TTbar_incl' : list(f for f in glob.glob(files_ttbar_scale_down))})
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     return [
         TreeProjector(

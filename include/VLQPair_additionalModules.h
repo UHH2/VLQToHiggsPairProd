@@ -537,6 +537,45 @@ private:
     GenParticleId tp1d_, tp2d_;
 };  // GenSelectionAcceptProducer
 
+class GenMassTTbarSelection : public AnalysisModule {
+public:
+    explicit GenMassTTbarSelection(Context & ctx,
+            float min_mass,
+            float max_mass = std::numeric_limits<float>::infinity(),
+            string const & h_accept = "gendecay_accept",
+            string const & ttbargen = "ttbargen") :
+    min_mass_(min_mass),
+    max_mass_(max_mass),
+    h_accept_(ctx.get_handle<int>(h_accept)),
+    h_ttbargen_(ctx.get_handle<TTbarGen>(ttbargen)) {}
+
+    virtual bool process(Event & event) override {
+        if (event.isRealData) {
+            event.set(h_accept_, 1);
+            return true;
+        }
+
+        const auto & ttbargen = event.get(h_ttbargen_);
+
+        LorentzVector top = ttbargen.Top().v4();
+        LorentzVector antitop = ttbargen.Antitop().v4();
+
+
+        double mttbar_gen = (top+antitop).M();
+
+        bool pass = mttbar_gen >= min_mass_ && mttbar_gen < max_mass_;
+
+        event.set(h_accept_, (int)pass);
+        return pass;
+    }
+
+private:
+    float min_mass_, max_mass_;
+    Event::Handle<int> h_accept_;
+    Event::Handle<TTbarGen> h_ttbargen_;
+
+};  // GenMassTTbarSelection
+
 
 
 class BTagSFJetCollectionProducer: public AnalysisModule {

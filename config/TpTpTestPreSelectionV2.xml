@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "1000">
+<!ENTITY NEVT "-1">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestPreselection/">
 
@@ -291,11 +291,11 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="True">
+    <!-- <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="True">
         &MC_BpBp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
 
@@ -523,11 +523,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
     
     <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="True">
         &MC_TTJets_ScaleUp;
@@ -547,7 +547,7 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="True">
+    <!-- <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="True">
         &MC_TTJets_M_700to1000;
         &MC_TTJets_M_700to1000_ext1;
         <InputTree Name="AnalysisTree" />
@@ -559,7 +559,7 @@
         &MC_TTJets_M_1000toInf_ext2;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
@@ -602,7 +602,7 @@
             -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="TpTpPreselectionV2" />
+            <Item Name="AnalysisModule" Value="TpTpCountSplitTTbar" />
 
             <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
             <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->

@@ -310,7 +310,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // In the end, the overall weight that you apply thus needs to be multiplied by 1./0.9919819
 
     if (version.find("TT") != string::npos) {
-        other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen"));
+        other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen", false));
         other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
         other_modules.emplace_back(new HTReweighting(ctx, 1.268084, -0.000390272, 3000., "weight_htrew_tt"));
         other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
