@@ -904,6 +904,44 @@ private:
 };
 
 
+class NSubjetBtagProducer: public AnalysisModule {
+public:
+
+    explicit NSubjetBtagProducer(Context & ctx,
+                                std::string const & in_name,
+                                std::string const & out_name,
+                                JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM),
+                                unsigned ind = 1):
+        in_hndl(ctx.get_handle<vector<TopJet>>(in_name)),
+        out_hndl_nsjbtags(ctx.declare_event_output<float>(out_name+"_nsjbtags")),
+        id_(id),
+        ind_(ind) {}
+
+    bool process(Event & event) override {
+        assert(event.is_valid(in_hndl));
+        float nsjbtags = -1.;
+        vector<TopJet> const & coll = event.get(in_hndl);
+        if (coll.size() >= ind_) {
+            TopJet const & tj = coll[ind_-1];
+            // eta = tj.eta();
+            nsjbtags = 0.;
+            for (Jet const & j : tj.subjets()) {
+                // sj_v4 += j.v4();
+                if (id_(j, event)) nsjbtags += 1.;
+            }
+        }
+        event.set(out_hndl_nsjbtags, nsjbtags);
+        return true;
+    }
+
+private:
+    Event::Handle<vector<TopJet>> in_hndl;
+    Event::Handle<float> out_hndl_nsjbtags;
+    JetId id_;
+    unsigned int ind_;
+};
+
+
 template<typename T1, typename T2>
 class DeltaRProducer: public AnalysisModule {
 public:

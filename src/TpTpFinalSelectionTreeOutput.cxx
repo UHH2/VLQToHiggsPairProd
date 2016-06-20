@@ -115,7 +115,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_before_sj", "diff before sj", 50, -1., 1.)),
         // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_10_sj", "diff 10 sj", 50, -1., 1.)),
         // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_20_sj", "diff 20 sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("nobtag_boost_mass_nsjbtags", "N sjbtags medium", 6, -0.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatF("nobtag_boost_mass_nsjbtags", "N sjbtags medium", 6, -0.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("dR_ak8_higgs_cand_1_ak4_jets_btagged_cl", "dR_ak8_higgs_cand_1_ak4_jets_btagged_cl", 50, 0., 5.)),
         // shared_ptr<SelectionItem>(new SelDatF("dR_jets_1_PrimaryLepton_cl", "dR_jets_1_PrimaryLepton_cl", 50, 0., 5.)),
         // shared_ptr<SelectionItem>(new SelDatF("dR_jets_2_PrimaryLepton_cl", "dR_jets_2_PrimaryLepton_cl", 50, 0., 5.)),
@@ -275,6 +275,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     ctx.declare_event_output<vector<Jet>>("jets");
     ctx.declare_event_output<vector<TopJet>>("topjets");
     ctx.declare_event_output<FlavorParticle>("PrimaryLepton");
+    if (version.find("TTbar_split") == string::npos) 
+        ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
     // ctx.declare_event_output<FlavorParticle>("PrimaryMuon");
     // ctx.declare_event_output<FlavorParticle>("PrimaryElectron");
     // ctx.declare_event_output<vector<TopJet>>("ak8_boost");
@@ -669,6 +671,12 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ));
 
 
+    other_modules.emplace_back(new NSubjetBtagProducer(ctx,
+                "nobtag_boost_mass",
+                "nobtag_boost_mass",
+                CSVBTag(CSVBTag::WP_MEDIUM),
+                1
+                ));
 
     // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
     //             "higgs_tags_1b_med_sm10",
