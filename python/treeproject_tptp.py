@@ -12,7 +12,7 @@ import pprint
 # varial.settings.max_num_processes = 24
 
 
-if False:
+if True:
     TreeProjector = BatchTreeProjector
     from varial_ext.sgeworker import SGESubmitter
     import varial_ext.treeprojector as tp
@@ -157,8 +157,10 @@ final_states = [
     '_noH_bwbw',
 ]
 
+ttbar_smpl = 'TTbar_split'
+
 background_samples = [
-    'TTbar_incl',
+    ttbar_smpl,
     'SingleTop',
     'QCD',
     'DYJets',
@@ -191,7 +193,7 @@ base_weight = 'weight'
 # ttbar_reweight = '*(weight_ttbar/0.9910819)'
 
 sample_weights_def = {
-    'TTbar_incl' : base_weight,
+    ttbar_smpl : base_weight,
     'SingleTop' : base_weight,
     'QCD' : base_weight,
     'DYJets' : base_weight,
@@ -280,9 +282,9 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
         for sample in samples
     )
     dict_up_files = dict(dict_nom_files)
-    dict_up_files.update({'TTbar_incl' : list(f for f in glob.glob(files_ttbar_scale_up))})
+    dict_up_files.update({ttbar_smpl : list(f for f in glob.glob(files_ttbar_scale_up))})
     dict_down_files = dict(dict_nom_files)
-    dict_down_files.update({'TTbar_incl' : list(f for f in glob.glob(files_ttbar_scale_down))})
+    dict_down_files.update({ttbar_smpl : list(f for f in glob.glob(files_ttbar_scale_down))})
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     return [
         TreeProjector(

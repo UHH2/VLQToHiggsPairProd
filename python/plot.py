@@ -184,7 +184,7 @@ final_states_to_plot = [
 ]
 
 other_samples_to_plot = [
-    'TTbar_incl',
+    'TTbar_split',
     'SingleTop',
     'QCD',
     'DYJets',
