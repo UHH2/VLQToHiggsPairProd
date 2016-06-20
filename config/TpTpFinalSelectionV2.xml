@@ -607,7 +607,7 @@
             <Item Name="jersmear_smear_met" Value="true" />
 
             <Item Name="use_sframe_weight" Value="false" />
-            <Item Name="create_btag_eff" Value="true" />
+            <Item Name="create_btag_eff" Value="false" />
             <Item Name="category" Value="CombinedElMu Mu45_Baseline El45_Baseline" />
 
             <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>

@@ -246,7 +246,7 @@ def mk_sframe_tools_and_plot(argv):
     if options.selection == 'pre':
         sframe_cfg = sframe_cfg_pre
         setup_for_ind_run = setup_for_presel
-        allowed_datasets=['BpBp', 'WJets_LNu_HT800To1200']
+        # allowed_datasets=['BpBp', 'WJets_LNu_HT800To1200']
         categories = categories_pre
         analysis_module = 'TpTpPreselectionV2'
         sys_uncerts = no_sys_uncerts
@@ -284,7 +284,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
         )]
         plot_chain += [varial.tools.ToolChainParallel(
-                    'Plots_incl',
+                    'Plots',
                     lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
                         # filter_keyfunc=lambda w: 'Baseline' in w.in_file_path
                         filter_keyfunc=filter_func
@@ -394,4 +394,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)

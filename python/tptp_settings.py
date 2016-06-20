@@ -93,7 +93,7 @@ settings.defaults_Legend.update({
     'y_pos': 0.75,
     'label_width': 0.25,
     'label_height': 0.027,
-    'box_text_size' : 0.025,
+    'box_text_size' : 0.035,
     'opt': 'f',
     'opt_data': 'pl',
     'reverse': True,
@@ -111,7 +111,7 @@ settings.stacking_order = [
     'QCD',
 ]
 
-settings.box_text_size = 0.025
+settings.box_text_size = 0.035
 # if settings.style != 'AN':
 settings.canvas_size_x = 618
 settings.canvas_size_y = 494
