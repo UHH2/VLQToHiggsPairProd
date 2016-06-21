@@ -1,5 +1,4 @@
 import math
-import theta_auto
 import os
 import pprint
 
@@ -22,6 +21,8 @@ dict_uncerts = {
 }
 
 def get_model(hist_dir, final_states):
+    import theta_auto
+
     model = theta_auto.build_model_from_rootfile(
         hist_dir,
         include_mc_uncertainties = True)#mc uncertainties=true
@@ -42,6 +43,8 @@ def get_model(hist_dir, final_states):
     return model
 
 def get_model_with_norm(hist_dir, final_states):
+    import theta_auto
+
     dict_uncerts_ = dict(dict_uncerts)
     dict_uncerts_.update({'TTbar' : 1.5, 'WJets' : 1.5,})
     model = theta_auto.build_model_from_rootfile(
@@ -73,6 +76,8 @@ def get_model_with_norm(hist_dir, final_states):
 
 
 def get_model_no_norm(hist_dir, final_states):
+    import theta_auto
+    
     dict_uncerts_ = dict(dict_uncerts)
     model = theta_auto.build_model_from_rootfile(
         hist_dir,
