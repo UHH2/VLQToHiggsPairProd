@@ -9,8 +9,9 @@ import itertools
 import os
 import pprint
 import collections
+from math import sqrt
 
-order_cats = ['Preselection', 'Sideband', 'H1B category', 'H2B category']
+order_cats = ['Preselection', '0H category', 'H1B category', 'H2B category']
 order_smpls = [
     'TT M0700 incl.', 'TT M0900 incl.', 'TT M1100 incl.', 'TT M1300 incl.', 'TT M1500 incl.', 'TT M1700 incl.',
     'TT M0700 tHtH', 'TT M0900 tHtH', 'TT M1100 tHtH', 'TT M1300 tHtH', 'TT M1500 tHtH', 'TT M1700 tHtH'
@@ -58,180 +59,13 @@ def sort_cats(sort_list):
 
 
 
-# class EffNumTable(varial.tools.Tool):
-#     def __init__(self, input_blocks, get_region, calc_eff=False, name=None):
-#         super(EffNumTable, self).__init__(name)
-#         self.input_blocks = input_blocks
-#         self.get_region = get_region
-#         self.calc_eff = calc_eff
-
-#     def mk_filter(self, smpl):
-#         def tmp(path):
-#             return smpl in path and path.endswith('ST')
-#         return tmp
-
-#     def get_precision(self, num):
-#         if num >= 1.0:
-#             return "%17.1f"
-#         elif num > 0:
-#             ex_dim = abs(floor(log10(num)))
-#             add_prec = 0
-#             if num*10**ex_dim < 2.:
-#                 add_prec = 1
-#             prec = int(ex_dim+add_prec)
-#             prec = "%17."+str(prec)+"f"
-#             return prec
-#         else:
-#             return "%17d"
-
-#     def prepare(self, samples, path):
-#         def get_path(path):
-#             if not os.path.exists(path):
-#                 return os.path.join(self.cwd, path)
-#             else:
-#                 return path
-        
-
-#         if isinstance(samples, dict):
-#             smpls = samples
-#         elif isinstance(samples, collections.Iterable) and not isinstance(samples, str):
-#             smpls = dict((s, self.mk_filter(s)) for s in samples)
-#         else:
-#             self.message('ERROR! Need to provide list of samples or dict!')
-
-
-#         smpl_tup = list((s, fs) for s, fs in smpls.items())
-#         smpl_tup = sorted(smpl_tup, key=sort_cats(order_smpls))
-
-#         if isinstance(path, collections.Iterable) and not isinstance(path, str):
-#             res = (os.path.join(get_path(p), '_varial_infodata.pkl')
-#                 for p in path
-#             )
-#             res = list(res)
-#             res = dict((fname, dict((k, i) for k, i in cPickle.load(open(fname)).items())) for fname in res)
-#         elif isinstance(path, str):
-#             res = cPickle.load(open(os.path.join(get_path(path), '_varial_infodata.pkl')))
-
-#         return smpl_tup, res
-
-#     def get_info(self, region, sample, filt_smpls, filt_func, res, key_word):
-#         rgns = list(itertools.ifilter(filt_func, filt_smpls))
-#         if len(rgns) > 1:
-#             self.message('WARNING! More than one region found for region %s and sample %s!' % (region, sample))
-#             return
-#         if len(rgns) == 0:
-#             self.message('WARNING! Nothing found for region %s and sample %s!' % (region, sample))
-#             return
-#         info = res[rgns[0]]
-#         if not key_word or not key_word in info.keys():
-#             key = list(itertools.ifilter(lambda w: sample in w, info))
-#             if len(key) == 1:
-#                 key = key[0]
-#             elif len(key) > 1:
-#                 self.message('WARNING! More than one key word found for sample '+sample)
-#             else:
-#                 self.message('WARNING! No key word found for sample '+sample)
-#         else:
-#             key = key_word
-#         return info[key]
-
-#     def create_count_block(self, samples, path, key_word='Integral___bkg_sum'):
-
-#         smpl_tup, res = self.prepare(samples, path)
-
-#         lines = []
-#         for s, fs in smpl_tup:
-#             filt_smpls = list(itertools.ifilter(fs, res))
-#             line = s + " "
-#             for r, fr in self.get_region:
-#                 line += "&$ "
-#                 info = self.get_info(r, s, filt_smpls, fr, res, key_word)
-#                 if not info:
-#                     continue
-#                 if 'data' in key_word:
-#                     prec = "%17d"
-#                 else:
-#                     prec = self.get_precision(info[1])
-#                 line += prec % info[0] + r" \pm " + prec % info[1]
-#                 if len(info) == 4:
-#                     syst_string = "^{+"+prec+"}_{"+prec+"}"
-#                     line += syst_string % (info[2], info[3])
-#                 line += " $"
-#             line += r" \\"
-#             lines.append(line)
-#         return lines
-
-
-#     def create_eff_block(self, samples, path, baseline, key_word='Integral___bkg_sum'):
-
-#         smpl_tup, res = self.prepare(samples, path)
-
-#         lines = []
-#         for s, fs in smpl_tup:
-#             filt_smpls = list(itertools.ifilter(fs, res))
-#             line = s + " "
-#             if isinstance(baseline, dict): 
-#                 baseline_count = baseline[s]
-#             else:
-#                 baseline_count = baseline
-#             for r, fr in self.get_region:
-#                 line += "&$ "
-#                 info = self.get_info(r, s, filt_smpls, fr, res, key_word)
-#                 if not info:
-#                     continue
-#                 # prec = eff_prec.get(s, "%.1f")
-#                 prec_string = " "+self.get_precision(info[1]/baseline_count*100.)+r" \%% \pm "+self.get_precision(info[1]/baseline_count*100.)+r" \%%"
-#                 line += prec_string % (info[0]/baseline_count*100., info[1]/baseline_count*100.)
-#                 if len(info) == 4:
-#                     syst_string = "^{+"+self.get_precision(info[1]/baseline_count*100.)+r" \%%}_{"+self.get_precision(info[1]/baseline_count*100.)+r" \%%}"
-#                     line += syst_string % (info[2]/baseline_count*100., info[3]/baseline_count*100.)
-#                 line += " $"
-#             line += r" \\"
-#             lines.append(line)
-#         return lines
-
-        
-
-#     def run(self):
-
-#         if not isinstance(self.get_region, dict):
-#             self.get_region = dict((s, self.mk_filter(s)) for s in self.get_region)
-
-#         region_tup = list((r, fr) for r, fr in self.get_region.items())
-#         region_tup = sorted(region_tup, key=sort_cats(order_cats))
-#         self.get_region = region_tup
-#         lines = []
-#         lines.append(r"\begin{tabular}{|l "
-#             + len(self.get_region)*"| r "
-#             + r"|}\hline")
-#         lines.append("process / category & " + r" & ".join(r[0] for r in self.get_region)
-#             + r"\\ \hline")
-#         if not self.calc_eff:
-#             for smpls, path, key_word in self.input_blocks:
-#                 lines += self.create_count_block(smpls, path, key_word)
-#                 lines.append(r"\hline")
-#         else:
-#             for smpls, path, baseline, key_word in self.input_blocks:
-#                 lines += self.create_eff_block(smpls, path, baseline, key_word)
-#                 lines.append(r"\hline")
-
-        
-#         lines.append(r"\end{tabular}")
-
-
-#         lines = '\n'.join(lines)
-#         with open(self.cwd+'count_table_content.tex', 'w') as f:
-#             f.write(lines)
-
-
-
-
 
 class NumTableNew(varial.tools.Tool):
-    def __init__(self, input_blocks, get_region, name=None):
+    def __init__(self, input_blocks, get_region, squash_errs=False, name=None):
         super(NumTableNew, self).__init__(name)
         self.input_blocks = input_blocks
         self.regions = get_region
+        self.squash_errs = squash_errs
 
     def get_precision(self, num):
         if num >= 1.0:
@@ -247,7 +81,7 @@ class NumTableNew(varial.tools.Tool):
         else:
             return "{0:17.0f}"
 
-    def create_block(self, sample_dict):
+    def create_block(self, sample_dict, sym_errs):
         pass
         
 
@@ -260,12 +94,13 @@ class NumTableNew(varial.tools.Tool):
         lines.append(r"\begin{tabular}{|l "
             + len(self.regions)*"| r "
             + r"|}\hline")
-        lines.append("process / category & " + r" & ".join(r for r, _ in self.regions)
+        lines.append("process & " + r" & ".join(r for r, _ in self.regions)
             + r"\\ \hline")
         # if not self.calc_eff:
         for smpl_dict in self.input_blocks:
+            sym_errs = len(smpl_dict == 3) and smpl_dict[2]
             smpl_dict = sorted(smpl_dict, key=sort_cats(order_smpls))
-            lines += self.create_block(smpl_dict)
+            lines += self.create_block(smpl_dict, sym_errs)
             lines.append(r"\hline")
         
         lines.append(r"\end{tabular}")
@@ -276,11 +111,11 @@ class NumTableNew(varial.tools.Tool):
 
 
 class EffTable(NumTableNew):
-    def __init__(self, input_blocks, get_region, norm_fct, name=None):
-        super(EffTable, self).__init__(input_blocks, get_region, name)
+    def __init__(self, input_blocks, get_region, norm_fct, squash_errs=False, name=None):
+        super(EffTable, self).__init__(input_blocks, get_region, squash_errs, name)
         self.norm_fct = norm_fct
 
-    def create_block(self, sample_dict):
+    def create_block(self, sample_dict, sym_errs):
 
         lines = []
         for s, s_func in sample_dict:
@@ -311,19 +146,30 @@ class EffTable(NumTableNew):
                     prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
-                line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
-                if len(info) == 4:
-                    line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
+                if self.squash_errs:
+                    stat_err = info[1]
+                    syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
+                    tot_err = sqrt(stat_err**2+syst_err**2)
+                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(tot_err/baseline_count) + r" \%"
+                elif sym_errs:
+                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                    if len(info) == 4:
+                        syst_err = max(abs(info[2]), abs(info[3]))
+                        line += r" \pm " + prec.format(syst_err/baseline_count)
+                else:
+                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                    if len(info) == 4:
+                        line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
                 line += " $"
             line += r" \\"
             lines.append(line)
         return lines
 
 class CountTable(NumTableNew):
-    def __init__(self, input_blocks, get_region, name=None):
-        super(CountTable, self).__init__(input_blocks, get_region, name)
+    def __init__(self, input_blocks, get_region, squash_errs=False, name=None):
+        super(CountTable, self).__init__(input_blocks, get_region, squash_errs, name)
 
-    def create_block(self, sample_dict):
+    def create_block(self, sample_dict, sym_errs):
 
         lines = []
         for s, s_func in sample_dict:
@@ -343,9 +189,20 @@ class CountTable(NumTableNew):
                     prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1])
-                line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
-                if len(info) == 4:
-                    line += "^{+"+prec.format(info[2])+"}_{"+prec.format(info[3])+"}"
+                if self.squash_errs:
+                    stat_err = info[1]
+                    syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
+                    tot_err = sqrt(stat_err**2+syst_err**2)
+                    line += prec.format(info[0]) + r" \pm " + prec.format(tot_err)
+                elif sym_errs:
+                    line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
+                    if len(info) == 4:
+                        syst_err = max(abs(info[2]), abs(info[3]))
+                        line += r" \pm " + prec.format(syst_err)
+                else:
+                    line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
+                    if len(info) == 4:
+                        line += "^{+"+prec.format(info[2])+"}_{"+prec.format(info[3])+"}"
                 line += " $"
             line += r" \\"
             lines.append(line)

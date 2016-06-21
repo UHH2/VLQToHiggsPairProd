@@ -555,7 +555,7 @@ def plotter_factory_uncerts(**args):
 
 def mk_plots_and_cf(categories=None, datasets=None, **kws):
     if datasets:
-        dataset_filter = lambda w: any(f in w.file_path.split('/')[-1] for f in datasets)
+        dataset_filter = lambda w: any(f in os.path.basename(w.file_path.split) for f in datasets)
     else:
         dataset_filter = lambda w: w
     args = {

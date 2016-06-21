@@ -20,7 +20,7 @@ from varial.extensions import git, limits
 
 
 varial.settings.max_num_processes = 24
-varial.settings.max_open_root_files = 1000
+varial.settings.max_open_root_files = 5000
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -101,7 +101,7 @@ br_list_th_only = [{
             'tz' : 0.
         }]
 
-def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only):
+def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only, model_func=model_vlqpair.get_model):
 
     def tmp():
         limit_list = []
@@ -110,30 +110,18 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
             tc = []
             tc.append(varial.tools.ToolChainParallel(
                 'ThetaLimits', list(varial.tools.ToolChain(
-                    sig,
-                    sensitivity.mk_limit_tc_single(
+                    sig, sensitivity.mk_limit_tc_single(
                         brs_,
                         sig,
                         filter_keyfunc=sensitivity.select_single_sig(sig, list_region),
                         selection='ThetaLimits',
                         sys_pat=sys_pat,
                         pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
+                        model_func=model_func
                         # select_no_sig(),
                     ))
                 for sig in sensitivity.signals_to_use)
             ))
-            tc.append(varial.tools.ToolChain(
-                'ThetaLimitsNoSig', 
-                sensitivity.mk_limit_tc_single(
-                    brs_,
-                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
-                    selection='ThetaLimits',
-                    sys_pat=sys_pat,
-                    pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
-                    model_func=model_vlqpair.get_model_bkg_only,
-                    hook_loaded_histos=sensitivity.loader_hook(brs_, 15)
-                ))
-            )
             tc.append(varial.tools.ToolChain('LimitsWithGraphs',[
                 limits.LimitGraphs(
                     limit_path='../../ThetaLimits/*/ThetaLimit',
@@ -381,30 +369,30 @@ def get_dict(hist_path, var):
     return tmp
 
 table_block_signal = [
-    (r'TT M0700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w),
-    (r'TT M0900 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w),
-    (r'TT M1100 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w),
-    (r'TT M1300 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w),
-    (r'TT M1500 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w),
-    (r'TT M1700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'T#bar{T} (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
+    (r'T#bar{T} (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
+    (r'T#bar{T} (1.3 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w, True),
+    (r'T#bar{T} (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
 ]
 
 table_block_signal_fs_700 = [
-    (r'TT M0700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w),
-    (r'TT M0700 $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w),
-    (r'TT M0700 $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w),
-    (r'TT M0700 $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w),
-    (r'TT M0700 $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w),
-    (r'TT M0700 $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
 ]
 
 table_block_signal_fs_1700 = [
-    (r'TT M1700 $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w),
-    (r'TT M1700 $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w),
-    (r'TT M1700 $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w),
-    (r'TT M1700 $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w),
-    (r'TT M1700 $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w),
-    (r'TT M1700 $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
 ]
 
 table_block_background = [
@@ -416,12 +404,12 @@ table_block_background = [
 ]
 
 norm_factors = [
-    ('TT M0700', (1./common_plot.normfactors['TpTp_M-0700'])*lumi),
-    ('TT M0900', (1./common_plot.normfactors['TpTp_M-0900'])*lumi),
-    ('TT M1100', (1./common_plot.normfactors['TpTp_M-1100'])*lumi),
-    ('TT M1300', (1./common_plot.normfactors['TpTp_M-1300'])*lumi),
-    ('TT M1500', (1./common_plot.normfactors['TpTp_M-1500'])*lumi),
-    ('TT M1700', (1./common_plot.normfactors['TpTp_M-1700'])*lumi),
+    ('T#bar{T} (0.7 TeV)', (1./common_plot.normfactors['TpTp_M-0700'])*lumi),
+    ('T#bar{T} (0.9 TeV)', (1./common_plot.normfactors['TpTp_M-0900'])*lumi),
+    ('T#bar{T} (1.1 TeV)', (1./common_plot.normfactors['TpTp_M-1100'])*lumi),
+    ('T#bar{T} (1.3 TeV)', (1./common_plot.normfactors['TpTp_M-1300'])*lumi),
+    ('T#bar{T} (1.5 TeV)', (1./common_plot.normfactors['TpTp_M-1500'])*lumi),
+    ('T#bar{T} (1.7 TeV)', (1./common_plot.normfactors['TpTp_M-1700'])*lumi),
 ]
 
 def get_table_category_block():
@@ -577,29 +565,78 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
     def mk_tc_sens():
         uncerts = uncertainties or get_sys_dir()
-        lim_all_reg = [sensitivity.mk_tc('LimitsAllUncertsAllRegions', mk_limit_list_syst(
-            output_dir,
-            name,
-            list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-            all_regions,
-            br_list=br_list,
-            ), )]
-        lim_split_reg = [
-            sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
+        lim_list = [
+            sensitivity.mk_tc('LimitsAllUncertsAllRegionsNoNorm', mk_limit_list_syst(
                 output_dir,
                 name,
                 list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45'],
-                br_list=br_list_th_only,
-                ), mk_triangle=False),
-            sensitivity.mk_tc('LimitsAllUncertsOnlyMu', mk_limit_list_syst(
+                all_regions,
+                br_list=br_list,
+                model_func=model_vlqpair.get_model_no_norm,
+                )),
+
+            sensitivity.mk_tc('LimitsAllUncertsAllRegionsWithNorm', mk_limit_list_syst(
                 output_dir,
                 name,
-                list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45'],
-                br_list=br_list_th_only,
-                ), mk_triangle=False),]
-        return lim_all_reg+lim_split_reg if name == 'HTReweighting' else lim_all_reg
+                list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+                all_regions,
+                br_list=br_list,
+                model_func=model_vlqpair.get_model_with_norm,
+                )),
+        ]
+        lim_list += [
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitBoth', 
+                sensitivity.mk_limit_tc_single(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+                    selection='ThetaLimits',
+                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_with_norm,
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitNoScaleVar', 
+                sensitivity.mk_limit_tc_single(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+                    selection='ThetaLimits',
+                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_with_norm,
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitWithScaleVar', 
+                sensitivity.mk_limit_tc_single(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+                    selection='ThetaLimits',
+                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_no_norm,
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
+            ]
+        if name == 'HTReweighting':
+            lim_list += [
+                # sensitivity.mk_tc('LimitsAllUncertsOnlyEl', mk_limit_list_syst(
+                #     output_dir,
+                #     name,
+                #     list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+                #     ['SignalRegion2b_El45', 'SignalRegion1b_El45', 'SidebandRegion_El45'],
+                #     br_list=br_list_th_only,
+                #     ), mk_triangle=False),
+                # sensitivity.mk_tc('LimitsAllUncertsOnlyMu', mk_limit_list_syst(
+                #     output_dir,
+                #     name,
+                #     list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+                #     ['SignalRegion2b_Mu45', 'SignalRegion1b_Mu45', 'SidebandRegion_Mu45'],
+                #     br_list=br_list_th_only,
+                #     ), mk_triangle=False),
+                ]
+        return lim_list
 
     # def mk_tc_plot(style='AN'):
     varial.settings.style = 'PAS'
@@ -733,6 +770,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         ],
                     #         get_table_category_block(),
                     #         norm_factors,
+                    #         squash_errs=True,
                     #         name='EffTable'
                     #         ),
                     #     EffTable([
@@ -741,6 +779,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         ],
                     #         get_table_category_block(),
                     #         norm_factors,
+                    #         squash_errs=True,
                     #         name='EffTableCompFS'
                     #         ),
                     #     ]),
@@ -773,6 +812,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         ],
                     #         get_table_category_block_split('Mu45'),
                     #         norm_factors,
+                    #         squash_errs=True,
                     #         name='EffTableMu45'
                     #         ),
                     #     EffTable([
@@ -780,10 +820,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         ],
                     #         get_table_category_block_split('El45'),
                     #         norm_factors,
+                    #         squash_errs=True,
                     #         name='EffTableEl45'
                     #         ),
 
                     #     ]),
+
+                    varial.tools.WebCreator(),
+                    
 
                     ]
             # return tmp
@@ -917,9 +961,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     
     return varial.tools.ToolChain(name, [
-            varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
-            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
-            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            # varial.tools.ToolChainParallel('TreeProject', tc_tp, n_workers=1),
+            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
@@ -948,10 +992,10 @@ def run_treeproject_and_plot(output_dir):
                     # br_list=br_list_all,
                     # uncertainties=all_uncerts+['ht_reweight']
                     ),
-                make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
-                    add_uncert_func=add_all_without_weight_uncertainties,
-                    # uncertainties=all_uncerts
-                    ),
+                # make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
+                #     add_uncert_func=add_all_without_weight_uncertainties,
+                #     # uncertainties=all_uncerts
+                #     ),
                 # make_tp_plot_chain('TopPtReweighting', base_path, output_dir+'/RunAnalysis',
                 #     add_uncert_func=add_all_with_weight_uncertainties({'top_pt_reweight' : {treeproject_tptp.ttbar_smpl : top_pt_reweight}}),
                 #     mod_sample_weights={treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+top_pt_reweight},
@@ -973,7 +1017,6 @@ def run_treeproject_and_plot(output_dir):
                 #     ),
 
                 ], n_workers=1),
-            varial.tools.WebCreator(),
             # varial.tools.ToolChain('ReweightingComparision', [
             #     tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
             #     tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),

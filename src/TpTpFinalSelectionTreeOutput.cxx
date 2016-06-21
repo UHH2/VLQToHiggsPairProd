@@ -409,7 +409,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 0.99, 0.02, "sfel_trg", true));
     ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
                 1., 0., "sfel_trg", true));
-    if (version.find("TpTp") != string::npos) {
+    if (version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
         other_modules.emplace_back(new PDFWeightBranchCreator(ctx, 110, false));
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx));
     }

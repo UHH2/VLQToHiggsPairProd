@@ -12,11 +12,11 @@ import pprint
 # varial.settings.max_num_processes = 24
 
 
-if True:
+if False:
     TreeProjector = BatchTreeProjector
     from varial_ext.sgeworker import SGESubmitter
     import varial_ext.treeprojector as tp
-    SGESubmitter(500, tp.jug_work_dir_pat, tp.jug_file_search_pat).submit()
+    SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).submit()
 
 iteration = [1]
 
@@ -182,7 +182,7 @@ final_states = [
     '_noH_bwbw',
 ]
 
-ttbar_smpl = 'TTbar_split'
+ttbar_smpl = 'TTbar'
 
 background_samples = [
     ttbar_smpl,
@@ -425,9 +425,11 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
         (sample, list(f for f in glob.glob(nominal_files) if sample in f))
         for sample in samples
     )
-    with open('weight_dict_pdf') as f:
-        weight_dict_pdf = ast.literal_eval(f.read())
-    weight_dict_pdf.update(dict((smpl, ['1']*100) for smpl in background_samples))
+    weight_dict_pdf = {}
+    for d in glob.glob('weight_dict_pdf*'):
+        with open(d) as f:
+            weight_dict_pdf.update(ast.literal_eval(f.read()))
+    weight_dict_pdf.update(dict((smpl, ['1']*100) for smpl in samples_no_data if smpl not in weight_dict_pdf))
     for g in final_states:
         weight_dict_pdf.update(dict((s+g, weight_dict_pdf[s]) for s in signals))
     # sys_params_pdf = {
@@ -455,13 +457,13 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
         for name, ssw in sys_sec_sel_weight_pdf
     )
     # sys_tps_pdf += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev)]
-    sys_tps_pdf += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev, sample=s, load_aliases=False) for s in samples)
+    sys_tps_pdf += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_stddev, sample='*'+s, load_aliases=False) for s in samples)
     return [
         varial.tools.ToolChain('SysTreeProjectorsPDF', sys_tps_pdf),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', name='PDF__minus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
+        # GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__plus'),
+        # GenUncertUpDown(input_path='../SysTreeProjectorsPDF/GenUncertHistoSquash*', norm=True, name='NormPDF__minus'),
     ]
     # return tmp
 
@@ -473,9 +475,11 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
         (sample, list(f for f in glob.glob(nominal_files) if sample in f))
         for sample in samples
     )
-    with open('weight_dict_scale') as f:
-        weight_dict_scale = ast.literal_eval(f.read())
-    weight_dict_scale.update(dict((smpl, ['1']*9) for smpl in background_samples))
+    weight_dict_scale = {}
+    for d in glob.glob('weight_dict_scale*'):
+        with open(d) as f:
+            weight_dict_scale.update(ast.literal_eval(f.read()))
+    weight_dict_scale.update(dict((smpl, ['1']*9) for smpl in samples_no_data if smpl not in weight_dict_scale))
     for g in final_states:
         weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in signals))
     sys_sec_sel_weight_scalevar = list(
@@ -499,13 +503,14 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
         )
         for name, ssw in sys_sec_sel_weight_scalevar
     )
-    sys_tps_scalevar += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_env)]
+    sys_tps_scalevar += list(GenUncertHistoSquash(squash_func=varial.op.squash_sys_env, sample='*'+s, load_aliases=False) for s in samples)
+    # sys_tps_scalevar += [GenUncertHistoSquash(squash_func=varial.op.squash_sys_env)]
     return [
         varial.tools.ToolChain('SysTreeProjectorsScaleVar', sys_tps_scalevar),
         GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__plus'),
         GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', name='ScaleVar__minus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
-        GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
+        # GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__plus'),
+        # GenUncertUpDown(input_path='../SysTreeProjectorsScaleVar/GenUncertHistoSquash*', norm=True, name='NormScaleVar__minus'),
     ]
     # return tmp
 
@@ -578,7 +583,7 @@ class GenUncertHistoSquash(varial.tools.Tool):
         self.rel_path = '*.root'
         self.load_aliases = load_aliases
         if self.sample:
-            self.name = 'GenUncertHistoSquash_'+sample
+            self.name = 'GenUncertHistoSquash_'+sample.replace('*', '')
             self.rel_path = self.sample+'.root'
 
     def run(self):

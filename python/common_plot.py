@@ -157,6 +157,13 @@ mod_dict = {
             'y_min_gr_zero' : 0.1,
             'y_max_fct' : 1.5,
             },
+    'jets[].m_pt' : {
+            'rebin' : 30,
+            # 'title' : 'p_{T} (1st AK4 Jet) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
+            'y_max_fct' : 1.5,
+            },
     'pt_subld_ak4_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} (2nd AK4 Jet) [GeV]',
@@ -172,6 +179,20 @@ mod_dict = {
             'y_max_fct' : 1.5,
             },
     'pt_fourth_ak4_jet' : {
+            'rebin' : 30,
+            'title' : 'p_{T} (4th AK4 Jet) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
+            'y_max_fct' : 1.5,
+            },
+    'jets[2].m_pt' : {
+            'rebin' : 30,
+            'title' : 'p_{T} (3rd AK4 Jet) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
+            'y_max_fct' : 1.5,
+            },
+    'jets[3].m_pt' : {
             'rebin' : 30,
             'title' : 'p_{T} (4th AK4 Jet) [GeV]',
             'y_max_log_fct' : 1000.,
@@ -227,13 +248,13 @@ mod_dict = {
     #         },
     'nomass_boost_1b_mass' : {
             'rebin' : 30,
-            'title' : 'M_{soft-drop}(type-I Higgs tag) [GeV]',
+            'title' : 'M_{soft-drop}(Higgs tag, 1 subjet b-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass' : {
             'rebin' : 15,
-            'title' : 'M_{soft-drop}(type-II Higgs tag) [GeV]',
+            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.2
@@ -243,17 +264,29 @@ mod_dict = {
             'y_min_gr_zero' : 10,
             },
     'noboost_mass_1b_pt' : {
-            'title' : 'p_{T}(type-I Higgs tag) [GeV]',
-            'y_max_log_fct' : 1000.,            'y_min_gr_zero' : 1e-3,
-            'scale' : 0.2
-            },
-    'noboost_mass_2b_pt' : {
-            'title' : 'p_{T}(type-II Higgs tag) [GeV]',
+            'title' : 'p_{T}(Higgs tag, 1 subjet b-tag) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'scale' : 0.2
             },
-
+    'noboost_mass_2b_pt' : {
+            'title' : 'p_{T}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
+            'scale' : 0.2
+            },
+    'noboost_mass_1b[0].m_pt' : {
+            'title' : 'p_{T}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
+            'scale' : 0.2
+            },
+    'noboost_mass_2b[0].m_pt' : {
+            'title' : 'p_{T}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 1e-3,
+            'scale' : 0.2
+            },
 
     ##### FINAL CATEGORY VARIABLES ######
     'n_additional_btags_medium' : {
@@ -263,14 +296,14 @@ mod_dict = {
             'set_leg_2_col_log' : True
             },
     'n_higgs_tags_1b_med' : {
-            'title' : 'N(type-I Higgs tags)',
+            'title' : 'N(Higgs tag, 1 subjet b-tag)',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 3e-3,
             # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_2b_med' : {
             'y_max_log_fct' : 1000.,
-            'title' : 'N(type-II Higgs tags)',
+            'title' : 'N(Higgs tag, 2 subjet b-tags)',
             'y_min_gr_zero' : 1e-3,
             # 'set_leg_2_col_log' : True
             },

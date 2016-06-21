@@ -212,6 +212,7 @@ def scale_bkg_postfit(wrps, theta_res_path, signal):
 
 
 def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model, **kws):
+    # def tmp():
     load_dict = {
         'hook_loaded_histos' : loader_hook(brs)
     }
@@ -289,6 +290,7 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
         return [loader, plotter, sys_loader, limits, postfit, post_loader, plotter_postfit, corr_mat, corr_plotter] #, corr_mat, corr_plotter # , plotter_postfit
     else:
         return [loader, plotter, limits]
+        # return tmp
 
 
 # tool_list.append(TriangleLimitPlots())
