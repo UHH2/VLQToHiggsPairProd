@@ -59,6 +59,10 @@ public:
         // shared_ptr<SelectionItem>(new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 90, 0., 900.)),
         shared_ptr<SelectionItem>(new SelDatI("n_leptons", "N(Leptons)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_muons", "N(Leptons)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_muons_iso", "N(Leptons)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_electrons", "N(Leptons)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_electrons_iso", "N(Leptons)", 6, -.5, 5.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_btags_medium", "N(medium AK4 b-tags)", 10, -.5, 9.5)),
         shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 65, 0, 6500)),
         // shared_ptr<SelectionItem>(new SelDatD("parton_ht", "Parton HT", 45, 0, 4500)),
@@ -143,6 +147,11 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_mass_sj", "nomass_boost_2b_med_mass_sj", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm10_mass_softdrop", "nomass_boost_2b_med_sm10_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm20_mass_softdrop", "nomass_boost_2b_med_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("mass_muons", "mass_muons", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("mass_muons_iso", "mass_muons_iso", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("mass_electrons", "mass_electrons", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("mass_electrons_iso", "mass_electrons_iso", 100, 0., 300.)),
+
         // shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_ld_ak4_jet", "Pt first Ak4 Jet (reco-gen)", 40, 0., 1600.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_subld_ak4_jet", "Pt second Ak4 Jet (reco-gen)", 40, 0., 1600.)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_reco_gen_third_ak4_jet", "Pt third Ak4 Jet (reco-gen)", 40, 0., 1600.)),
@@ -453,6 +462,25 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     if (!create_btag_eff)
         other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
         // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+
+    other_modules.emplace_back(new LeadingPartInvMassproducer<Muon>(ctx,
+                "muons",
+                "mass_muons"
+                ));
+    other_modules.emplace_back(new LeadingPartInvMassproducer<Muon>(ctx,
+                "muons",
+                "mass_muons_iso",
+                MuonId(MuonIso())
+                ));
+    other_modules.emplace_back(new LeadingPartInvMassproducer<Electron>(ctx,
+                "electrons",
+                "mass_electrons"
+                ));
+    other_modules.emplace_back(new LeadingPartInvMassproducer<Electron>(ctx,
+                "electrons",
+                "mass_electrons_iso",
+                ElectronId(ElectronID_Spring15_25ns_medium)
+                ));
 
     other_modules.emplace_back(new HiggsMassSmear(ctx,
                 "ak8_boost",

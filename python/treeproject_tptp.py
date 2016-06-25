@@ -17,7 +17,7 @@ def _start_job_submitter():
     import varial_ext.treeprojector as tp
     SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).start()
 
-if True:
+if False:
     TreeProjector = BatchTreeProjector
     job_proc = mp.Process(target=_start_job_submitter)
     job_proc.start()

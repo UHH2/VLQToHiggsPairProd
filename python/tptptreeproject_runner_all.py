@@ -1018,6 +1018,7 @@ def run_treeproject_and_plot(output_dir):
                 #     ),
 
                 ], n_workers=1),
+                varial.tools.WebCreator(),
             # varial.tools.ToolChain('ReweightingComparision', [
             #     tex_content.mk_autoCompareReweightingMethods(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingDistributions'),
             #     tex_content.mk_autoComparePostfitPlots(output_dir+'/RunAnalysis', ['NoReweighting', 'HTReweighting', 'TopPtReweighting', 'TopPtAndHTReweighting'], name='CompareReweightingPostfits'),

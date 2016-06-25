@@ -252,6 +252,32 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
         JetId(CSVBTag(CSVBTag::WP_TIGHT))
         ));
 
+
+    common_modules.emplace_back(new CollectionSizeProducer<Muon>(ctx,
+        "muons",
+        "n_muons"
+        ));
+    common_modules.emplace_back(new CollectionSizeProducer<Muon>(ctx,
+        "muons",
+        "n_muons_iso",
+        MuonId(MuonIso())
+        ));
+    common_modules.emplace_back(new CollectionSizeProducer<Electron>(ctx,
+        "electrons",
+        "n_electrons"
+        ));
+    common_modules.emplace_back(new CollectionSizeProducer<Electron>(ctx,
+        "electrons",
+        "n_electrons_iso",
+        ElectronId(ElectronID_Spring15_25ns_medium)
+        ));
+
+    common_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
+        "jets",
+        "n_btags_tight",
+        JetId(CSVBTag(CSVBTag::WP_TIGHT))
+        ));
+
     common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "ak8_boost",
                 "ak8_higgs_cand",
@@ -272,182 +298,11 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
                 ));
 
 
-    // get pt of the top tagged jet with smallest pt, just to see if PtEtaCut Id is working
-    // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "toptags", "smallest_pt_toptags", -1));
-
-    // common_modules.emplace_back(new PrimaryLeptonPtProducer(ctx));
-
-    // class that takes care of applying CommonModules (with JEC, jet-lepton-cleaning, MCWeight etc.),
-    // produces all handles for generic quantities like n_jets, met, etc.
-    // tptp_commonModules.reset(new TpTpCommonModules(ctx));
-
-    // EventWeightOutputHandle only needed for TMVA studies
-    // other_common_modules.emplace_back(new EventWeightOutputHandle(ctx));
-
-    // ========TEST STUFF HERE=======
-    
-
-    // pre_modules.emplace_back(new ElectronCleaner(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4))));
-    // pre_modules.emplace_back(new MuonCleaner(AndId<Muon>(MuonIDTight(),PtEtaCut(20.0, 2.1))));
-    // pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4)), "jets"));
-    // pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(150., 2.4), "topjets"));
-    // pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-
-    // pre_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
-    //             "jets",
-    //             "n_ak4_before"
-    //             ));
-    // pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "topjets",
-    //             "n_ak8_slimmed_before"
-    //             ));
-    // pre_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
-    //             "n_ak8_packed_before"
-    //             ));
-    // pre_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_ld_ak4_jet_before", 1));
-    // pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet_slimmed_before", 1));
-    // pre_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "pt_ld_ak8_jet_packed_before", 1));
-
-    // // pre_modules.emplace_back(new TestJetLeptonCleaner(ctx));
-
-    // pre_modules.emplace_back(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "jets"));
-    // pre_modules.emplace_back(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "topjets"));
-    // pre_modules.emplace_back(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer15_25ns_L123_AK8PFchs_MC, "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-
-    // pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4)), "jets"));
-    // pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(150., 2.4), "topjets"));
-    // pre_modules.emplace_back(new TopJetCleaner(ctx, PtEtaCut(150., 2.4), "patJetsAk8CHSJetsSoftDropPacked_daughters"));
-
-    // patjets_ = ctx.get_handle<std::vector<TopJet>>("patJetsAk8CHSJetsSoftDropPacked_daughters");
-
-
-    // common_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
-    //             "jets",
-    //             "n_ak4_after"
-    //             ));
-    // common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "topjets",
-    //             "n_ak8_slimmed_after"
-    //             ));
-    // common_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "patJetsAk8CHSJetsSoftDropPacked_daughters",
-    //             "n_ak8_packed_after"
-    //             ));
-    // common_modules.emplace_back(new PartPtProducer<Jet>(ctx, "jets", "pt_ld_ak4_jet_after", 1));
-    // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "topjets", "pt_ld_ak8_jet_slimmed_after", 1));
-    // common_modules.emplace_back(new PartPtProducer<TopJet>(ctx, "patJetsAk8CHSJetsSoftDropPacked_daughters", "pt_ld_ak8_jet_packed_after", 1));
-
-    // const vector<shared_ptr<SelectionItem>> TEST_SEL {
-    //     shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt_noIso", "Primary Muon p_T", 90, 0., 900.)),
-    //     // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
-    //     // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5,)),
-    //     // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
-    //     // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
-    //     // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.))
-    //     // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.))
-    //     // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.))
-    //     // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.))
-    // };
-
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak4_before", "N(Ak4 Jets)", 8, -.5, 7.5));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet_before", "Pt leading Ak4 Jet", 60, 0., 1500., 100.));
-
-    // vector<string> item_names;
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name());    
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "Ak4Before");
-    
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak4_after", "N(Ak4 Jets)", 8, -.5, 7.5));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak4_jet_after", "Pt leading Ak4 Jet", 60, 0., 1500., 100.));
-
-    // item_names.clear();
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name());
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "Ak4After");
-
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak8_slimmed_before", "N(Ak8 Jets)", 8, -.5, 7.5, 3));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak8_jet_slimmed_before", "Pt leading Ak8 Jet", 60, 0., 1500.));
-
-    // item_names.clear();
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name());    
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "SlimmedBefore");
-
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak8_packed_before", "N(Ak8 Jets)", 8, -.5, 7.5, 3));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak8_jet_packed_before", "Pt leading Ak8 Jet", 60, 0., 1500.));
-
-    // item_names.clear();
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name()); 
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "PackedBefore");
-    
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak8_slimmed_after", "N(Ak8 Jets)", 8, -.5, 7.5, 3));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak8_jet_slimmed_after", "Pt leading Ak8 Jet", 60, 0., 1500.));
-
-    // item_names.clear();
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name());
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "SlimmedAfter");
-
-    // SEL_ITEMS_FULL_SEL.push_back(TEST_SEL);
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+1, new SelDatI("n_ak8_packed_after", "N(Ak8 Jets)", 8, -.5, 7.5, 3));
-    // SEL_ITEMS_FULL_SEL.back().emplace(SEL_ITEMS_FULL_SEL.back().begin()+2, new SelDatF("pt_ld_ak8_jet_packed_after", "Pt leading Ak8 Jet", 60, 0., 1500.));
-
-    // item_names.clear();
-    // for (auto const & seli : SEL_ITEMS_FULL_SEL.back()) 
-    //     item_names.push_back(seli->name());
-
-    // sel_helpers.emplace_back(new SelItemsHelper(SEL_ITEMS_FULL_SEL.back(), ctx, item_names, "sel_accept", "sel_all_accepted"));
-    // sel_modules.emplace_back(new SelectionProducer(ctx, *sel_helpers.back()));
-    // v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-    // sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), "PackedAfter");
 }
 
 
 bool TpTpAnalysisModule::process(Event & event) {
 
-    // run all modules
-
-    // sort_by_pt(*event.jets);
-    // sort_by_pt(*event.topjets);
-    // sort_by_pt(event.get(patjets_));
-
-    // std::cout << "AFTER lepton cleaning:\n";
-    // std::cout << "  Ak4 jets:";
-    // for (auto const & jet : *event.jets) {std::cout << " " << jet.pt();}
-    // std::cout << std::endl;
-    // std::cout << "  Slimmed Ak8 jets:";
-    // for (auto const & jet : *event.topjets) {std::cout << " " << jet.pt();}
-    // std::cout << std::endl;
-    // std::cout << "  Packed Ak8 jets:";
-    // for (auto const & jet : event.get(patjets_)) {std::cout << " " << jet.pt();}
-    // std::cout << std::endl;
 
     for (auto & mod : common_modules) {
         mod->process(event);

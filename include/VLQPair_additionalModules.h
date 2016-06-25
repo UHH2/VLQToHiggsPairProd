@@ -437,6 +437,7 @@ public:
             for (auto const & part : coll) {
                 if ((*id_)(part, event)) {
                     prim_part = part;
+                    break;
                 }
             }
         }
@@ -451,6 +452,57 @@ public:
 private:
     uhh2::Event::Handle<vector<T>> h_in_;
     uhh2::Event::Handle<FlavorParticle> h_out_;
+    boost::optional<TYPE_ID> id_; 
+};
+
+template <typename T>
+class LeadingPartInvMassproducer: public uhh2::AnalysisModule {
+public:
+    typedef std::function<bool (const T &, const uhh2::Event &)> TYPE_ID;
+
+    explicit LeadingPartInvMassproducer(uhh2::Context & ctx, 
+                           const std::string & h_in,
+                           const std::string & h_out,
+                           boost::optional<TYPE_ID> const & id = boost::none) :
+            h_in_(ctx.get_handle<vector<T>>(h_in)),
+            h_out_(ctx.get_handle<float>(h_out)),
+            id_(id) {}
+
+    virtual bool process(uhh2::Event & event) override {
+
+        if (!event.is_valid(h_in_))
+            throw;
+
+        float inv_mass = -1.;
+
+        vector<T> const & coll = event.get(h_in_);
+        vector<LorentzVector> coll_ld_part;
+
+        if (id_) {
+            for (auto const & part : coll) {
+                if ((*id_)(part, event)) {
+                    coll_ld_part.push_back(part.v4());
+                }
+            }
+        }
+        else {
+            for (auto const & part : coll) {
+                coll_ld_part.push_back(part.v4());
+            }
+        }
+
+        if (coll_ld_part.size() >= 2) {
+            LorentzVector sum_v4 = coll_ld_part[0]+coll_ld_part[1];
+            if (sum_v4.isTimelike())
+                inv_mass = sum_v4.M();
+        }
+        event.set(h_out_, inv_mass);
+        return true;
+    }
+
+private:
+    uhh2::Event::Handle<vector<T>> h_in_;
+    uhh2::Event::Handle<float> h_out_;
     boost::optional<TYPE_ID> id_; 
 };
 
@@ -1156,7 +1208,6 @@ public:
     }
 
 private:
-    boost::optional<JetId> jet_id_;
     Event::Handle<double> h_ht;
     Event::Handle<FlavorParticle> h_primlep;
 };  // class GenHTCalculator
