@@ -55,7 +55,7 @@ for bw_br in [i/10. for i in xrange(0, int(bw_max*10)+2, 2)]:
 backgrounds_to_use = [
     # 'Run2015CD',
     'QCD',
-    'TTbar',
+    'TTbar_split',
     'WJets',
     'DYJets',
     'SingleTop',

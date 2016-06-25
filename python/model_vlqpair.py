@@ -77,7 +77,7 @@ def get_model_with_norm(hist_dir, final_states):
 
 def get_model_no_norm(hist_dir, final_states):
     import theta_auto
-    
+
     dict_uncerts_ = dict(dict_uncerts)
     model = theta_auto.build_model_from_rootfile(
         hist_dir,

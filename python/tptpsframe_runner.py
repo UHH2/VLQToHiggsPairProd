@@ -123,8 +123,8 @@ def set_output_dir(element_tree, outputdir=''):
         sframe_cycle.set('OutputDirectory', outputdir)
 
 def set_uncert(element_tree, uncert_name=''):
-    if varial.settings.sys_uncerts:
-        uncert = varial.settings.sys_uncerts[uncert_name]
+    if sys_uncerts:
+        uncert = sys_uncerts[uncert_name]
         cycle = element_tree.getroot().find('Cycle')
         user_config = cycle.find('UserConfig')
         for name, value in uncert.iteritems():
@@ -207,7 +207,7 @@ class MySFrameBatch(SFrame):
         if os.path.exists(self.cwd + 'workdir'):
             opt = ' -rl --exitOnQuestion'
         else:
-            opt = ' -sl --exitOnQuestion'
+            opt = ' --exitOnQuestion'
 
         self.exe = 'sframe_batch.py' + opt
 
@@ -216,13 +216,12 @@ class MySFrameBatch(SFrame):
 sframe_cfg_final = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpFinalSelectionV2.xml'
 sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpPreselectionV2.xml'
 
+
 import common_plot
 import plot as plot
 from optparse import OptionParser
 import tex_content
 from varial.extensions.hadd import Hadd
-
-varial.settings.sys_uncerts = {}
 
 def mk_sframe_tools_and_plot(argv):
     parser = OptionParser()
@@ -240,7 +239,7 @@ def mk_sframe_tools_and_plot(argv):
 
     count = '-1'
 
-    sys_uncerts = []
+    global sys_uncerts
     allowed_datasets = []
 
     if options.selection == 'pre':
@@ -258,10 +257,10 @@ def mk_sframe_tools_and_plot(argv):
         # varial.settings.merge_decay_channels = True
     elif options.selection == 'final':
         sframe_cfg = sframe_cfg_final
+        sys_uncerts = sys_uncerts_final
         setup_for_ind_run = setup_for_finalsel
         categories = categories_final
         analysis_module = 'TpTpFinalSelectionTreeOutput'
-        sys_uncerts = sys_uncerts_final
         basenames = plot.basenames_final
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_only_th

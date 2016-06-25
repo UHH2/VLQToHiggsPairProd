@@ -68,11 +68,11 @@ def final_state_scaling(wrps, brs):
                     w = scale_histo(w, factor)
         yield w
 
-def set_category(wrps):
-    for w in wrps:
-        category = w.file_path.split('/')[-3]
-        setattr(w, "category", category)
-    return wrps
+# def set_category(wrps):
+#     for w in wrps:
+#         category = w.file_path.split('/')[-3]
+#         setattr(w, "category", category)
+#     return wrps
 
 def get_final_state(wrp):
     if any(wrp.sample.endswith(g) for g in ['thth', 'thtz', 'thbw']):

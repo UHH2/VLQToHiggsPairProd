@@ -314,14 +314,15 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     if (version.find("TT") != string::npos) {
         other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen", false));
         other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
-        other_modules.emplace_back(new HTReweighting(ctx, 1.268084, -0.000390272, 3000., "weight_htrew_tt"));
-        other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
     }
     if (version.find("WJets") != string::npos) {
         other_modules.emplace_back(new HTReweighting(ctx, 1.146709, -0.00026451, 3000., "weight_htrew_wjets"));
         other_modules.emplace_back(new HTReweighting(ctx, 1.201648, -0.000250984, 3000., "weight_htrew_wjets_toppt"));
     }
-
+    if (version.find("TT") != string::npos || version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
+        other_modules.emplace_back(new HTReweighting(ctx, 1.268084, -0.000390272, 3000., "weight_htrew_tt"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
+    }
 
 
     auto ak8_corr_bef = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
@@ -1263,6 +1264,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         v_hists.back().emplace_back(nm1_hists);
         v_hists.back().emplace_back(cf_hists);
+        sel_helpers.back()->fill_hists_vector(v_hists.back(), cat+"/NoSelection");
         sel_helpers.back()->fill_hists_vector(v_hists_after_sel.back(), cat+"/PostSelection");
         // sel_helpers.back()->fill_hists_vector(v_reweighted_hists_after_sel.back(), cat+"/PostSelectionReweighted");
         // for (auto const & hist_helper : ak8jet_hists) {
@@ -1360,6 +1362,11 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
     // btag_sf_cr->process(event);
     
     // all hists
+    for (auto & hist_vec : v_hists) {
+        for (auto & hist : hist_vec) {
+            hist->fill(event);
+        }
+    }
     for (auto & hist_vec : v_hists) {
         for (auto & hist : hist_vec) {
             hist->fill(event);

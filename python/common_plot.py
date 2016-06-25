@@ -572,7 +572,12 @@ def add_wrp_info(wrps, sig_ind=None):
             return smpl
 
     def fix_ttbar_smpl(wrp):
-        smpl = vlq_common.get_samplename(wrp)
+        if 'jug_file' in wrp.file_path:
+            smpl = os.path.splitext(wrp.file_path)[0]
+            smpl = os.path.basename(smpl)
+            smpl = '-'.join(smpl.split('-')[3:])
+        else:
+            smpl = vlq_common.get_samplename(wrp)
         if smpl == 'TTbar_split' or smpl == 'TTbar_incl':
             smpl = 'TTbar'
         return smpl
@@ -593,7 +598,7 @@ def add_wrp_info(wrps, sig_ind=None):
         wrps,
         sample=get_samplename,
         legend=get_samplename,
-        in_file_path=lambda w: w.in_file_path if 'jug-file' not in w.file_path else batch_tp_infilepath,
+        # in_file_path=lambda w: w.in_file_path if 'jug-file' not in w.file_path else batch_tp_infilepath,
         is_signal=lambda w: any(s in w.file_path for s in sig_ind),
         is_data=lambda w: 'Run20' in w.file_path,
         variable=lambda w: w.in_file_path.split('/')[-1],
@@ -609,20 +614,15 @@ def add_sample_integrals(canvas_builders):
         fct = 1.
         if hasattr(wrp, 'scl_fct'):
             fct = wrp.scl_fct
-        bkg_sum = util.integral_and_error(wrp.histo)
-        if len(bkg_sum) == 2:
-            bkg_sum = (bkg_sum[0]/fct, bkg_sum[1]/fct)
-        sys_sum = (util.integral_and_error(wrp.histo_sys_err)
+        nom_sum = util.integral_and_error(wrp.histo)
+        if len(nom_sum) == 2:
+            nom_sum = (nom_sum[0]/fct, nom_sum[1]/fct)
+        sys_sum = (op.get_sys_int(wrp)
                    if wrp.histo_sys_err
                    else tuple())
         if len(sys_sum) == 2:
             sys_sum = (sys_sum[0]/fct, sys_sum[1]/fct)
-        if len(sys_sum) == 2 and len(bkg_sum) >= 1:
-            diff = sys_sum[0] - bkg_sum[0]
-            sys_up = sys_sum[1] + diff
-            sys_down = sys_sum[1] - diff
-            sys_sum = (sys_up, -sys_down)
-        return [(wrp.sample, bkg_sum + sys_sum)]
+        return [(wrp.sample, nom_sum + sys_sum)]
 
     def integral_stack_wrp(wrp):
         for hist in wrp.obj.GetHists():
@@ -632,26 +632,17 @@ def add_sample_integrals(canvas_builders):
             sum_tmp = util.integral_and_error(hist)
             sys_tmp = getattr(wrp, hist.GetTitle()+'__sys', (sum_tmp[0], 0.))
             if len(sum_tmp) == 2:
-                diff = sys_tmp[0] - sum_tmp[0]
-                sys_up = sys_tmp[1] + diff
-                sys_down = sys_tmp[1] - diff
-                sys_tmp = (sys_up, -sys_down)
                 sum_tmp = (sum_tmp[0]/fct, sum_tmp[1]/fct, sys_tmp[0]/fct, sys_tmp[1]/fct)
             yield hist.GetTitle(), sum_tmp
-        bkg_sum = util.integral_and_error(wrp.histo)
-        # if len(bkg_sum) == 2:
-            # bkg_sum = (bkg_sum[0]*2, bkg_sum[1]*2)
-        sys_sum = (util.integral_and_error(wrp.histo_sys_err)
+        nom_sum = util.integral_and_error(wrp.histo)
+        # if len(nom_sum) == 2:
+            # nom_sum = (nom_sum[0]*2, nom_sum[1]*2)
+        sys_sum = (op.get_sys_int(wrp)
                    if wrp.histo_sys_err
                    else tuple())
-        if len(sys_sum) == 2 and len(bkg_sum) >= 1:
-            diff = sys_sum[0] - bkg_sum[0]
-            sys_up = sys_sum[1] + diff
-            sys_down = sys_sum[1] - diff
-            sys_sum = (sys_up, -sys_down)
         # if len(sys_sum) == 2:
             # sys_sum = (sys_sum[0]*2, sys_sum[1]*2)
-        yield 'bkg_sum', bkg_sum + sys_sum
+        yield 'bkg_sum', nom_sum + sys_sum
 
     def integral(wrp):
         if isinstance(wrp, rnd.StackRenderer):

@@ -8,15 +8,19 @@ import glob
 import os
 import ast
 import pprint
+import multiprocessing as mp
 
 # varial.settings.max_num_processes = 24
 
-
-if False:
-    TreeProjector = BatchTreeProjector
+def _start_job_submitter():
     from varial_ext.sgeworker import SGESubmitter
     import varial_ext.treeprojector as tp
-    SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).submit()
+    SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).start()
+
+if True:
+    TreeProjector = BatchTreeProjector
+    job_proc = mp.Process(target=_start_job_submitter)
+    job_proc.start()
 
 iteration = [1]
 
@@ -182,7 +186,7 @@ final_states = [
     '_noH_bwbw',
 ]
 
-ttbar_smpl = 'TTbar'
+ttbar_smpl = 'TTbar_split'
 
 background_samples = [
     ttbar_smpl,

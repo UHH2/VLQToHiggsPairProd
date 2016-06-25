@@ -195,11 +195,11 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <!-- <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+    <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
         &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -505,11 +505,11 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0000to0700" Cacheable="True">
         &MC_TTbar;
@@ -541,7 +541,7 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="True">
+    <!-- <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="True">
         &MC_TTJets_M_700to1000;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -551,7 +551,7 @@
         &MC_TTJets_M_1000toInf;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
