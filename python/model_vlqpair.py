@@ -15,9 +15,9 @@ background_samples = [
 dict_uncerts = {
 'TTbar' : 1.10,
 'WJets' : 1.10,
-'QCD' : 1.8,
-'DYJets' : 1.8,
-'SingleTop' : 1.8,
+'QCD' : 2.0,
+'DYJets' : 1.2,
+'SingleTop' : 1.2,
 }
 
 def get_model(hist_dir, final_states):
