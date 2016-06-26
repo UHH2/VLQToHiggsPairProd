@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "1000">
+<!ENTITY NEVT "10000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestFinalSelection/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
@@ -195,11 +195,11 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
+    <!-- <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="True">
         &MC_TpTp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,11 +273,11 @@
         <OutputTree Name="AnalysisTree" />
     </InputData> -->
 
-    <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="True">
+    <!-- <InputData Lumi="2103324808" NEventsMax="&NEVT;" Type="MC" Version="BpBp_M-1800" Cacheable="True">
         &MC_BpBp_M-1800;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
 
 
@@ -412,13 +412,13 @@
         &MC_DYJetsToLL_M50_HT0400to0600;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <InputData Lumi="381390.0" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M50_HT0600toINFT" Cacheable="True">
         &MC_DYJetsToLL_M50_HT0600toINFT;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -207,7 +207,7 @@ class MySFrameBatch(SFrame):
         if os.path.exists(self.cwd + 'workdir'):
             opt = ' -rl --exitOnQuestion'
         else:
-            opt = ' --exitOnQuestion'
+            opt = ' -sl --exitOnQuestion'
 
         self.exe = 'sframe_batch.py' + opt
 

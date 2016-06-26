@@ -785,47 +785,47 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         ),
                     #     ]),
 
-                    # varial.tools.ToolChain('TablesSplitLepton', [
-                    #     plot.mk_toolchain('Histograms', plot.more_samples, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts)
-                    #             ),  
-                    #     CountTable([
-                    #             table_block_signal,
-                    #             table_block_background,
-                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    #             [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                    #         ],
-                    #         get_table_category_block_split('Mu45'),
-                    #         name='CountTableMu45'
-                    #         ),
-                    #     CountTable([
-                    #             table_block_signal,
-                    #             table_block_background,
-                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    #             [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                    #         ],
-                    #         get_table_category_block_split('El45'),
-                    #         name='CountTableEl45'
-                    #         ),
-                    #     EffTable([
-                    #             table_block_signal,
-                    #         ],
-                    #         get_table_category_block_split('Mu45'),
-                    #         norm_factors,
-                    #         squash_errs=True,
-                    #         name='EffTableMu45'
-                    #         ),
-                    #     EffTable([
-                    #             table_block_signal,
-                    #         ],
-                    #         get_table_category_block_split('El45'),
-                    #         norm_factors,
-                    #         squash_errs=True,
-                    #         name='EffTableEl45'
-                    #         ),
+                    varial.tools.ToolChain('TablesSplitLepton', [
+                        plot.mk_toolchain('Histograms', plot.more_samples, 
+                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                                + list(sys_path+'/%s*/*.root'% i for i in uncerts)
+                                ),  
+                        CountTable([
+                                table_block_signal,
+                                table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            get_table_category_block_split('Mu45'),
+                            name='CountTableMu45'
+                            ),
+                        CountTable([
+                                table_block_signal,
+                                table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            get_table_category_block_split('El45'),
+                            name='CountTableEl45'
+                            ),
+                        EffTable([
+                                table_block_signal,
+                            ],
+                            get_table_category_block_split('Mu45'),
+                            norm_factors,
+                            squash_errs=True,
+                            name='EffTableMu45'
+                            ),
+                        EffTable([
+                                table_block_signal,
+                            ],
+                            get_table_category_block_split('El45'),
+                            norm_factors,
+                            squash_errs=True,
+                            name='EffTableEl45'
+                            ),
 
-                    #     ]),
+                        ]),
 
                     varial.tools.WebCreator(),
                     

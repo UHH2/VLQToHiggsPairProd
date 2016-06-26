@@ -81,7 +81,7 @@ class NumTableNew(varial.tools.Tool):
         else:
             return "{0:17.0f}"
 
-    def create_block(self, sample_dict, sym_errs):
+    def create_block(self, sample_dict):
         pass
         
 
@@ -98,9 +98,8 @@ class NumTableNew(varial.tools.Tool):
             + r"\\ \hline")
         # if not self.calc_eff:
         for smpl_dict in self.input_blocks:
-            sym_errs = len(smpl_dict == 3) and smpl_dict[2]
             smpl_dict = sorted(smpl_dict, key=sort_cats(order_smpls))
-            lines += self.create_block(smpl_dict, sym_errs)
+            lines += self.create_block(smpl_dict)
             lines.append(r"\hline")
         
         lines.append(r"\end{tabular}")
@@ -115,10 +114,15 @@ class EffTable(NumTableNew):
         super(EffTable, self).__init__(input_blocks, get_region, squash_errs, name)
         self.norm_fct = norm_fct
 
-    def create_block(self, sample_dict, sym_errs):
+    def create_block(self, sample_dict):
 
         lines = []
-        for s, s_func in sample_dict:
+        for sample_tup in sample_dict:
+            try:
+                s, s_func, sym_errs = sample_tup
+            except ValueError:
+                s, s_func = sample_tup
+                sym_errs = False
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
             if isinstance(self.norm_fct, list):
@@ -150,14 +154,20 @@ class EffTable(NumTableNew):
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(tot_err/baseline_count) + r" \%"
+                    line += prec.format(info[0]/baseline_count)
+                    if 'data' not in s:
+                        line += r" \% \pm " + prec.format(tot_err/baseline_count) + r" \%"
                 elif sym_errs:
-                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                    line += prec.format(info[0]/baseline_count)
+                    if 'data' not in s:
+                        line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
                     if len(info) == 4:
                         syst_err = max(abs(info[2]), abs(info[3]))
                         line += r" \pm " + prec.format(syst_err/baseline_count)
                 else:
-                    line += prec.format(info[0]/baseline_count) + r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                    line += prec.format(info[0]/baseline_count)
+                    if 'data' not in s:
+                        line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
                     if len(info) == 4:
                         line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
                 line += " $"
@@ -169,10 +179,15 @@ class CountTable(NumTableNew):
     def __init__(self, input_blocks, get_region, squash_errs=False, name=None):
         super(CountTable, self).__init__(input_blocks, get_region, squash_errs, name)
 
-    def create_block(self, sample_dict, sym_errs):
+    def create_block(self, sample_dict):
 
         lines = []
-        for s, s_func in sample_dict:
+        for sample_tup in sample_dict:
+            try:
+                s, s_func, sym_errs = sample_tup
+            except ValueError:
+                s, s_func = sample_tup
+                sym_errs = False
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
             for r, r_dict in self.regions:
@@ -193,14 +208,20 @@ class CountTable(NumTableNew):
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    line += prec.format(info[0]) + r" \pm " + prec.format(tot_err)
+                    line += prec.format(info[0])
+                    if 'data' not in s:
+                        line += r" \pm " + prec.format(tot_err)
                 elif sym_errs:
-                    line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
+                    line += prec.format(info[0])
+                    if 'data' not in s:
+                        line += r" \pm " + prec.format(info[1])
                     if len(info) == 4:
                         syst_err = max(abs(info[2]), abs(info[3]))
                         line += r" \pm " + prec.format(syst_err)
                 else:
-                    line += prec.format(info[0]) + r" \pm " + prec.format(info[1])
+                    line += prec.format(info[0])
+                    if 'data' not in s:
+                        line += r" \pm " + prec.format(info[1])
                     if len(info) == 4:
                         line += "^{+"+prec.format(info[2])+"}_{"+prec.format(info[3])+"}"
                 line += " $"
