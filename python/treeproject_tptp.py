@@ -17,8 +17,10 @@ def _start_job_submitter():
     import varial_ext.treeprojector as tp
     SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).start()
 
-if False:
-    TreeProjector = BatchTreeProjector
+treeproject = TreeProjector
+
+if True:
+    treeproject = BatchTreeProjector
     job_proc = mp.Process(target=_start_job_submitter)
     job_proc.start()
 
@@ -269,7 +271,7 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='
         for sample in samples
     )
 
-    return TreeProjector(
+    return treeproject(
         filenames, all_params, sec_sel_weight, 
         # suppress_job_submission=True, 
         name=name,
@@ -287,7 +289,7 @@ def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     return list(
-        TreeProjector(
+        treeproject(
             dict(
                 (sample, list(f for f in glob.glob(pat) if (sample in f and 'Scale' not in f)))
                 for sample in samples
@@ -316,14 +318,14 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
     dict_down_files.update({ttbar_smpl : list(f for f in glob.glob(files_ttbar_scale_down))})
     nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
     return [
-        TreeProjector(
+        treeproject(
             dict_up_files, 
             params, 
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name='PSScale__plus',
         ),
-        TreeProjector(
+        treeproject(
             dict_down_files, 
             params, 
             nominal_sec_sel_weight,
@@ -347,7 +349,7 @@ def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=sa
         ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_up))
     )
     return list(
-        TreeProjector(
+        treeproject(
             filenames,
             params, 
             ssw,
@@ -410,7 +412,7 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
         )
     )
     return list(
-        TreeProjector(
+        treeproject(
             filenames,
             params, 
             ssw,
@@ -451,7 +453,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
         for i in xrange(100)
     )
     sys_tps_pdf = list(
-        TreeProjector(
+        treeproject(
             filenames, 
             params, 
             ssw,
@@ -498,7 +500,7 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
         # for i in [1, 2] # physical indices for scale variations without nominal value!
     )
     sys_tps_scalevar = list(
-        TreeProjector(
+        treeproject(
             filenames, 
             params, 
             ssw,
@@ -535,7 +537,7 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
         (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
     )
     return list(
-        TreeProjector(
+        treeproject(
             filenames,
             params, 
             ssw,
