@@ -305,8 +305,8 @@ def make_uncertainty_histograms(wrps):
     def _grp(wrps):
         for grp in wrps:
             grp = sorted(grp, key=lambda w: w.sys_info)
-            grp = list(grp)
-            print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
+            # grp = list(grp)
+            # print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
             grp = gen.group(grp, lambda w: w.sys_info)
             grp = list(list(ws) for ws in grp)
             yield grp
@@ -329,7 +329,7 @@ def make_uncertainty_histograms(wrps):
     for grp in wrps:
         nom = dict((w.sample, w) for w in grp[0])
         samples = list(w for w in nom)
-        # print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
+        print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
         for g in grp[1:]:
             unc = dict((w.sample, w) for w in g)
             for s in samples:
@@ -427,7 +427,6 @@ def loader_hook_merge_regions(wrps):
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
     wrps = varial.gen.gen_add_wrp_info(wrps, in_file_path=get_new_infile_path, region=get_base_selection, sys_info=get_sys_info)
-    wrps = make_uncertainty_histograms(wrps)
     return wrps
 
 def loader_hook_merge_lep_channels(wrps):
@@ -439,6 +438,7 @@ def loader_hook_merge_lep_channels(wrps):
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps)
+    wrps = make_uncertainty_histograms(wrps)
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
 
