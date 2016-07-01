@@ -300,6 +300,46 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
+def make_uncertainty_histograms(wrps):
+
+    def _grp(wrps):
+        for grp in wrps:
+            grp = sorted(grp, key=lambda w: w.sys_info)
+            grp = gen.group(grp, lambda w: w.sys_info)
+            grp = list(list(ws) for ws in grp)
+            yield grp
+
+    # def plus_minus_key(w):
+    #     if not w.sys_info:
+    #         return w.sys_info
+    #     elif w.sys_info.endswith('__plus'):
+    #         return w.sys_info[:-6]
+    #     elif w.sys_info.endswith('__minus'):
+    #         return w.sys_info[:-7]
+    #     else:
+    #         raise RuntimeError('ERROR unknown sys_info ending')
+
+    # for wrps in grps:
+    wrps = sorted(wrps, key=lambda w: w.in_file_path)
+    wrps = gen.group(wrps, lambda w: w.in_file_path)
+    wrps = list(_grp(wrps))
+    # wrps = list(list(ws) for ws in wrps)
+    for grp in wrps:
+        nom = dict((w.sample, w) for w in grp[0])
+        samples = list(w for w in nom)
+        print samples
+        for g in grp[1:]:
+            unc = dict((w.sample, w) for w in g)
+            for s in samples:
+                if s not in unc:
+                    g.append(op.copy(nom[s]))
+            # g = 
+        # for i, grp in enumerate(grp):
+        #     print i, list((w.in_file_path, w.sys_info, w.sample) for w in grp)
+    wrps = list(w for grp in wrps for ws in grp for w in ws)
+    return wrps
+
+
 
 
 def loader_hook_finalstates_excl(wrps):
@@ -317,6 +357,7 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
+    # wrps = make_uncertainty_histograms(wrps)
     return wrps
 
 
