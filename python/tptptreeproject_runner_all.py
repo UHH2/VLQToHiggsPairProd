@@ -649,15 +649,17 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
                     ######## HISTOGRAMS WITH LEPTON CHANNELS SEPARATE ########
 
-                    plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
-                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                                + list(sys_path+'/%s*/*.root'% i for i in uncerts)
-                                ),                                             
-                    plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
-                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                                + list(sys_path+'/%s*/*.root'% i for i in uncerts),
-                                filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                                plotter_factory=plot.plotter_factory_uncerts()),                                             
+                    # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
+                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             lookup_aliases=False
+                    #             ),                                             
+                    # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
+                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                    #             plotter_factory=plot.plotter_factory_uncerts(),
+                    #             lookup_aliases=False),                                             
                     # plot.mk_toolchain('HistogramsNormToInt', plot.less_samples_to_plot_only_th, 
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
@@ -685,49 +687,53 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
                     ####### MERGE LEPTON CHANNELS ########
 
-                    # varial.tools.ToolChain('MergeChannelsMoreHists', [
-                    #     varial.tools.ToolChainParallel('HistoLoader',
-                    #     list(varial.tools.HistoLoader(
-                    #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
-                    #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-                    #         'Region_Comb' not in w.in_file_path and\
-                    #         any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
-                    #             'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                    #             'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                    #             'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
-                    #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                    #         name='HistoLoader_'+g,
-                    #         lookup_aliases=False,
-                    #         raise_on_empty_result=False
-                    #         ) for g in plot.less_samples_to_plot_only_th)),
-                    #     plot.mk_toolchain('HistogramsMerged',
-                    #         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsMergedNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                    #         plotter_factory=plot.plotter_factory_stack(
-                    #             hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                    #             hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
-                    #             ),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsMergedNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                    #         plotter_factory=plot.plotter_factory_stack(
-                    #             hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                    #             hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
-                    #             canvas_decorators=[
-                    #                 varial.rendering.BottomPlotRatioPullErr,
-                    #                 varial.rendering.Legend,
-                    #                 ]
-                    #             ),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsMergedNoData', filter_keyfunc=lambda w: not w.is_data,
-                    #         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),                                             
-                    #     # plot.mk_toolchain('HistogramsNormToInt',
-                    #     #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
-                    #     #             pattern=None, input_result_path='../HistoLoader*',
-                    #     #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int,
-                    #     #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
-                    #     ]),
+                    varial.tools.ToolChain('MergeChannelsMoreHists', [
+                        varial.tools.ToolChainParallel('HistoLoader',
+                        list(varial.tools.HistoLoader(
+                            pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                            filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                            'Region_Comb' not in w.in_file_path and\
+                            any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
+                                'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                            hook_loaded_histos=plot.loader_hook_merge_regions,
+                            name='HistoLoader_'+g,
+                            lookup_aliases=False,
+                            raise_on_empty_result=False
+                            ) for g in plot.less_samples_to_plot_only_th)),
+                        plot.mk_toolchain('HistogramsMerged',
+                            plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        plot.mk_toolchain('HistogramsMergedCompareUncerts',
+                            filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                            plotter_factory=plot.plotter_factory_uncerts(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),                                            
+                        # plot.mk_toolchain('HistogramsMergedNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
+                        #     plotter_factory=plot.plotter_factory_stack(
+                        #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+                        #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
+                        #         ),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsMergedNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
+                        #     plotter_factory=plot.plotter_factory_stack(
+                        #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+                        #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
+                        #         canvas_decorators=[
+                        #             varial.rendering.BottomPlotRatioPullErr,
+                        #             varial.rendering.Legend,
+                        #             ]
+                        #         ),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsMergedNoData', filter_keyfunc=lambda w: not w.is_data,
+                        #     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsNormToInt',
+                        #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
+                        #             pattern=None, input_result_path='../HistoLoader*',
+                        #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int,
+                        #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
+                        ]),
                     
 
 
