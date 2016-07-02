@@ -559,7 +559,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # #     name='SysTreeProjectors'),
         ]
 
-    sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors*' % name
+    sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors' % name
     
     def get_sys_dir():
         return set(sys.split('__')[0] for d in glob.glob(sys_path) for sys in os.listdir(d) if all(g not in sys for g in ['Norm', 'SysTreeProjectors']))

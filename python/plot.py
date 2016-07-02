@@ -327,14 +327,19 @@ def make_uncertainty_histograms(wrps):
     wrps = list(_grp(wrps))
     # wrps = list(list(ws) for ws in wrps)
     for grp in wrps:
-        nom = dict((w.sample, w) for w in grp[0])
+        nom = dict((w.sample, w) for w in grp[0] if not w.is_data)
         samples = list(w for w in nom)
-        print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
+        # print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
         for g in grp[1:]:
-            unc = dict((w.sample, w) for w in g)
+            unc_dict = dict((w.sample, w) for w in g)
+            unc_name = g[0].sys_info
+            print 'BEFORE: ', list((w.in_file_path, w.sys_info, w.sample) for w in g)
             for s in samples:
-                if s not in unc:
-                    g.append(op.copy(nom[s]))
+                if s not in unc_dict:
+                    new_wrp = op.copy(nom[s])
+                    new_wrp.sys_info = unc_name
+                    g.append(new_wrp)
+            print 'AFTER: ', list((w.in_file_path, w.sys_info, w.sample) for w in g)
             # g = 
         # for i, grp in enumerate(grp):
         #     print i, list((w.in_file_path, w.sys_info, w.sample) for w in grp)
