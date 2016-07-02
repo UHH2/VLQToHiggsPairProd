@@ -364,7 +364,7 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
-    # wrps = make_uncertainty_histograms(wrps)
+    wrps = make_uncertainty_histograms(wrps)
     return wrps
 
 
@@ -482,7 +482,7 @@ def loader_hook_uncerts(wrps):
                 w.histo.SetLineWidth(2)
             yield w
 
-    wrps = loader_hook_finalstates_excl(wrps)
+    # wrps = loader_hook_finalstates_excl(wrps)
     wrps = set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     return wrps
@@ -584,7 +584,7 @@ def plotter_factory_uncerts(**args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-        kws['hook_loaded_histos'] = loader_hook_uncerts
+        kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w))
         kws['plot_grouper'] = lambda w: group_by_uncerts(w, 
             lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
         kws['plot_setup'] = plot_setup_uncerts
