@@ -311,6 +311,8 @@ def make_uncertainty_histograms(wrps):
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
         grp.append(rate_unc)
+        for g in grp[1:]:
+            print list((w.in_file_path, w.sys_info, w.sample) for w in g)
     wrps = list(w for grp in wrps for ws in grp for w in ws)
     return wrps
 
