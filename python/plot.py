@@ -298,8 +298,8 @@ def make_uncertainty_histograms(wrps):
                     new_wrp = op.copy(nom[s])
                     new_wrp.sys_info = unc_name
                     g.append(new_wrp)
+        rate_unc = []
         for s in samples:
-            rate_unc = []
             new_wrp_up = op.copy(nom[s])
             new_wrp_down = op.copy(nom[s])
             rate = nom[s].histo.Integral()
@@ -310,6 +310,7 @@ def make_uncertainty_histograms(wrps):
                 new_wrp_up.histo.Scale(1+unc)
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
+        grp.append(rate_unc)
     wrps = list(w for grp in wrps for ws in grp for w in ws)
     return wrps
 
