@@ -10,7 +10,7 @@ import os
 import glob
 import sys
 import pprint
-import varial.analysis as analysis
+# import varial.analysis as analysis
 from ROOT import TLatex
 import cPickle
 
@@ -55,6 +55,7 @@ import sensitivity
 import model_vlqpair
 import common_sensitivity
 import tex_content
+import analysis
 from get_eff_count import CountTable, EffTable # EffNumTable, 
 
 varial.settings.plot_obs = True
@@ -327,13 +328,15 @@ all_uncerts = [
     'sfel_id',
     'sfel_trg',
     'pu',
-    'PDF',
+    # 'PDF',
     'ScaleVar',
     # 'rate',
     'PSScale'
     # 'top_pt_weight',
     # 'ht_reweight'
 ]
+
+analysis.shape_uncertainties += all_uncerts + ['sflep_id', 'sflep_trg']
 
 plot_uncerts = {
     'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'pu', 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'], # , 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'

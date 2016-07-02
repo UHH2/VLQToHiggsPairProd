@@ -171,38 +171,6 @@ settings.colors.update({
     # 'TpTp_M1000_bwbw': 593,
 })
 
-# settings.max_open_root_files = 100
-# settings.max_num_processes = 20
-
-# sample definitions
-# smpls = list()
-
-
-# smpls.append(Sample(
-#     name='QCD',
-#     legend='QCD'
-# ))
-
-# smpls.append(Sample(
-#     name='TTbar',
-#     legend='TTbar'
-# ))
-
-# smpls.append(Sample(
-#     name='WJets',
-#     legend='WJets'
-# ))
-
-# smpls.append(Sample(
-#     name='DYJetsToLL',
-#     legend='DYJetsToLL'
-# ))
-
-# smpls.append(Sample(
-#     name='SingleTop',
-#     legend='SingleTop'
-# ))
-
 # analysis.all_samples = dict((s.name, s) for s in smpls)
 
 settings.stacking_order = ['TTBar', 'WJets', 'SingleT', 'SingleTop', 'DYJets', 'DYJetsToLL', 'QCD']

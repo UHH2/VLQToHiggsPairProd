@@ -10,7 +10,7 @@ import varial.settings
 import varial.tools
 import varial.generators as gen
 import varial.rendering as rnd
-import varial.analysis as analysis
+# import varial.analysis as analysis
 from varial.sample import Sample
 # from varial.extensions.sframe import SFrame
 from varial.extensions.hadd import Hadd
@@ -27,6 +27,7 @@ import common_plot
 # import tptp_sframe 
 import sensitivity
 import compare_crs
+import analysis
 
 from ROOT import TLatex, TH2
 
@@ -205,30 +206,6 @@ less_samples_to_plot_pre = other_samples_to_plot + less_signals
 
 get_samplename = vlq_common.get_samplename
 
-# varial.settings.pretty_names.update({
-#     'no sel._tex' : 'no sel.',
-#     'trigger_accept_el45_tex' : 'trigger',
-#     'trigger_accept_mu45_tex' : 'trigger',
-#     'primary_lepton_pt_tex' : 'p_T(Lepton)',
-#     'primary_electron_pt_tex' : 'p_T(Electron)',
-#     'primary_muon_pt_tex' : 'p_T(Muon)',
-#     'pt_ld_ak4_jet_tex' : 'p_T(1st AK4 jet)',
-#     'pt_subld_ak4_jet_tex' : 'p_T(2nd AK4 jet)',
-#     '2D cut_tex' : '2D cut',
-#     'ST_tex' : 'ST',
-#     'n_ak4_tex' : 'N(AK4 jets)',
-#     'n_ak8_tex' : 'N(AK8 jets)',
-#     'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
-#     'output/input_tex' : 'output/input',
-#     'TpTp_M-0700' : 'TT M0700',
-#     'TpTp_M-1000' : 'TT M1000',
-#     'TpTp_M-1300' : 'TT M1300',
-#     'TpTp_M-1700' : 'TT M1700',
-#     'DYJetsToLL' : 'DY + jets',
-#     'SingleTop' : 'Single T',
-#     'WJets' : 'W + jets'
-# } )
-
 
 def common_loader_hook(wrps):
     wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
@@ -277,17 +254,6 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
         canvas_decorators=common_plot.get_style()
     )
 
-    # cutflow_normed_plots = varial.tools.Plotter(
-    #     'CutflowNormed',
-    #     # stack=False,
-    #     plot_grouper=varial.plotter.plot_grouper_by_in_file_path,
-    #     hook_loaded_histos=gen.gen_norm_to_max_val,
-    #     input_result_path='../CutflowHistos',
-    #     # plot_setup=varial.plotter.default_plot_colorizer,
-    #     save_lin_log_scale=True,
-    #     canvas_decorators=[varial.rendering.Legend]
-    # )
-
     return varial.tools.ToolChain(category, [
         cutflow_histos,
         # cutflow_normed_plots,
@@ -311,15 +277,6 @@ def make_uncertainty_histograms(wrps):
             grp = list(list(ws) for ws in grp)
             yield grp
 
-    # def plus_minus_key(w):
-    #     if not w.sys_info:
-    #         return w.sys_info
-    #     elif w.sys_info.endswith('__plus'):
-    #         return w.sys_info[:-6]
-    #     elif w.sys_info.endswith('__minus'):
-    #         return w.sys_info[:-7]
-    #     else:
-    #         raise RuntimeError('ERROR unknown sys_info ending')
 
     # for wrps in grps:
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
@@ -330,19 +287,29 @@ def make_uncertainty_histograms(wrps):
         nom = dict((w.sample, w) for w in grp[0] if not w.is_data)
         samples = list(w for w in nom)
         # print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
-        for g in grp[1:]:
+        for i, g in enumerate(grp[1:]):
             unc_dict = dict((w.sample, w) for w in g)
             unc_name = g[0].sys_info
-            print 'BEFORE: ', list((w.in_file_path, w.sys_info, w.sample) for w in g)
+            if unc_name.split('__')[0] not in analysis.shape_uncertainties:
+                grp.pop(i+1)
+                continue
             for s in samples:
                 if s not in unc_dict:
                     new_wrp = op.copy(nom[s])
                     new_wrp.sys_info = unc_name
                     g.append(new_wrp)
-            print 'AFTER: ', list((w.in_file_path, w.sys_info, w.sample) for w in g)
-            # g = 
-        # for i, grp in enumerate(grp):
-        #     print i, list((w.in_file_path, w.sys_info, w.sample) for w in grp)
+        for s in samples:
+            rate_unc = []
+            new_wrp_up = op.copy(nom[s])
+            new_wrp_down = op.copy(nom[s])
+            rate = nom[s].histo.Integral()
+            new_wrp_up.sys_info = 'rate__plus'
+            new_wrp_down.sys_info = 'rate__minus'
+            if s in analysis.rate_uncertainties:
+                unc = analysis.rate_uncertainties[s]-1.
+                new_wrp_up.histo.Scale(1+unc)
+                new_wrp_down.histo.Scale(1-unc)
+            rate_unc += [new_wrp_up, new_wrp_down]
     wrps = list(w for grp in wrps for ws in grp for w in ws)
     return wrps
 
@@ -379,27 +346,6 @@ def loader_hook_norm_to_int(wrps):
     wrps = common_plot.norm_to_int(wrps)
     return wrps
 
-
-# def merge_final_states(wrps):
-#     wrps = common_loader_hook(wrps)
-#     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
-#     wrps = gen.gen_make_th2_projections(wrps)
-#     # # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
-#     # # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
-#     # wrps = list(wrps)
-#     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
-#     # wrps = common_plot.mod_legend_eff_counts(wrps)
-#     return wrps
-
-
-# def loader_hook_compare_finalstates_split_lepton_channels(wrps):
-#     wrps = common_loader_hook(wrps)
-#     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
-#     wrps = gen.gen_make_th2_projections(wrps)
-#     wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
-#     wrps = common_plot.mod_legend_eff_counts(wrps)
-#     wrps = common_plot.rebin_st_and_nak4(wrps)
-#     return wrps
 
 
 def loader_hook_merge_regions(wrps):
@@ -447,11 +393,6 @@ def loader_hook_merge_lep_channels(wrps):
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
 
-# def loader_hook_split_lep_channels(wrps):
-#     # wrps = merge_regions(wrps)
-#     wrps = common_plot.mod_legend_eff_counts(wrps)
-#     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name+'__'+w.sample)
-#     return wrps
 
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
@@ -507,19 +448,6 @@ def group_by_uncerts(wrps, first_sort_func):
             nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
             yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
 
-# def group_gen_reco_ht(wrps):
-
-#     wrps = itertools.groupby(wrps, first_sort_func)
-#     for k1, g in wrps:
-#         g = sorted(g, key=lambda w: '{0}'.format())
-#         g = list(g)
-#         nominal = g[0]
-#         sys_uncerts = itertools.groupby(g[1:], sort_key_func)
-#         for k2, sys in sys_uncerts:
-#             # print nominal.in_file_path, nominal.sample, nominal.sys_info, list((s.in_file_path, s.sample, s.sys_info) for s in sys)
-#             nom_copy = copy.copy(nominal)
-#             nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
-#             yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
 
 def plot_setup_uncerts(grps):
     def set_legend(wrps):
