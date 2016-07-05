@@ -135,19 +135,19 @@ def loader_hook(brs, bounds=st_bounds):
         return wrps
     return temp
 
-def loader_hook_postfit(wrps):
-    wrps = common_plot.add_wrp_info(wrps)
-    wrps = varial.generators.gen_add_wrp_info(
-        wrps, category=lambda w: w.name.split('__')[0],
-        is_data=lambda w: w.name.split('__')[1] == 'DATA',
-        sample=lambda w: w.name.split('__')[1],
-        legend=lambda w: w.name.split('__')[1],
-        )
-    wrps = common_plot.mod_legend(wrps)
-    wrps = label_axes(wrps)
-    wrps = common_plot.mod_title(wrps)
-    wrps = sorted(wrps, key=lambda w: w.category)
-    return wrps
+# def loader_hook_postfit(wrps):
+#     wrps = common_plot.add_wrp_info(wrps)
+#     wrps = varial.generators.gen_add_wrp_info(
+#         wrps, category=lambda w: w.name.split('__')[0],
+#         is_data=lambda w: w.name.split('__')[1] == 'DATA',
+#         sample=lambda w: w.name.split('__')[1],
+#         legend=lambda w: w.name.split('__')[1],
+#         )
+#     wrps = common_plot.mod_legend(wrps)
+#     wrps = label_axes(wrps)
+#     wrps = common_plot.mod_title(wrps)
+#     wrps = sorted(wrps, key=lambda w: w.category)
+#     return wrps
 
 # def loader_hook_triangle(wrps):
 #     for w in wrps:
@@ -197,17 +197,21 @@ def select_single_sig(signal, list_region):
 
 
 def scale_bkg_postfit(wrps, theta_res_path, signal):
-    if theta_res_path.startswith('..'):
-        mass_points = os.listdir(os.path.join(varial.analysis.cwd, theta_res_path))
-    else:
-        mass_points = os.listdir(theta_res_path)
+    # if theta_res_path.startswith('..'):
+    #     mass_points = os.listdir(os.path.join(varial.analysis.cwd, theta_res_path))
+    # else:
+    #     mass_points = os.listdir(theta_res_path)
 
-    wrps = list(self.lookup_result(k) for k in theta_tools)
-    if not wrps:
-        wrps = gen.dir_content(theta_res_path)
-    if isinstance(theta_res_path, str):
-        theta_res_path = [theta_res_path]
-    theta_res = list(varial.analysis.lookup_result(p) for g in theta_res_path for p in glob.glob(g))
+    # wrps = list(self.lookup_result(k) for k in theta_tools)
+    # if not wrps:
+    #     wrps = gen.dir_content(theta_res_path)
+    # if isinstance(theta_res_path, str):
+    #     theta_res_path = [theta_res_path]
+    # theta_res = list(varial.analysis.lookup_result(p) for g in theta_res_path for p in glob.glob(g))
+    theta_res = varial.analysis.lookup_result(theta_res_path)
+    if not theta_res:
+        theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
+    print varial.analysis.cwd, theta_res_path
     bkg_scl_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
@@ -220,11 +224,11 @@ def scale_bkg_postfit(wrps, theta_res_path, signal):
                 r, _ = constr[0]
                 r = prior**r
             else:
-                varial.monitor.message('WARNING syst uncertainty in scale_bkg_postfit %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
                 r = 1.
             bkg_scl_dict[smpl] = r
     except KeyError as e:
-        varial.monitor.message('WARNING loading theta result in scale_bkg_postfit did not work')
+        varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING loading theta result did not work')
         raise e
 
     for w in wrps:
@@ -243,6 +247,8 @@ def loader_hook_postfit(wrps, theta_res_path, signal):
 
 def stack_setup_postfit(grps, theta_res_path, signal):
     theta_res = varial.analysis.lookup_result(theta_res_path)
+    if not theta_res:
+        theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
     unc_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
@@ -252,11 +258,11 @@ def stack_setup_postfit(grps, theta_res_path, signal):
             if constr:
                 _, c = constr[0]
             else:
-                varial.monitor.message('WARNING syst uncertainty in stack_setup_postfit %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                varial.monitor.message('sensitivity.stack_setup_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
                 c = 1.
             unc_dict[s] = c
     except KeyError as e:
-        varial.monitor.message('WARNING loading theta result in stack_setup_postfit did not work')
+        varial.monitor.message('sensitivity.stack_setup_postfit', 'WARNING loading theta result did not work')
         raise e
 
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, scl_dict=unc_dict)
@@ -344,33 +350,33 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
 
 
 def mk_tc_postfit(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model(), **kws):
-    def tmp():
-        return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
-            [varial.tools.ToolChain('PostFitPlots', [
-                varial.tools.ToolChainParallel('HistoLoaderPost',
-                    list(varial.tools.HistoLoader(
-                        pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
-                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-                            'Region_Comb' not in w.in_file_path and\
-                            any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
-                                'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                                'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                                'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
-                        hook_loaded_histos=plot.loader_hook_merge_regions,
-                        name='HistoLoader_'+g,
-                        lookup_aliases=False,
-                        raise_on_empty_result=False
-                        ) for g in plot.less_samples_to_plot_only_th)),
-                varial.plotter.RootFilePlotter(
-                    plotter_factory=plotter_factory_postfit('../../ThetaLimits/*/ThetaLimit', signal),
-                    pattern=None,
-                    input_result_path='../HistoLoaderPost/HistoLoader*',
-                    auto_legend=False,
-                    name='StackedAll',
-                    lookup_aliases=varial.settings.lookup_aliases
-                    )
-                ])]
-    return tmp
+    # def tmp():
+    return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
+        [varial.tools.ToolChain('PostFitPlots', [
+            varial.tools.ToolChainParallel('HistoLoaderPost',
+                list(varial.tools.HistoLoader(
+                    pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
+                    filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                        'Region_Comb' not in w.in_file_path and\
+                        any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
+                            'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                            'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                            'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                    hook_loaded_histos=plot.loader_hook_merge_regions,
+                    name='HistoLoader_'+g,
+                    lookup_aliases=False,
+                    raise_on_empty_result=False
+                    ) for g in plot.less_samples_to_plot_only_th)),
+            plot.mk_toolchain('HistogramsPostfit',
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal),
+                pattern=None,
+                input_result_path='../HistoLoaderPost/HistoLoader*',
+                # auto_legend=False,
+                # name='HistogramsPostfit',
+                # lookup_aliases=varial.settings.lookup_aliases
+                )
+            ])]
+    # return tmp
 
 # tool_list.append(TriangleLimitPlots())
 

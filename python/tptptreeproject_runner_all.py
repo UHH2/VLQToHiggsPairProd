@@ -627,7 +627,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     )),
             varial.tools.ToolChain(
                 'BackgroundOnlyFitNoScaleVarPF',
-                lazy_eval_tools_func = sensitivity.mk_tc_postfit(
+                sensitivity.mk_tc_postfit(
                     br_list_th_only[0],
                     filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
                     selection='ThetaLimits',

@@ -286,13 +286,10 @@ def make_uncertainty_histograms(wrps):
     for grp in wrps:
         nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
         samples = list(w for w in nom)
-        print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
         uncertainties = grp.keys()
         for unc_name in uncertainties:
-            print unc_name
             if unc_name:
                 if unc_name.split('__')[0] not in analysis.shape_uncertainties:
-                    print 'POP', grp[unc_name][0].sys_info
                     del grp[unc_name]
                     continue
                 unc_dict = dict((w.sample, w) for w in grp[unc_name])
@@ -314,14 +311,6 @@ def make_uncertainty_histograms(wrps):
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
         grp['rate'] = rate_unc
-        print 'NEXT'
-        for i, g in grp.iteritems():
-            print i
-            try:
-                print list((w.in_file_path, w.sys_info, w.sample) for w in g)
-            except TypeError as e:
-                print g
-                raise e
     wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
     return wrps
 
