@@ -197,7 +197,17 @@ def select_single_sig(signal, list_region):
 
 
 def scale_bkg_postfit(wrps, theta_res_path, signal):
-    theta_res = varial.analysis.lookup_result(theta_res_path)
+    if theta_res_path.startswith('..'):
+        mass_points = os.listdir(os.path.join(varial.analysis.cwd, theta_res_path))
+    else:
+        mass_points = os.listdir(theta_res_path)
+
+    wrps = list(self.lookup_result(k) for k in theta_tools)
+    if not wrps:
+        wrps = gen.dir_content(theta_res_path)
+    if isinstance(theta_res_path, str):
+        theta_res_path = [theta_res_path]
+    theta_res = list(varial.analysis.lookup_result(p) for g in theta_res_path for p in glob.glob(g))
     bkg_scl_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
@@ -270,7 +280,7 @@ def plotter_factory_postfit(theta_res_path, signal, **args):
     return tmp
 
 
-def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model, **kws):
+def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model(), **kws):
     # def tmp():
     load_dict = {
         'hook_loaded_histos' : loader_hook(brs)
@@ -327,48 +337,40 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
                         ]
             )
-        # post_loader = varial.tools.HistoLoader(
-        #     name='HistoLoaderPost',
-        #     pattern='../ThetaLimit/Theta*.root',
-        #     filter_keyfunc=lambda w: 'MLE' in w.file_path or w.name.endswith('DATA'),
-        #     lookup_aliases=False,
-        # )
-        # plotter_postfit = varial.tools.Plotter(
-        #     name='PostFitPlotter',
-        #     input_result_path='../HistoLoaderPost',
-        #     hook_loaded_histos=loader_hook_postfit,
-        #     plot_grouper=lambda ws: varial.gen.group(
-        #         ws, key_func=lambda w: w.category),
-        #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-        #     save_name_func=lambda w: w.category,
-        #     hook_canvas_post_build=varial.gen.add_sample_integrals,
-        #     # hook_loaded_histos=lambda w: scale_bkg_postfit(
-        #     #     w, '../ThetaLimit', signal),
-        #     # name='PostFitPlot',
-        # )
-        # post_loader = varial.tools.ToolChainParallel('HistoLoaderPost',
-        #     list(varial.tools.HistoLoader(
-        #         pattern=pattern+sys_pat,
-        #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-        #             'Region_Comb' not in w.in_file_path,
-        #         hook_loaded_histos=plot.loader_hook_merge_regions,
-        #         name='HistoLoader_'+g,
-        #         lookup_aliases=False,
-        #         raise_on_empty_result=False
-        #         ) for g in plot.less_samples_to_plot_only_th)),
-        # plotter_postfit = varial.plotter.RootFilePlotter(
-        #     plotter_factory=plotter_factory_postfit('../ThetaLimit', signal),
-        #     pattern=None,
-        #     input_result_path='../HistoLoaderPost/HistoLoader*',
-        #     auto_legend=False,
-        #     name='StackedAll',
-        #     lookup_aliases=varial.settings.lookup_aliases
-        #     )
-        return [loader, plotter, sys_loader, limits, postfit, corr_mat, corr_plotter] # post_loader
+        return [loader, plotter, sys_loader, limits, postfit, corr_mat, corr_plotter] # post_loader, plotter_postfit, 
     else:
         return [loader, plotter, limits]
         # return tmp
 
+
+def mk_tc_postfit(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model(), **kws):
+    def tmp():
+        return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
+            [varial.tools.ToolChain('PostFitPlots', [
+                varial.tools.ToolChainParallel('HistoLoaderPost',
+                    list(varial.tools.HistoLoader(
+                        pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
+                        filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                            'Region_Comb' not in w.in_file_path and\
+                            any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
+                                'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                        hook_loaded_histos=plot.loader_hook_merge_regions,
+                        name='HistoLoader_'+g,
+                        lookup_aliases=False,
+                        raise_on_empty_result=False
+                        ) for g in plot.less_samples_to_plot_only_th)),
+                varial.plotter.RootFilePlotter(
+                    plotter_factory=plotter_factory_postfit('../../ThetaLimits/*/ThetaLimit', signal),
+                    pattern=None,
+                    input_result_path='../HistoLoaderPost/HistoLoader*',
+                    auto_legend=False,
+                    name='StackedAll',
+                    lookup_aliases=varial.settings.lookup_aliases
+                    )
+                ])]
+    return tmp
 
 # tool_list.append(TriangleLimitPlots())
 

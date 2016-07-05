@@ -102,7 +102,7 @@ br_list_th_only = [{
             'tz' : 0.
         }]
 
-def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only, model_func=model_vlqpair.get_model):
+def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only, model_func=model_vlqpair.get_model()):
 
     def tmp():
         limit_list = []
@@ -573,56 +573,67 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     def mk_tc_sens():
         uncerts = uncertainties or get_sys_dir()
         lim_list = [
-            sensitivity.mk_tc('LimitsAllUncertsAllRegionsNoNorm', mk_limit_list_syst(
-                output_dir,
-                name,
-                list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                all_regions,
-                br_list=br_list,
-                model_func=model_vlqpair.get_model_no_norm,
-                )),
+            # sensitivity.mk_tc('LimitsAllUncertsAllRegionsNoNorm', mk_limit_list_syst(
+            #     output_dir,
+            #     name,
+            #     list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+            #     all_regions,
+            #     br_list=br_list,
+            #     model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
+            #     )),
 
-            sensitivity.mk_tc('LimitsAllUncertsAllRegionsWithNorm', mk_limit_list_syst(
-                output_dir,
-                name,
-                list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
-                all_regions,
-                br_list=br_list,
-                model_func=model_vlqpair.get_model_with_norm,
-                )),
+            # sensitivity.mk_tc('LimitsAllUncertsAllRegionsWithNorm', mk_limit_list_syst(
+            #     output_dir,
+            #     name,
+            #     list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+            #     all_regions,
+            #     br_list=br_list,
+            #     model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+            #     )),
         ]
         lim_list += [
+            # varial.tools.ToolChain(
+            #     'BackgroundOnlyFitBoth', 
+            #     sensitivity.mk_limit_tc_single(
+            #         br_list_th_only[0],
+            #         filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+            #         selection='ThetaLimits',
+            #         sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+            #         model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+            #     )),
+            # varial.tools.ToolChain(
+            #     'BackgroundOnlyFitWithScaleVar', 
+            #     sensitivity.mk_limit_tc_single(
+            #         br_list_th_only[0],
+            #         filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+            #         selection='ThetaLimits',
+            #         sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
+            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+            #         model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
+            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+            #     )),
+            # varial.tools.ToolChain(
+            #     'BackgroundOnlyFitNoScaleVar', 
+            #     sensitivity.mk_limit_tc_single(
+            #         br_list_th_only[0],
+            #         filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+            #         selection='ThetaLimits',
+            #         sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+            #         model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+            #     )),
             varial.tools.ToolChain(
-                'BackgroundOnlyFitBoth', 
-                sensitivity.mk_limit_tc_single(
-                    br_list_th_only[0],
-                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
-                    selection='ThetaLimits',
-                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-                    model_func=model_vlqpair.get_model_with_norm,
-                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
-                )),
-            varial.tools.ToolChain(
-                'BackgroundOnlyFitWithScaleVar', 
-                sensitivity.mk_limit_tc_single(
-                    br_list_th_only[0],
-                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
-                    selection='ThetaLimits',
-                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm'])),
-                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-                    model_func=model_vlqpair.get_model_no_norm,
-                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
-                )),
-            varial.tools.ToolChain(
-                'BackgroundOnlyFitNoScaleVar', 
-                sensitivity.mk_limit_tc_single(
+                'BackgroundOnlyFitNoScaleVarPF',
+                lazy_eval_tools_func = sensitivity.mk_tc_postfit(
                     br_list_th_only[0],
                     filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
                     selection='ThetaLimits',
                     sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
                     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-                    model_func=model_vlqpair.get_model_with_norm,
+                    model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
                     hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
                 )),
             ]
@@ -698,11 +709,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         list(varial.tools.HistoLoader(
                             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
                             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-                                'Region_Comb' not in w.in_file_path,
-                                # any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
-                                #     'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                                #     'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                                #     'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                                'Region_Comb' not in w.in_file_path and\
+                                any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
+                                    'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                    'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                    'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
                             hook_loaded_histos=plot.loader_hook_merge_regions,
                             name='HistoLoader_'+g,
                             lookup_aliases=False,
