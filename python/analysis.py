@@ -20,14 +20,13 @@
 
 
 
-
 rate_uncertainties = {
-    'TTbar' : 1.10,
-    'WJets' : 1.10,
-    'QCD' : 2.0,
-    'DYJets' : 1.2,
-    'SingleTop' : 1.2, 
+    'TTbar' : ('ttbar_rate', 1.10),
+    'WJets' : ('wjets_rate', 1.10),
+    'QCD' : ('qcd_rate', 2.0),
+    'DYJets' : ('dyjets_rate', 1.2),
+    'SingleTop' : ('singlet_rate', 1.2), 
 }
 
-shape_uncertainties = []
+shape_uncertainties = {}
 

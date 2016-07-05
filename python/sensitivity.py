@@ -10,13 +10,14 @@ import theta_auto
 
 import varial.tools
 import varial.generators as gen
-import varial.analysis as analysis
+import varial.analysis
 import varial.wrappers as wrappers
 import varial.plotter
 import varial.rendering
 import varial.settings
 import varial.operations
 import varial.util as util
+import varial.monitor
 from ROOT import TLatex, gStyle, TColor
 import ROOT
 from varial.sample import Sample
@@ -26,6 +27,8 @@ from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots
 import common_sensitivity
 import common_plot
 import model_vlqpair
+import analysis
+import plot
 # import limit_plots
 
 # varial.settings.use_parallel_chains = False
@@ -90,8 +93,8 @@ datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015CD']
 back_plus_data = backgrounds_to_use + ['Run2015CD']
 
 datasets_not_to_use = [
-    'ak4_jetpt__minus/TpTp',
-    'ak4_jetpt__plus/TpTp',
+    # 'ak4_jetpt__minus/TpTp',
+    # 'ak4_jetpt__plus/TpTp',
 ]
 
 # def select_files(categories=None, var=''):
@@ -194,21 +197,77 @@ def select_single_sig(signal, list_region):
 
 
 def scale_bkg_postfit(wrps, theta_res_path, signal):
-    theta_res = varial.ana.lookup_result(theta_res_path)
+    theta_res = varial.analysis.lookup_result(theta_res_path)
+    bkg_scl_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
         postfit_vals = postfit_vals[signal]
-        pprint.pprint(postfit_vals)
-        r, _ = postfit_vals[signal]['bkg_rate'][0]
-    except KeyError:
-        r = 0
+        for smpl in analysis.rate_uncertainties:
+            s = analysis.rate_uncertainties[smpl][0]
+            prior = analysis.rate_uncertainties[smpl][1]
+            constr = postfit_vals.get(s, None)
+            if constr:
+                r, _ = constr[0]
+                r = prior**r
+            else:
+                varial.monitor.message('WARNING syst uncertainty in scale_bkg_postfit %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                r = 1.
+            bkg_scl_dict[smpl] = r
+    except KeyError as e:
+        varial.monitor.message('WARNING loading theta result in scale_bkg_postfit did not work')
+        raise e
 
     for w in wrps:
-        # if w.sample == 'Bkg':
-        #     w.sample = 'BkgPostFit'
-        #     w.legend = 'Bkg. post-fit'
-        #     w.histo.Scale(1+r)
+        if bkg_scl_dict.get(w.sample, None) and not w.is_signal:
+            w.legend = w.legend + ' post-fit'
+            w.histo.Scale(1+r)
         yield w
+
+
+
+def loader_hook_postfit(wrps, theta_res_path, signal):
+    wrps = plot.loader_hook_merge_lep_channels(wrps)
+    wrps = scale_bkg_postfit(wrps, theta_res_path, signal)
+    return wrps
+
+
+def stack_setup_postfit(grps, theta_res_path, signal):
+    theta_res = varial.analysis.lookup_result(theta_res_path)
+    unc_dict = {}
+    try:
+        postfit_vals = cPickle.loads(theta_res.postfit_vals)
+        postfit_vals = postfit_vals[signal]
+        for s in analysis.shape_uncertainties:
+            constr = postfit_vals.get(s, None)
+            if constr:
+                _, c = constr[0]
+            else:
+                varial.monitor.message('WARNING syst uncertainty in stack_setup_postfit %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                c = 1.
+            unc_dict[s] = c
+    except KeyError as e:
+        varial.monitor.message('WARNING loading theta result in stack_setup_postfit did not work')
+        raise e
+
+    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, scl_dict=unc_dict)
+    return grps
+
+def plotter_factory_postfit(theta_res_path, signal, **args):
+    def tmp(**kws):
+        # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
+        # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
+        kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal)
+        kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
+        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
+        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
+        # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
+        # kws['y_axis_scale'] = 'lin'
+        kws['hook_canvas_post_build'] = plot.canvas_setup_post
+        # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
+        kws['canvas_decorators'] = common_plot.get_style()
+        kws.update(**args)
+        return varial.tools.Plotter(**kws)
+    return tmp
 
 
 def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model, **kws):
@@ -268,26 +327,44 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
                         ]
             )
-        post_loader = varial.tools.HistoLoader(
-            name='HistoLoaderPost',
-            pattern='../ThetaLimit/Theta*.root',
-            filter_keyfunc=lambda w: 'MLE' in w.file_path or w.name.endswith('DATA'),
-            lookup_aliases=False,
-        )
-        plotter_postfit = varial.tools.Plotter(
-            name='PostFitPlotter',
-            input_result_path='../HistoLoaderPost',
-            hook_loaded_histos=loader_hook_postfit,
-            plot_grouper=lambda ws: varial.gen.group(
-                ws, key_func=lambda w: w.category),
-            plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
-            save_name_func=lambda w: w.category,
-            hook_canvas_post_build=varial.gen.add_sample_integrals,
-            # hook_loaded_histos=lambda w: scale_bkg_postfit(
-            #     w, '../ThetaLimit', signal),
-            # name='PostFitPlot',
-        )
-        return [loader, plotter, sys_loader, limits, postfit, post_loader, plotter_postfit, corr_mat, corr_plotter] #, corr_mat, corr_plotter # , plotter_postfit
+        # post_loader = varial.tools.HistoLoader(
+        #     name='HistoLoaderPost',
+        #     pattern='../ThetaLimit/Theta*.root',
+        #     filter_keyfunc=lambda w: 'MLE' in w.file_path or w.name.endswith('DATA'),
+        #     lookup_aliases=False,
+        # )
+        # plotter_postfit = varial.tools.Plotter(
+        #     name='PostFitPlotter',
+        #     input_result_path='../HistoLoaderPost',
+        #     hook_loaded_histos=loader_hook_postfit,
+        #     plot_grouper=lambda ws: varial.gen.group(
+        #         ws, key_func=lambda w: w.category),
+        #     plot_setup=lambda w: varial.gen.mc_stack_n_data_sum(w, None, True),
+        #     save_name_func=lambda w: w.category,
+        #     hook_canvas_post_build=varial.gen.add_sample_integrals,
+        #     # hook_loaded_histos=lambda w: scale_bkg_postfit(
+        #     #     w, '../ThetaLimit', signal),
+        #     # name='PostFitPlot',
+        # )
+        # post_loader = varial.tools.ToolChainParallel('HistoLoaderPost',
+        #     list(varial.tools.HistoLoader(
+        #         pattern=pattern+sys_pat,
+        #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+        #             'Region_Comb' not in w.in_file_path,
+        #         hook_loaded_histos=plot.loader_hook_merge_regions,
+        #         name='HistoLoader_'+g,
+        #         lookup_aliases=False,
+        #         raise_on_empty_result=False
+        #         ) for g in plot.less_samples_to_plot_only_th)),
+        # plotter_postfit = varial.plotter.RootFilePlotter(
+        #     plotter_factory=plotter_factory_postfit('../ThetaLimit', signal),
+        #     pattern=None,
+        #     input_result_path='../HistoLoaderPost/HistoLoader*',
+        #     auto_legend=False,
+        #     name='StackedAll',
+        #     lookup_aliases=varial.settings.lookup_aliases
+        #     )
+        return [loader, plotter, sys_loader, limits, postfit, corr_mat, corr_plotter] # post_loader
     else:
         return [loader, plotter, limits]
         # return tmp

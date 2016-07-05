@@ -274,7 +274,7 @@ def make_uncertainty_histograms(wrps):
             # grp = list(grp)
             # print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
             grp = gen.group(grp, lambda w: w.sys_info)
-            grp = list(list(ws) for ws in grp)
+            grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
             yield grp
 
 
@@ -284,20 +284,23 @@ def make_uncertainty_histograms(wrps):
     wrps = list(_grp(wrps))
     # wrps = list(list(ws) for ws in wrps)
     for grp in wrps:
-        nom = dict((w.sample, w) for w in grp[0] if not w.is_data)
+        nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
         samples = list(w for w in nom)
-        # print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
-        for i, g in enumerate(grp[1:]):
-            unc_dict = dict((w.sample, w) for w in g)
-            unc_name = g[0].sys_info
-            if unc_name.split('__')[0] not in analysis.shape_uncertainties:
-                grp.pop(i+1)
-                continue
-            for s in samples:
-                if s not in unc_dict:
-                    new_wrp = op.copy(nom[s])
-                    new_wrp.sys_info = unc_name
-                    g.append(new_wrp)
+        print list((s, w.in_file_path+' '+w.sys_info) for s, w in nom.iteritems())
+        uncertainties = grp.keys()
+        for unc_name in uncertainties:
+            print unc_name
+            if unc_name:
+                if unc_name.split('__')[0] not in analysis.shape_uncertainties:
+                    print 'POP', grp[unc_name][0].sys_info
+                    del grp[unc_name]
+                    continue
+                unc_dict = dict((w.sample, w) for w in grp[unc_name])
+                for s in samples:
+                    if s not in unc_dict:
+                        new_wrp = op.copy(nom[s])
+                        new_wrp.sys_info = unc_name
+                        grp[unc_name].append(new_wrp)
         rate_unc = []
         for s in samples:
             new_wrp_up = op.copy(nom[s])
@@ -306,14 +309,20 @@ def make_uncertainty_histograms(wrps):
             new_wrp_up.sys_info = 'rate__plus'
             new_wrp_down.sys_info = 'rate__minus'
             if s in analysis.rate_uncertainties:
-                unc = analysis.rate_uncertainties[s]-1.
+                unc = analysis.rate_uncertainties[s][1]-1.
                 new_wrp_up.histo.Scale(1+unc)
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
-        grp.append(rate_unc)
-        for g in grp[1:]:
-            print list((w.in_file_path, w.sys_info, w.sample) for w in g)
-    wrps = list(w for grp in wrps for ws in grp for w in ws)
+        grp['rate'] = rate_unc
+        print 'NEXT'
+        for i, g in grp.iteritems():
+            print i
+            try:
+                print list((w.in_file_path, w.sys_info, w.sample) for w in g)
+            except TypeError as e:
+                print g
+                raise e
+    wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
     return wrps
 
 

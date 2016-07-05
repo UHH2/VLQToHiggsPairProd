@@ -328,25 +328,28 @@ all_uncerts = [
     'sfel_id',
     'sfel_trg',
     'pu',
-    # 'PDF',
+    'PDF',
     'ScaleVar',
-    # 'rate',
-    'PSScale'
+    'rate',
+    'PSScale',
+    'higgs_smear',
     # 'top_pt_weight',
-    # 'ht_reweight'
+    'ht_reweight',
+    'sflep_id',
+    'sflep_trg'
 ]
 
-analysis.shape_uncertainties += all_uncerts + ['sflep_id', 'sflep_trg']
+analysis.shape_uncertainties.update(dict((a, 1.) for a in all_uncerts))
 
-plot_uncerts = {
-    'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'pu', 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'], # , 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'
-    'ScaleVar' : ['ScaleVar'],
-    'PDF' : ['PDF'],
-    'TTbarScale' : ['ttbar_scale'],
-    'Theo' : ['ScaleVar', 'PDF', 'PSScale'],
-    'TopPt' : ['top_pt_reweight'],
-    'HT' : ['ht_reweight'],
-}
+# plot_uncerts = {
+#     'Exp' : ['jec', 'jer', 'btag_bc', 'btag_udsg', 'pu', 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'], # , 'sfmu_id', 'sfmu_trg', 'sfel_id', 'sfel_trg'
+#     'ScaleVar' : ['ScaleVar'],
+#     'PDF' : ['PDF'],
+#     'TTbarScale' : ['ttbar_scale'],
+#     'Theo' : ['ScaleVar', 'PDF', 'PSScale'],
+#     'TopPt' : ['top_pt_reweight'],
+#     'HT' : ['ht_reweight'],
+# }
 
 # theory_uncerts = [
 #     'PDF',
@@ -695,11 +698,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         list(varial.tools.HistoLoader(
                             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
                             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-                            'Region_Comb' not in w.in_file_path and\
-                            any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
-                                'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                                'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                                'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                                'Region_Comb' not in w.in_file_path,
+                                # any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
+                                #     'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                #     'n_higgs_tags_1b_med', 'n_higgs_tags_2b_med', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                #     'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
                             hook_loaded_histos=plot.loader_hook_merge_regions,
                             name='HistoLoader_'+g,
                             lookup_aliases=False,
@@ -986,9 +989,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
-            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
 
