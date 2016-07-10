@@ -266,7 +266,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
-def make_uncertainty_histograms(wrps):
+def make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties):
 
     def _grp(wrps):
         for grp in wrps:
@@ -305,8 +305,8 @@ def make_uncertainty_histograms(wrps):
             rate = nom[s].histo.Integral()
             new_wrp_up.sys_info = 'rate__plus'
             new_wrp_down.sys_info = 'rate__minus'
-            if s in analysis.rate_uncertainties:
-                unc = analysis.rate_uncertainties[s][1]-1.
+            if s in rate_uncertainties:
+                unc = rate_uncertainties[s][1]-1.
                 new_wrp_up.histo.Scale(1+unc)
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
@@ -317,7 +317,7 @@ def make_uncertainty_histograms(wrps):
 
 
 
-def loader_hook_finalstates_excl(wrps):
+def loader_hook_finalstates_excl(wrps, rate_uncertainties=analysis.rate_uncertainties):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
@@ -332,7 +332,7 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
-    wrps = make_uncertainty_histograms(wrps)
+    wrps = make_uncertainty_histograms(wrps, analysis.rate_uncertainties)
     return wrps
 
 
@@ -381,7 +381,7 @@ def loader_hook_merge_regions(wrps):
     wrps = varial.gen.gen_add_wrp_info(wrps, in_file_path=get_new_infile_path, region=get_base_selection, sys_info=get_sys_info)
     return wrps
 
-def loader_hook_merge_lep_channels(wrps):
+def loader_hook_merge_lep_channels(wrps, rate_uncertainties=analysis.rate_uncertainties):
     # wrps = merge_regions(wrps)
     # wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
@@ -390,7 +390,7 @@ def loader_hook_merge_lep_channels(wrps):
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    wrps = make_uncertainty_histograms(wrps)
+    wrps = make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties)
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
 

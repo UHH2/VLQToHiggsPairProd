@@ -197,21 +197,9 @@ def select_single_sig(signal, list_region):
 
 
 def scale_bkg_postfit(wrps, theta_res_path, signal):
-    # if theta_res_path.startswith('..'):
-    #     mass_points = os.listdir(os.path.join(varial.analysis.cwd, theta_res_path))
-    # else:
-    #     mass_points = os.listdir(theta_res_path)
-
-    # wrps = list(self.lookup_result(k) for k in theta_tools)
-    # if not wrps:
-    #     wrps = gen.dir_content(theta_res_path)
-    # if isinstance(theta_res_path, str):
-    #     theta_res_path = [theta_res_path]
-    # theta_res = list(varial.analysis.lookup_result(p) for g in theta_res_path for p in glob.glob(g))
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
-    print varial.analysis.cwd, theta_res_path
     bkg_scl_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
