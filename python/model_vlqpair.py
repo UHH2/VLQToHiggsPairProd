@@ -78,8 +78,8 @@ def get_model_with_norm(dict_uncerts=None):
                     'typ': 'gauss',
                     'width': float('inf')}
         model.distribution.distributions.update({
-            'ttbar_rate' : dist_dict,
-            'wjets_rate' : dist_dict})
+            'TTbar_rate' : dist_dict,
+            'WJets_rate' : dist_dict})
         for smpl in background_samples:
             model.add_lognormal_uncertainty('luminosity', math.log(1.027), smpl)
         return model
