@@ -234,7 +234,7 @@ def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     return wrps
 
 
-def stack_setup_postfit(grps, theta_res_path, signal, shape_uncertainties):
+def stack_setup_postfit(grps, theta_res_path, signal):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -264,14 +264,14 @@ def stack_setup_postfit(grps, theta_res_path, signal, shape_uncertainties):
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, scl_dict=unc_dict)
     return grps
 
-def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties, **args):
+def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal, rate_uncertainties)
         kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, shape_uncertainties)
-        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, shape_uncertainties)
+        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
+        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = plot.canvas_setup_post
@@ -350,6 +350,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
     model_func=model_vlqpair.get_model, **kws):
     # def tmp():
     sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
+    print sys_uncerts
     return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func(rate_uncertainties), **kws) +\
         [varial.tools.ToolChain('PostFitPlots', [
             varial.tools.ToolChainParallel('HistoLoaderPost',
