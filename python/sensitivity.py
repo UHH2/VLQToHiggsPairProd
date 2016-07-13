@@ -350,7 +350,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
     model_func=model_vlqpair.get_model, **kws):
     # def tmp():
     sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
-    print sys_uncerts
+    print sys_pat
     return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func(rate_uncertainties), **kws) +\
         [varial.tools.ToolChain('PostFitPlots', [
             varial.tools.ToolChainParallel('HistoLoaderPost',
@@ -368,7 +368,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
             plot.mk_toolchain('HistogramsPostfit',
-                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
                 # auto_legend=False,
