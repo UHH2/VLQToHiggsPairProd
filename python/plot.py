@@ -305,6 +305,7 @@ def make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertain
             rate = nom[s].histo.Integral()
             new_wrp_up.sys_info = 'rate__plus'
             new_wrp_down.sys_info = 'rate__minus'
+            print 'NEW_WRP ', new_wrp_down.sample
             if s in rate_uncertainties:
                 unc = rate_uncertainties[s][1]-1.
                 new_wrp_up.histo.Scale(1+unc)
