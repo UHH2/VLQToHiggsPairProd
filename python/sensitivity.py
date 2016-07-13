@@ -196,7 +196,7 @@ def select_single_sig(signal, list_region):
 
 
 
-def scale_bkg_postfit(wrps, theta_res_path, signal):
+def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -204,15 +204,16 @@ def scale_bkg_postfit(wrps, theta_res_path, signal):
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
         postfit_vals = postfit_vals[signal]
-        for smpl in analysis.rate_uncertainties:
-            s = analysis.rate_uncertainties[smpl][0]
-            prior = analysis.rate_uncertainties[smpl][1]
+        for smpl in rate_uncertainties:
+            ##### CONTINUE HERE: instead of using analysis.rate_uncertainties, pass a variable rate list to avoid discrepancies
+            s = rate_uncertainties[smpl][0]
+            prior = rate_uncertainties[smpl][1]
             constr = postfit_vals.get(s, None)
             if constr:
                 r, _ = constr[0]
                 r = prior**r
             else:
-                varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals.keys())))
                 r = 1.
             bkg_scl_dict[smpl] = r
     except KeyError as e:
@@ -227,13 +228,13 @@ def scale_bkg_postfit(wrps, theta_res_path, signal):
 
 
 
-def loader_hook_postfit(wrps, theta_res_path, signal):
-    wrps = plot.loader_hook_merge_lep_channels(wrps)
-    wrps = scale_bkg_postfit(wrps, theta_res_path, signal)
+def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
+    wrps = plot.loader_hook_merge_lep_channels(wrps, rate_uncertainties)
+    wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     return wrps
 
 
-def stack_setup_postfit(grps, theta_res_path, signal):
+def stack_setup_postfit(grps, theta_res_path, signal, shape_uncertainties):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -241,29 +242,36 @@ def stack_setup_postfit(grps, theta_res_path, signal):
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
         postfit_vals = postfit_vals[signal]
-        for s in analysis.shape_uncertainties:
+        for s in postfit_vals:
+            if s.startswith('_'):
+                continue
+            ##### CONTINUE HERE: convert sflep -> larger constraint of sfel/sfmu
+            ##### CONTINUE HERE: instead of using analysis.shape_uncertainties, pass the list of uncertainties that is also used in the fitting 
             constr = postfit_vals.get(s, None)
             if constr:
                 _, c = constr[0]
             else:
-                varial.monitor.message('sensitivity.stack_setup_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals)))
+                varial.monitor.message('sensitivity.stack_setup_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals.keys())))
                 c = 1.
             unc_dict[s] = c
     except KeyError as e:
         varial.monitor.message('sensitivity.stack_setup_postfit', 'WARNING loading theta result did not work')
         raise e
 
+    for i in ['id', 'trg']:
+        unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
+
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, scl_dict=unc_dict)
     return grps
 
-def plotter_factory_postfit(theta_res_path, signal, **args):
+def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-        kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal)
+        kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal, rate_uncertainties)
         kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
-        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal)
+        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, shape_uncertainties)
+        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, shape_uncertainties)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = plot.canvas_setup_post
@@ -337,9 +345,12 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
         # return tmp
 
 
-def mk_tc_postfit(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model(), **kws):
+def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_uncertainties,
+    rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
+    model_func=model_vlqpair.get_model, **kws):
     # def tmp():
-    return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
+    sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
+    return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func(rate_uncertainties), **kws) +\
         [varial.tools.ToolChain('PostFitPlots', [
             varial.tools.ToolChainParallel('HistoLoaderPost',
                 list(varial.tools.HistoLoader(
@@ -356,7 +367,7 @@ def mk_tc_postfit(brs, signal='', sys_pat=None, selection='', pattern=None, mode
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
             plot.mk_toolchain('HistogramsPostfit',
-                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal),
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
                 # auto_legend=False,

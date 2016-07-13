@@ -63,6 +63,7 @@ def get_model_with_norm(dict_uncerts=None):
             model.set_signal_processes(final_states)
         else:
             model.set_signal_process_groups({'':[]})
+        print dict_uncerts,
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
                 model.add_lognormal_uncertainty(u[0], math.log(u[1]), s)

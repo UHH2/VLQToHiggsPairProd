@@ -335,8 +335,8 @@ all_uncerts = [
     'higgs_smear',
     # 'top_pt_weight',
     'ht_reweight',
-    'sflep_id',
-    'sflep_trg'
+    # 'sflep_id',
+    # 'sflep_trg'
 ]
 
 analysis.shape_uncertainties.update(dict((a, 1.) for a in all_uncerts))
@@ -631,9 +631,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     br_list_th_only[0],
                     filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
                     selection='ThetaLimits',
-                    sys_pat=list(sys_path+'/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+                    sys_path=sys_path,
+                    sys_uncerts=list(i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+                    rate_uncertainties=analysis.rate_uncertainties,
                     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-                    model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+                    model_func=model_vlqpair.get_model_with_norm,
                     hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
                 )),
             ]
