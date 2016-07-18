@@ -266,24 +266,29 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
-def make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties):
+def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties):
 
-    def _grp(wrps):
-        for grp in wrps:
-            grp = sorted(grp, key=lambda w: w.sys_info)
-            # grp = list(grp)
-            # print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
-            grp = gen.group(grp, lambda w: w.sys_info)
-            grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
-            yield grp
+    # def _grp(wrps):
+    #     for grp in wrps:
+    #         grp = sorted(grp, key=lambda w: w.sys_info)
+    #         # grp = list(grp)
+    #         # print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
+    #         grp = gen.group(grp, lambda w: w.sys_info)
+    #         grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
+    #         yield grp
 
 
-    # for wrps in grps:
-    wrps = sorted(wrps, key=lambda w: w.in_file_path)
-    wrps = gen.group(wrps, lambda w: w.in_file_path)
-    wrps = list(_grp(wrps))
+    # # for wrps in grps:
+    # wrps = sorted(wrps, key=lambda w: w.in_file_path)
+    # wrps = gen.group(wrps, lambda w: w.in_file_path)
+    # wrps = list(_grp(wrps))
     # wrps = list(list(ws) for ws in wrps)
-    for grp in wrps:
+    grps = list(grps)
+    for grp in grps:
+        print grp.name
+        grp = sorted(grp, key=lambda w: w.sys_info)
+        grp = gen.group(grp, lambda w: w.sys_info)
+        grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
         nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
         samples = list(w for w in nom)
         uncertainties = grp.keys()
@@ -305,20 +310,28 @@ def make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertain
             rate = nom[s].histo.Integral()
             new_wrp_up.sys_info = 'rate__plus'
             new_wrp_down.sys_info = 'rate__minus'
-            print 'NEW_WRP ', new_wrp_down.sample
+            # print 'NEW_WRP ', new_wrp_down.sample
             if s in rate_uncertainties:
                 unc = rate_uncertainties[s][1]-1.
                 new_wrp_up.histo.Scale(1+unc)
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
         grp['rate'] = rate_unc
-    wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
-    return wrps
+        new_grp = []
+        for g in grp.itervalues():
+            new_grp += g
+        grp = wrappers.WrapperWrapper(new_grp, name=new_grp[0].in_file_path)
+        yield grp
+    # wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
+    # return wrps
+
+# def squash_unc_histos(wrps):
 
 
 
 
-def loader_hook_finalstates_excl(wrps, rate_uncertainties=analysis.rate_uncertainties):
+
+def loader_hook_finalstates_excl(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
@@ -333,7 +346,7 @@ def loader_hook_finalstates_excl(wrps, rate_uncertainties=analysis.rate_uncertai
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
-    wrps = make_uncertainty_histograms(wrps, analysis.rate_uncertainties)
+    # wrps = make_uncertainty_histograms(wrps, analysis.rate_uncertainties)
     return wrps
 
 
@@ -382,7 +395,7 @@ def loader_hook_merge_regions(wrps):
     wrps = varial.gen.gen_add_wrp_info(wrps, in_file_path=get_new_infile_path, region=get_base_selection, sys_info=get_sys_info)
     return wrps
 
-def loader_hook_merge_lep_channels(wrps, rate_uncertainties=analysis.rate_uncertainties):
+def loader_hook_merge_lep_channels(wrps):
     # wrps = merge_regions(wrps)
     # wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
@@ -391,7 +404,7 @@ def loader_hook_merge_lep_channels(wrps, rate_uncertainties=analysis.rate_uncert
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    wrps = make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties)
+    # wrps = make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties)
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
 
@@ -475,6 +488,7 @@ def canvas_setup_post(grps):
 
 
 def stack_setup_norm_sig(grps):
+    grps = make_uncertainty_histograms(grps)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     if varial.settings.flex_sig_norm:
         grps = common_plot.norm_to_bkg(grps)
