@@ -234,7 +234,7 @@ def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     return wrps
 
 
-def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
+def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -248,6 +248,7 @@ def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_
             ##### CONTINUE HERE: convert sflep -> larger constraint of sfel/sfmu
             ##### CONTINUE HERE: instead of using analysis.shape_uncertainties, pass the list of uncertainties that is also used in the fitting 
             constr = postfit_vals.get(s, None)
+            print s, constr
             if constr:
                 _, c = constr[0]
             else:
@@ -267,7 +268,7 @@ def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 
-def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
+def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)

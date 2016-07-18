@@ -338,8 +338,9 @@ def squash_unc_histos(grps, scl_dict):
                 if sys == 'rate':
                     sys = nom.sample + '_rate'
                 scl_fct = scl_dict.get(sys, None)
+                # print sys, scl_fct
                 if not scl_fct:
-                    varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for uncert %s and sample %s, set to 1' % (sys, nom.sample))
+                    # varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for uncert %s and sample %s, set to 1' % (sys, nom.sample))
                     scl_fct = 1.
                 delta.Scale(scl_fct)
                 delta.Add(nom.histo)
