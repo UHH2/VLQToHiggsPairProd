@@ -337,11 +337,17 @@ def squash_unc_histos(grps, scl_dict, rate_uncertainties):
                 sys = h.sys_info.split('__')[0]
                 if sys == 'rate':
                     sys = nom.sample + '_rate'
-                scl_fct = scl_dict.get(sys, None)
-                # print sys, scl_fct
-                if not scl_fct:
-                    # varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for uncert %s and sample %s, set to 1' % (sys, nom.sample))
-                    scl_fct = 1.
+                    prior = rate_uncertainties[nom.sample]
+                    scl_fct = scl_dict.get(sys, None)
+                    if not scl_fct:
+                        varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for RATE uncert %s and sample %s, set to 1' % (sys, nom.sample))
+                        scl_fct = 1.
+                    prior_scl = prior**scl_fct
+                    scl_fct = (prior_scl-1)/(prior-1)
+                else:
+                    scl_fct = scl_dict.get(sys, None)
+                    if not scl_fct:
+                        scl_fct = 1.
                 delta.Scale(scl_fct)
                 delta.Add(nom.histo)
                 h.histo = delta

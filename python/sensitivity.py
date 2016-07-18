@@ -377,14 +377,14 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                 # name='HistogramsPostfit',
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
-            plot.mk_toolchain('HistogramsPostfitCompareUncerts',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                plotter_factory=plot.plotter_factory_uncerts(
-                    hook_loaded_histos=lambda w: plot.loader_hook_uncerts(loader_hook_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties)),
-                    plot_setup=lambda w: plot.plot_setup_uncerts(plot_setup_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts))
-                ),
-                pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-                ), 
+            # plot.mk_toolchain('HistogramsPostfitCompareUncerts',
+            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+            #     plotter_factory=plot.plotter_factory_uncerts(
+            #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(loader_hook_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties)),
+            #         plot_setup=lambda w: plot.plot_setup_uncerts(plot_setup_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts))
+            #     ),
+            #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
+            #     ), 
             ])]
     # return tmp
 
