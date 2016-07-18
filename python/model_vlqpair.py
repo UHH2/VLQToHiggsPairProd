@@ -36,7 +36,7 @@ def get_model(dict_uncerts=None):
             model.set_signal_process_groups({'':[]})
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
-                model.add_lognormal_uncertainty(u[0], math.log(u[1]), s)
+                model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
@@ -66,7 +66,7 @@ def get_model_with_norm(dict_uncerts=None):
         print dict_uncerts,
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
-                model.add_lognormal_uncertainty(u[0], math.log(u[1]), s)
+                model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')
@@ -103,7 +103,7 @@ def get_model_no_norm(dict_uncerts=None):
             model.set_signal_process_groups({'':[]})
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
-                model.add_lognormal_uncertainty(u[0], math.log(u[1]), s)
+                model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')

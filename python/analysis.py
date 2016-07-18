@@ -21,8 +21,8 @@
 
 
 rate_uncertainties = {
-    'TTbar' : 1.10,
-    'WJets' : 1.10,
+    'TTbar' : 1.20,
+    'WJets' : 1.20,
     'QCD' : 2.00,
     'DYJets' : 1.20,
     'SingleTop' : 1.20

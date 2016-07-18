@@ -311,7 +311,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
             new_wrp_down.sys_info = 'rate__minus'
             # print 'NEW_WRP ', new_wrp_down.sample
             if s in rate_uncertainties:
-                unc = rate_uncertainties[s][1]-1.
+                unc = rate_uncertainties[s]-1.
                 new_wrp_up.histo.Scale(1+unc)
                 new_wrp_down.histo.Scale(1-unc)
             rate_unc += [new_wrp_up, new_wrp_down]
@@ -324,7 +324,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
     # wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
     # return wrps
 
-def squash_unc_histos(grps, scl_dict):
+def squash_unc_histos(grps, scl_dict, rate_uncertainties):
     for grp in grps:
         wrps = sorted(grp, key=lambda w: w.sample)
         wrps = list(gen.group(wrps, lambda w: w.sample))
