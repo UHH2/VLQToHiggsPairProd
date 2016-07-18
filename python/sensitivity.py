@@ -208,7 +208,7 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
             ##### CONTINUE HERE: instead of using analysis.rate_uncertainties, pass a variable rate list to avoid discrepancies
             # s = rate_uncertainties[smpl]
             prior = rate_uncertainties[smpl]
-            constr = postfit_vals.get(s, None)
+            constr = postfit_vals.get(smpl+'_rate', None)
             if constr:
                 r, _ = constr[0]
                 r = prior**r
@@ -223,14 +223,15 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     for w in wrps:
         if bkg_scl_dict.get(w.sample, None) and not w.is_signal:
             w.legend = w.legend + ' post-fit'
-            w.histo.Scale(1+r)
+            r = bkg_scl_dict[w.sample]
+            w.histo.Scale(r)
         yield w
 
 
 
 def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     wrps = plot.loader_hook_merge_lep_channels(wrps)
-    # wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
+    wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     return wrps
 
 
@@ -248,7 +249,7 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
             ##### CONTINUE HERE: convert sflep -> larger constraint of sfel/sfmu
             ##### CONTINUE HERE: instead of using analysis.shape_uncertainties, pass the list of uncertainties that is also used in the fitting 
             constr = postfit_vals.get(s, None)
-            print s, constr
+            # print s, constr
             if constr:
                 _, c = constr[0]
             else:
