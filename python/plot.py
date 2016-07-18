@@ -324,9 +324,27 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
     # wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
     # return wrps
 
-# def squash_unc_histos(wrps):
-
-
+def squash_unc_histos(grps, scl_dict):
+    for grp in grps:
+        wrps = sorted(grp, key=lambda w: w.sample)
+        wrps = list(gen.group(wrps, lambda w: w.sample))
+        for w in wrps:
+            sys_wrps = list(sorted(w, key=lambda w: w.sys_info))
+            nom = sys_wrps[0]
+            for h in sys_wrps[1:]:
+                delta = h.histo.Clone()
+                delta.Add(nom.histo, -1)
+                sys = h.sys_info.split('__')[0]
+                if sys == 'rate':
+                    sys = nom.sample + '_rate'
+                scl_fct = scl_dict.get(sys, None)
+                if not scl_fct:
+                    varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for uncert %s and sample %s, set to 1' % (sys, nom.sample))
+                    scl_fct = 1.
+                delta.Scale(scl_fct)
+                delta.Add(nom.histo)
+                h.histo = delta
+        yield grp
 
 
 

@@ -261,7 +261,9 @@ def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_
     for i in ['id', 'trg']:
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
-    # grps = plot.make_uncertainty_histograms(grps, rate_uncertainties=rate_uncertainties, shape_uncertainties=shape_uncertainties)
+    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties=rate_uncertainties, shape_uncertainties=shape_uncertainties)
+    grps = plot.squash_unc_histos(grps, unc_dict)
+    grps = list(grps)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 
@@ -367,7 +369,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     lookup_aliases=False,
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
-            plot.mk_toolchain('HistogramsPostfit3',
+            plot.mk_toolchain('HistogramsPostfit4',
                 plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
