@@ -230,11 +230,11 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
 
 def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     wrps = plot.loader_hook_merge_lep_channels(wrps)
-    wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
+    # wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     return wrps
 
 
-def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties):
+def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -261,18 +261,18 @@ def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties):
     for i in ['id', 'trg']:
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
-    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties=rate_uncertainties)
+    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties=rate_uncertainties, shape_uncertainties=shape_uncertainties)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, scl_dict=unc_dict)
     return grps
 
-def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, **args):
+def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal, rate_uncertainties)
         kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, rate_uncertainties)
-        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, rate_uncertainties)
+        kws['plot_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties)
+        kws['stack_setup'] = lambda w: stack_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = plot.canvas_setup_post
@@ -368,7 +368,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
             plot.mk_toolchain('HistogramsPostfit',
-                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties),
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
                 # auto_legend=False,

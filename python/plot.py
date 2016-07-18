@@ -266,7 +266,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
-def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties):
+def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
 
     # def _grp(wrps):
     #     for grp in wrps:
@@ -285,7 +285,6 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
     # wrps = list(list(ws) for ws in wrps)
     grps = list(grps)
     for grp in grps:
-        print grp.name
         grp = sorted(grp, key=lambda w: w.sys_info)
         grp = gen.group(grp, lambda w: w.sys_info)
         grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
@@ -294,7 +293,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
         uncertainties = grp.keys()
         for unc_name in uncertainties:
             if unc_name:
-                if unc_name.split('__')[0] not in analysis.shape_uncertainties:
+                if unc_name.split('__')[0] not in shape_uncertainties:
                     del grp[unc_name]
                     continue
                 unc_dict = dict((w.sample, w) for w in grp[unc_name])
