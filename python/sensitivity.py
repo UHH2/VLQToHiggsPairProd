@@ -196,6 +196,39 @@ def select_single_sig(signal, list_region):
 
 
 
+
+def squash_unc_histos(grps, scl_dict, rate_uncertainties):
+    for grp in grps:
+        wrps = sorted(grp, key=lambda w: w.sample)
+        wrps = list(gen.group(wrps, lambda w: w.sample))
+        for w in wrps:
+            sys_wrps = list(sorted(w, key=lambda w: w.sys_info))
+            nom = sys_wrps[0]
+            for h in sys_wrps[1:]:
+                delta = h.histo.Clone()
+                delta.Add(nom.histo, -1)
+                sys = h.sys_info.split('__')[0]
+                if sys == 'rate':
+                    sys = nom.sample + '_rate'
+                    prior = rate_uncertainties.get(nom.sample, None)
+                    if not prior:
+                        continue
+                    scl_fct = scl_dict.get(sys, None)
+                    if not scl_fct:
+                        varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for RATE uncert %s and sample %s, set to 1' % (sys, nom.sample))
+                        scl_fct = 1.
+                    prior_scl = prior**scl_fct
+                    scl_fct = (prior_scl-1)/(prior-1)
+                else:
+                    scl_fct = scl_dict.get(sys, None)
+                    if not scl_fct:
+                        scl_fct = 1.
+                delta.Scale(scl_fct)
+                delta.Add(nom.histo)
+                h.histo = delta
+        yield grp
+
+
 def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
@@ -264,7 +297,7 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
     grps = plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
-    grps = plot.squash_unc_histos(grps, unc_dict, rate_uncertainties)
+    grps = squash_unc_histos(grps, unc_dict, rate_uncertainties)
     # grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 

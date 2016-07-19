@@ -268,21 +268,6 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
 
-    # def _grp(wrps):
-    #     for grp in wrps:
-    #         grp = sorted(grp, key=lambda w: w.sys_info)
-    #         # grp = list(grp)
-    #         # print list((g.in_file_path, g.sys_info, g.sample) for g in grp)
-    #         grp = gen.group(grp, lambda w: w.sys_info)
-    #         grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
-    #         yield grp
-
-
-    # # for wrps in grps:
-    # wrps = sorted(wrps, key=lambda w: w.in_file_path)
-    # wrps = gen.group(wrps, lambda w: w.in_file_path)
-    # wrps = list(_grp(wrps))
-    # wrps = list(list(ws) for ws in wrps)
     grps = list(grps)
     for grp in grps:
         grp = sorted(grp, key=lambda w: w.sys_info)
@@ -324,37 +309,6 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
     # wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
     # return wrps
 
-def squash_unc_histos(grps, scl_dict, rate_uncertainties):
-    for grp in grps:
-        wrps = sorted(grp, key=lambda w: w.sample)
-        wrps = list(gen.group(wrps, lambda w: w.sample))
-        for w in wrps:
-            sys_wrps = list(sorted(w, key=lambda w: w.sys_info))
-            nom = sys_wrps[0]
-            for h in sys_wrps[1:]:
-                delta = h.histo.Clone()
-                delta.Add(nom.histo, -1)
-                sys = h.sys_info.split('__')[0]
-                if sys == 'rate':
-                    sys = nom.sample + '_rate'
-                    prior = rate_uncertainties.get(nom.sample, None)
-                    if not prior:
-                        continue
-                    scl_fct = scl_dict.get(sys, None)
-                    if not scl_fct:
-                        varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for RATE uncert %s and sample %s, set to 1' % (sys, nom.sample))
-                        scl_fct = 1.
-                    prior_scl = prior**scl_fct
-                    scl_fct = (prior_scl-1)/(prior-1)
-                else:
-                    scl_fct = scl_dict.get(sys, None)
-                    if not scl_fct:
-                        scl_fct = 1.
-                delta.Scale(scl_fct)
-                delta.Add(nom.histo)
-                h.histo = delta
-        yield grp
-
 
 
 def loader_hook_finalstates_excl(wrps):
@@ -372,7 +326,6 @@ def loader_hook_finalstates_excl(wrps):
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
-    # wrps = make_uncertainty_histograms(wrps, analysis.rate_uncertainties)
     return wrps
 
 
@@ -430,7 +383,6 @@ def loader_hook_merge_lep_channels(wrps):
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps)
-    # wrps = make_uncertainty_histograms(wrps, rate_uncertainties=analysis.rate_uncertainties)
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
 
@@ -463,9 +415,12 @@ def set_line_width(wrps):
             w.histo.SetLineWidth(2)
         yield w
 
-def loader_hook_uncerts(wrps):
+def loader_hook_uncerts(wrps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
 
-    # wrps = loader_hook_finalstates_excl(wrps)
+    wrps = sorted(wrps, key=lambda w: w.in_file_path)
+    wrps = gen.group(wrps, lambda w: w.in_file_path)
+    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
+    wrps = list(w for ws in wrps for w in ws)
     wrps = set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     return wrps
@@ -514,8 +469,8 @@ def canvas_setup_post(grps):
     return grps
 
 
-def stack_setup_norm_sig(grps):
-    grps = make_uncertainty_histograms(grps)
+def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
+    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     if varial.settings.flex_sig_norm:
         grps = common_plot.norm_to_bkg(grps)
@@ -533,14 +488,14 @@ def plot_grouper_by_in_file_path_mod(wrps, separate_th2=True):
     wrps = sorted(wrps, key=lambda w: w.scale+'___'+w.in_file_path)
     return gen.group(wrps, key_func=lambda w: w.scale+'___'+w.in_file_path)
 
-def plotter_factory_stack(**args):
+def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = loader_hook_finalstates_excl
         kws['plot_grouper'] = plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = stack_setup_norm_sig
-        kws['stack_setup'] = stack_setup_norm_sig
+        kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties)
+        kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = canvas_setup_post
@@ -551,19 +506,14 @@ def plotter_factory_stack(**args):
     return tmp
 
 
-def plotter_factory_uncerts(**args):
+def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-        kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w))
+        kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w), rate_uncertainties, shape_uncertainties)
         kws['plot_grouper'] = lambda w: group_by_uncerts(w, 
             lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
         kws['plot_setup'] = plot_setup_uncerts
-        # kws['stack_setup'] = stack_setup_norm_sig
-        # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-        # kws['y_axis_scale'] = 'lin'
-        # kws['save_name_func'] = lambda w: w.save_name
-        # kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_decorators'] = [
             common_plot.BottomPlotUncertRatio,
             varial.rendering.Legend,

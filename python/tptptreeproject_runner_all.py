@@ -328,10 +328,10 @@ all_uncerts = [
     'sfel_id',
     'sfel_trg',
     'pu',
-    'PDF',
-    'ScaleVar',
+    # 'PDF',
+    # 'ScaleVar',
     'rate',
-    'PSScale',
+    # 'PSScale',
     'higgs_smear',
     # 'top_pt_weight',
     'ht_reweight',
@@ -683,7 +683,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
                     #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
-                    #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int,
+                    #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
                     #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
                     # plot.mk_toolchain('HistogramsNoData', plot.less_samples_to_plot_only_th, 
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
@@ -693,7 +693,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
                     #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])),
-                    #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates),
+                    #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_compare_finalstates),
                     #             ),
                     # # # plot.mk_toolchain_pull('HistogramsPull', [output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                     # # #             + list(sys_path+'/%s*/*.root'% i for i in uncerts)
@@ -722,20 +722,20 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             raise_on_empty_result=False
                             ) for g in plot.less_samples_to_plot_only_th)),
                         plot.mk_toolchain('HistogramsMerged',
-                            plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         plot.mk_toolchain('HistogramsMergedCompareUncerts',
                             filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                            plotter_factory=plot.plotter_factory_uncerts(hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
+                            plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),                                            
                         # plot.mk_toolchain('HistogramsMergedNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                        #     plotter_factory=plot.plotter_factory_stack(
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
                         #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
                         #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
                         #         ),
                         #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsMergedNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                        #     plotter_factory=plot.plotter_factory_stack(
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
                         #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
                         #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
                         #         canvas_decorators=[
@@ -745,12 +745,12 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         #         ),
                         #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsMergedNoData', filter_keyfunc=lambda w: not w.is_data,
-                        #     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                         #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsNormToInt',
                         #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
                         #             pattern=None, input_result_path='../HistoLoader*',
-                        #             plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_norm_to_int,
+                        #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
                         #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
                         ]),
                     
@@ -769,14 +769,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #     ),
                     #     plot.mk_toolchain('HistogramsMerged', pattern=None, input_result_path='../HistoLoader',
                     #         filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #         plotter_factory=plot.plotter_factory_stack(
+                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
                     #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
                     #             # hook_canvas_post_build=lambda w: plot.canvas_setup_post(common_plot.mod_shift_leg(w))
                     #             )
                     #         ),
                     #     plot.mk_toolchain('HistogramsNoData', pattern=None, input_result_path='../HistoLoader',
                     #         filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #         plotter_factory=plot.plotter_factory_stack(
+                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
                     #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
                     #             # hook_canvas_post_build=lambda w: plot.canvas_setup_post(common_plot.mod_shift_leg(w))
                     #             )
@@ -794,7 +794,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         hook_loaded_histos=plot.loader_hook_merge_regions,
                     #     ),
                     #     plot.mk_toolchain('HistogramsMerged',
-                    #         plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                     #         pattern=None, input_result_path='../HistoLoader'),
                     #     CountTable([
                     #             table_block_signal,
@@ -1002,7 +1002,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
-            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
