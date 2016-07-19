@@ -457,12 +457,13 @@ def loader_hook_compare_finalstates(wrps):
     return wrps
 
 
+def set_line_width(wrps):
+    for w in wrps:
+        if isinstance(w, wrappers.HistoWrapper):
+            w.histo.SetLineWidth(2)
+        yield w
+
 def loader_hook_uncerts(wrps):
-    def set_line_width(wrps):
-        for w in wrps:
-            if isinstance(w, wrappers.HistoWrapper):
-                w.histo.SetLineWidth(2)
-            yield w
 
     # wrps = loader_hook_finalstates_excl(wrps)
     wrps = set_line_width(wrps)

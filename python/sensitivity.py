@@ -231,7 +231,7 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
 
 def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     wrps = plot.loader_hook_merge_lep_channels(wrps)
-    # wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
+    wrps = scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     return wrps
 
 
@@ -264,7 +264,7 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
     grps = plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
-    # grps = plot.squash_unc_histos(grps, unc_dict, rate_uncertainties)
+    grps = plot.squash_unc_histos(grps, unc_dict, rate_uncertainties)
     # grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 
@@ -348,6 +348,17 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
         return [loader, plotter, limits]
         # return tmp
 
+def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties):
+    wrps = loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties)
+    wrps = plot.loader_hook_uncerts(wrps)
+    wrps = sorted(wrps, key=lambda w: w.in_file_path)
+    wrps = gen.group(wrps, lambda w: w.in_file_path)
+    wrps = plot_setup_postfit(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties)
+    wrps = list(w for ws in wrps for w in ws)
+    wrps = plot.set_line_width(wrps)
+    wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
+    return wrps
+
 
 def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_uncertainties,
     rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
@@ -370,7 +381,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     lookup_aliases=False,
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
-            plot.mk_toolchain('HistogramsPostfit5',
+            plot.mk_toolchain('HistogramsPostfit4',
                 plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
@@ -378,14 +389,14 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                 # name='HistogramsPostfit',
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
-            # plot.mk_toolchain('HistogramsPostfitCompareUncerts',
-            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-            #     plotter_factory=plot.plotter_factory_uncerts(
-            #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(loader_hook_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties)),
-            #         plot_setup=lambda w: plot.plot_setup_uncerts(plot_setup_postfit(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts))
-            #     ),
-            #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-            #     ), 
+            plot.mk_toolchain('HistogramsPostfitCompareUncerts',
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                plotter_factory=plot.plotter_factory_uncerts(
+                    hook_loaded_histos=lambda w: loader_hook_split_uncert(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
+                    plot_setup=plot.plot_setup_uncerts
+                ),
+                pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
+                ), 
             ])]
     # return tmp
 
