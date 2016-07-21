@@ -20,7 +20,7 @@ from varial.extensions import git, limits
 
 
 varial.settings.max_num_processes = 24
-varial.settings.max_open_root_files = 993
+varial.settings.max_open_root_files = 1500
 
 # if len(sys.argv) < 2:
 #     print 'Provide output dir!'
@@ -543,10 +543,15 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
     def mk_tc_tp():
         return [
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.samples_w_data),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.samples_w_data),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.bpbp_signal_samples,
+                name='TreeProjectorBB'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.samples_no_data, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectors'),
+            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
+                samples=treeproject_tptp.bpbp_signal_samples, params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsBB'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_syst, weights,
             #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectorsBkg'),
@@ -1002,7 +1007,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
@@ -1030,7 +1035,7 @@ def run_treeproject_and_plot(output_dir):
                         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
                     },
                     # br_list=br_list_all,
-                    # uncertainties=all_uncerts+['ht_reweight']
+                    uncertainties=all_uncerts
                 ),
                 # make_tp_plot_chain('NoReweighting', base_path, output_dir+'/RunAnalysis', 
                 #     add_uncert_func=add_all_without_weight_uncertainties,

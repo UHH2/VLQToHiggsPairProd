@@ -219,6 +219,7 @@ def squash_unc_histos(grps, scl_dict, rate_uncertainties):
                         scl_fct = 1.
                     prior_scl = prior**scl_fct
                     scl_fct = (prior_scl-1)/(prior-1)
+                    setattr(nom, sys+'_post', (prior_scl-1)*100.)
                 else:
                     scl_fct = scl_dict.get(sys, None)
                     if not scl_fct:
@@ -390,6 +391,10 @@ def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, s
     wrps = list(w for ws in wrps for w in ws)
     wrps = plot.set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
+    wrps = list(wrps)
+    print 'LENGTH', len(wrps)
+    for w in wrps:
+        print w.in_file_path, w.sample, w.sys_info
     return wrps
 
 
@@ -414,7 +419,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     lookup_aliases=False,
                     raise_on_empty_result=False
                     ) for g in plot.less_samples_to_plot_only_th)),
-            plot.mk_toolchain('HistogramsPostfit4',
+            plot.mk_toolchain('HistogramsPostfit',
                 plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
@@ -424,9 +429,8 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                 ),
             plot.mk_toolchain('HistogramsPostfitCompareUncerts',
                 filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                plotter_factory=plot.plotter_factory_uncerts(
+                plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
                     hook_loaded_histos=lambda w: loader_hook_split_uncert(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
-                    plot_setup=plot.plot_setup_uncerts
                 ),
                 pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
                 ), 

@@ -276,6 +276,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
         nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
         samples = list(w for w in nom)
         uncertainties = grp.keys()
+        print 'UNCERTAINTIES', uncertainties
         for unc_name in uncertainties:
             if unc_name:
                 if unc_name.split('__')[0] not in shape_uncertainties:
@@ -287,20 +288,22 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
                         new_wrp = op.copy(nom[s])
                         new_wrp.sys_info = unc_name
                         grp[unc_name].append(new_wrp)
-        rate_unc = []
-        for s in samples:
-            new_wrp_up = op.copy(nom[s])
-            new_wrp_down = op.copy(nom[s])
-            rate = nom[s].histo.Integral()
-            new_wrp_up.sys_info = 'rate__plus'
-            new_wrp_down.sys_info = 'rate__minus'
-            # print 'NEW_WRP ', new_wrp_down.sample
-            if s in rate_uncertainties:
-                unc = rate_uncertainties[s]-1.
-                new_wrp_up.histo.Scale(1+unc)
-                new_wrp_down.histo.Scale(1-unc)
-            rate_unc += [new_wrp_up, new_wrp_down]
-        grp['rate'] = rate_unc
+        if not any(g in uncertainties for g in ['rate__plus', 'rate__minus']):
+            rate_unc = []
+            for s in samples:
+                new_wrp_up = op.copy(nom[s])
+                new_wrp_down = op.copy(nom[s])
+                rate = nom[s].histo.Integral()
+                new_wrp_up.sys_info = 'rate__plus'
+                new_wrp_down.sys_info = 'rate__minus'
+                # print 'NEW_WRP ', new_wrp_down.sample
+                if s in rate_uncertainties:
+                    unc = rate_uncertainties[s]-1.
+                    new_wrp_up.histo.Scale(1+unc)
+                    new_wrp_down.histo.Scale(1-unc)
+                    setattr(nom[s], s+'_rate_prior', unc*100.)
+                rate_unc += [new_wrp_up, new_wrp_down]
+            grp['rate'] = rate_unc
         new_grp = []
         for g in grp.itervalues():
             new_grp += g
@@ -416,10 +419,9 @@ def set_line_width(wrps):
         yield w
 
 def loader_hook_uncerts(wrps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
-
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     wrps = gen.group(wrps, lambda w: w.in_file_path)
-    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
+    wrps = make_uncertainty_histograms(wrps, rate_uncertainties, shape_uncertainties)
     wrps = list(w for ws in wrps for w in ws)
     wrps = set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))

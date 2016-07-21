@@ -102,8 +102,6 @@ def tmp(smpl_grp):
         if not sum_events % 10000:
             print 'at event:', sum_events, name
         sum_events += 1
-        if sum_events > 10000:
-            break
         scale_uncert = e.genInfo.originalXWGTUP()
         for i in xrange(100):
             sum_weight_pdf[i] += e.genInfo.systweights()[pdf_offset + i]/scale_uncert
@@ -124,8 +122,6 @@ pool = Pool(24)
 weight_list = list(pool.imap_unordered(tmp, smpl_grps))
 weight_dict_pdf = dict((n, p) for n, p, _ in weight_list)
 weight_dict_scale = dict((n, s) for n, _, s in weight_list)
-pprint.pprint(weight_dict_pdf)
-pprint.pprint(weight_dict_scale)
 with open('weight_dict_pdf_'+out_name, 'a') as f:
     f.write(repr(weight_dict_pdf))
 with open('weight_dict_scale_'+out_name, 'a') as f:
