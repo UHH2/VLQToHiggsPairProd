@@ -276,7 +276,6 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
         nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
         samples = list(w for w in nom)
         uncertainties = grp.keys()
-        print 'UNCERTAINTIES', uncertainties
         for unc_name in uncertainties:
             if unc_name:
                 if unc_name.split('__')[0] not in shape_uncertainties:

@@ -26,17 +26,29 @@ dict_factors_original = {
     'tztz' : 0.111,
     'thbw' : 0.222,
     'thtz' : 0.222,
-    'tzbw' : 0.222
+    'tzbw' : 0.222,
+    'twtw' : 0.111,
+    'bhbh' : 0.111,
+    'bzbz' : 0.111,
+    'bhtw' : 0.222,
+    'bhbz' : 0.222,
+    'bztw' : 0.222
 }
 
 def make_factors_new(brs):
     dict_factors_new = {
-        'bwbw' : brs['bw']*brs['bw'],
-        'thth' : brs['th']*brs['th'],
-        'tztz' : brs['tz']*brs['tz'],
-        'thbw' : brs['th']*brs['bw']*2,
-        'thtz' : brs['th']*brs['tz']*2,
-        'tzbw' : brs['tz']*brs['bw']*2
+        'bwbw' : brs['w']*brs['w'],
+        'thth' : brs['h']*brs['h'],
+        'tztz' : brs['z']*brs['z'],
+        'thbw' : brs['h']*brs['w']*2,
+        'thtz' : brs['h']*brs['z']*2,
+        'tzbw' : brs['z']*brs['w']*2,
+        'twtw' : brs['w']*brs['w'],
+        'bhbh' : brs['h']*brs['h'],
+        'bzbz' : brs['z']*brs['z'],
+        'bhtw' : brs['h']*brs['w']*2,
+        'bhbz' : brs['h']*brs['z']*2,
+        'bztw' : brs['z']*brs['w']*2
     }
     return dict_factors_new
 
@@ -118,6 +130,7 @@ def loader_hook_scale_excl(wrps, brs=None):
     # wrps = list(wrps)
     # for w in wrps: print w.category, w.sys_info,  w.sample
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=True)
+    wrps = vlq_common.merge_decay_channels(wrps, ['_bhbh', '_bhbz', '_bhtw', '_noH_bzbz', '_noH_bztw', '_noH_twtw'], print_warning=True)
     # wrps = common_plot.merge_finalstates_channels(wrps, [
     #     'thbw',
     #     'thth',

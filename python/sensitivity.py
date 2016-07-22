@@ -80,15 +80,20 @@ signals_to_use = [
 ]
 
 final_states_to_use = [
-    '_thth',
-    '_thtz',
+    # '_thth',
+    # '_thtz',
     '_thbw',
-    '_noH_tztz',
-    '_noH_tzbw',
-    '_noH_bwbw',
+    # '_bhbh',
+    # '_bhbz',
+    '_bhtw',
+    # '_noH_tztz',
+    # '_noH_tzbw',
+    # '_noH_bwbw',
+    # '_noH_bzbz',
+    # '_noH_bztw',
+    # '_noH_twtw',
 ]
 
-datasets_to_use = backgrounds_to_use + signals_to_use + ['Run2015CD']
 
 back_plus_data = backgrounds_to_use + ['Run2015CD']
 
@@ -215,7 +220,7 @@ def squash_unc_histos(grps, scl_dict, rate_uncertainties):
                         continue
                     scl_fct = scl_dict.get(sys, None)
                     if not scl_fct:
-                        varial.monitor.message('plot.squash_unc_histos', 'WARNING no constraint found for RATE uncert %s and sample %s, set to 1' % (sys, nom.sample))
+                        # varial.monitor.message('sensitivity.squash_unc_histos', 'WARNING no constraint found for RATE uncert %s and sample %s, set to 1' % (sys, nom.sample))
                         scl_fct = 1.
                     prior_scl = prior**scl_fct
                     scl_fct = (prior_scl-1)/(prior-1)
@@ -247,7 +252,7 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
                 r, _ = constr[0]
                 r = prior**r
             else:
-                varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (s, str(postfit_vals.keys())))
+                # varial.monitor.message('sensitivity.scale_bkg_postfit', 'WARNING syst uncertainty %s not found. Possible uncertainties: %s' % (smpl+'_rate', str(postfit_vals.keys())))
                 r = 1.
             bkg_scl_dict[smpl] = r
     except KeyError as e:
@@ -392,23 +397,20 @@ def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, s
     wrps = plot.set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     wrps = list(wrps)
-    print 'LENGTH', len(wrps)
-    for w in wrps:
-        print w.in_file_path, w.sample, w.sys_info
     return wrps
 
 
 def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_uncertainties,
     rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
-    model_func=model_vlqpair.get_model, **kws):
+    model_func=model_vlqpair.get_model(analysis.rate_uncertainties), filter_plots = lambda _: True, **kws):
     # def tmp():
     sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
-    return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func(rate_uncertainties), **kws) +\
+    return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
         [varial.tools.ToolChain('PostFitPlots', [
             varial.tools.ToolChainParallel('HistoLoaderPost',
                 list(varial.tools.HistoLoader(
                     pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
-                    filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                    filter_keyfunc=lambda w: filter_plots(w) and any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
                         'Region_Comb' not in w.in_file_path and\
                         any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
                             'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
@@ -428,7 +430,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
             plot.mk_toolchain('HistogramsPostfitCompareUncerts',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
                 plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
                     hook_loaded_histos=lambda w: loader_hook_split_uncert(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
                 ),

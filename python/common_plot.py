@@ -31,6 +31,18 @@ normfactors = {
     'TpTp_M-1600' : 1./0.001148,
     'TpTp_M-1700' : 1./0.000666,
     'TpTp_M-1800' : 1./0.000391,
+    'BpBp_M-0700' : 1./0.455,
+    'BpBp_M-0800' : 1./0.196,
+    'BpBp_M-0900' : 1./0.0903,
+    'BpBp_M-1000' : 1./0.0440,
+    'BpBp_M-1100' : 1./0.0224,
+    'BpBp_M-1200' : 1./0.0118,
+    'BpBp_M-1300' : 1./0.00639,
+    'BpBp_M-1400' : 1./0.00354,
+    'BpBp_M-1500' : 1./0.00200,
+    'BpBp_M-1600' : 1./0.001148,
+    'BpBp_M-1700' : 1./0.000666,
+    'BpBp_M-1800' : 1./0.000391,
 }
 
 normfactors_wrong = {
@@ -314,7 +326,7 @@ mod_dict = {
 
 
 
-signal_indicators = ['TpTp_']
+signal_indicators = ['TpTp_', 'BpBp_']
 
 #====SELECT_FILES FUNCTIONS====
 
