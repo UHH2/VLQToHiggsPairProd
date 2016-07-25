@@ -64,20 +64,20 @@ backgrounds_to_use = [
     'SingleTop',
 ]
 
-signals_to_use = [
-    'TpTp_M-0700',
-    'TpTp_M-0800',
-    'TpTp_M-0900',
-    'TpTp_M-1000',
-    'TpTp_M-1100',
-    'TpTp_M-1200',
-    'TpTp_M-1300',
-    'TpTp_M-1400',
-    'TpTp_M-1500',
-    'TpTp_M-1600',
-    'TpTp_M-1700',
-    'TpTp_M-1800',
-]
+# signals_to_use = [
+#     'TpTp_M-0700',
+#     'TpTp_M-0800',
+#     'TpTp_M-0900',
+#     'TpTp_M-1000',
+#     'TpTp_M-1100',
+#     'TpTp_M-1200',
+#     'TpTp_M-1300',
+#     'TpTp_M-1400',
+#     'TpTp_M-1500',
+#     'TpTp_M-1600',
+#     'TpTp_M-1700',
+#     'TpTp_M-1800',
+# ]
 
 final_states_to_use = [
     '_thth',
@@ -382,7 +382,8 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
             canvas_decorators=[
                         # varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
                         varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
-                        ]
+                        ],
+            raise_on_no_histograms=False
             )
         return [loader, plotter, sys_loader, limits, postfit, corr_mat, corr_plotter] # post_loader, plotter_postfit, 
     else:

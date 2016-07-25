@@ -19,7 +19,7 @@ def _start_job_submitter():
 
 treeproject = TreeProjector
 
-if True:
+if False:
     treeproject = BatchTreeProjector
     job_proc = mp.Process(target=_start_job_submitter)
     job_proc.start()
