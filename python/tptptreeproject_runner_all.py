@@ -10,6 +10,7 @@ import os
 import glob
 import sys
 import pprint
+import ast
 # import varial.analysis as analysis
 from ROOT import TLatex
 import cPickle
@@ -111,7 +112,7 @@ br_list_thbw = [{
 
 
 
-tptp_signal_samples = [
+tptp_signals = [
     'TpTp_M-0700',
     'TpTp_M-0800',
     'TpTp_M-0900',
@@ -141,9 +142,15 @@ bpbp_signal_samples = [
     'BpBp_M-1800',
 ]
 
-def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only, model_func=model_vlqpair.get_model(), signals=tptp_signal_samples):
-
+def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, br_list=br_list_th_only, model_func=model_vlqpair.get_model(), signals=tptp_signals, filter_func=sensitivity.select_single_sig(all_regions), **kws):
     def tmp():
+        arg_dict = {
+            'selection' : 'ThetaLimits',
+            'sys_pat' : sys_pat,
+            'pattern' : [os.path.join(base_path, name)+'/TreeProject/TreeProjector/*.root'],
+            'model_func' : model_func
+        }
+        arg_dict.update(**kws)
         limit_list = []
         for ind, brs_ in enumerate(br_list):
             # if ind > 5: break
@@ -153,12 +160,8 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions, b
                     sig, sensitivity.mk_limit_tc_single(
                         brs_,
                         sig,
-                        filter_keyfunc=sensitivity.select_single_sig(sig, list_region),
-                        selection='ThetaLimits',
-                        sys_pat=sys_pat,
-                        pattern=[os.path.join(base_path, name)+'/TreeProject/TreeProjector*/*.root'],
-                        model_func=model_func
-                        # select_no_sig(),
+                        filter_keyfunc=filter_func(sig),
+                        **arg_dict
                     ))
                 for sig in signals)
             ))
@@ -579,10 +582,15 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     else:
         weights = treeproject_tptp.sample_weights_def
 
+
+    weight_dict_ht_rew_tptp = {}
+    for d in glob.glob('weight_dict_ht_rew_tptp*'):
+        with open(d) as f:
+            weight_dict_ht_rew_tptp.update(ast.literal_eval(f.read()))
     sig_ht_weights = dict(weights)
-    sig_ht_weights.update(dict((f, treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight) for f in tptp_signal_samples))
-
-
+    sig_ht_weights_rate = dict(weights)
+    sig_ht_weights.update(dict((f, treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight+'/'+str(weight_dict_ht_rew_tptp[f])) for f in treeproject_tptp.tptp_signal_samples))
+    sig_ht_weights_rate.update(dict((f, treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight) for f in treeproject_tptp.tptp_signal_samples))
 
     def mk_tc_tp():
         return [
@@ -598,10 +606,17 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights, samples=treeproject_tptp.tptp_signal_samples,
                 name='TreeProjectorHTSignal'),
             treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
-                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight) for f in tptp_signal_samples)
+                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight+'/'+str(weight_dict_ht_rew_tptp[f])) for f in treeproject_tptp.tptp_signal_samples)
                         })(base_path, final_regions_all, sig_ht_weights,
                 samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
                 name='SysTreeProjectorsHTSignal'),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights_rate, samples=treeproject_tptp.tptp_signal_samples,
+                name='TreeProjectorHTSignalRate'),
+            treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
+                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight) for f in treeproject_tptp.tptp_signal_samples)
+                        })(base_path, final_regions_all, sig_ht_weights_rate,
+                samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsHTSignalRate'),
         ]
 
     sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors' % name
@@ -619,6 +634,24 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         if 'PSScale' in wrp.file_path:
             return False
         return True
+
+
+    def select_sig_htrew(list_region, tp_path):
+        def sel_sig(signal):
+            def tmp(wrp):
+                if (wrp.file_path.endswith('.root')
+                        # and name in wrp.file_path
+                        and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
+                        and wrp.in_file_path.endswith('ST')
+                        and (any(a in wrp.file_path for a in sensitivity.back_plus_data)
+                            or any(signal+f in wrp.file_path for f in sensitivity.final_states_to_use))
+                        and all(a not in wrp.file_path for a in sensitivity.datasets_not_to_use)
+                        and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))
+                        and ((tp_path in wrp.file_path and 'TpTp' in wrp.file_path) or 'TpTp' not in wrp.file_path)):
+                    return True
+            return tmp
+        return sel_sig
+
 
     def mk_tc_sens():
         uncerts = uncertainties or get_sys_dir()
@@ -742,14 +775,39 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
             #     signals=bpbp_signal_samples
             #     )),
-            sensitivity.mk_tc('TTLimitsAllUncertsAllRegionsWithNormTHBW', mk_limit_list_syst(
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormNOSigRew', mk_limit_list_syst(
                 output_dir,
                 name,
-                list(sys_path+'*/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+                [sys_path+'/ht_reweight*/*.root'],
                 all_regions,
-                br_list=br_list_thbw,
+                br_list=br_list_th_only,
                 model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
-                signals=tptp_signal_samples
+                signals=tptp_signals
+                )),
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRew', mk_limit_list_syst(
+                output_dir,
+                name,
+                [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignal/ht_reweight*/*.root'],
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+                signals=tptp_signals,
+                filter_func=select_sig_htrew(all_regions, 'HTSignal/'),
+                pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
+                    os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignal/*.root'],
+                )),
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRewUncOnly', mk_limit_list_syst(
+                output_dir,
+                name,
+                [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignalUncOnly/ht_reweight*/*.root'],
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+                signals=tptp_signals,
+                filter_func=select_sig_htrew(all_regions, 'HTSignalUncOnly/'),
+                pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
+                    os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignalUncOnly/*.root'],
+                lookup_aliases=False
                 )),
         ]
         if name == 'HTReweighting':
@@ -1117,7 +1175,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
             # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
-            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
 

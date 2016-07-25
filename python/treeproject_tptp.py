@@ -562,8 +562,8 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
     )
     sample_weights_reweight_down = dict(sample_weights)
     sample_weights_reweight_up = dict(sample_weights)
-    sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*'+weight) for proc, weight in weight_dict.iteritems()))
-    sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/'+weight) for proc, weight in weight_dict.iteritems()))
+    sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*('+weight+')') for proc, weight in weight_dict.iteritems()))
+    sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/('+weight+')') for proc, weight in weight_dict.iteritems()))
     sys_sec_sel_weight_reweight_weight = (
         (weight_name+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
         (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))

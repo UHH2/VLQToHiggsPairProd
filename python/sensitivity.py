@@ -186,18 +186,20 @@ def select_no_sig(list_region):
             return True
     return tmp
 
-def select_single_sig(signal, list_region):
-    def tmp(wrp):
-        if (wrp.file_path.endswith('.root')
-                # and name in wrp.file_path
-                and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
-                and wrp.in_file_path.endswith('ST')
-                and (any(a in wrp.file_path for a in back_plus_data)
-                    or any(signal+f in wrp.file_path for f in final_states_to_use))
-                and all(a not in wrp.file_path for a in datasets_not_to_use)
-                and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
-            return True
-    return tmp
+def select_single_sig(list_region):
+    def sel_sig(signal):
+        def tmp(wrp):
+            if (wrp.file_path.endswith('.root')
+                    # and name in wrp.file_path
+                    and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
+                    and wrp.in_file_path.endswith('ST')
+                    and (any(a in wrp.file_path for a in back_plus_data)
+                        or any(signal+f in wrp.file_path for f in final_states_to_use))
+                    and all(a not in wrp.file_path for a in datasets_not_to_use)
+                    and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
+                return True
+        return tmp
+    return sel_sig
 
 
 
