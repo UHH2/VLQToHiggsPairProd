@@ -50,25 +50,37 @@ pdf_offset = 110
 #     name = name.replace('MC_', 'Signal_') # MC_TpT_TH_LH_M1600
 #     return name
 
-# fix_messup_name = {
-#     'TpTp_M-1600' : 'TpTp_M-0700',
-#     'TpTp_M-1700' : 'TpTp_M-0800',
-#     'TpTp_M-1800' : 'TpTp_M-0900',
-#     'TpTp_M-700' : 'TpTp_M-1000',
-#     'TpTp_M-800' : 'TpTp_M-1100',
-#     'TpTp_M-900' : 'TpTp_M-1200',
-#     'TpTp_M-1000' : 'TpTp_M-1300',
-#     'TpTp_M-1100' : 'TpTp_M-1400',
-#     'TpTp_M-1200' : 'TpTp_M-1500',
-#     'TpTp_M-1300' : 'TpTp_M-1600',
-#     'TpTp_M-1400' : 'TpTp_M-1700',
-#     'TpTp_M-1500' : 'TpTp_M-1800',
-# }
+fix_messup_name = {
+    'TpTp_M-700' : 'TpTp_M-0700',
+    'TpTp_M-800' : 'TpTp_M-0800',
+    'TpTp_M-900' : 'TpTp_M-0900',
+    'TpTp_M-1600' : 'TpTp_M-1600',
+    'TpTp_M-1700' : 'TpTp_M-1700',
+    'TpTp_M-1800' : 'TpTp_M-1800',
+    'TpTp_M-1000' : 'TpTp_M-1000',
+    'TpTp_M-1100' : 'TpTp_M-1100',
+    'TpTp_M-1200' : 'TpTp_M-1200',
+    'TpTp_M-1300' : 'TpTp_M-1300',
+    'TpTp_M-1400' : 'TpTp_M-1400',
+    'TpTp_M-1500' : 'TpTp_M-1500',
+    'BpBp_M-700' : 'BpBp_M-0700',
+    'BpBp_M-800' : 'BpBp_M-0800',
+    'BpBp_M-900' : 'BpBp_M-0900',
+    'BpBp_M-1600' : 'BpBp_M-1600',
+    'BpBp_M-1700' : 'BpBp_M-1700',
+    'BpBp_M-1800' : 'BpBp_M-1800',
+    'BpBp_M-1000' : 'BpBp_M-1000',
+    'BpBp_M-1100' : 'BpBp_M-1100',
+    'BpBp_M-1200' : 'BpBp_M-1200',
+    'BpBp_M-1300' : 'BpBp_M-1300',
+    'BpBp_M-1400' : 'BpBp_M-1400',
+    'BpBp_M-1500' : 'BpBp_M-1500',
+}
 
 def get_name(smpl):
     name = get_basename(smpl)
     name = name.replace('MC_', '')
-    # name = fix_messup_name[name]
+    name = fix_messup_name[name]
     return name
 
 

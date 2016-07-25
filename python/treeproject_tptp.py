@@ -19,7 +19,7 @@ def _start_job_submitter():
 
 treeproject = TreeProjector
 
-if False:
+if True:
     treeproject = BatchTreeProjector
     job_proc = mp.Process(target=_start_job_submitter)
     job_proc.start()
@@ -144,7 +144,7 @@ more_histos = {
 more_histos.update(core_histos)
 
 
-signals = [
+tptp_signals = [
     'TpTp_M-0700',
     'TpTp_M-0800',
     'TpTp_M-0900',
@@ -174,14 +174,14 @@ bpbp_signals = [
     'BpBp_M-1800',
 ]
 
-signals_important = [
+tptp_signals_important = [
     'TpTp_M-0800',
     'TpTp_M-1000',
     'TpTp_M-1200',
     'TpTp_M-1600',
 ]
 
-signals_rest = [
+tptp_signals_rest = [
     'TpTp_M-0700',
     'TpTp_M-0900',
     # 'TpTp_M-1000',
@@ -194,7 +194,7 @@ signals_rest = [
     'TpTp_M-1800',
 ]
 
-final_states = [
+tptp_final_states = [
     '_thth',
     '_thtz',
     '_thbw',
@@ -222,14 +222,14 @@ background_samples = [
     'WJets',
 ]
 
-signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals))
-signal_samples_important = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals_important))
-signal_samples_rest = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in signals_rest))
-signal_samples_reduced = reduce(lambda x, y: x+y, (list(g + f for f in final_states) for g in ['TpTp_M-0800', 'TpTp_M-1600']))
+tptp_signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals))
+tptp_signal_samples_important = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals_important))
+tptp_signal_samples_rest = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals_rest))
+tptp_signal_samples_reduced = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in ['TpTp_M-0800', 'TpTp_M-1600']))
 bpbp_signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in bpbp_final_states) for g in bpbp_signals))
 
-samples_w_data = background_samples + signal_samples + ['Run2015CD']
-samples_no_data = background_samples + signal_samples
+samples_w_data = background_samples + tptp_signal_samples + ['Run2015CD']
+samples_no_data = background_samples + tptp_signal_samples
 
 base_weight = 'weight'
 
@@ -256,7 +256,7 @@ sample_weights_def = {
     'WJets' : base_weight,
     'Run2015CD' : '1',
 }
-sample_weights_def.update(dict((f, 'weight') for f in signal_samples))
+sample_weights_def.update(dict((f, 'weight') for f in tptp_signal_samples))
 sample_weights_def.update(dict((f, 'weight') for f in bpbp_signal_samples))
 
 
@@ -463,8 +463,8 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
             weight_dict_pdf.update(ast.literal_eval(f.read()))
     weight_dict_pdf.update(dict((smpl, ['1']*100) for smpl in samples_no_data if smpl not in weight_dict_pdf))
     weight_dict_pdf.update(dict((smpl_fix, weight_dict_pdf[smpl]) for (smpl_fix, smpl) in itertools.izip(['BpBp_M-0700', 'BpBp_M-0800', 'BpBp_M-0900'], ['BpBp_M-700', 'BpBp_M-800', 'BpBp_M-900'])))
-    for g in final_states:
-        weight_dict_pdf.update(dict((s+g, weight_dict_pdf[s]) for s in signals))
+    for g in tptp_final_states:
+        weight_dict_pdf.update(dict((s+g, weight_dict_pdf[s]) for s in tptp_signals))
     for g in bpbp_final_states:
         weight_dict_pdf.update(dict((s+g, weight_dict_pdf[s]) for s in bpbp_signals))
     # sys_params_pdf = {
@@ -516,8 +516,8 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
             weight_dict_scale.update(ast.literal_eval(f.read()))
     weight_dict_scale.update(dict((smpl, ['1']*9) for smpl in samples_no_data if smpl not in weight_dict_scale))
     weight_dict_scale.update(dict((smpl_fix, weight_dict_scale[smpl]) for (smpl_fix, smpl) in itertools.izip(['BpBp_M-0700', 'BpBp_M-0800', 'BpBp_M-0900'], ['BpBp_M-700', 'BpBp_M-800', 'BpBp_M-900'])))
-    for g in final_states:
-        weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in signals))
+    for g in tptp_final_states:
+        weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in tptp_signals))
     for g in bpbp_final_states:
         weight_dict_scale.update(dict((s+g, weight_dict_scale[s]) for s in bpbp_signals))
     sys_sec_sel_weight_scalevar = list(

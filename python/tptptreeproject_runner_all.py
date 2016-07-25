@@ -538,15 +538,15 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
         return tmp
     return add_uncerts
 
-# def add_only_weight_uncertainties(dict_weight_uncerts):
-#     def add_uncerts(base_path, regions, weights, samples, params):
-#         def tmp():
-#             sys_tps = []
-#             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
-#                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
-#             return sys_tps
-#         return tmp
-#     return add_uncerts
+def add_only_weight_uncertainties(dict_weight_uncerts):
+    def add_uncerts(base_path, regions, weights, samples, params):
+        def tmp():
+            sys_tps = []
+            for weight_name, weight_dict in dict_weight_uncerts.iteritems():
+                sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params)
+            return sys_tps
+        return tmp
+    return add_uncerts
 
 def add_all_without_weight_uncertainties(base_path, regions, weights, samples, params):
     pdf_params = params if params == treeproject_tptp.st_only_params else treeproject_tptp.st_plus_jets_params
@@ -579,34 +579,29 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     else:
         weights = treeproject_tptp.sample_weights_def
 
+    sig_ht_weights = dict(weights)
+    sig_ht_weights.update(dict((f, treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight) for f in tptp_signal_samples))
+
+
 
     def mk_tc_tp():
         return [
             # treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.samples_w_data),
-            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.bpbp_signal_samples,
-                name='TreeProjectorBB'),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.bpbp_signal_samples,
+            #     name='TreeProjectorBB'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.samples_no_data, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectors'),
-            treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-                samples=treeproject_tptp.bpbp_signal_samples, params=treeproject_tptp.sys_params),
-                name='SysTreeProjectorsBB'),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_syst, weights,
-            #     samples=treeproject_tptp.background_samples, params=treeproject_tptp.sys_params),
-            #     name='SysTreeProjectorsBkg'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            #     samples=treeproject_tptp.signal_samples_important, params=treeproject_tptp.st_only_params),
-            #     name='SysTreeProjectorsSigImportant'),
-            # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            # # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_syst, weights,
-            #     samples=treeproject_tptp.signal_samples_rest, params=treeproject_tptp.st_only_params),
-            #     name='SysTreeProjectorsSigRest'),
-            # # # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            # # #     samples=treeproject_tptp.signal_samples, params=treeproject_tptp.st_only_params),
-            # # #     name='SysTreeProjectorsSig'),
-            # # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
-            # #     samples=treeproject_tptp.samples_no_data, params=treeproject_tptp.sys_params),
-            # #     name='SysTreeProjectors'),
+            #     samples=treeproject_tptp.bpbp_signal_samples, params=treeproject_tptp.sys_params),
+            #     name='SysTreeProjectorsBB'),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights, samples=treeproject_tptp.tptp_signal_samples,
+                name='TreeProjectorHTSignal'),
+            treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
+                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight) for f in tptp_signal_samples)
+                        })(base_path, final_regions_all, sig_ht_weights,
+                samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsHTSignal'),
         ]
 
     sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors' % name
@@ -738,15 +733,15 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #         analysis.rate_uncertainties),
             #     signals=tptp_signal_samples
             #     )),
-            sensitivity.mk_tc('BBLimitsAllUncertsAllRegionsWithNormTHBW', mk_limit_list_syst(
-                output_dir,
-                name,
-                list(sys_path+'*/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
-                all_regions,
-                br_list=br_list_thbw,
-                model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
-                signals=bpbp_signal_samples
-                )),
+            # sensitivity.mk_tc('BBLimitsAllUncertsAllRegionsWithNormTHBW', mk_limit_list_syst(
+            #     output_dir,
+            #     name,
+            #     list(sys_path+'*/%s*/*.root'% i for i in uncerts if all(g not in i for g in ['Norm', 'ScaleVar'])),
+            #     all_regions,
+            #     br_list=br_list_thbw,
+            #     model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+            #     signals=bpbp_signal_samples
+            #     )),
             sensitivity.mk_tc('TTLimitsAllUncertsAllRegionsWithNormTHBW', mk_limit_list_syst(
                 output_dir,
                 name,
@@ -1119,10 +1114,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     
     return varial.tools.ToolChain(name, [
-            # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
+            varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
             # varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
-            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
 

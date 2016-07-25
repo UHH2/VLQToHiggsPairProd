@@ -80,18 +80,18 @@ signals_to_use = [
 ]
 
 final_states_to_use = [
-    # '_thth',
-    # '_thtz',
+    '_thth',
+    '_thtz',
     '_thbw',
-    # '_bhbh',
-    # '_bhbz',
+    '_bhbh',
+    '_bhbz',
     '_bhtw',
-    # '_noH_tztz',
-    # '_noH_tzbw',
-    # '_noH_bwbw',
-    # '_noH_bzbz',
-    # '_noH_bztw',
-    # '_noH_twtw',
+    '_noH_tztz',
+    '_noH_tzbw',
+    '_noH_bwbw',
+    '_noH_bzbz',
+    '_noH_bztw',
+    '_noH_twtw',
 ]
 
 
