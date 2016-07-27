@@ -266,7 +266,7 @@ def mk_cutflow_chain_cat(category, loader_hook, datasets):
 
 #=======FOR ALL PLOTS=======
 
-def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
+def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
 
     grps = list(grps)
     for grp in grps:
@@ -287,7 +287,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
                         new_wrp = op.copy(nom[s])
                         new_wrp.sys_info = unc_name
                         grp[unc_name].append(new_wrp)
-        if not any(g in uncertainties for g in ['rate__plus', 'rate__minus']):
+        if not any(g in uncertainties for g in ['rate__plus', 'rate__minus']) and include_rate:
             rate_unc = []
             for s in samples:
                 new_wrp_up = op.copy(nom[s])
@@ -417,10 +417,10 @@ def set_line_width(wrps):
             w.histo.SetLineWidth(2)
         yield w
 
-def loader_hook_uncerts(wrps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
+def loader_hook_uncerts(wrps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     wrps = gen.group(wrps, lambda w: w.in_file_path)
-    wrps = make_uncertainty_histograms(wrps, rate_uncertainties, shape_uncertainties)
+    wrps = make_uncertainty_histograms(wrps, rate_uncertainties, shape_uncertainties, include_rate)
     wrps = list(w for ws in wrps for w in ws)
     wrps = set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
@@ -470,8 +470,8 @@ def canvas_setup_post(grps):
     return grps
 
 
-def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties):
-    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
+def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
+    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     if varial.settings.flex_sig_norm:
         grps = common_plot.norm_to_bkg(grps)
@@ -489,14 +489,14 @@ def plot_grouper_by_in_file_path_mod(wrps, separate_th2=True):
     wrps = sorted(wrps, key=lambda w: w.scale+'___'+w.in_file_path)
     return gen.group(wrps, key_func=lambda w: w.scale+'___'+w.in_file_path)
 
-def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
+def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = loader_hook_finalstates_excl
         kws['plot_grouper'] = plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties)
-        kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties)
+        kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
+        kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = canvas_setup_post
@@ -507,11 +507,11 @@ def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_
     return tmp
 
 
-def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, **args):
+def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-        kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w), rate_uncertainties, shape_uncertainties)
+        kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w), rate_uncertainties, shape_uncertainties, include_rate)
         kws['plot_grouper'] = lambda w: group_by_uncerts(w, 
             lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
         kws['plot_setup'] = plot_setup_uncerts

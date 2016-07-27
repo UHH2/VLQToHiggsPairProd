@@ -676,66 +676,66 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # #     )),
 
             # compare the background modelling for different sets of systematic uncertainties
-            # varial.tools.ToolChain(
-            #     'BackgroundOnlyFitNoTheoryCR',
-            #     sensitivity.mk_tc_postfit(
-            #         br_list_th_only[0],
-            #         filter_keyfunc=lambda w: sensitivity.select_no_sig(cr_only_regions)(w) and unselect_theory_uncert(w),
-            #         selection='ThetaLimits',
-            #         sys_path=sys_path,
-            #         # sys_uncerts=list(i for i in all_uncerts if all(g not in i for g in ['ScaleVar', 'PSScale', 'PDF'])),
-            #         sys_uncerts=all_uncerts,
-            #         rate_uncertainties=analysis.rate_uncertainties,
-            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-            #         model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
-            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15),
-            #         filter_plots=unselect_theory_uncert,
-            #     )),
-            # varial.tools.ToolChain(
-            #     'BackgroundOnlyFitWithTheoryCR',
-            #     sensitivity.mk_tc_postfit(
-            #         br_list_th_only[0],
-            #         filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
-            #         selection='ThetaLimits',
-            #         sys_path=sys_path,
-            #         sys_uncerts=all_uncerts,
-            #         rate_uncertainties=analysis.rate_uncertainties,
-            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-            #         model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
-            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
-            #     )),
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitNoTheoryCR',
+                sensitivity.mk_tc_postfit(
+                    br_list_th_only[0],
+                    filter_keyfunc=lambda w: sensitivity.select_no_sig(cr_only_regions)(w) and unselect_theory_uncert(w),
+                    selection='ThetaLimits',
+                    sys_path=sys_path,
+                    # sys_uncerts=list(i for i in all_uncerts if all(g not in i for g in ['ScaleVar', 'PSScale', 'PDF'])),
+                    sys_uncerts=all_uncerts,
+                    rate_uncertainties=analysis.rate_uncertainties,
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15),
+                    filter_plots=unselect_theory_uncert,
+                )),
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitWithTheoryCR',
+                sensitivity.mk_tc_postfit(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+                    selection='ThetaLimits',
+                    sys_path=sys_path,
+                    sys_uncerts=all_uncerts,
+                    rate_uncertainties=analysis.rate_uncertainties,
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
 
-            # # post-fit distributions and event yields - or use plots above? check Zprime analysis
-            # varial.tools.ToolChain(
-            #     'BackgroundOnlyFitNoTheoryAllRegions',
-            #     sensitivity.mk_tc_postfit(
-            #         br_list_th_only[0],
-            #         filter_keyfunc=sensitivity.select_no_sig(all_regions),
-            #         selection='ThetaLimits',
-            #         sys_path=sys_path,
-            #         sys_uncerts=list(i for i in all_uncerts if all(g not in i for g in ['ScaleVar', 'PSScale', 'PDF'])),
-            #         rate_uncertainties=analysis.rate_uncertainties,
-            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-            #         model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
-            #             '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
-            #             analysis.rate_uncertainties),
-            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
-            #     )),
+            # post-fit distributions and event yields - or use plots above? check Zprime analysis
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitNoTheoryAllRegions',
+                sensitivity.mk_tc_postfit(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(all_regions),
+                    selection='ThetaLimits',
+                    sys_path=sys_path,
+                    sys_uncerts=list(i for i in all_uncerts if all(g not in i for g in ['ScaleVar', 'PSScale', 'PDF'])),
+                    rate_uncertainties=analysis.rate_uncertainties,
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
+                        '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
+                        analysis.rate_uncertainties),
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
 
-            # # this is just a check that does not go into AN or PAS
-            # varial.tools.ToolChain(
-            #     'BackgroundOnlyFitWithTheoryAllRegions',
-            #     sensitivity.mk_tc_postfit(
-            #         br_list_th_only[0],
-            #         filter_keyfunc=sensitivity.select_no_sig(all_regions),
-            #         selection='ThetaLimits',
-            #         sys_path=sys_path,
-            #         sys_uncerts=all_uncerts,
-            #         rate_uncertainties=analysis.rate_uncertainties,
-            #         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
-            #         model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
-            #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
-            #     )),
+            # this is just a check that does not go into AN or PAS
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitWithTheoryAllRegions',
+                sensitivity.mk_tc_postfit(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(all_regions),
+                    selection='ThetaLimits',
+                    sys_path=sys_path,
+                    sys_uncerts=all_uncerts,
+                    rate_uncertainties=analysis.rate_uncertainties,
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
             ]
         lim_list += [
             # # sensitivity.mk_tc('LimitsAllUncertsAllRegionsNoNorm', mk_limit_list_syst(
@@ -748,75 +748,75 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # #     )),
 
             # compare the expected limits for different sets of systematic uncertainties
-            # sensitivity.mk_tc('TTLimitsNoTheoryAllRegions', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     filter_func=unselect_theory_uncert_single_sig(all_regions),
-            #     )),
-            # sensitivity.mk_tc('TTLimitsWithTheoryAllRegions', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     )),
+            sensitivity.mk_tc('TTLimitsNoTheoryAllRegions', mk_limit_list_syst(
+                output_dir,
+                name,
+                list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals,
+                filter_func=unselect_theory_uncert_single_sig(all_regions),
+                )),
+            sensitivity.mk_tc('TTLimitsWithTheoryAllRegions', mk_limit_list_syst(
+                output_dir,
+                name,
+                list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
+                signals=treeproject_tptp.tptp_signals,
+                )),
 
-            # # compare impact of HT reweighting on signal                                           
-            # sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormNOSigRew', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     [sys_path+'/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals
-            #     )),
-            # sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRew', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignal/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     filter_func=select_sig_htrew(all_regions, 'HTSignal/'),
-            #     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
-            #         os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignal/*.root'],
-            #     )),
-            # sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRewUncOnly', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignalUncOnly/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     filter_func=select_sig_htrew(all_regions, 'HTSignalUncOnly/'),
-            #     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
-            #         os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignalUncOnly/*.root'],
-            #     lookup_aliases=False
-            #     )),
+            # compare impact of HT reweighting on signal                                           
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormNOSigRew', mk_limit_list_syst(
+                output_dir,
+                name,
+                [sys_path+'/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals
+                )),
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRew', mk_limit_list_syst(
+                output_dir,
+                name,
+                [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignal/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals,
+                filter_func=select_sig_htrew(all_regions, 'HTSignal/'),
+                pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
+                    os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignal/*.root'],
+                )),
+            sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormSigRewUncOnly', mk_limit_list_syst(
+                output_dir,
+                name,
+                [sys_path+'/ht_reweight*/*.root', sys_path+'HTSignalUncOnly/ht_reweight*/*.root', sys_path+'/ScaleVar*/*.root'],
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals,
+                filter_func=select_sig_htrew(all_regions, 'HTSignalUncOnly/'),
+                pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
+                    os.path.join(output_dir, name)+'/TreeProject/TreeProjectorHTSignalUncOnly/*.root'],
+                lookup_aliases=False
+                )),
             
-            # # final limits with all BRs
-            # sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
-            #     all_regions,
-            #     br_list=br_list_all,
-            #     model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
-            #         '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
-            #         analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     filter_func=unselect_theory_uncert_single_sig(all_regions),
-            #     )),
+            # final limits with all BRs
+            sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
+                output_dir,
+                name,
+                list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
+                all_regions,
+                br_list=br_list_all,
+                model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
+                    '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
+                    analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals,
+                filter_func=unselect_theory_uncert_single_sig(all_regions),
+                )),
             sensitivity.mk_tc('BBLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
                 output_dir,
                 name,
@@ -902,6 +902,12 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
                                 pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
                                 + list(sys_path+'/%s*/*.root'% i for i in uncerts)
+                                ),
+                    plot.mk_toolchain('HistogramsNoTheory', plot.less_samples_to_plot_only_th, 
+                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
+                                + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                                filter_keyfunc=unselect_theory_uncert,
+                                plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True)
                                 ),                                             
                     # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
                     #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
@@ -1016,50 +1022,26 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             raise_on_empty_result=False
                             ) for g in plot.less_samples_to_plot_only_th)),
                         plot.mk_toolchain('Histograms',
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         plot.mk_toolchain('HistogramsCompUncerts',
                             filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                            plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
+                            plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
                             filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
                                 hook_loaded_histos=plot.loader_hook_compare_finalstates,
                                 # hook_canvas_post_build=lambda w: plot.canvas_setup_post(common_plot.mod_shift_leg(w))
                                 )
                             ),
                         plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
                             filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
                                 hook_loaded_histos=plot.loader_hook_compare_finalstates,
                                 # hook_canvas_post_build=lambda w: plot.canvas_setup_post(common_plot.mod_shift_leg(w))
                                 )
                             )
-                        # plot.mk_toolchain('HistogramsNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                        #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                        #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
-                        #         ),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # plot.mk_toolchain('HistogramsNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                        #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                        #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
-                        #         canvas_decorators=[
-                        #             varial.rendering.BottomPlotRatioPullErr,
-                        #             varial.rendering.Legend,
-                        #             ]
-                        #         ),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # plot.mk_toolchain('HistogramsNoData', filter_keyfunc=lambda w: not w.is_data,
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # plot.mk_toolchain('HistogramsNormToInt',
-                        #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
-                        #             pattern=None, input_result_path='../HistoLoader*',
-                        #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
-                        #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
                         ]),
 
 
@@ -1163,11 +1145,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         #     hook_loaded_histos=plot.loader_hook_merge_regions,
                         # ),
                         plot.mk_toolchain('Histograms',
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         plot.mk_toolchain('HistogramsCompUncerts',
                             filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                            plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
+                            plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         CountTable([
                                 table_block_signal,
@@ -1249,6 +1231,60 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
 
                         ]),
 
+                    varial.tools.ToolChain('TablesSplitLeptonNoTheory', [
+                        varial.tools.ToolChainParallel('HistoLoader',
+                            list(varial.tools.HistoLoader(
+                                pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                                    'Region_Comb' not in w.in_file_path and\
+                                    any(w.in_file_path.endswith(f) for f in ['ST']) and\
+                                    unselect_theory_uncert(w),
+                                # hook_loaded_histos=plot.loader_hook_merge_regions,
+                                name='HistoLoader_'+g,
+                                lookup_aliases=False,
+                                raise_on_empty_result=False
+                                ) for g in plot.more_samples)),
+                        plot.mk_toolchain('Histograms', plot.more_samples, 
+                                pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                                plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True)
+                                ),  
+                        CountTable([
+                                table_block_signal,
+                                table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            get_table_category_block_split('Mu45'),
+                            name='CountTableMu45'
+                            ),
+                        CountTable([
+                                table_block_signal,
+                                table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            get_table_category_block_split('El45'),
+                            name='CountTableEl45'
+                            ),
+                        EffTable([
+                                table_block_signal,
+                            ],
+                            get_table_category_block_split('Mu45'),
+                            norm_factors,
+                            squash_errs=True,
+                            name='EffTableMu45'
+                            ),
+                        EffTable([
+                                table_block_signal,
+                            ],
+                            get_table_category_block_split('El45'),
+                            norm_factors,
+                            squash_errs=True,
+                            name='EffTableEl45'
+                            ),
+
+                        ]),
+
                     varial.tools.WebCreator(),
                     
 
@@ -1279,28 +1315,30 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     path_pas = os.path.join(output_dir, name+'/PlotPAS')
     def mk_tc_an():
         tc_tex = [
-            tex_content.mk_autoContentSignalControlRegion(path_an+'/Histograms', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),
-            tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHists/Histograms/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
-            # tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHists/HistogramsNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
-            tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHists/HistogramsNormToInt/StackedAll', 'NormedSystPlotsCombinedMore_'+name),
+            tex_content.mk_autoContentSignalControlRegion(path_an+'/HistogramsNoTheory', 'El45', 'Mu45', 'WithDataFinalRegions_'+name),
+            tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/Histograms/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
+            # tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/HistogramsNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
+            tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/HistogramsNormToInt/StackedAll', 'NormedSystPlotsCombinedMore_'+name),
             # tex_content.mk_compSystematicPlots(path_an+'/HistogramsCompUncerts', treeproject_tptp.ttbar_smpl, 'El45', 'Mu45', 'CompUncertPlotsTTbar_'+name),
-            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHists/HistogramsCompUncerts', treeproject_tptp.ttbar_smpl, '', 'CompUncertPlotsTTbar_'+name),
-            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHists/HistogramsCompUncerts', 'WJets', '', 'CompUncertPlotsWJets_'+name),
-            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHists/HistogramsCompUncerts', 'TpTp_M-0800_thth', '', 'CompUncertPlotsTpTpM0800_'+name),
-            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHists/HistogramsCompUncerts', 'TpTp_M-1600_thth', '', 'CompUncertPlotsTpTpM1600_'+name),
-            tex_content.mk_autoContentLimits(path_sens, 'El45', 'Mu45', 'LimitPlots_'+name),
-            tex_content.mk_autoContentLimitsLarge(path_sens, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
+            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', treeproject_tptp.ttbar_smpl, '', 'CompUncertPlotsTTbar_'+name),
+            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', 'WJets', '', 'CompUncertPlotsWJets_'+name),
+            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', 'TpTp_M-0800_thth', '', 'CompUncertPlotsTpTpM0800_'+name),
+            tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', 'TpTp_M-1600_thth', '', 'CompUncertPlotsTpTpM1600_'+name),
+            tex_content.mk_autoContentCompareSplitWithMergedLep(path_pas+'/Histograms/StackedAll', path_pas+'/MergeChannelsHistsNoTheory/Histograms/StackedAll', 'Sideband', 'El45', 'Mu45', 'WithDataSidebandRegions_'+name),
+            tex_content.mk_autoContentLimits(path_sens, 'TTLimitsNoTheory%sFinal', 'TTLimitPlots_'+name),
+            tex_content.mk_autoContentLimits(path_sens, 'BBLimitsNoTheory%sFinal', 'BBLimitPlots_'+name),
+            # tex_content.mk_autoContentLimitsLarge(path_sens, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
             # tex_content.mk_autoContentLimits(path_sens_old, 'El45', 'Mu45', 'LimitPlotsOld_'+name),
             # tex_content.mk_autoContentLimitsLarge(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
             tex_content.mk_autoContentSysTabs(path_sens, 'El45', 'Mu45', 'SysTabs_'+name, mass_points=['M-0800', 'M-1200', 'M-1600']),
             ######## TABLES ########
-            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/EffTable/count_table_content.tex', name='EffTable_'+name),
-            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
-            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTables/CountTable/count_table_content.tex', name='CountTable_'+name),
-            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
-            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
-            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
-            tex_content.mk_autoEffCount(path_an+'/TablesSplitLepton/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTablesNoTheory/EffTable/count_table_content.tex', name='EffTable_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTablesNoTheory/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
+            tex_content.mk_autoEffCount(path_an+'/MergeChannelsTablesNoTheory/CountTable/count_table_content.tex', name='CountTable_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/EffTableEl45/count_table_content.tex', name='EffTableEl45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
+            tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
 
             ######### DEPRECATED #########
             # # tex_content.mk_autoContentSystematicCRPlots(path_an+'/Histograms', 'El45', 'Mu45', 'SystematicCRPlots_'+name),
@@ -1360,7 +1398,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoEffCount(path_pas+'/MergeChannelsTables/EffTable/count_table_content.tex', name='EffTable_'+name),
             tex_content.mk_autoEffCount(path_pas+'/MergeChannelsTables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS_'+name),
             tex_content.mk_autoEffCount(path_pas+'/MergeChannelsTables/CountTable/count_table_content.tex', name='CountTable_'+name),
-            tex_content.mk_autoContentControlRegion(path_pas+'/Histograms/StackedAll', path_pas+'/MergeChannelsHists/Histograms/StackedAll', 'Sideband', 'El45', 'Mu45', 'WithDataSidebandRegions_'+name),
+            tex_content.mk_autoContentCompareSplitWithMergedLep(path_pas+'/Histograms/StackedAll', path_pas+'/MergeChannelsHists/Histograms/StackedAll', 'Sideband', 'El45', 'Mu45', 'WithDataSidebandRegions_'+name),
             
             ######### DEPRECATED #########
             # # tex_content.mk_autoContentHiggsVarCombinedMore(path_pas+'/MergeChannelsHistsCombFinalStates/Histograms/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
