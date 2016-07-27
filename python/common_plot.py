@@ -2,6 +2,7 @@ import os
 import copy
 import pprint
 import cPickle
+import math
 
 import varial.analysis
 import varial.generators as gen
@@ -13,7 +14,7 @@ import varial.operations as op
 import varial.wrappers
 import varial.util as util
 
-from ROOT import THStack, TH2, TLatex
+from ROOT import THStack, TH2, TLatex, kFALSE
 
 lumi_times_pure_BR = 2630.*0.111
 lumi_times_mixed_BR = 2630.*0.222
@@ -51,23 +52,54 @@ normfactors = {
     'BpBp_M-1800' : 1./0.000391,
 }
 
-normfactors_wrong = {
+pas_normfactors = {
     # 'TpTp' : 20.,
     # '_thX' : 1./0.56,
     # '_other' : 1./0.44,
-    'TpTp_M-0700' : (1./0.455)*(1748747./1769230.),
-    'TpTp_M-0800' : (1./0.196)*(4145693./4021428.),
-    'TpTp_M-0900' : (1./0.0903)*(9189878./9196013.),
-    'TpTp_M-1000' : (1./0.0440)*(18700000./18604545.),
-    'TpTp_M-1100' : (1./0.0224)*(36678571./36107142.),
-    'TpTp_M-1200' : (1./0.0118)*(70576271./69305084.),
-    'TpTp_M-1300' : (1./0.00639)*(129953051./129577464.),
-    'TpTp_M-1400' : (1./0.00354)*(235254237./233559322.),
-    'TpTp_M-1500' : (1./0.00200)*(406100000./416000000.),
-    'TpTp_M-1600' : (1./0.001148)*(804000000./704878048.),
-    'TpTp_M-1700' : (1./0.000666)*(1664800000./1194594594.),
-    'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
+    # '_thth' : 1./0.111,
+    'TpTp_M-0700' : 10.,
+    'TpTp_M-0800' : 10.,
+    'TpTp_M-0900' : 10.,
+    'TpTp_M-1000' : 10.,
+    'TpTp_M-1100' : 100.,
+    'TpTp_M-1200' : 100.,
+    'TpTp_M-1300' : 100.,
+    'TpTp_M-1400' : 100.,
+    'TpTp_M-1500' : 1000.,
+    'TpTp_M-1600' : 1000.,
+    'TpTp_M-1700' : 1000.,
+    'TpTp_M-1800' : 1000.,
+    # 'BpBp_M-0700' : 1./0.455,
+    # 'BpBp_M-0800' : 1./0.196,
+    # 'BpBp_M-0900' : 1./0.0903,
+    # 'BpBp_M-1000' : 1./0.0440,
+    # 'BpBp_M-1100' : 1./0.0224,
+    # 'BpBp_M-1200' : 1./0.0118,
+    # 'BpBp_M-1300' : 1./0.00639,
+    # 'BpBp_M-1400' : 1./0.00354,
+    # 'BpBp_M-1500' : 1./0.00200,
+    # 'BpBp_M-1600' : 1./0.001148,
+    # 'BpBp_M-1700' : 1./0.000666,
+    # 'BpBp_M-1800' : 1./0.000391,
 }
+
+# normfactors_wrong = {
+#     # 'TpTp' : 20.,
+#     # '_thX' : 1./0.56,
+#     # '_other' : 1./0.44,
+#     'TpTp_M-0700' : (1./0.455)*(1748747./1769230.),
+#     'TpTp_M-0800' : (1./0.196)*(4145693./4021428.),
+#     'TpTp_M-0900' : (1./0.0903)*(9189878./9196013.),
+#     'TpTp_M-1000' : (1./0.0440)*(18700000./18604545.),
+#     'TpTp_M-1100' : (1./0.0224)*(36678571./36107142.),
+#     'TpTp_M-1200' : (1./0.0118)*(70576271./69305084.),
+#     'TpTp_M-1300' : (1./0.00639)*(129953051./129577464.),
+#     'TpTp_M-1400' : (1./0.00354)*(235254237./233559322.),
+#     'TpTp_M-1500' : (1./0.00200)*(406100000./416000000.),
+#     'TpTp_M-1600' : (1./0.001148)*(804000000./704878048.),
+#     'TpTp_M-1700' : (1./0.000666)*(1664800000./1194594594.),
+#     'TpTp_M-1800' : (1./0.000391)*(3331200000./2112020460.),
+# }
 
 norm_reg_dict = {
     'Baseline' : 5,
@@ -80,17 +112,13 @@ norm_reg_dict = {
 }
 
 def get_style():
-    if varial.settings.style == 'PAS':
-        return [varial.rendering.BottomPlotRatioSplitErr,
-            varial.rendering.Legend,
-            varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
-            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
-            ]
-    else:
-        return [varial.rendering.BottomPlotRatioSplitErr,
-            varial.rendering.Legend,
-            varial.rendering.TextBox(textbox=TLatex(0.65, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
-            ]
+    # _style = style or varial.settings.style
+    return [
+        varial.rendering.Legend,
+        varial.rendering.BottomPlotRatioSplitErr,
+        # varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
+        varial.rendering.TextBox(textbox=TLatex(0.68, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
+        ]
 
 mod_dict = {
 
@@ -127,11 +155,30 @@ mod_dict = {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 1e-3,
+            'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+                              (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
+            'y_max_fct' : 1.8,
+            'y_title' : '100',
             },
     'ST_rebin_flex' : {
             'title' : 'S_{T} [GeV]',
-            'y_max_log_fct' : 1000.,
+            'y_max_log_fct' : 30000.,
             'y_min_gr_zero' : 2e-3,
+            'set_leg_2_col_log' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.67,
+                    'label_width': 0.30,
+                    'label_height': 0.045,
+                    'box_text_size' : 0.035,
+                    'opt': 'f',
+                    'opt_data': 'pl',
+                    'reverse': True,
+                    'sort_legend' : lambda w: 'TT ' in w[1],
+                },
+            'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+                              (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
+            'y_max_fct' : 1.8,
+            'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")
             },
     'HT' : {
             'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
@@ -231,6 +278,20 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 0.1,
             },
+    'topjets[0].m_pt' : {
+            'rebin' : 30,
+            'title' : 'p_{T} (1st AK8 Jet) [GeV]',
+            'y_max_fct' : 1.5,
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
+            },
+    'topjets[1].m_pt' : {
+            'rebin' : 30,
+            'title' : 'p_{T} (2nd AK8 Jet) [GeV]',
+            'y_max_fct' : 1.5,
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 0.1,
+            },
     'n_ak4' : {
             'title' : 'N(AK4 jets)',
             'y_max_log_fct' : 10000.,
@@ -277,9 +338,71 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             'scale' : 0.2
             },
+    'nomass_boost_1b_mass_softdrop' : {
+            'rebin' : 30,
+            'title' : 'M_{soft-drop}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'y_min_gr_zero' : 0.4,
+            'y_max_log_fct' : 1000.,
+            },
+    'nomass_boost_2b_mass_softdrop' : {
+            'rebin' : list(i + 40 for i in xrange(0, 260, 10)),
+            # 'rebin' : [40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 260., 280., 300.],
+            'y_max_fct' : 1.8,
+            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            'scale' : 0.2,
+            'set_leg_1_col_lin' : {
+                    'x_pos': 0.67,
+                    'y_pos': 0.67,
+                    'label_width': 0.30,
+                    'label_height': 0.040,
+                    'box_text_size' : 0.033,
+                    'opt': 'f',
+                    'opt_data': 'pl',
+                    'reverse': True,
+                    'sort_legend' : lambda w: 'TT ' in w[1],
+                }
+            },
+    'nomass_boost_2b_mass_softdrop_rebin_flex' : {
+            'y_max_fct' : 3.,
+            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'y_title' : '10',
+            'y_min_gr_zero' : 0.02,
+            'y_max_log_fct' : 1000.,
+            'scale' : 0.2,
+            'no_exp' : True,
+            'set_leg_1_col_lin' : {
+                    'x_pos': 0.65,
+                    'y_pos': 0.68,
+                    'label_width': 0.30,
+                    'label_height': 0.040,
+                    'box_text_size' : 0.033,
+                    'opt': 'f',
+                    'opt_data': 'pl',
+                    'reverse': True,
+                    'sort_legend' : lambda w: 'TT ' in w[1],
+                },
+            'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+                              (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
+            },
     'nobtag_boost_mass_nsjbtags' : {
             'title' : 'N(subjet b tags)',
-            'y_min_gr_zero' : 10,
+            'y_min_gr_zero' : 100,
+            'y_max_log_fct' : 50.,
+            'set_leg_1_col_log' : {
+                    'x_pos': 0.65,
+                    'y_pos': 0.67,
+                    'label_width': 0.30,
+                    'label_height': 0.040,
+                    'box_text_size' : 0.033,
+                    'opt': 'f',
+                    'opt_data': 'pl',
+                    'reverse': True,
+                    'sort_legend' : lambda w: 'TT ' in w[1],
+                },
+            'text_box_log' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+                              (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'noboost_mass_1b_pt' : {
             'title' : 'p_{T}(Higgs tag, 1 subjet b-tag) [GeV]',
@@ -312,6 +435,18 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'set_leg_2_col_log' : True
+            },
+    'n_higgs_tags_1b_med_sm10' : {
+            'title' : 'N(Higgs tag, 1 subjet b-tag)',
+            'y_max_log_fct' : 1000.,
+            'y_min_gr_zero' : 3e-3,
+            # 'set_leg_2_col_log' : True
+            },
+    'n_higgs_tags_2b_med_sm10' : {
+            'y_max_log_fct' : 1000.,
+            'title' : 'N(Higgs tag, 2 subjet b-tags)',
+            'y_min_gr_zero' : 1e-3,
+            # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_1b_med' : {
             'title' : 'N(Higgs tag, 1 subjet b-tag)',
@@ -417,7 +552,7 @@ def norm_to_int(wrps, use_bin_width=False):
         yield w
 
 # @history.track_history
-def scale_signal(wrp, fct=1.):
+def scale_signal(wrp, fct=1., show_tot_scl=False):
     if not hasattr(wrp, 'is_scaled'):
         if fct >= 5:
             fct = int(fct)
@@ -436,10 +571,18 @@ def scale_signal(wrp, fct=1.):
             op.add_wrp_info(wrp, scl_fct=lambda _: fct)
         wrp.histo.Scale(fct)
         op.add_wrp_info(wrp, is_scaled=lambda w: True)
-        if fct >= 1:
-            wrp.legend +=' (%.2g pb)' % fct
-        elif fct < 1:
-            wrp.legend +=' (%.1g pb)' % fct
+        if ' #times' in wrp.legend:
+            wrp.legend = wrp.legend[:wrp.legend.find(' #times')]
+        if show_tot_scl:
+            if wrp.scl_fct >= 1:
+                wrp.legend +=' (#times %.2d)' % int(wrp.scl_fct)
+            elif wrp.scl_fct < 1:
+                wrp.legend +=' (#times %.1d)' % int(wrp.scl_fct)
+        else:
+            if fct >= 1:
+                wrp.legend +=' (#times %.2d)' % fct
+            elif fct < 1:
+                wrp.legend +=' (#times %.1d)' % fct
     # else:
     #     print 'WARNING! histogram '+wrp.in_file_path+' already scaled'
 
@@ -477,7 +620,7 @@ def norm_stack_to_integral(grps):
                 w.histo_sys_err.Scale(1./integr_err)
         yield g
 
-def norm_to_fix_xsec(wrps):
+def norm_to_fix_xsec(wrps, show_tot_scl=False):
     for w in wrps:
         if w.is_signal:
             base_fct = 20.
@@ -489,8 +632,22 @@ def norm_to_fix_xsec(wrps):
                 mult_fct = mod_wrp_dict.get('scale', None)
                 if mult_fct:
                     base_fct *= mult_fct
-            scale_signal(w, base_fct)            
+            scale_signal(w, base_fct, show_tot_scl)            
         yield w
+
+# def norm_sig_pas(wrps, smpl_fct=None, norm_all=1.):
+#     for w in wrps:
+#         if smpl_fct:
+#             for fct_key, fct_val in smpl_fct.iteritems():
+#                 if fct_key in w.sample:
+#                     # if w.analyzer = 'NoSelection' or
+#                     scale_signal(w, fct_val)
+#         if hasattr(w, 'scl_fct'):
+#             w.scl_fct *= norm_all
+#         else:
+#             op.add_wrp_info(w, scl_fct=lambda _: norm_all)
+#         w.histo.Scale(norm_all)
+#         yield w
 
 
 def mod_legend(wrps):
@@ -517,30 +674,31 @@ def mod_legend(wrps):
 def mod_legend_eff_counts(wrps):
     for w in wrps:
         if w.legend.endswith('_thth'):
-            w.legend = w.legend[:-5] + '#rightarrow tH#bar{t}H'
+            w.legend = w.legend[:-5] + '#rightarrowtH#bar{t}H'
         if w.legend.endswith('_thtz'):
-            w.legend = w.legend[:-5] + '#rightarrow tH#bar{t}Z'
+            w.legend = w.legend[:-5] + '#rightarrowtH#bar{t}Z'
         if w.legend.endswith('_thbw'):
-            w.legend = w.legend[:-5] + '#rightarrow tH#bar{b}W'
+            w.legend = w.legend[:-5] + '#rightarrowtH#bar{b}W'
         if w.legend.endswith('_tztz'):
-            w.legend = w.legend[:-9] + '#rightarrow tZ#bar{t}Z'
+            w.legend = w.legend[:-9] + '#rightarrowtZ#bar{t}Z'
         if w.legend.endswith('_tzbw'):
-            w.legend = w.legend[:-9] + '#rightarrow tZ#bar{b}W'
+            w.legend = w.legend[:-9] + '#rightarrowtZ#bar{b}W'
         if w.legend.endswith('_bwbw'):
-            w.legend = w.legend[:-9] + '#rightarrow bW#bar{b}W'
+            w.legend = w.legend[:-9] + '#rightarrowbW#bar{b}W'
         if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-4] + '#rightarrow tH+X'
+            w.legend = w.legend[:-4] + '#rightarrowtH+X'
         if w.legend.endswith('_other'):
-            w.legend = w.legend[:-6] + '#rightarrow other'
+            w.legend = w.legend[:-6] + '#rightarrowother'
         if w.legend.endswith('_incl'):
-            w.legend = w.legend[:-5] + '#rightarrow incl.'
+            w.legend = w.legend[:-5] + '#rightarrowincl.'
         yield w
 
 def mod_legend_no_thth(wrps):
-    if varial.settings.style != 'AN':
-        arr = '#rightarrow tHtH'
-    else:
-        arr = ''
+    # if varial.settings.style != 'AN':
+    #     arr = '#rightarrowtHtH'
+    # else:
+    #     arr = ''
+    arr = ''
     for w in wrps:
         if w.legend.endswith('_thth') or w.legend.endswith(' tHtH'):
             w.legend = w.legend[:-5] + arr
@@ -572,6 +730,8 @@ def mod_title(wrps):
             title = w.histo.GetXaxis().GetTitle()
             w.histo.GetXaxis().SetTitle(title.replace('MET', 'missing E_{T}'))
         yield w
+
+
 
 
 
@@ -762,6 +922,12 @@ def leg_mod(rnd, dict_leg=varial.settings.defaults_Legend, n_col=1):
         rnd.legend.SetX2(x_pos + width/2.)
         rnd.legend.SetY2(y_pos + height/2.)
 
+def box_mod(box_list):
+    # if varial.settings.style != 'AN':
+    if not isinstance(box_list, list):
+        box_list = [box_list]
+    return list(varial.rendering.TextBox(textbox=TLatex(x, y, cont)) for x, y, cont in box_list)
+
 default_canv_attr = {
     'y_min_gr_zero' : 1e-9,
     'y_max_fct' : 1.,
@@ -770,59 +936,68 @@ default_canv_attr = {
     'set_leg_2_col_log' : False,
     'set_leg_1_col_lin' : False,
     'set_leg_1_col_log' : False,
+    'move_exp' : False,
+    'no_exp' : False,
 }
 
-# def mod_post_canv_new(grps):
-#     for g in grps:
-#         g.renderers[0].name += '_'+g.renderers[0].scale
-#         _, y_max = g.y_bounds
-#         canv_attr = dict(default_canv_attr)
-#         mod_wrp_dict = mod_dict.get(g.name, None)
-#         if not any(w.is_data for w in g.renderers):
-#             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
-#         if mod_wrp_dict:
-#             canv_attr.update(mod_wrp_dict)
-#         if g.renderers[0].scale == 'lin':
-#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
-#             if canv_attr['set_leg_2_col_lin']:
-#                 if isinstance(canv_attr['set_leg_2_col_lin'], dict):
-#                     leg_mod(g, canv_attr['set_leg_2_col_lin'], n_col=2)
-#                 else:
-#                     leg_mod(g, n_col=2)
-#             if canv_attr['set_leg_1_col_lin']:
-#                 if isinstance(canv_attr['set_leg_1_col_lin'], dict):
-#                     leg_mod(g, canv_attr['set_leg_1_col_lin'])
-#                 else:
-#                     leg_mod(g)
-#         elif g.renderers[0].scale == 'log':
-#             if isinstance(g.first_drawn, TH2):
-#                 g.main_pad.SetLogz(1)
-#             else:
-#                 g.main_pad.SetLogy(1)
-#             g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
-#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
-#             if canv_attr['set_leg_2_col_log']:
-#                 if isinstance(canv_attr['set_leg_2_col_log'], dict):
-#                     leg_mod(g, canv_attr['set_leg_2_col_log'], n_col=2)
-#                 else:
-#                     leg_mod(g, n_col=2)
-#             if canv_attr['set_leg_1_col_log']:
-#                 if isinstance(canv_attr['set_leg_1_col_log'], dict):
-#                     leg_mod(g, canv_attr['set_leg_1_col_log'])
-#                 else:
-#                     leg_mod(g)
-#         yield g
 
-
-def mod_post_canv(grps):
+def mod_pre_canv(grps):
     for g in grps:
-        if not any(w.is_data for w in g.renderers):
-            g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
-        y_min, y_max = g.y_bounds
         canv_attr = dict(default_canv_attr)
         mod_wrp_dict = mod_dict.get(g.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
+        if g.renderers[0].scale == 'lin' and canv_attr.get('text_box_lin', None):
+            box_list = canv_attr['text_box_lin']
+            box_list = box_mod(box_list)
+            for dec in box_list:
+                g = dec(g)
+        if g.renderers[0].scale == 'log' and canv_attr.get('text_box_log', None):
+            box_list = canv_attr['text_box_log']
+            box_list = box_mod(box_list)
+            for dec in box_list:
+                g = dec(g)
+        yield g
+
+# 
+
+def mod_post_canv(grps):
+    for g in grps:
+        y_min, y_max = g.y_bounds
+        canv_attr = dict(default_canv_attr)
+        mod_wrp_dict = mod_dict.get(g.name, None)
+        y_exp = None
+        if mod_wrp_dict:
+            canv_attr.update(mod_wrp_dict)
+        if canv_attr['move_exp'] and int(math.log10(y_max)) and g.renderers[0].scale == 'lin' >= 3:
+            y_exp = int(math.log10(y_max))
+            for w in g.renderers:
+                if isinstance(w, rnd.StackRenderer):
+                    new_stk = THStack(w.name, w.title)
+                    for h in w.stack.GetHists():
+                        new_h = h.Clone()
+                        new_h.Scale(1./10**y_exp)
+                        new_stk.Add(new_h)
+                    w.stack = new_stk
+                    if w.histo_tot_err:
+                        w.histo_tot_err.Scale(1./10**y_exp)
+                    # w.draw(w.draw_option)
+                    # w.histo.Scale(1./10**y_exp)
+                else:
+                    w.histo.Scale(1./10**y_exp)
+                if w.histo_sys_err:
+                    w.histo_sys_err.Scale(1./10**y_exp)
+            g.draw_full_plot()
+            y_max *= 1./10**y_exp
+        if not any(w.is_data for w in g.renderers):
+            g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
+        if canv_attr['no_exp']:
+            g.first_drawn.GetYaxis().SetNoExponent()
+        if canv_attr.get('y_title', None):
+            g.first_drawn.GetYaxis().SetTitle('Events / %s GeV' % canv_attr['y_title'])
+        if canv_attr.get('y_title', None) and y_exp:
+            g.first_drawn.GetYaxis().SetTitle('Events / (%s GeV #times 10^{%d})' % (canv_attr['y_title'], y_exp))
+        g.first_drawn.GetYaxis().CenterTitle(kFALSE)
         if y_max > 1.:
             g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
             g.y_min_gr_zero = canv_attr['y_min_gr_zero']
@@ -866,34 +1041,34 @@ def copy_wrp_for_log(wrps):
                 yield new_w
         yield w
 
-def ini_def_leg(grps):
-    for g in grps:
-        g.legend.SetNColumns(1)
-        # if g.name == 'mass_sj':
-        n_entries = len(g.legend.GetListOfPrimitives())
-        x_pos   = varial.settings.defaults_Legend['x_pos']
-        y_pos   = varial.settings.defaults_Legend['y_pos']
-        width   = varial.settings.defaults_Legend['label_width']
-        height  = varial.settings.defaults_Legend['label_height'] * n_entries
-        g.legend.SetX1(x_pos - width/2.)
-        g.legend.SetY1(y_pos - height/2.)
-        g.legend.SetX2(x_pos + width/2.)
-        g.legend.SetY2(y_pos + height/2.)
-        yield g
+# def ini_def_leg(grps):
+#     for g in grps:
+#         g.legend.SetNColumns(1)
+#         # if g.name == 'mass_sj':
+#         n_entries = len(g.legend.GetListOfPrimitives())
+#         x_pos   = varial.settings.defaults_Legend['x_pos']
+#         y_pos   = varial.settings.defaults_Legend['y_pos']
+#         width   = varial.settings.defaults_Legend['label_width']
+#         height  = varial.settings.defaults_Legend['label_height'] * n_entries
+#         g.legend.SetX1(x_pos - width/2.)
+#         g.legend.SetY1(y_pos - height/2.)
+#         g.legend.SetX2(x_pos + width/2.)
+#         g.legend.SetY2(y_pos + height/2.)
+#         yield g
 
-def mod_shift_leg(grps):
-    for g in grps:
-        # if g.name == 'mass_sj':
-        n_entries = len(g.legend.GetListOfPrimitives())
-        x_pos   = 0.7
-        y_pos   = 0.72
-        width   = 0.33
-        height  = 0.035 * n_entries
-        g.legend.SetX1(x_pos - width/2.)
-        g.legend.SetY1(y_pos - height/2.)
-        g.legend.SetX2(x_pos + width/2.)
-        g.legend.SetY2(y_pos + height/2.)
-        yield g
+# def mod_shift_leg(grps):
+#     for g in grps:
+#         # if g.name == 'mass_sj':
+#         n_entries = len(g.legend.GetListOfPrimitives())
+#         x_pos   = 0.7
+#         y_pos   = 0.72
+#         width   = 0.33
+#         height  = 0.035 * n_entries
+#         g.legend.SetX1(x_pos - width/2.)
+#         g.legend.SetY1(y_pos - height/2.)
+#         g.legend.SetX2(x_pos + width/2.)
+#         g.legend.SetY2(y_pos + height/2.)
+#         yield g
 
 def mod_no_2D_leg(grps):
     for g in grps:
@@ -909,6 +1084,8 @@ def mod_no_2D_leg(grps):
         g.legend.SetX2(x_pos + width/2.)
         g.legend.SetY2(y_pos + height/2.)
         yield g
+
+
 
 class BottomPlotUncertRatio(varial.rendering.BottomPlot):
     """Same as BottomPlotRatio, but split MC and data uncertainties."""
@@ -1005,30 +1182,36 @@ def get_dict(hist_path, var):
     return tmp
 
 table_block_signal = [
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'T#bar{T} (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
-    (r'T#bar{T} (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
-    (r'T#bar{T} (1.3 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w, True),
-    (r'T#bar{T} (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.3 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+]
+
+table_block_signal_small = [
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
 ]
 
 table_block_signal_fs_700 = [
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
 ]
 
 table_block_signal_fs_1700 = [
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
 ]
 
 table_block_background = [
@@ -1040,20 +1223,20 @@ table_block_background = [
 ]
 
 norm_factors = [
-    ('T#bar{T} (0.7 TeV)', (1./normfactors['TpTp_M-0700'])*lumi),
-    ('T#bar{T} (0.9 TeV)', (1./normfactors['TpTp_M-0900'])*lumi),
-    ('T#bar{T} (1.1 TeV)', (1./normfactors['TpTp_M-1100'])*lumi),
-    ('T#bar{T} (1.3 TeV)', (1./normfactors['TpTp_M-1300'])*lumi),
-    ('T#bar{T} (1.5 TeV)', (1./normfactors['TpTp_M-1500'])*lumi),
-    ('T#bar{T} (1.7 TeV)', (1./normfactors['TpTp_M-1700'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV)', (1./normfactors['TpTp_M-0700'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (0.9 TeV)', (1./normfactors['TpTp_M-0900'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.1 TeV)', (1./normfactors['TpTp_M-1100'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.3 TeV)', (1./normfactors['TpTp_M-1300'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.5 TeV)', (1./normfactors['TpTp_M-1500'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV)', (1./normfactors['TpTp_M-1700'])*lumi),
 ]
 
-def get_table_category_block(hist_path='Histograms'):
+def get_table_category_block(hist_path='Histograms', style='AN'):
     return [
         ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
         ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path, 'ST')),
         ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
-    ] if varial.settings.style == 'PAS' else [
+    ] if style == 'PAS' else [
         ('Preselection', get_dict('../%s/StackedAll/BaseLineSelection' % hist_path, 'ST')),
         ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
         ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path , 'ST')),

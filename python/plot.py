@@ -26,7 +26,7 @@ import tptp_settings
 import common_plot
 # import tptp_sframe 
 import sensitivity
-import compare_crs
+# import compare_crs
 import analysis
 
 from ROOT import TLatex, TH2
@@ -129,6 +129,15 @@ normfactors_ind_fs = {
     '_tzbw' : 1./0.222,
 }
 
+normfactors_ind_fs_rev = {
+    '_thth' : 0.111,
+    '_tztz' : 0.111,
+    '_bwbw' : 0.111,
+    '_thtz' : 0.222,
+    '_thbw' : 0.222,
+    '_tzbw' : 0.222,
+}
+
 
 signals_to_plot = [
     'TpTp_M-0700',
@@ -184,6 +193,21 @@ final_states_to_plot = [
     '_noH_bwbw',
 ]
 
+almost_all_signals = [
+    'TpTp_M-0700',
+    'TpTp_M-0800',
+    'TpTp_M-0900',
+    'TpTp_M-1000',
+    'TpTp_M-1100',
+    'TpTp_M-1200',
+    'TpTp_M-1300',
+    # 'TpTp_M-1400',
+    'TpTp_M-1500',
+    'TpTp_M-1600',
+    'TpTp_M-1700',
+    # 'TpTp_M-1800',
+]
+
 other_samples_to_plot = [
     'TTbar_split',
     'SingleTop',
@@ -196,6 +220,7 @@ other_samples_to_plot = [
 samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
 more_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in more_signals))
 less_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in less_signals))
+almost_all_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in almost_all_signals))
 
 samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in signals_to_plot)
 more_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in more_signals)
@@ -379,11 +404,11 @@ def loader_hook_merge_regions(wrps):
 def loader_hook_merge_lep_channels(wrps):
     # wrps = merge_regions(wrps)
     # wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
-    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
+    wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors)
     wrps = common_plot.mod_title(wrps)
     wrps = common_plot.mod_legend_no_thth(wrps)
     if not varial.settings.flex_sig_norm:
-        wrps = common_plot.norm_to_fix_xsec(wrps)
+        wrps = common_plot.norm_to_fix_xsec(wrps, True)
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = sorted(wrps, key=lambda w: w.region+'__'+w.name)
     return wrps
@@ -392,9 +417,10 @@ def loader_hook_merge_lep_channels(wrps):
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = common_loader_hook(wrps)
-    wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
+    wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors)
     # wrps = common_plot.norm_smpl(wrps, common_plot.normfactors)
     # wrps = gen.gen_make_th2_projections(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs_rev, calc_scl_fct=False)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
     # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
@@ -403,10 +429,10 @@ def loader_hook_compare_finalstates(wrps):
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     # wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thth','_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
     # wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
-    wrps = common_plot.norm_smpl(wrps, normfactors_comp)
+    wrps = common_plot.norm_smpl(wrps, normfactors_comp, calc_scl_fct=False)
     wrps = common_plot.mod_legend_eff_counts(wrps)
     if not varial.settings.flex_sig_norm:
-        wrps = common_plot.norm_to_fix_xsec(wrps)
+        wrps = common_plot.norm_to_fix_xsec(wrps, True)
     wrps = gen.sort(wrps, ['in_file_path'])
     return wrps
 
@@ -500,7 +526,7 @@ def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = canvas_setup_post
-        # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
+        kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
         kws['canvas_decorators'] = common_plot.get_style()
         kws.update(**args)
         return varial.tools.Plotter(**kws)

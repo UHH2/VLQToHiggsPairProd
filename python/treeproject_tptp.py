@@ -48,8 +48,8 @@ core_histos = {
     'jets[3].m_pt'              : ('p_{T} fourth Ak4 Jet [GeV]',             30, 0., 600.),
     # 'pt_fourth_ak4_jet'              : ('p_{T} fourth Ak4 Jet',             30, 0., 600.),
     'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
-    'topjets[0]'                 : ('p_{T} leading Ak8 Jet [GeV]',               120, 0., 2400.),
-    'topjets[1]'              : ('p_{T} subleading Ak8 Jet',             100, 0., 2000.),
+    'topjets[0].m_pt'                 : ('p_{T} leading Ak8 Jet [GeV]',               120, 0., 2400.),
+    'topjets[1].m_pt'              : ('p_{T} subleading Ak8 Jet',             100, 0., 2000.),
     'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
     'met'                           : ('missing E_{T} [GeV]',                              50, 0., 1000.),
     'primary_lepton_pt'             : ('Primary Lepton p_{T} [GeV]',               50, 0., 1200.),
@@ -625,12 +625,12 @@ class GenUncertHistoSquash(varial.tools.Tool):
             self.rel_path = self.sample+'.root'
 
     def run(self):
-        pdf_paths = glob.glob(self.cwd + '../../*_weight*')
-        # pdf_paths.remove(self.cwd + '../'+self.name)
+        sys_paths = glob.glob(self.cwd + '../../*_weight*')
+        # sys_paths.remove(self.cwd + '../'+self.name)
         try:
             uncert_histos = (
                 w
-                for p in pdf_paths
+                for p in sys_paths
                 for w in varial.diskio.bulk_load_histograms(
                             # varial.gen.dir_content(p+'/%s'%self.rel_path))
                             varial.gen.dir_content(p+'/%s'%self.rel_path, self.load_aliases))

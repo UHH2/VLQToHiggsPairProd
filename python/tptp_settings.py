@@ -76,10 +76,14 @@ settings.pretty_names.update({
 # settings.defaults_Legend['opt_data'] = 'p'
 # settings.defaults_Legend['reverse'] = True
 
+settings.stat_error_color = 923
+settings.stat_error_fill = 3002
 settings.sys_error_color = (632, 1.)
 settings.sys_error_fill = 3002
-settings.tot_error_color = (923, 1.)
-settings.tot_error_fill = 3002
+settings.tot_error_color_main = (921, 0.6)
+settings.tot_error_fill_main = 3644
+settings.tot_error_color_bot = (921, 0.6)
+settings.tot_error_fill_bot = 3644
 
 settings.defaults_BottomPlot['y_min'] = -1.2
 settings.defaults_BottomPlot['y_max'] = 1.2
@@ -90,18 +94,15 @@ settings.defaults_BottomPlot['draw_opt'] = 'E0'
 # if settings.style != 'AN':
 settings.defaults_Legend.update({
     'x_pos': 0.7,
-    'y_pos': 0.75,
-    'label_width': 0.25,
-    'label_height': 0.027,
-    'box_text_size' : 0.035,
+    'y_pos': 0.67,
+    'label_width': 0.30,
+    'label_height': 0.040,
+    'box_text_size' : 0.033,
     'opt': 'f',
     'opt_data': 'pl',
     'reverse': True,
+    'sort_legend' : lambda w: 'TT ' in w[1],
 })
-
-settings.defaults_Legend.update({
-        'sort_legend' : lambda w: 'TT ' in w[1],
-    })
 
 settings.stacking_order = [
     'TTbar',
@@ -111,7 +112,7 @@ settings.stacking_order = [
     'QCD',
 ]
 
-settings.box_text_size = 0.035
+settings.box_text_size = 0.033
 # if settings.style != 'AN':
 settings.canvas_size_x = 618
 settings.canvas_size_y = 494
@@ -135,7 +136,7 @@ final_states = final_states = ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzb
 
 for s, c in signals.iteritems():
     settings.colors.update(dict((s + f, c) for f in final_states))
-    settings.colors.update({s+'_thX' : ROOT.kOrange, s+'_other' : ROOT.kAzure})
+    settings.colors.update({s+'_thX' : ROOT.kAzure, s+'_other' : ROOT.kOrange+10})
 
 
 

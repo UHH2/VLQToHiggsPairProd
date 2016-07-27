@@ -3,6 +3,7 @@
 from varial.extensions import tex
 import varial.settings
 import varial.tools
+import varial.monitor
 import os.path
 
 # base path
@@ -203,8 +204,8 @@ def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
 #             p + 'SidebandRegion_%s/n_additional_btags_medium_lin' % chan + ext,
 #         ),
 #         chan+'_Nm1htag': (
-#             p + 'SidebandRegion_%s/n_higgs_tags_1b_med_lin' % chan + ext,
-#             p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_lin' % chan + ext,
+#             p + 'SidebandRegion_%s/n_higgs_tags_1b_med_sm10_lin' % chan + ext,
+#             p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_sm10_lin' % chan + ext,
 #         ),
 #         chan+'_st': (
 #             p + 'SignalRegion1b_%s/ST_lin' % chan + ext,
@@ -235,12 +236,12 @@ def mk_autoContentControlPlots(base, el_channel=None, mu_channel=None):
 #             chan+'_ak4jetpt': (
 #                 p + 'SidebandRegion_%s/pt_ld_ak4_jet_log' % chan + ext,
 #                 p + 'SidebandRegion_%s/pt_subld_ak4_jet_log' % chan + ext,
-#                 p + 'SidebandRegion_%s/pt_third_ak4_jet_log' % chan + ext,
-#                 p + 'SidebandRegion_%s/pt_fourth_ak4_jet_log' % chan + ext,
+#                 p + 'SidebandRegion_%s/jets[2].m_pt_log' % chan + ext,
+#                 p + 'SidebandRegion_%s/jets[3].m_pt_log' % chan + ext,
 #             ),
 #             chan+'_ak8jetpt': (
-#                 p + 'SidebandRegion_%s/pt_ld_ak8_jet_log' % chan + ext,
-#                 p + 'SidebandRegion_%s/pt_subld_ak8_jet_log' % chan + ext,
+#                 p + 'SidebandRegion_%s/topjets[0].m_pt_log' % chan + ext,
+#                 p + 'SidebandRegion_%s/topjets[1].m_pt_log' % chan + ext,
 #             ),
 #             chan+'_stplusjets': (
 #                 p + 'SidebandRegion_%s/ST_rebin_flex_leg_log' % chan + ext,
@@ -288,40 +289,44 @@ def mk_compSystematicPlots(base, process, channel=None, name='AutoContentSystema
         p = os.path.join(base, 'StackedAll/')
         # print base
         return {
-            channel+'_exp_comp': (
-                p + 'BaseLineSelection%s/ST__%s__btag_bc_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__btag_udsg_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__jec_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__jer_log' % (channel, process) + ext,
+            channel.replace('_', '')+'_exp_comp': (
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__btag_bc_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__btag_udsg_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__jec_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
             ),
-            channel+'_theo_comp': (
-                p + 'BaseLineSelection%s/ST__%s__ScaleVar_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__PDF_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__ht_reweight_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__top_pt_reweight_log' % (channel, process) + ext,
-                # p + 'BaseLineSelection%s/ST__%s__jer_log' % (channel, process) + ext,
+            channel.replace('_', '')+'_theo_comp': (
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__ScaleVar_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__PDF_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__ht_reweight_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__top_pt_reweight_log' % (channel, process) + ext,
+                # p + 'BaseLineSelection%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
             ),
-            channel+'_theo_no_top_pt_comp': (
-                p + 'BaseLineSelection%s/ST__%s__ScaleVar_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__PDF_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__ht_reweight_log' % (channel, process) + ext,
-                # p + 'BaseLineSelection%s/ST__%s__jer_log' % (channel, process) + ext,
+            channel.replace('_', '')+'_theo_no_top_pt_comp': (
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__ScaleVar_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__PDF_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__ht_reweight_log' % (channel, process) + ext,
+                # p + 'BaseLineSelection%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
             ),
-            channel+'_theo_no_reweight_comp': (
-                p + 'BaseLineSelection%s/ST__%s__ScaleVar_log' % (channel, process) + ext,
-                p + 'BaseLineSelection%s/ST__%s__PDF_log' % (channel, process) + ext,
-                # p + 'BaseLineSelection%s/ST__%s__jer_log' % (channel, process) + ext,
+            channel.replace('_', '')+'_theo_no_reweight_comp': (
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__ScaleVar_log' % (channel, process) + ext,
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__PDF_log' % (channel, process) + ext,
+                # p + 'BaseLineSelection%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
             ),
-            channel+'_only_top_pt': (
-                p + 'BaseLineSelection%s/ST__%s__top_pt_reweight_log' % (channel, process) + ext,
-                # p + 'BaseLineSelection_%s/ST__%s__jer_log' % (channel, process) + ext,
+            channel.replace('_', '')+'_only_top_pt': (
+                p + 'BaseLineSelection%s/ST_rebin_flex__%s__top_pt_reweight_log' % (channel, process) + ext,
+                # p + 'BaseLineSelection_%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
+            ),
+            channel.replace('_', '')+'_only_ht': (
+                p + 'SidebandRegion%s/ST_rebin_flex__%s__ht_reweight_log' % (channel, process) + ext,
+                # p + 'BaseLineSelection_%s/ST_rebin_flex__%s__jer_log' % (channel, process) + ext,
             ),
         }.items()
 
     # muchannel = mu_channel or mu_channel_def
     # elchannel = el_channel or el_channel_def
     return varial.extensions.tex.TexContent(
-        dict(getSystCompPlots(channel)),
+        dict(getSystCompPlots()),
         include_str=r'\includegraphics[width=0.4\textwidth]{%s}',
         name=name,
     )
@@ -365,13 +370,13 @@ def mk_autoContentSignalControlRegion(base, el_channel=None, mu_channel=None, na
                 p + 'SidebandRegion_%s/n_additional_btags_medium_log' % chan + ext,
             ),
             chan+'_Nm1htag': (
-                p + 'SidebandRegion_%s/n_higgs_tags_1b_med_leg_log' % chan + ext,
-                p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_leg_log' % chan + ext,
+                p + 'SidebandRegion_%s/n_higgs_tags_1b_med_sm10_leg_log' % chan + ext,
+                p + 'SignalRegion2b_%s/n_higgs_tags_2b_med_sm10_leg_log' % chan + ext,
             ),
             chan+'_baseline_tag_plots': (
                 p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
-                p + 'BaseLineSelection_%s/n_higgs_tags_1b_med_leg_log' % chan + ext,
-                p + 'BaseLineSelection_%s/n_higgs_tags_2b_med_leg_log' % chan + ext,
+                p + 'BaseLineSelection_%s/n_higgs_tags_1b_med_sm10_leg_log' % chan + ext,
+                p + 'BaseLineSelection_%s/n_higgs_tags_2b_med_sm10_leg_log' % chan + ext,
             ),
             chan+'_baseline_htag_plots': (
                 p + 'BaseLineSelection_%s/n_additional_btags_medium_log' % chan + ext,
@@ -441,7 +446,7 @@ def mk_autoContentCompareSplitWithMergedLep(base_split, base_comb, categories, e
 ####### TREEPROJECT MORE OUTPUT COMBINED CHANNELS #######
 #########################################################
 
-def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalControlRegionCombined', size='0.4'):
+def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalControlRegionCombined', size='0.48'):
 
     def getFinalVarCombinedMore(cat):
         # print base
@@ -450,24 +455,24 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
             #     os.path.join(base, cat+'/primary_lepton_pt_lin' + ext),
             #     os.path.join(base, cat+'/met_lin' + ext),
             #     os.path.join(base, cat+'/pt_ld_ak4_jet_lin' + ext),
-            #     os.path.join(base, cat+'/pt_ld_ak8_jet_lin' + ext),
+            #     os.path.join(base, cat+'/topjets[0].m_pt_lin' + ext),
             #     os.path.join(base, cat+'/HT_rebin_flex_leg_log' + ext),
             #     os.path.join(base, cat+'/n_ak4_log' + ext),
             # ),
             cat+'_control_plots_jets': (
                 os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
                 os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
-                os.path.join(base, cat+'/pt_ld_ak8_jet_leg_log' + ext),
+                os.path.join(base, cat+'/topjets[0].m_pt_leg_log' + ext),
             ),
             cat+'_control_plots_ak4jets': (
                 os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
                 os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
-                os.path.join(base, cat+'/pt_third_ak4_jet_leg_log' + ext),
-                os.path.join(base, cat+'/pt_fourth_ak4_jet_leg_log' + ext),
+                os.path.join(base, cat+'/jets[2].m_pt_leg_log' + ext),
+                os.path.join(base, cat+'/jets[3].m_pt_leg_log' + ext),
             ),
             cat+'_control_plots_ak8jets': (
-                os.path.join(base, cat+'/pt_ld_ak8_jet_leg_log' + ext),
-                os.path.join(base, cat+'/pt_subld_ak8_jet_leg_log' + ext),
+                os.path.join(base, cat+'/topjets[0].m_pt_leg_log' + ext),
+                os.path.join(base, cat+'/topjets[1].m_pt_leg_log' + ext),
             ),
             cat+'_control_plots_njets': (
                 os.path.join(base, cat+'/n_ak4_leg_log' + ext),
@@ -492,42 +497,42 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
             #     os.path.join(base, cat+'/HT_rebin_flex_leg_log' + ext),
             #     os.path.join(base, cat+'/n_ak4_log' + ext),
             #     os.path.join(base, cat+'/pt_ld_ak4_jet_lin' + ext),
-            #     os.path.join(base, cat+'/pt_ld_ak8_jet_lin' + ext),
-            #     os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
-            #     os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+            #     os.path.join(base, cat+'/topjets[0].m_pt_lin' + ext),
+            #     os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_leg_log' + ext),
+            #     os.path.join(base, cat+'/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
             # ),
             # cat+'_control_plots_ht_nak4': (
             #     os.path.join(base, cat+'/HT_rebin_flex_leg_log' + ext),
             #     os.path.join(base, cat+'/n_ak4_log' + ext),
             # ),
             cat+'_control_plots_hhiggsvar': (
-                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
-                os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_leg_log' + ext),
+                os.path.join(base, cat+'/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
             ),
             cat+'_control_plots_hhiggsvar_more': (
-                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_log' + ext),
+                os.path.join(base, cat+'/nobtag_boost_mass_nsjbtags_leg_log' + ext),
                 # os.path.join(base, cat+'/pt_log' + ext),
-                os.path.join(base, cat+'/nomass_boost_1b_mass_lin' + ext),
-                os.path.join(base, cat+'/nomass_boost_2b_mass_lin' + ext),
+                os.path.join(base, cat+'/nomass_boost_1b_mass_softdrop_lin' + ext),
+                os.path.join(base, cat+'/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
             ),
             cat+'_nminus1_plots_withak4btag': (
                 os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
-                os.path.join(base, cat+'/n_higgs_tags_1b_med_leg_log' + ext),
-                os.path.join(base, cat+'/n_higgs_tags_2b_med_leg_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_1b_med_sm10_leg_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_2b_med_sm10_leg_log' + ext),
             ),
             cat+'_n_ak4btags': (
                 os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
             ),
             cat+'_htag_plots': (
                 # os.path.join(base, cat+'/n_additional_btags_medium_log' + ext),
-                os.path.join(base, cat+'/n_higgs_tags_1b_med_leg_log' + ext),
-                os.path.join(base, cat+'/n_higgs_tags_2b_med_leg_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_1b_med_sm10_leg_log' + ext),
+                os.path.join(base, cat+'/n_higgs_tags_2b_med_sm10_leg_log' + ext),
             ),
             cat+'_more_higgsvar': (
-                os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-                os.path.join(base, 'BaseLineSelection/noboost_mass_1b_pt_lin' + ext),
-                os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
-                os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+                os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_leg_log' + ext),
+                os.path.join(base, 'BaseLineSelection/noboost_mass_1b[0].m_pt_lin' + ext),
+                os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_softdrop_lin' + ext),
+                os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
             ),
         }.items()
 
@@ -546,9 +551,9 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
                 os.path.join(base, 'SidebandRegion/pt_subld_ak4_jet_leg_log' + ext),
             ),
             'pt_ld_ak8_jet': (
-                os.path.join(base, 'SignalRegion1b/pt_ld_ak8_jet_leg_log' + ext),
-                os.path.join(base, 'SignalRegion2b/pt_ld_ak8_jet_leg_log' + ext),
-                os.path.join(base, 'SidebandRegion/pt_ld_ak8_jet_leg_log' + ext),
+                os.path.join(base, 'SignalRegion1b/topjets[0].m_pt_leg_log' + ext),
+                os.path.join(base, 'SignalRegion2b/topjets[0].m_pt_leg_log' + ext),
+                os.path.join(base, 'SidebandRegion/topjets[0].m_pt_leg_log' + ext),
             ),
             'primary_muon_pt': (
                 os.path.join(base, 'SignalRegion1b/primary_muon_pt_log' + ext),
@@ -613,14 +618,14 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
 #     # print base
 #     return {
 #         'baseline_control_plots_hhiggsvar': (
-#             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-#             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+#             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_leg_log' + ext),
+#             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
 #         ),
 #         'baseline_more_higgsvar': (
-#             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext),
-#             os.path.join(base, 'BaseLineSelection/noboost_mass_1b_pt_lin' + ext),
-#             os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_lin' + ext),
-#             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_lin' + ext),
+#             os.path.join(base, 'BaseLineSelection/nobtag_boost_mass_nsjbtags_leg_log' + ext),
+#             os.path.join(base, 'BaseLineSelection/noboost_mass_1b[0].m_pt_lin' + ext),
+#             os.path.join(base, 'BaseLineSelection/nomass_boost_1b_mass_softdrop_lin' + ext),
+#             os.path.join(base, 'BaseLineSelection/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext),
 #         ),
 #     }.items()
 
@@ -650,14 +655,14 @@ def mk_autoCompareReweightingMethods(base, categories, name='AutoContentSignalCo
                 os.path.join(base, cat+int_path+reg+'/pt_ld_ak4_jet_leg_log' + ext) for cat in categories),
             reg+'_pt_subld_ak4_jet' : list(
                 os.path.join(base, cat+int_path+reg+'/pt_subld_ak4_jet_leg_log' + ext) for cat in categories),
-            reg+'_pt_third_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_third_ak4_jet_leg_log' + ext) for cat in categories),
-            reg+'_pt_fourth_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_fourth_ak4_jet_leg_log' + ext) for cat in categories),
+            reg+'__pt_third_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/jets[2].m_pt_leg_log' + ext) for cat in categories),
+            reg+'__pt_fourth_ak4_jet' : list(
+                os.path.join(base, cat+int_path+reg+'/jets[3].m_pt_leg_log' + ext) for cat in categories),
             reg+'_pt_ld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_ld_ak8_jet_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/topjets[0].m_pt_leg_log' + ext) for cat in categories),
             reg+'_pt_subld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/pt_subld_ak8_jet_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/topjets[1].m_pt_leg_log' + ext) for cat in categories),
             reg+'_primary_muon_pt' : list(
                 os.path.join(base, cat+int_path+reg+'/primary_muon_pt_log' + ext) for cat in categories),
             reg+'_primary_electron_pt' : list(
@@ -675,19 +680,19 @@ def mk_autoCompareReweightingMethods(base, categories, name='AutoContentSignalCo
             })
         comp_dict.update({
             'BaseLineSelection_nobtag_boost_mass_nsjbtags' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/nobtag_boost_mass_nsjbtags_log' + ext) for cat in categories),
-            'BaseLineSelection_noboost_mass_1b_pt' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/noboost_mass_1b_pt_lin' + ext) for cat in categories),
-            'BaseLineSelection_nomass_boost_1b_mass' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_1b_mass_lin' + ext) for cat in categories),
-            'BaseLineSelection_nomass_boost_2b_mass' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_2b_mass_lin' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+'BaseLineSelection/nobtag_boost_mass_nsjbtags_leg_log' + ext) for cat in categories),
+            'BaseLineSelection_noboost_mass_1b[0].m_pt' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/noboost_mass_1b[0].m_pt_lin' + ext) for cat in categories),
+            'BaseLineSelection_nomass_boost_1b_mass_softdrop' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_1b_mass_softdrop_lin' + ext) for cat in categories),
+            'BaseLineSelection_nomass_boost_2b_mass_softdrop' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/nomass_boost_2b_mass_softdrop_rebin_flex_lin' + ext) for cat in categories),
             'BaseLineSelection_n_additional_btags_medium' : list(
                 os.path.join(base, cat+int_path+'BaseLineSelection/n_additional_btags_medium_log' + ext) for cat in categories),
-            'BaseLineSelection_n_higgs_tags_1b_med' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/n_higgs_tags_1b_med_leg_log' + ext) for cat in categories),
-            'BaseLineSelection_n_higgs_tags_2b_med' : list(
-                os.path.join(base, cat+int_path+'BaseLineSelection/n_higgs_tags_2b_med_leg_log' + ext) for cat in categories),
+            'BaseLineSelection_n_higgs_tags_1b_med_sm10' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/n_higgs_tags_1b_med_sm10_leg_log' + ext) for cat in categories),
+            'BaseLineSelection_n_higgs_tags_2b_med_sm10' : list(
+                os.path.join(base, cat+int_path+'BaseLineSelection/n_higgs_tags_2b_med_sm10_leg_log' + ext) for cat in categories),
             })
         return comp_dict.items()
 
@@ -740,28 +745,34 @@ def mk_autoComparePostfitPlots(base, categories, name='AutoContentSignalControlR
 #     }
 #     return tmp_dict
 
-def mk_autoContentLimits(base, lim_base, el_channel=None, mu_channel=None, name='AutoContentLimits'):
+def mk_autoContentLimits(base, lim_base, name='AutoContentLimits'):
 
     def getLimPlotsAll():
         # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
         return {
             'Limits': (
-                os.path.join(base, '%s/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' % lim_base + ext),
-                os.path.join(base, '%s/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' % lim_base + ext),
-                os.path.join(base, '%s/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' % lim_base + ext),
+                os.path.join(base, lim_base % 'Mu45' + '/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+                os.path.join(base, lim_base % 'El45' + '/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            ),
+            'limits_mult_br': (
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit11/LimitsWithGraphs/LimitCurvesCompared/tH60tZ0bW40_log' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit18/LimitsWithGraphs/LimitCurvesCompared/tH20tZ0bW80_log' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit20/LimitsWithGraphs/LimitCurvesCompared/tH0tZ0bW100_log' + ext),
             ),
             'triangle_lim_both_box': (
-                os.path.join(base, '%s/LimitTriangle/PlotterBoxExp/lim_exp_lin' % lim_base + ext),
-                os.path.join(base, '%s/LimitTriangle/PlotterBoxObs/lim_obs_lin' % lim_base + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/LimitTriangle/PlotterBoxExp/lim_exp_lin' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
             ),
             'triangle_plus_single_lim': (
-                os.path.join(base, '%s/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' % lim_base + ext),
-                os.path.join(base, '%s/LimitTriangle/PlotterBoxObs/lim_obs_lin' % lim_base + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
             ),
             'Postfit-all': (
-                os.path.join(base, '%s/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' % lim_base + ext),
-                os.path.join(base, '%s/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' % lim_base + ext),
-                os.path.join(base, '%s/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' % lim_base + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
+                os.path.join(base, lim_base % 'AllRegions' + '/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
             ),
         }
 
@@ -769,7 +780,7 @@ def mk_autoContentLimits(base, lim_base, el_channel=None, mu_channel=None, name=
     lim_dict = getLimPlotsAll()
     return varial.extensions.tex.TexContent(
         lim_dict,
-        include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
+        include_str=r'\includegraphics[width=0.48\textwidth]{%s}',
         name=name,
     )
 
@@ -782,6 +793,9 @@ def mk_autoContentLimitsVarSize(base, size=0.6, name='AutoContentLimits'):
             'limits_comb_only_no_obs': (
                 os.path.join(base, 'Ind_Limits/Limit0/LimitsWithGraphsNoObs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             ),
+            'limits_comb_only_with_obs': (
+                os.path.join(base, 'Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            ),
             # 'triangle_lim_obs_box': (
             #     os.path.join(base, 'LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
             # ),
@@ -792,7 +806,7 @@ def mk_autoContentLimitsVarSize(base, size=0.6, name='AutoContentLimits'):
                 os.path.join(base, 'PostFit/cnv_post_fit_' + ext),
             ),
             'correlation_matrix': (
-                os.path.join(base, 'CorrelationPlot/cnv_post_fit_' + ext),
+                os.path.join(base, 'CorrelationPlot/correlation_matrix_lin' + ext),
             ),
             # 'Postfit-M0700': (
             #     os.path.join(base, 'Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
@@ -808,7 +822,7 @@ def mk_autoContentLimitsVarSize(base, size=0.6, name='AutoContentLimits'):
     lim_dict = getSingleLimPlotLarge()
     return varial.extensions.tex.TexContent(
         lim_dict,
-        include_str=r'\includegraphics[width={0}\textwidth]{%s}'.format(size_str),
+        include_str=r'\includegraphics[width=%s\textwidth]' % size_str+'{%s}',
         name=name,
     )
 
@@ -840,12 +854,6 @@ def my_mod_sys_table(table):
             new_columns += r'\\'
         return new_columns
 
-    table = limits.tex_table_mod(table, [
-        ('(gauss) ', '  '),
-        ('TpTp_', ''),
-        (' (s) ', ''),
-        ('process / nusiance parameter', 'pr./ns. par.'),
-    ] + limits.tex_table_mod_list)
     lines = table.split('\n')
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
         + find_column_string(lines[3], '---')
@@ -853,6 +861,13 @@ def my_mod_sys_table(table):
     for i, line in enumerate(lines):
         lines[i] = remove_column(line, indizes)
     table = '\n'.join(lines)
+    table = limits.tex_table_mod(table, [
+        ('(gauss) ', '  '),
+        ('TpTp ', 'TT '),
+        (' (s) ', ''),
+        # ('process / nuisance parameter', 'pr./ns. par.'),
+        ('$^{+0.00}_{+0.00}$', '---')
+    ] + limits.tex_table_mod_list)
     return table
 
 def find_sig_line(table, signal_ind):
@@ -882,7 +897,7 @@ def find_sig_line(table, signal_ind):
 
 
 def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
-    p_lim = os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_{0}/ThetaLimit')
+    p_lim = os.path.join(base, 'Ind_Limits/Limit0/ThetaLimits/TpTp_{0}/ThetaLimit')
     new_files = []
     # if mod:
     for region in ['SidebandRegion', 'SignalRegion1b', 'SignalRegion2b']:
@@ -909,6 +924,7 @@ def getSysTab(chan, base, mass_points, mod=my_mod_sys_table):
                 # print mod(cont)
                 f.write(mod(new_table))
         except IOError:
+            varial.monitor.message('tex_content.getSysTab', 'WARNING sys tab %s could not be written!' % filename.replace('.tex', '_mod.tex'))
             continue
         new_files.append(filename.replace('.tex', '_mod.tex'))
     if new_files:

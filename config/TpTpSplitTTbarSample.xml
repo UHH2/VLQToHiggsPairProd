@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
+[
+<!ENTITY NEVT "-1">
+<!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
+<!ENTITY OUTPUTDIR "NewSamples-76X-v1/Preselection-v11/SplitTTbar">
+
+
+<!ENTITY MC_TTbar SYSTEM            "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TTbar.xml">
+<!ENTITY MC_TTJets_M_700to1000 SYSTEM            "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TTJets_M_700to1000.xml">
+<!ENTITY MC_TTJets_M_1000toInf SYSTEM            "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TTJets_M_1000toInf.xml">
+
+]
+>
+
+<!--
+   <ConfigParse NEventsBreak="0" FileSplit="5" AutoResubmit="2" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir2"/>
+-->
+
+
+<JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2vlqToHPairProd"/>
+    <Package Name="SUHH2vlqToHPairProd.par" />
+
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2630" >
+    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&OUTPUTDIR;/Samples-25ns-v2/TpTpPreselection-v3/" PostFix="" TargetLumi="2460" > -->
+    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="60" OutputDirectory="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/TpTpPreSelection-v4/" PostFix="" TargetLumi="1984.1" > -->
+        
+    
+    <!--
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    TTbar
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    -->
+
+    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
+        &MC_TTbar;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0000to0700" Cacheable="False">
+        &MC_TTbar;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt0700to1000" Cacheable="False">
+        &MC_TTbar;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl_Mtt1000toINFT" Cacheable="False">
+        &MC_TTbar;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleUp" Cacheable="False">
+        &MC_TTbar_ScaleUp;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="11942" NEventsMax="&NEVT;" Type="MC" Version="TTbar_ScaleDown" Cacheable="False">
+        &MC_TTbar_ScaleDown;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+    <!-- <InputData Lumi="527013" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_700to1000" Cacheable="False">
+        &MC_TTJets_M_700to1000;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="1310352" NEventsMax="&NEVT;" Type="MC" Version="TTJets_M_1000toInf" Cacheable="False">
+        &MC_TTJets_M_1000toInf;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+            <Item Name="TauCollection" Value="slimmedTaus" />
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDrop" />
+            <Item Name="TopJetCollection" Value="slimmedJetsAK8_SoftDrop" />
+            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="additionalBranches" Value="slimmedMETs triggerNames triggerResults patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsSoftDropPacked_daughters patJetsHepTopTagCHSPacked_daughters electrons_mva_loose" />
+
+            
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <!-- <Item Name="AnalysisModule" Value="TpTpFinalSelectionTreeOutput" /> -->
+            <Item Name="AnalysisModule" Value="TpTpSplitTTbarSample" />
+            
+            <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
+            <Item Name="TestKey" Value="TestKeyValue" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
