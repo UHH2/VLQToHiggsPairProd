@@ -29,6 +29,8 @@ import common_plot
 import model_vlqpair
 import analysis
 import plot
+
+from get_eff_count import CountTable
 # import limit_plots
 
 # varial.settings.use_parallel_chains = False
@@ -276,7 +278,7 @@ def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     return wrps
 
 
-def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties):
+def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate=False):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -304,19 +306,19 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
     for i in ['id', 'trg']:
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
-    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties)
+    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
     grps = squash_unc_histos(grps, unc_dict, rate_uncertainties)
     # grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 
-def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties, **args):
+def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate=False, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal, rate_uncertainties)
         kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
-        kws['plot_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties), calc_sys_integral=True)
-        kws['stack_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties), calc_sys_integral=True)
+        kws['plot_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate), calc_sys_integral=True)
+        kws['stack_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate), calc_sys_integral=True)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = plot.canvas_setup_post
@@ -390,12 +392,12 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
         return [loader, plotter, limits]
         # return tmp
 
-def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties):
+def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate=False):
     wrps = loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     wrps = plot.loader_hook_uncerts(wrps)
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     wrps = gen.group(wrps, lambda w: w.in_file_path)
-    wrps = plot_setup_postfit(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties)
+    wrps = plot_setup_postfit(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate)
     wrps = list(w for ws in wrps for w in ws)
     wrps = plot.set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
@@ -405,7 +407,7 @@ def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, s
 
 def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_uncertainties,
     rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
-    model_func=model_vlqpair.get_model(analysis.rate_uncertainties), filter_plots = lambda _: True, **kws):
+    model_func=model_vlqpair.get_model(analysis.rate_uncertainties), filter_plots=lambda _: True, include_rate=False, **kws):
     # def tmp():
     sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
     return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
@@ -413,7 +415,7 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
             varial.tools.ToolChainParallel('HistoLoaderPost',
                 list(varial.tools.HistoLoader(
                     pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
-                    filter_keyfunc=lambda w: filter_plots(w) and any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                    filter_keyfunc=lambda w: filter_plots(w) and any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
                         'Region_Comb' not in w.in_file_path and\
                         any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0]', 'topjets[1]',
                             'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
@@ -423,22 +425,40 @@ def mk_tc_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_unce
                     name='HistoLoader_'+g,
                     lookup_aliases=False,
                     raise_on_empty_result=False
-                    ) for g in plot.less_samples_to_plot_only_th)),
-            plot.mk_toolchain('HistogramsPostfit',
-                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
+                    ) for g in plot.more_samples)),
+            plot.mk_toolchain('HistogramsPostfit', plot.less_samples_to_plot_only_th,
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts, include_rate),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
                 # auto_legend=False,
                 # name='HistogramsPostfit',
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
-            plot.mk_toolchain('HistogramsPostfitCompareUncerts',
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+            plot.mk_toolchain('HistogramsPostfitCompareUncerts', plot.less_samples_to_plot_only_th,
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
+                    any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
                 plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
-                    hook_loaded_histos=lambda w: loader_hook_split_uncert(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts),
+                    hook_loaded_histos=lambda w: loader_hook_split_uncert(w, '../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts, include_rate),
                 ),
                 pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-                ), 
+                ),
+            plot.mk_toolchain('HistogramsTables', plot.more_samples,
+                plotter_factory=plotter_factory_postfit('../../../../ThetaLimit', signal, rate_uncertainties, sys_uncerts, include_rate),
+                pattern=None,
+                input_result_path='../HistoLoaderPost/HistoLoader*',
+                # auto_legend=False,
+                # name='HistogramsPostfit',
+                # lookup_aliases=varial.settings.lookup_aliases
+                ),
+            CountTable([
+                    common_plot.table_block_signal,
+                    common_plot.table_block_background,
+                    [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                    [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                ],
+                common_plot.get_table_category_block('HistogramsTables'),
+                name='CountTablePostFit'
+                ),
             ])]
     # return tmp
 

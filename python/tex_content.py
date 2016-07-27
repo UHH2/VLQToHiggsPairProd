@@ -773,37 +773,42 @@ def mk_autoContentLimits(base, lim_base, el_channel=None, mu_channel=None, name=
         name=name,
     )
 
-def mk_autoContentLimitsLarge(base, el_channel=None, mu_channel=None, name='AutoContentLimits'):
+def mk_autoContentLimitsVarSize(base, size=0.6, name='AutoContentLimits'):
+    size_str = str(size)
 
     def getSingleLimPlotLarge():
         # p_lim = os.path.join(base, 'LimitsSyst/Ind_Limits/Limit0/{0}/Limit{0}')
         return {
-            'Limits_comb_only': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/LimitsWithGraphs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
+            'limits_comb_only_no_obs': (
+                os.path.join(base, 'Ind_Limits/Limit0/LimitsWithGraphsNoObs/LimitCurvesCompared/tH100tZ0bW0_log' + ext),
             ),
-            'triangle_lim_obs_box': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
+            # 'triangle_lim_obs_box': (
+            #     os.path.join(base, 'LimitTriangle/PlotterBoxObs/lim_obs_lin' + ext),
+            # ),
+            # 'triangle_lim_exp_box': (
+            #     os.path.join(base, 'LimitTriangle/PlotterBoxExp/lim_exp_lin' + ext),
+            # ),
+            'postfit': (
+                os.path.join(base, 'PostFit/cnv_post_fit_' + ext),
             ),
-            'triangle_lim_exp_box': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/LimitTriangle/PlotterBoxExp/lim_exp_lin' + ext),
+            'correlation_matrix': (
+                os.path.join(base, 'CorrelationPlot/cnv_post_fit_' + ext),
             ),
-            'Postfit-M0700': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
-            ),
-            'Postfit-M1200': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
-            ),
-            'Postfit-M1700': (
-                os.path.join(base, 'LimitsAllUncertsAllRegions/Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
-            ),
+            # 'Postfit-M0700': (
+            #     os.path.join(base, 'Ind_Limits/Limit0/ThetaLimits/TpTp_M-0700/PostFit/cnv_post_fit_TpTp_M-0700' + ext),
+            # ),
+            # 'Postfit-M1200': (
+            #     os.path.join(base, 'Ind_Limits/Limit0/ThetaLimits/TpTp_M-1200/PostFit/cnv_post_fit_TpTp_M-1200' + ext),
+            # ),
+            # 'Postfit-M1700': (
+            #     os.path.join(base, 'Ind_Limits/Limit0/ThetaLimits/TpTp_M-1700/PostFit/cnv_post_fit_TpTp_M-1700' + ext),
+            # ),
         }
 
-    muchannel = mu_channel or mu_channel_def
-    elchannel = el_channel or el_channel_def
     lim_dict = getSingleLimPlotLarge()
     return varial.extensions.tex.TexContent(
         lim_dict,
-        include_str=r'\includegraphics[width=0.6\textwidth]{%s}',
+        include_str=r'\includegraphics[width={0}\textwidth]{%s}'.format(size_str),
         name=name,
     )
 

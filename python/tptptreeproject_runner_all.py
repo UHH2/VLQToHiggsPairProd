@@ -369,95 +369,6 @@ analysis.shape_uncertainties.update(dict((a, 1.) for a in all_uncerts))
 # ]
 
 
-lumi_times_pure_BR = 2630.*0.111
-lumi_times_mixed_BR = 2630.*0.222
-lumi = 2630.
-lumi_ele = 2540.
-
-def get_dict(hist_path, var):
-    def tmp(base_path):
-        path = hist_path
-        if not os.path.exists(path):
-            path = os.path.join(base_path, path)
-        with open(os.path.join(path, '_varial_infodata.pkl')) as f:
-            res = cPickle.load(f)
-        return res[var]
-    return tmp
-
-table_block_signal = [
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'T#bar{T} (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
-    (r'T#bar{T} (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
-    (r'T#bar{T} (1.3 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w, True),
-    (r'T#bar{T} (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
-]
-
-table_block_signal_fs_700 = [
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
-    (r'T#bar{T} (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
-]
-
-table_block_signal_fs_1700 = [
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
-    (r'T#bar{T} (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
-]
-
-table_block_background = [
-    (r'$\mathrm{t\bar{t}}$', lambda w: 'Integral___t#bar{t}' in w),
-    ('W + Jets', lambda w: 'Integral___W + jets' in w),
-    ('Z + Jets', lambda w: 'Integral___DY + jets' in w),
-    ('QCD', lambda w: 'Integral___QCD' in w),
-    ('Single t', lambda w: 'Integral___Single t' in w),
-]
-
-norm_factors = [
-    ('T#bar{T} (0.7 TeV)', (1./common_plot.normfactors['TpTp_M-0700'])*lumi),
-    ('T#bar{T} (0.9 TeV)', (1./common_plot.normfactors['TpTp_M-0900'])*lumi),
-    ('T#bar{T} (1.1 TeV)', (1./common_plot.normfactors['TpTp_M-1100'])*lumi),
-    ('T#bar{T} (1.3 TeV)', (1./common_plot.normfactors['TpTp_M-1300'])*lumi),
-    ('T#bar{T} (1.5 TeV)', (1./common_plot.normfactors['TpTp_M-1500'])*lumi),
-    ('T#bar{T} (1.7 TeV)', (1./common_plot.normfactors['TpTp_M-1700'])*lumi),
-]
-
-def get_table_category_block():
-    return [
-        ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-        ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b', 'ST')),
-        ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
-    ] if varial.settings.style == 'PAS' else [
-        ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection', 'ST')),
-        ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-        ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b' , 'ST')),
-        ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
-    ]
-
-def get_table_category_block_split(chan):
-    return [
-        ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection_%s' % chan, 'ST')),
-        ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion_%s' % chan, 'ST')),
-        ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b_%s' % chan , 'ST')),
-        ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b_%s' % chan, 'ST')),
-    ]
-
-# table_category_block_comp_fs = [
-#     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b', 'ST')),
-#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
-# ] if varial.settings.style == 'PAS' else [
-#     ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection', 'ST')),
-#     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b' , 'ST')),
-#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
-# ]
 
 # NO TOP PT REWEIGHTING
 # values from FinalSelection-v21/Run5_withHiggsTagVar/ReweightCalc/
@@ -690,6 +601,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
                     hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15),
                     filter_plots=unselect_theory_uncert,
+                    include_rate=True
                 )),
             varial.tools.ToolChain(
                 'BackgroundOnlyFitWithTheoryCR',
@@ -702,6 +614,19 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     rate_uncertainties=analysis.rate_uncertainties,
                     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
                     model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                )),
+            varial.tools.ToolChain(
+                'BackgroundOnlyFitTheoryAndRateCR',
+                sensitivity.mk_tc_postfit(
+                    br_list_th_only[0],
+                    filter_keyfunc=sensitivity.select_no_sig(cr_only_regions),
+                    selection='ThetaLimits',
+                    sys_path=sys_path,
+                    sys_uncerts=all_uncerts,
+                    rate_uncertainties=analysis.rate_uncertainties,
+                    pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                    model_func=model_vlqpair.get_model_with_norm(rate_uncerts_part),
                     hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
                 )),
 
@@ -719,7 +644,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
                         '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
                         analysis.rate_uncertainties),
-                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
+                    hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15),
+                    include_rate=True
                 )),
 
             # this is just a check that does not go into AN or PAS
@@ -767,6 +693,15 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 model_func=model_vlqpair.get_model_no_norm(rate_uncerts_part),
                 signals=treeproject_tptp.tptp_signals,
                 )),
+            sensitivity.mk_tc('TTLimitsTheoryAndRateAllRegions', mk_limit_list_syst(
+                output_dir,
+                name,
+                list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_with_norm(rate_uncerts_part),
+                signals=treeproject_tptp.tptp_signals,
+                )),
 
             # compare impact of HT reweighting on signal                                           
             sensitivity.mk_tc('TTLimitsOnlyHTAllRegionsWithNormNOSigRew', mk_limit_list_syst(
@@ -805,31 +740,31 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 )),
             
             # final limits with all BRs
-            sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
-                output_dir,
-                name,
-                list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
-                all_regions,
-                br_list=br_list_all,
-                model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
-                    '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
-                    analysis.rate_uncertainties),
-                signals=treeproject_tptp.tptp_signals,
-                filter_func=unselect_theory_uncert_single_sig(all_regions),
-                )),
-            sensitivity.mk_tc('BBLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
-                output_dir,
-                name,
-                list(sys_path+'/%s*/*.root'% i for i in all_uncerts)+list(sys_path+'BB/%s*/*.root'% i for i in all_uncerts),
-                all_regions,
-                pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root', os.path.join(output_dir, name)+'/TreeProject/TreeProjectorBB/*.root'],
-                br_list=br_list_all,
-                model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
-                    '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
-                    analysis.rate_uncertainties),
-                signals=treeproject_tptp.bpbp_signals,
-                filter_func=unselect_theory_uncert_single_sig(all_regions),
-                )),
+            # sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
+            #     output_dir,
+            #     name,
+            #     list(sys_path+'/%s*/*.root'% i for i in all_uncerts),
+            #     all_regions,
+            #     br_list=br_list_all,
+            #     model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
+            #         '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
+            #         analysis.rate_uncertainties),
+            #     signals=treeproject_tptp.tptp_signals,
+            #     filter_func=unselect_theory_uncert_single_sig(all_regions),
+            #     )),
+            # sensitivity.mk_tc('BBLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
+            #     output_dir,
+            #     name,
+            #     list(sys_path+'/%s*/*.root'% i for i in all_uncerts)+list(sys_path+'BB/%s*/*.root'% i for i in all_uncerts),
+            #     all_regions,
+            #     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root', os.path.join(output_dir, name)+'/TreeProject/TreeProjectorBB/*.root'],
+            #     br_list=br_list_all,
+            #     model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
+            #         '/Limit/BackgroundOnlyFitNoTheoryCR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
+            #         analysis.rate_uncertainties),
+            #     signals=treeproject_tptp.bpbp_signals,
+            #     filter_func=unselect_theory_uncert_single_sig(all_regions),
+            #     )),
 
             plot.mk_toolchain('HistogramsCompUncertsShape', plot.less_samples_to_plot_only_th,
                         pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root',
@@ -1097,28 +1032,28 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
-                            get_table_category_block(),
+                            common_plot.get_table_category_block(),
                             name='CountTable'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block(),
-                            norm_factors,
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTable'
                             ),
                         EffTable([
-                                table_block_signal_fs_700,
-                                table_block_signal_fs_1700,
+                                common_plot.table_block_signal_fs_700,
+                                common_plot.table_block_signal_fs_1700,
                             ],
-                            get_table_category_block(),
-                            norm_factors,
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableCompFS'
                             ),
@@ -1152,28 +1087,28 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
                             pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
-                            get_table_category_block(),
+                            common_plot.get_table_category_block(),
                             name='CountTable'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block(),
-                            norm_factors,
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTable'
                             ),
                         EffTable([
-                                table_block_signal_fs_700,
-                                table_block_signal_fs_1700,
+                                common_plot.table_block_signal_fs_700,
+                                common_plot.table_block_signal_fs_1700,
                             ],
-                            get_table_category_block(),
-                            norm_factors,
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableCompFS'
                             ),
@@ -1195,36 +1130,36 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                                 pattern=None, input_result_path='../HistoLoader/HistoLoader*'
                                 ),  
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
-                            get_table_category_block_split('Mu45'),
+                            common_plot.get_table_category_block_split('Mu45'),
                             name='CountTableMu45'
                             ),
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
-                            get_table_category_block_split('El45'),
+                            common_plot.get_table_category_block_split('El45'),
                             name='CountTableEl45'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block_split('Mu45'),
-                            norm_factors,
+                            common_plot.get_table_category_block_split('Mu45'),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableMu45'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block_split('El45'),
-                            norm_factors,
+                            common_plot.get_table_category_block_split('El45'),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableEl45'
                             ),
@@ -1249,17 +1184,17 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                                 plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True)
                                 ),  
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
-                            get_table_category_block_split('Mu45'),
+                            common_plot.get_table_category_block_split('Mu45'),
                             name='CountTableMu45'
                             ),
                         CountTable([
-                                table_block_signal,
-                                table_block_background,
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
                                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                                 [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
                             ],
@@ -1267,18 +1202,18 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             name='CountTableEl45'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block_split('Mu45'),
-                            norm_factors,
+                            common_plot.get_table_category_block_split('Mu45'),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableMu45'
                             ),
                         EffTable([
-                                table_block_signal,
+                                common_plot.table_block_signal,
                             ],
-                            get_table_category_block_split('El45'),
-                            norm_factors,
+                            common_plot.get_table_category_block_split('El45'),
+                            common_plot.norm_factors,
                             squash_errs=True,
                             name='EffTableEl45'
                             ),
@@ -1319,6 +1254,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/Histograms/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
             # tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/HistogramsNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
             tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannelsHistsNoTheory/HistogramsNormToInt/StackedAll', 'NormedSystPlotsCombinedMore_'+name),
+            tex_content.mk_autoContentSignalControlRegionCombined(path_sens+'/BackgroundOnlyFitNoTheoryAllRegions/PostFitPlots/HistogramsPostfit/StackedAll', 'PostfitDistributionsCombined_'+name),
             # tex_content.mk_compSystematicPlots(path_an+'/HistogramsCompUncerts', treeproject_tptp.ttbar_smpl, 'El45', 'Mu45', 'CompUncertPlotsTTbar_'+name),
             tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', treeproject_tptp.ttbar_smpl, '', 'CompUncertPlotsTTbar_'+name),
             tex_content.mk_compSystematicPlots(path_an+'/MergeChannelsHistsNoTheory/HistogramsCompUncerts', 'WJets', '', 'CompUncertPlotsWJets_'+name),
@@ -1327,9 +1263,16 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoContentCompareSplitWithMergedLep(path_pas+'/Histograms/StackedAll', path_pas+'/MergeChannelsHistsNoTheory/Histograms/StackedAll', 'Sideband', 'El45', 'Mu45', 'WithDataSidebandRegions_'+name),
             tex_content.mk_autoContentLimits(path_sens, 'TTLimitsNoTheory%sFinal', 'TTLimitPlots_'+name),
             tex_content.mk_autoContentLimits(path_sens, 'BBLimitsNoTheory%sFinal', 'BBLimitPlots_'+name),
-            # tex_content.mk_autoContentLimitsLarge(path_sens, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
-            # tex_content.mk_autoContentLimits(path_sens_old, 'El45', 'Mu45', 'LimitPlotsOld_'+name),
-            # tex_content.mk_autoContentLimitsLarge(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
+
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/BackgroundOnlyFitNoTheoryCR', 0.45, 'PostfitNoTheory_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/BackgroundOnlyFitWithTheoryCR', 0.45, 'PostfitWithTheory_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/BackgroundOnlyFitTheoryAndRateCR', 0.45, 'PostfitTheoryAndRate_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsNoTheoryAllRegions', 0.45, 'ExpLimitsNoTheory_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsWithTheoryAllRegions', 0.45, 'ExpLimitsWithTheory_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsTheoryAndRateAllRegions', 0.45, 'ExpLimitsTheoryAndRate_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsOnlyHTAllRegionsWithNormNOSigRew', 0.45, 'ExpLimitsNOSigRew_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsOnlyHTAllRegionsWithNormSigRew', 0.45, 'ExpLimitsSigRew_'+name),
+            tex_content.mk_autoContentLimitsVarSize(path_sens+'/TTLimitsOnlyHTAllRegionsWithNormSigRewUncOnly', 0.45, 'ExpLimitsSigRewUncOnly_'+name),
             tex_content.mk_autoContentSysTabs(path_sens, 'El45', 'Mu45', 'SysTabs_'+name, mass_points=['M-0800', 'M-1200', 'M-1600']),
             ######## TABLES ########
             tex_content.mk_autoEffCount(path_an+'/MergeChannelsTablesNoTheory/EffTable/count_table_content.tex', name='EffTable_'+name),
@@ -1339,7 +1282,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/EffTableMu45/count_table_content.tex', name='EffTableMu45_'+name),
             tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/CountTableEl45/count_table_content.tex', name='CountTableEl45_'+name),
             tex_content.mk_autoEffCount(path_an+'/TablesSplitLeptonNoTheory/CountTableMu45/count_table_content.tex', name='CountTableMu45_'+name),
-
+            tex_content.mk_autoEffCount(path_sens+'/BackgroundOnlyFitNoTheoryAllRegions/CountTablePostFit/count_table_content.tex', name='CountTablePostFit_'+name),
             ######### DEPRECATED #########
             # # tex_content.mk_autoContentSystematicCRPlots(path_an+'/Histograms', 'El45', 'Mu45', 'SystematicCRPlots_'+name),
             # # tex_content.mk_autoContentHiggsVarCombinedMore(path_an+'/MergeChannelsHistsCombFinalStates/Histograms/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
@@ -1347,13 +1290,16 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # # tex_content.mk_autoContentSystematicCRPlots(path_an+'/HistogramsNormToInt', 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+name),
             # # tex_content.mk_autoContentSignalControlRegionCombined(path_an+'/MergeChannels/HistogramsMergeLeptonChannels', 'WithDataFinalRegionsCombined_'+name),
             # # tex_content.mk_autoContentSignalControlRegion(path_an+'/HistogramsNoData', 'El45', 'Mu45', 'NoDataFinalRegions_'+name),
+            # # tex_content.mk_autoContentLimitsVarSize(path_sens, 'El45', 'Mu45', 'LimitPlotsLarge_'+name),
+            # # tex_content.mk_autoContentLimits(path_sens_old, 'El45', 'Mu45', 'LimitPlotsOld_'+name),
+            # # tex_content.mk_autoContentLimitsVarSize(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
         ]
         
         ######## LIMIT PLOTS AND SYSTEMATIC TABLES ########
 
         # # if name == 'TopPtAndHTReweighting':
         # #     tc_tex += [tex_content.mk_autoContentLimits(path_an, 'El45', 'Mu45', 'LimitPlots_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-        # #     tc_tex += [tex_content.mk_autoContentLimitsLarge(path_an, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+        # #     tc_tex += [tex_content.mk_autoContentLimitsVarSize(path_an, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
 
 
         if name == 'NoReweighting':
@@ -1373,7 +1319,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         # #             #     path_an+'/HistogramsCompNormToInt_'+uc_name, 'El45', 'Mu45', 'SystematicCRPlotsNormed_'+uc_name+'_'+name)
         # #             ]
         # #     tc_tex += [tex_content.mk_autoContentLimits(path_an, 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-        # #     tc_tex += [tex_content.mk_autoContentLimitsLarge(path_an, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+        # #     tc_tex += [tex_content.mk_autoContentLimitsVarSize(path_an, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
 
         tc_tex += [tex_content.mk_autoContentCompSystPlots(
                     list(path_an+'/HistogramsCompNormToInt_'+uc_name for uc_name in ['ScaleVar', 'PDF', 'TTbarScale', 'Exp']),
@@ -1404,7 +1350,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # # tex_content.mk_autoContentHiggsVarCombinedMore(path_pas+'/MergeChannelsHistsCombFinalStates/Histograms/StackedAll', 'WithDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
             # # tex_content.mk_autoContentHiggsVarCombinedMore(path_pas+'/MergeChannelsHistsCombFinalStates/HistogramsNoData/StackedAll', 'NoDataFinalRegionsCombinedCompFinalStates_'+name, size='0.45'),
             # # tex_content.mk_autoContentLimits(path_sens_old, 'El45', 'Mu45', 'LimitPlotsOld_'+name),
-            # # tex_content.mk_autoContentLimitsLarge(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
+            # # tex_content.mk_autoContentLimitsVarSize(path_sens_old, 'El45', 'Mu45', 'LimitPlotsLargeOld_'+name),
             # # tex_content.mk_autoContentSignalControlRegionCombined(path_pas+'/MergeChannelsHists/HistogramsNoUncerts/StackedAll', 'WithDataFinalRegionsCombinedMore_'+name),
             # # tex_content.mk_autoContentSignalControlRegionCombined(path_pas+'/MergeChannelsHists/HistogramsNoData/StackedAll', 'NoDataFinalRegionsCombinedMore_'+name),
             # # tex_content.mk_autoEffCount(path_pas+'/MergeChannels/EffTable/count_table_content.tex', name='EffTable_'+name),
@@ -1414,10 +1360,10 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         ]
         # # if name == 'TopPtAndHTReweighting':
         # #     tc_tex_pas += [tex_content.mk_autoContentLimits(path_pas, 'El45', 'Mu45', 'LimitPlots_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-        # #     tc_tex_pas += [tex_content.mk_autoContentLimitsLarge(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+        # #     tc_tex_pas += [tex_content.mk_autoContentLimitsVarSize(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
         # # else:
         # #     tc_tex_pas += [tex_content.mk_autoContentLimits(path_pas, 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-        # #     tc_tex_pas += [tex_content.mk_autoContentLimitsLarge(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
+        # #     tc_tex_pas += [tex_content.mk_autoContentLimitsVarSize(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
         tc_tex_pas = [
             varial.tools.ToolChain('TexPas', tc_tex_pas),
             varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-011/trunk/', src='../TexPas/*', ignore=('*.svn', '*.html'), use_rsync=True),

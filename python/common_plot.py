@@ -1,10 +1,11 @@
 import os
 import copy
+import pprint
+import cPickle
 
 import varial.analysis
 import varial.generators as gen
 import varial.rendering as rnd
-import pprint
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
@@ -13,6 +14,11 @@ import varial.wrappers
 import varial.util as util
 
 from ROOT import THStack, TH2, TLatex
+
+lumi_times_pure_BR = 2630.*0.111
+lumi_times_mixed_BR = 2630.*0.222
+lumi = 2630.
+lumi_ele = 2540.
 
 normfactors = {
     # 'TpTp' : 20.,
@@ -986,3 +992,89 @@ class BottomPlotUncertRatio(varial.rendering.BottomPlot):
         self.bottom_hist_sec.Draw('sameE0')
         self.bottom_hist_mc_err.Draw('sameE2')
         self.main_pad.cd()
+
+
+def get_dict(hist_path, var):
+    def tmp(base_path):
+        path = hist_path
+        if not os.path.exists(path):
+            path = os.path.join(base_path, path)
+        with open(os.path.join(path, '_varial_infodata.pkl')) as f:
+            res = cPickle.load(f)
+        return res[var]
+    return tmp
+
+table_block_signal = [
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'T#bar{T} (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
+    (r'T#bar{T} (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
+    (r'T#bar{T} (1.3 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1300_thth' in w, True),
+    (r'T#bar{T} (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+]
+
+table_block_signal_fs_700 = [
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
+    (r'T#bar{T} (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
+]
+
+table_block_signal_fs_1700 = [
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
+    (r'T#bar{T} (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
+]
+
+table_block_background = [
+    (r'$\mathrm{t\bar{t}}$', lambda w: 'Integral___t#bar{t}' in w),
+    ('W + Jets', lambda w: 'Integral___W + jets' in w),
+    ('Z + Jets', lambda w: 'Integral___DY + jets' in w),
+    ('QCD', lambda w: 'Integral___QCD' in w),
+    ('Single t', lambda w: 'Integral___Single t' in w),
+]
+
+norm_factors = [
+    ('T#bar{T} (0.7 TeV)', (1./normfactors['TpTp_M-0700'])*lumi),
+    ('T#bar{T} (0.9 TeV)', (1./normfactors['TpTp_M-0900'])*lumi),
+    ('T#bar{T} (1.1 TeV)', (1./normfactors['TpTp_M-1100'])*lumi),
+    ('T#bar{T} (1.3 TeV)', (1./normfactors['TpTp_M-1300'])*lumi),
+    ('T#bar{T} (1.5 TeV)', (1./normfactors['TpTp_M-1500'])*lumi),
+    ('T#bar{T} (1.7 TeV)', (1./normfactors['TpTp_M-1700'])*lumi),
+]
+
+def get_table_category_block(hist_path='Histograms'):
+    return [
+        ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
+        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path, 'ST')),
+        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
+    ] if varial.settings.style == 'PAS' else [
+        ('Preselection', get_dict('../%s/StackedAll/BaseLineSelection' % hist_path, 'ST')),
+        ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
+        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path , 'ST')),
+        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
+    ]
+
+def get_table_category_block_split(chan, hist_path='Histograms'):
+    return [
+        ('Preselection', get_dict('../%s/StackedAll/BaseLineSelection_%s' % (hist_path, chan), 'ST')),
+        ('0H category', get_dict('../%s/StackedAll/SidebandRegion_%s' % (hist_path, chan), 'ST')),
+        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b_%s' % (hist_path, chan) , 'ST')),
+        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b_%s' % (hist_path, chan), 'ST')),
+    ]
+
+# table_category_block_comp_fs = [
+#     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
+#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b', 'ST')),
+#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
+# ] if varial.settings.style == 'PAS' else [
+#     ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection', 'ST')),
+#     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
+#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b' , 'ST')),
+#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
+# ]
