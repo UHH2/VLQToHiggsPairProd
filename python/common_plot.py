@@ -1191,9 +1191,9 @@ table_block_signal = [
 ]
 
 table_block_signal_small = [
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.1 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.5 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.7 TeV)', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.1 TeV)', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.5 TeV)', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
 ]
 
 table_block_signal_fs_700 = [

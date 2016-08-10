@@ -94,7 +94,7 @@ class NumTableNew(varial.tools.Tool):
         lines.append(r"\begin{tabular}{|l "
             + len(self.regions)*"| r "
             + r"|}\hline")
-        lines.append("process & " + r" & ".join(r for r, _ in self.regions)
+        lines.append("Process & " + r" & ".join(r for r, _ in self.regions)
             + r"\\ \hline")
         # if not self.calc_eff:
         for smpl_dict in self.input_blocks:

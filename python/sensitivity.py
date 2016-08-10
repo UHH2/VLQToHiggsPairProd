@@ -554,50 +554,18 @@ def plot_calc_intersect(grps):
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
-    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend='#sigma_{pp #rightarrow TT} (NNLO)')
+    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend='T#bar{T} (NNLO)')
     grps = plot_calc_intersect(grps)
     return grps
 
+def canvas_setup_post(grps, max_y=1.):
+    for g in grps:
+        y_min, y_max = g.y_bounds
+        g.first_drawn.SetMaximum(y_max * max_y)
+        yield g
 
 
-# def mod_post_canv(grps):
-#     for g in grps:
-#         if not any(w.is_data for w in g.renderers):
-#             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
-#         y_min, y_max = g.y_bounds
-#         canv_attr = dict(default_canv_attr)
-#         mod_wrp_dict = mod_dict.get(g.name, None)
-#         if mod_wrp_dict:
-#             canv_attr.update(mod_wrp_dict)
-#         if y_max > 1.:
-#             g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
-#             g.y_min_gr_zero = canv_attr['y_min_gr_zero']
-#         if g.renderers[0].scale == 'lin':
-#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_fct'])
-#             if canv_attr['set_leg_2_col_lin']:
-#                 if isinstance(canv_attr['set_leg_2_col_lin'], dict):
-#                     leg_mod(g, canv_attr['set_leg_2_col_lin'], n_col=2)
-#                 else:
-#                     leg_mod(g, n_col=2)
-#             if canv_attr['set_leg_1_col_lin']:
-#                 if isinstance(canv_attr['set_leg_1_col_lin'], dict):
-#                     leg_mod(g, canv_attr['set_leg_1_col_lin'])
-#                 else:
-#                     leg_mod(g)
-#         elif g.renderers[0].scale == 'log':
-#             g.renderers[0].name += '_leg'
-#             g.first_drawn.SetMaximum(y_max * canv_attr['y_max_log_fct'])
-#             if canv_attr['set_leg_2_col_log']:
-#                 if isinstance(canv_attr['set_leg_2_col_log'], dict):
-#                     leg_mod(g, canv_attr['set_leg_2_col_log'], n_col=2)
-#                 else:
-#                     leg_mod(g, n_col=2)
-#             if canv_attr['set_leg_1_col_log']:
-#                 if isinstance(canv_attr['set_leg_1_col_log'], dict):
-#                     leg_mod(g, canv_attr['set_leg_1_col_log'])
-#                 else:
-#                     leg_mod(g)
-#         yield g
+
 
 class DrawLess700(util.Decorator):
     """
@@ -653,9 +621,11 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 plot_setup=plot_setup_triangle('col'),
                 save_name_func=lambda w: w.save_name,
                 canvas_decorators=[DrawLess700,
-                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Simulation}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
                 ),
+
             varial.plotter.Plotter(
                 name='PlotterBoxObs',
                 input_result_path='../TriangleMassLimitPlots',
@@ -663,7 +633,8 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 plot_setup=plot_setup_triangle('col'),
                 save_name_func=lambda w: w.save_name,
                 canvas_decorators=[DrawLess700,
-                varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                varial.rendering.TextBox(textbox=TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
                 ),
             varial.plotter.Plotter(
