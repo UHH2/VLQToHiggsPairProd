@@ -14,7 +14,7 @@ settings.__setattr__('do_norm_plot', False)
 settings.__setattr__('flex_sig_norm', False)
 settings.__setattr__('cutflow_precision', {})
 settings.__setattr__('eff_precision', {})
-settings.__setattr__('lookup_aliases', True)
+settings.__setattr__('lookup_aliases', 'aliases.in.*')
 settings.__setattr__('style', 'AN')
 
 settings.cutflow_precision.update({

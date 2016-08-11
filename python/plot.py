@@ -112,6 +112,7 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.BpBp_M-1600',
     'MC.BpBp_M-1700',
     'MC.BpBp_M-1800',
+    'MC.Diboson'
     ])
 
 normfactors_comp = {
@@ -215,6 +216,7 @@ other_samples_to_plot = [
     'DYJets',
     'WJets',
     'Run2015CD',
+    'Diboson'
 ]
 
 samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
@@ -501,6 +503,7 @@ def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, s
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     if varial.settings.flex_sig_norm:
         grps = common_plot.norm_to_bkg(grps)
+    # grps = common_plot.make_empty_bin_error(grps)
     return grps
 
 def stack_setup_norm_all_to_intgr(grps):

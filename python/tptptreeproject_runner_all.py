@@ -887,110 +887,110 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     ####### MERGE LEPTON CHANNELS ########
 
 
-                    # varial.tools.ToolChain('MergeChannelsHists', [
-                    #     varial.tools.ToolChainParallel('HistoLoader',
-                    #     list(varial.tools.HistoLoader(
-                    #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
-                    #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
-                    #             'Region_Comb' not in w.in_file_path and\
-                    #             any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
-                    #                 'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                    #                 'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                    #                 'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
-                    #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                    #         name='HistoLoader_'+g,
-                    #         lookup_aliases=False,
-                    #         raise_on_empty_result=False
-                    #         ) for g in plot.less_samples_to_plot_only_th)),
-                    #     plot.mk_toolchain('Histograms',
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsCompUncerts',
-                    #         filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                    #         plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                    #         filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                    #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
-                    #             )
-                    #         ),
-                    #     plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                    #         filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                    #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
-                    #             )
-                    #         ),
-                    #     # # plot.mk_toolchain('HistogramsNormToInt',
-                    #     # #     filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
-                    #     # #     pattern=None, input_result_path='../HistoLoader*',
-                    #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
-                    #     # #         plot_setup=plot.stack_setup_norm_all_to_intgr)),
-                    #     # # plot.mk_toolchain('HistogramsNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                    #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                    #     # #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                    #     # #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
-                    #     # #         ),
-                    #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     # # plot.mk_toolchain('HistogramsNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
-                    #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
-                    #     # #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
-                    #     # #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
-                    #     # #         canvas_decorators=[
-                    #     # #             varial.rendering.BottomPlotRatioPullErr,
-                    #     # #             varial.rendering.Legend,
-                    #     # #             ]
-                    #     # #         ),
-                    #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     # # plot.mk_toolchain('HistogramsNoData', filter_keyfunc=lambda w: not w.is_data,
-                    #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    # # varial.tools.ToolChain('MergeChannelsHists', [
+                    # #     varial.tools.ToolChainParallel('HistoLoader',
+                    # #     list(varial.tools.HistoLoader(
+                    # #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    # #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
+                    # #             'Region_Comb' not in w.in_file_path and\
+                    # #             any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
+                    # #                 'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                    # #                 'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                    # #                 'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                    # #         hook_loaded_histos=plot.loader_hook_merge_regions,
+                    # #         name='HistoLoader_'+g,
+                    # #         lookup_aliases=False,
+                    # #         raise_on_empty_result=False
+                    # #         ) for g in plot.less_samples_to_plot_only_th)),
+                    # #     plot.mk_toolchain('Histograms',
+                    # #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                    # #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    # #     plot.mk_toolchain('HistogramsCompUncerts',
+                    # #         filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                    # #         plotter_factory=plot.plotter_factory_uncerts(analysis.rate_uncertainties, uncerts, hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w))),
+                    # #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    # #     plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                    # #         filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                    # #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                    # #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                    # #             )
+                    # #         ),
+                    # #     plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                    # #         filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                    # #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                    # #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                    # #             )
+                    # #         ),
+                    # #     # # plot.mk_toolchain('HistogramsNormToInt',
+                    # #     # #     filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
+                    # #     # #     pattern=None, input_result_path='../HistoLoader*',
+                    # #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
+                    # #     # #         plot_setup=plot.stack_setup_norm_all_to_intgr)),
+                    # #     # # plot.mk_toolchain('HistogramsNoUncerts', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
+                    # #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                    # #     # #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+                    # #     # #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w))
+                    # #     # #         ),
+                    # #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    # #     # # plot.mk_toolchain('HistogramsNoUncertsPull', filter_keyfunc=lambda w: not w.is_signal and not w.sys_info,
+                    # #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, 
+                    # #     # #         hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+                    # #     # #         hook_canvas_post_build=lambda w: common_plot.mod_no_2D_leg(plot.canvas_setup_post(w)),
+                    # #     # #         canvas_decorators=[
+                    # #     # #             varial.rendering.BottomPlotRatioPullErr,
+                    # #     # #             varial.rendering.Legend,
+                    # #     # #             ]
+                    # #     # #         ),
+                    # #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    # #     # # plot.mk_toolchain('HistogramsNoData', filter_keyfunc=lambda w: not w.is_data,
+                    # #     # #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                    # #     # #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         
-                    #     ]),
+                    # #     ]),
                     
-                    # varial.tools.ToolChain('MergeChannelsHistsNoTheory', [
-                    #     varial.tools.ToolChainParallel('HistoLoader',
-                    #     list(varial.tools.HistoLoader(
-                    #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
-                    #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
-                    #             'Region_Comb' not in w.in_file_path and\
-                    #             any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
-                    #                 'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                    #                 'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                    #                 'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']) and\
-                    #             unselect_theory_uncert(w),
-                    #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                    #         name='HistoLoader_'+g,
-                    #         lookup_aliases=False,
-                    #         raise_on_empty_result=False
-                    #         ) for g in plot.less_samples)),
-                    #     plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
-                    #         filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                    #         plotter_factory=plot.plotter_factory_uncerts(
-                    #             hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w), 
-                    #                 analysis.rate_uncertainties, uncerts, include_rate=True)),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                    #         filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
-                    #             hook_loaded_histos=plot.loader_hook_compare_finalstates,
-                    #             )
-                    #         ),
-                    #     # plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                    #     #     filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                    #     #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
-                    #     #         hook_loaded_histos=plot.loader_hook_compare_finalstates,
-                    #     #         )
-                    #     #     ),
-                    #     # plot.mk_toolchain('HistogramsNormToInt',
-                    #     #     filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
-                    #     #     pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                    #     #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
-                    #     #         plot_setup=plot.stack_setup_norm_all_to_intgr)),
-                    #     ]),
+                    varial.tools.ToolChain('MergeChannelsHistsNoTheory', [
+                        varial.tools.ToolChainParallel('HistoLoader',
+                        list(varial.tools.HistoLoader(
+                            pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                            filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
+                                'Region_Comb' not in w.in_file_path and\
+                                any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
+                                    'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                    'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                    'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']) and\
+                                unselect_theory_uncert(w),
+                            hook_loaded_histos=plot.loader_hook_merge_regions,
+                            name='HistoLoader_'+g,
+                            lookup_aliases=False,
+                            raise_on_empty_result=False
+                            ) for g in plot.less_samples)),
+                        plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
+                        #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                        #     plotter_factory=plot.plotter_factory_uncerts(
+                        #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w), 
+                        #             analysis.rate_uncertainties, uncerts, include_rate=True)),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                        #     filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
+                        #         hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                        #         )
+                        #     ),
+                        # plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                        #     filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
+                        #         hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                        #         )
+                        #     ),
+                        # plot.mk_toolchain('HistogramsNormToInt',
+                        #     filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
+                        #         plot_setup=plot.stack_setup_norm_all_to_intgr)),
+                        ]),
 
 
 
@@ -1063,74 +1063,74 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # #         ),
                     # #     ]),
 
-                    varial.tools.ToolChain('MergeChannelsTablesNoTheory', [
-                        # varial.tools.ToolChainParallel('HistoLoader',
-                        #     list(varial.tools.HistoLoader(
-                        #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
-                        #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
-                        #             'Region_Comb' not in w.in_file_path and\
-                        #             any(w.in_file_path.endswith(f) for f in ['ST']) and\
-                        #             unselect_theory_uncert(w),
-                        #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                        #         name='HistoLoader_'+g,
-                        #         lookup_aliases=False,
-                        #         raise_on_empty_result=False
-                        #         ) for g in plot.more_samples)),
-                        # plot.mk_toolchain('Histograms',
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # plot.mk_toolchain('HistogramsCompUncerts',
-                        #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                        #     plotter_factory=plot.plotter_factory_uncerts(
-                        #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w),
-                        #             analysis.rate_uncertainties, uncerts, include_rate=True,)),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # CountTable([
-                        #         common_plot.table_block_signal,
-                        #         common_plot.table_block_background,
-                        #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                        #         [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                        #     ],
-                        #     common_plot.get_table_category_block(),
-                        #     name='CountTable'
-                        #     ),
-                        # EffTable([
-                        #         common_plot.table_block_signal,
-                        #     ],
-                        #     common_plot.get_table_category_block(),
-                        #     common_plot.norm_factors,
-                        #     squash_errs=True,
-                        #     name='EffTable'
-                        #     ),
-                        # EffTable([
-                        #         common_plot.table_block_signal_fs_700,
-                        #         common_plot.table_block_signal_fs_1700,
-                        #     ],
-                        #     common_plot.get_table_category_block(),
-                        #     common_plot.norm_factors,
-                        #     squash_errs=True,
-                        #     name='EffTableCompFS'
-                        #     ),
-                        EffTable([
-                                common_plot.table_block_signal_fs_700,
-                                common_plot.table_block_signal_fs_1700,
-                            ],
-                            common_plot.get_table_category_block(style='PAS'),
-                            common_plot.norm_factors,
-                            squash_errs=True,
-                            name='EffTableCompFSPAS'
-                            ),
-                        CountTable([
-                                common_plot.table_block_signal,
-                                common_plot.table_block_background,
-                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                            ],
-                            common_plot.get_table_category_block(style='PAS'),
-                            squash_errs=True,
-                            name='CountTablePAS'
-                            ),
-                        ]),
+                    # varial.tools.ToolChain('MergeChannelsTablesNoTheory', [
+                    #     # varial.tools.ToolChainParallel('HistoLoader',
+                    #     #     list(varial.tools.HistoLoader(
+                    #     #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    #     #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                    #     #             'Region_Comb' not in w.in_file_path and\
+                    #     #             any(w.in_file_path.endswith(f) for f in ['ST']) and\
+                    #     #             unselect_theory_uncert(w),
+                    #     #         hook_loaded_histos=plot.loader_hook_merge_regions,
+                    #     #         name='HistoLoader_'+g,
+                    #     #         lookup_aliases=False,
+                    #     #         raise_on_empty_result=False
+                    #     #         ) for g in plot.more_samples)),
+                    #     # plot.mk_toolchain('Histograms',
+                    #     #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                    #     #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    #     # plot.mk_toolchain('HistogramsCompUncerts',
+                    #     #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                    #     #     plotter_factory=plot.plotter_factory_uncerts(
+                    #     #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w),
+                    #     #             analysis.rate_uncertainties, uncerts, include_rate=True,)),
+                    #     #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                    #     # CountTable([
+                    #     #         common_plot.table_block_signal,
+                    #     #         common_plot.table_block_background,
+                    #     #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                    #     #         [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                    #     #     ],
+                    #     #     common_plot.get_table_category_block(),
+                    #     #     name='CountTable'
+                    #     #     ),
+                    #     # EffTable([
+                    #     #         common_plot.table_block_signal,
+                    #     #     ],
+                    #     #     common_plot.get_table_category_block(),
+                    #     #     common_plot.norm_factors,
+                    #     #     squash_errs=True,
+                    #     #     name='EffTable'
+                    #     #     ),
+                    #     # EffTable([
+                    #     #         common_plot.table_block_signal_fs_700,
+                    #     #         common_plot.table_block_signal_fs_1700,
+                    #     #     ],
+                    #     #     common_plot.get_table_category_block(),
+                    #     #     common_plot.norm_factors,
+                    #     #     squash_errs=True,
+                    #     #     name='EffTableCompFS'
+                    #     #     ),
+                    #     EffTable([
+                    #             common_plot.table_block_signal_fs_700,
+                    #             common_plot.table_block_signal_fs_1700,
+                    #         ],
+                    #         common_plot.get_table_category_block(style='PAS'),
+                    #         common_plot.norm_factors,
+                    #         squash_errs=True,
+                    #         name='EffTableCompFSPAS'
+                    #         ),
+                    #     CountTable([
+                    #             common_plot.table_block_signal,
+                    #             common_plot.table_block_background,
+                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                    #             [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
+                    #         ],
+                    #         common_plot.get_table_category_block(style='PAS'),
+                    #         squash_errs=True,
+                    #         name='CountTablePAS'
+                    #         ),
+                    #     ]),
 
                     # # varial.tools.ToolChain('TablesSplitLepton', [
                     # #     varial.tools.ToolChainParallel('HistoLoader',
@@ -1392,11 +1392,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
-            varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
+            # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
 
         ])
 

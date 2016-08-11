@@ -278,7 +278,7 @@ def make_tp_plot_chain(name, base_path, output_dir, uncertainties=None, br_list=
                         analysis.rate_uncertainties),
                     pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
                     filter_plots=unselect_theory_uncert, include_rate=False
-                )),
+                ),
         ]
         lim_list += [            
             # final limits with all BRs

@@ -9,7 +9,6 @@ import itertools
 import os
 import pprint
 import collections
-from math import sqrt
 
 order_cats = ['Preselection', '0H category', 'H1B category', 'H2B category']
 order_smpls = [
@@ -17,33 +16,33 @@ order_smpls = [
     'TT M0700 tHtH', 'TT M0900 tHtH', 'TT M1100 tHtH', 'TT M1300 tHtH', 'TT M1500 tHtH', 'TT M1700 tHtH'
     ]
 
-count_prec = {
-    'TT M0700' : "%.2f",
-    'TT M1000' : "%.3f",
-    'TT M1300' : "%.4f",
-    'TT M1700' : "%.4f",
-    # 'TTbar' : "%.1f",
-    # 'WJets' : "%.1f",
-    # 'DYJets' : "%.1f",
-    # 'QCD' : "%.1f",
-    # 'SingleTop' : "%.1f",
-    r'\textbf{data}' : "%d"
+# count_prec = {
+#     'TT M0700' : "%.2f",
+#     'TT M1000' : "%.3f",
+#     'TT M1300' : "%.4f",
+#     'TT M1700' : "%.4f",
+#     # 'TTbar' : "%.1f",
+#     # 'WJets' : "%.1f",
+#     # 'DYJets' : "%.1f",
+#     # 'QCD' : "%.1f",
+#     # 'SingleTop' : "%.1f",
+#     r'\textbf{data}' : "%d"
 
-    }
+#     }
 
-eff_prec = {
-    'TT M0700' : "%.2f",
-    'TT M1000' : "%.2f",
-    'TT M1300' : "%.2f",
-    'TT M1700' : "%.2f",
-    'TTbar' : "%.3f",
-    # 'WJets' : "%.1f",
-    # 'DYJets' : "%.1f",
-    # 'QCD' : "%.1f",
-    # 'SingleTop' : "%.1f",
-    # r'\textbf{data}' : "%d"
+# eff_prec = {
+#     'TT M0700' : "%.2f",
+#     'TT M1000' : "%.2f",
+#     'TT M1300' : "%.2f",
+#     'TT M1700' : "%.2f",
+#     'TTbar' : "%.3f",
+#     # 'WJets' : "%.1f",
+#     # 'DYJets' : "%.1f",
+#     # 'QCD' : "%.1f",
+#     # 'SingleTop' : "%.1f",
+#     # r'\textbf{data}' : "%d"
 
-    }
+#     }
 
 def sort_cats(sort_list):
     def tmp(tpl):
@@ -69,11 +68,11 @@ class NumTableNew(varial.tools.Tool):
 
     def get_precision(self, num):
         if num >= 1.0:
-            return "{0:17.1f}"
+            return "{0:17.0f}"
         elif num > 0:
             ex_dim = abs(floor(log10(num)))
             add_prec = 0
-            if num*10**ex_dim < 2.:
+            if num*10**ex_dim < 3.55:
                 add_prec = 1
             prec = int(ex_dim+add_prec)
             prec = "{0:17."+str(prec)+"f}"
@@ -119,10 +118,15 @@ class EffTable(NumTableNew):
         lines = []
         for sample_tup in sample_dict:
             try:
-                s, s_func, sym_errs = sample_tup
+                s, s_func, sym_errs, sig_dig_count = sample_tup
             except ValueError:
-                s, s_func = sample_tup
-                sym_errs = False
+                try:
+                    s, s_func, sym_errs = sample_tup
+                    sig_dig_count = False
+                except ValueError:
+                    s, s_func = sample_tup
+                    sym_errs = False
+                    sig_dig_count = False
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
             if isinstance(self.norm_fct, list):
@@ -151,12 +155,19 @@ class EffTable(NumTableNew):
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
                 if self.squash_errs:
+                    nom_val = info[0]
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    line += prec.format(info[0]/baseline_count)
+                    tot_err /= baseline_count
+                    prec = "{0:17.0f}" if 'data' in s else self.get_precision(tot_err)
+                    if sig_dig_count:
+                        prec = "{0:17.0f}"
+                        nom_val = round(nom_val)
+                        tot_err = round(tot_err)
+                    line += prec.format(nom_val/baseline_count)
                     if 'data' not in s:
-                        line += r" \% \pm " + prec.format(tot_err/baseline_count) + r" \%"
+                        line += r" \% \pm " + prec.format(tot_err) + r" \%"
                 elif sym_errs:
                     line += prec.format(info[0]/baseline_count)
                     if 'data' not in s:
@@ -184,10 +195,15 @@ class CountTable(NumTableNew):
         lines = []
         for sample_tup in sample_dict:
             try:
-                s, s_func, sym_errs = sample_tup
+                s, s_func, sym_errs, sig_dig_count = sample_tup
             except ValueError:
-                s, s_func = sample_tup
-                sym_errs = False
+                try:
+                    s, s_func, sym_errs = sample_tup
+                    sig_dig_count = False
+                except ValueError:
+                    s, s_func = sample_tup
+                    sym_errs = False
+                    sig_dig_count = False
             # filt_smpls = list(itertools.ifilter(fs, res))
             line = s + " "
             for r, r_dict in self.regions:
@@ -205,10 +221,16 @@ class CountTable(NumTableNew):
                 else:
                     prec = self.get_precision(info[1])
                 if self.squash_errs:
+                    nom_val = info[0]
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    line += prec.format(info[0])
+                    prec = "{0:17.0f}" if 'data' in s else self.get_precision(tot_err)
+                    if sig_dig_count:
+                        prec = "{0:17.0f}"
+                        nom_val = round(nom_val)
+                        tot_err = round(tot_err)
+                    line += prec.format(nom_val)
                     if 'data' not in s:
                         line += r" \pm " + prec.format(tot_err)
                 elif sym_errs:

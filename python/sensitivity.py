@@ -446,14 +446,14 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
                 # name='HistogramsPostfit',
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
-            plot.mk_toolchain('HistogramsPostfitCompareUncerts', plot.less_samples_to_plot_only_th,
-                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
-                    any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
-                plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
-                    hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-                ),
-                pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-                ),
+            # plot.mk_toolchain('HistogramsPostfitCompareUncerts', plot.less_samples_to_plot_only_th,
+            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
+            #         any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
+            #     plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
+            #         hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
+            #     ),
+            #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
+            #     ),
             plot.mk_toolchain('HistogramsTables', plot.more_samples,
                 plotter_factory=plotter_factory_postfit(theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
                 pattern=None,
@@ -466,7 +466,7 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
                     common_plot.table_block_signal,
                     common_plot.table_block_background,
                     [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                    [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
                 ],
                 common_plot.get_table_category_block('HistogramsTables'),
                 name='CountTablePostFit'
@@ -475,7 +475,7 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
                     common_plot.table_block_signal_small,
                     common_plot.table_block_background,
                     [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                    [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
                 ],
                 common_plot.get_table_category_block('HistogramsTables', style='PAS'),
                 squash_errs=True,

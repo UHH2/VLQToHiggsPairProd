@@ -115,7 +115,7 @@ def get_style():
     # _style = style or varial.settings.style
     return [
         varial.rendering.Legend,
-        varial.rendering.BottomPlotRatioSplitErr,
+        varial.rendering.BottomPlotRatioSplitErr(poisson_errs=True),
         # varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
         varial.rendering.TextBox(textbox=TLatex(0.68, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
         ]
@@ -151,19 +151,21 @@ mod_dict = {
 
     ##### GENERAL VARIABLES ######
     'ST' : {
-            'rebin' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
+            'rebin_list' : [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 1e-3,
             'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             'y_max_fct' : 1.8,
-            'y_title' : '100',
+            'bin_width' : 100,
+            'err_empty_bins' : True
             },
     'ST_rebin_flex' : {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 30000.,
             'y_min_gr_zero' : 2e-3,
+            'bin_width' : 100,
             'set_leg_2_col_log' : {
                     'x_pos': 0.7,
                     'y_pos': 0.67,
@@ -178,16 +180,19 @@ mod_dict = {
             'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             'y_max_fct' : 1.8,
-            'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")
+            'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
+            'err_empty_bins' : True,
+            'draw_x_errs' : True
             },
     'HT' : {
-            'rebin' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
+            'rebin_list' : [0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'title' : 'H_{T} [GeV]',
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 1e-3,
             },
     'HT_rebin_flex' : {
             'title' : 'H_{T} [GeV]',
+            'bin_width' : 100,
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 2e-3,
             },
@@ -345,7 +350,7 @@ mod_dict = {
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass_softdrop' : {
-            'rebin' : list(i + 40 for i in xrange(0, 260, 10)),
+            'rebin_list' : list(i + 40 for i in xrange(0, 260, 10)),
             # 'rebin' : [40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 260., 280., 300.],
             'y_max_fct' : 1.8,
             'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
@@ -367,7 +372,7 @@ mod_dict = {
     'nomass_boost_2b_mass_softdrop_rebin_flex' : {
             'y_max_fct' : 3.,
             'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
-            'y_title' : '10',
+            'bin_width' : 10,
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.2,
@@ -733,8 +738,6 @@ def mod_title(wrps):
 
 
 
-
-
 def add_wrp_info(wrps, sig_ind=None):
     def fix_get_samplename(wrp):
         fname = os.path.basename(wrp.file_path)
@@ -838,39 +841,6 @@ def add_sample_integrals(canvas_builders):
         ))
         yield cnv
 
-# def add_sample_integrals(canvas_builders):
-#     """
-#     Adds {'legend1' : histo_integral, ...} to canvases.
-#     """
-#     def integral_histo_wrp(wrp):
-#         fct = 1.
-#         if hasattr(wrp, 'scl_fct'):
-#             fct = wrp.scl_fct
-#         return [(wrp.legend, wrp.obj.Integral()/fct)]
-
-#     def integral_stack_wrp(wrp):
-#         for hist in wrp.obj.GetHists():
-#             fct = 1.
-#             if hasattr(wrp, 'scl_fct'):
-#                 fct = wrp.scl_fct
-#             yield hist.GetTitle(), hist.Integral()/fct
-
-#     def integral(wrp):
-#         if isinstance(wrp, rnd.StackRenderer):
-#             return integral_stack_wrp(wrp)
-#         else:
-#             return integral_histo_wrp(wrp)
-
-#     for cnv in canvas_builders:
-#         # TODO when rendering goes generator
-#         cnv.renderers[0].__dict__.update(dict(
-#             ('Integral__' + legend, integ)
-#             for r in cnv.renderers
-#             if isinstance(r, rnd.HistoRenderer)  # applies also to StackRnd.
-#             for legend, integ in integral(r)
-#         ))
-#         yield cnv
-
 
 
 def rebin_st_and_nak4(wrps):
@@ -884,13 +854,14 @@ def rebin_st_and_nak4(wrps):
             mod_wrp_dict = mod_dict.get(w.name, None)
             rebin_ind = False
             if mod_wrp_dict:
+                rebin_list = mod_wrp_dict.get('rebin_list', None)
                 rebin_fct = mod_wrp_dict.get('rebin', None)
-                if (isinstance(rebin_fct, list)):
-                    new_w_flex = op.rebin(w, rebin_fct, True)
+                if (rebin_list):
+                    new_w_flex = op.rebin(w, rebin_list, True)
                     new_w_flex.name = w.name+'_rebin_flex'
                     new_w_flex.in_file_path = w.in_file_path.replace(w.name, w.name+'_rebin_flex')
                     yield new_w_flex
-                elif (isinstance(rebin_fct, int)):
+                elif (rebin_fct):
                     w = op.rebin_nbins_max(w, rebin_fct)
                     rebin_ind = True
             # if not rebin_ind:
@@ -928,6 +899,29 @@ def box_mod(box_list):
         box_list = [box_list]
     return list(varial.rendering.TextBox(textbox=TLatex(x, y, cont)) for x, y, cont in box_list)
 
+def make_empty_bins_dat(g):
+    dat = g.renderers[-1]
+    if not dat.is_data:
+        return
+    dat_hist = dat.histo
+    for i in xrange(dat_hist.GetNbinsX()+2):
+        if not dat_hist.GetBinContent(i):
+            dat_hist.SetBinContent(i, -1e-9)
+            dat_hist.SetBinError(i, 0.)
+
+def make_empty_bins_dat_error(g, bin_width=None):
+    bkg = g.renderers[0]
+    dat = g.renderers[-1]
+    assert dat.is_data, 'is not data!'
+    bkg_hist = bkg.histo
+    dat_hist = dat.histo
+    for i in xrange(bkg_hist.GetNbinsX()+2):
+        if bkg_hist.GetBinContent(i) and dat_hist.GetBinContent(i) < 0.:
+            corr_fct = 1.
+            if bin_width:
+                corr_fct = dat_hist.GetBinWidth(i)/bin_width
+            dat_hist.SetBinError(i, 1.8/corr_fct)
+
 default_canv_attr = {
     'y_min_gr_zero' : 1e-9,
     'y_max_fct' : 1.,
@@ -939,7 +933,6 @@ default_canv_attr = {
     'move_exp' : False,
     'no_exp' : False,
 }
-
 
 def mod_pre_canv(grps):
     for g in grps:
@@ -957,6 +950,11 @@ def mod_pre_canv(grps):
             box_list = box_mod(box_list)
             for dec in box_list:
                 g = dec(g)
+        make_empty_bins_dat(g)
+        if canv_attr.get('draw_x_errs'):
+            setattr(g, 'draw_x_errs', True)
+        if canv_attr.get('err_empty_bins', None):
+            make_empty_bins_dat_error(g, canv_attr.get('bin_width', None))
         yield g
 
 # 
@@ -993,10 +991,10 @@ def mod_post_canv(grps):
             g.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         if canv_attr['no_exp']:
             g.first_drawn.GetYaxis().SetNoExponent()
-        if canv_attr.get('y_title', None):
-            g.first_drawn.GetYaxis().SetTitle('Events / %s GeV' % canv_attr['y_title'])
-        if canv_attr.get('y_title', None) and y_exp:
-            g.first_drawn.GetYaxis().SetTitle('Events / (%s GeV #times 10^{%d})' % (canv_attr['y_title'], y_exp))
+        if canv_attr.get('bin_width', None):
+            g.first_drawn.GetYaxis().SetTitle('Events / %s GeV' % str(canv_attr['bin_width']))
+        if canv_attr.get('bin_width', None) and y_exp:
+            g.first_drawn.GetYaxis().SetTitle('Events / (%s GeV #times 10^{%d})' % (str(canv_attr['bin_width']), y_exp))
         g.first_drawn.GetYaxis().CenterTitle(kFALSE)
         if y_max > 1.:
             g.first_drawn.SetMinimum(canv_attr['y_min_gr_zero'])
@@ -1215,11 +1213,11 @@ table_block_signal_fs_1700 = [
 ]
 
 table_block_background = [
-    (r'$\mathrm{t\bar{t}}$', lambda w: 'Integral___t#bar{t}' in w),
-    ('W + Jets', lambda w: 'Integral___W + jets' in w),
-    ('Z + Jets', lambda w: 'Integral___DY + jets' in w),
-    ('QCD', lambda w: 'Integral___QCD' in w),
-    ('Single t', lambda w: 'Integral___Single t' in w),
+    (r'$\mathrm{t\bar{t}}$', lambda w: 'Integral___t#bar{t}' in w, False, True),
+    ('W + Jets', lambda w: 'Integral___W + jets' in w, False, True),
+    ('Z + Jets', lambda w: 'Integral___DY + jets' in w, False, True),
+    ('QCD', lambda w: 'Integral___QCD' in w, False, True),
+    ('Single t', lambda w: 'Integral___Single t' in w, False, True),
 ]
 
 norm_factors = [

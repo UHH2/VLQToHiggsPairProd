@@ -36,8 +36,8 @@ categories_final = [
         ]
 
 categories_pre = [ #"NoSelection",
-        # 'IsoMuo20',
-        # 'IsoEle27',
+        'IsoMuo20',
+        'IsoEle27',
         'Mu45',
         'El45',
         'El105',
@@ -367,10 +367,10 @@ def mk_sframe_tools_and_plot(argv):
             options.outputdir,
             [
                 git.GitAdder(),
-                ToolChain('Files_and_Plots',
+                ToolChain('Files_and_Plots2',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_pre(options.outputdir+tex_base),
+                # mk_tex_tc_pre(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
@@ -380,10 +380,10 @@ def mk_sframe_tools_and_plot(argv):
             options.outputdir,
             [
                 git.GitAdder(),
-                ToolChain('Files_and_Plots',
+                ToolChain('Files_and_Plots2',
                     sf_batch_tc()
                 ),
-                mk_tex_tc_final(options.outputdir+tex_base),
+                # mk_tex_tc_final(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
                 git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
