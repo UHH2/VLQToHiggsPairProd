@@ -547,8 +547,8 @@ def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shap
             lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
         kws['plot_setup'] = plot_setup_uncerts
         kws['canvas_decorators'] = [
-            common_plot.BottomPlotUncertRatio,
             varial.rendering.Legend,
+            common_plot.BottomPlotUncertRatio,
             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
             ]
         kws.update(**args)

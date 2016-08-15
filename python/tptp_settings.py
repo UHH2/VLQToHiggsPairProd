@@ -39,10 +39,30 @@ settings.pretty_names.update({
     'n_ak8_tex' : 'N(AK8 jets)',
     'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
     'output/input_tex' : 'output/input',
-    'TpTp_M-0700' : 'TT M0700',
-    'TpTp_M-1000' : 'TT M1000',
-    'TpTp_M-1300' : 'TT M1300',
-    'TpTp_M-1700' : 'TT M1700',
+    'TpTp_M-0700' : r'$\mathrm{T\bar{T}}$ (0.7 TeV)',
+    'TpTp_M-0800' : r'$\mathrm{T\bar{T}}$ (0.8 TeV)',
+    'TpTp_M-0900' : r'$\mathrm{T\bar{T}}$ (0.9 TeV)',
+    'TpTp_M-1000' : r'$\mathrm{T\bar{T}}$ (1.0 TeV)',
+    'TpTp_M-1100' : r'$\mathrm{T\bar{T}}$ (1.1 TeV)',
+    'TpTp_M-1200' : r'$\mathrm{T\bar{T}}$ (1.2 TeV)',
+    'TpTp_M-1300' : r'$\mathrm{T\bar{T}}$ (1.3 TeV)',
+    'TpTp_M-1400' : r'$\mathrm{T\bar{T}}$ (1.4 TeV)',
+    'TpTp_M-1500' : r'$\mathrm{T\bar{T}}$ (1.5 TeV)',
+    'TpTp_M-1600' : r'$\mathrm{T\bar{T}}$ (1.6 TeV)',
+    'TpTp_M-1700' : r'$\mathrm{T\bar{T}}$ (1.7 TeV)',
+    'TpTp_M-1800' : r'$\mathrm{T\bar{T}}$ (1.8 TeV)',
+    'BpBp_M-0700' : r'$\mathrm{B\bar{B}}$ (0.7 TeV)',
+    'BpBp_M-0800' : r'$\mathrm{B\bar{B}}$ (0.8 TeV)',
+    'BpBp_M-0900' : r'$\mathrm{B\bar{B}}$ (0.9 TeV)',
+    'BpBp_M-1000' : r'$\mathrm{B\bar{B}}$ (1.0 TeV)',
+    'BpBp_M-1100' : r'$\mathrm{B\bar{B}}$ (1.1 TeV)',
+    'BpBp_M-1200' : r'$\mathrm{B\bar{B}}$ (1.2 TeV)',
+    'BpBp_M-1300' : r'$\mathrm{B\bar{B}}$ (1.3 TeV)',
+    'BpBp_M-1400' : r'$\mathrm{B\bar{B}}$ (1.4 TeV)',
+    'BpBp_M-1500' : r'$\mathrm{B\bar{B}}$ (1.5 TeV)',
+    'BpBp_M-1600' : r'$\mathrm{B\bar{B}}$ (1.6 TeV)',
+    'BpBp_M-1700' : r'$\mathrm{B\bar{B}}$ (1.7 TeV)',
+    'BpBp_M-1800' : r'$\mathrm{B\bar{B}}$ (1.8 TeV)',
     'DYJetsToLL' : 'DY + jets',
     'SingleTop' : 'Single T',
     'WJets' : 'W + jets',
@@ -89,8 +109,8 @@ settings.tot_error_fill_bot = 3644
 # style = 3475
 # color = ROOT.kGray+3
 
-settings.defaults_BottomPlot['y_min'] = -1.2
-settings.defaults_BottomPlot['y_max'] = 1.2
+settings.defaults_BottomPlot['y_min'] = -0.2
+settings.defaults_BottomPlot['y_max'] = 2.2
 settings.defaults_BottomPlot['draw_opt'] = 'E0'
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False

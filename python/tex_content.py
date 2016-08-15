@@ -957,22 +957,26 @@ def mk_autoContentSysTabs(base, el_channel=None, mu_channel=None, name='AutoCont
 ############ TREEPROJECT OUTPUT EFF COUNTS ##############
 #########################################################
 
-def getEffCount(filepath, mod=None):
+def getTable(filepath, tab_name, mod=None):
     path = filepath
-    if mod:
-        with open(filepath) as f:
-            cont = f.read()
-        with open(filepath.replace('.tex', '_mod.tex'), 'w') as f:
-            f.write(mod(cont))
-        path = path.replace('.tex', '._mod.tex') 
+    if isinstance(filepath, str):
+        path = {filepath : tab_name}
+    for p in path:
+        if mod:
+            with open(p) as f:
+                cont = f.read()
+            with open(p.replace('.tex', '_mod.tex'), 'w') as f:
+                f.write(mod(cont))
+            path[p.replace('.tex', '._mod.tex') ] = path.pop(p)
 
-    return {
-        'count_table_content.tex': path
-    }.items()
+    return dict(
+        (t+'.tex', p)
+        for p, t in path.iteritems()
+    ).items()
 
-def mk_autoEffCount(filepath, mod=None, name='AutoEffCount'):
+def mk_autoTable(filepath, tab_name='count_table_content', mod=None, name='AutoEffCount'):
     return varial.extensions.tex.TexContent(
-        plain_files=dict(getEffCount(filepath, mod)),
+        plain_files=dict(getTable(filepath, tab_name, mod)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name=name,
     )
