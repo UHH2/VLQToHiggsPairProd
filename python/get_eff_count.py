@@ -150,7 +150,7 @@ class EffTable(NumTableNew):
                 if not info:
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
-                if 'data' in s:
+                if 'data' in s.lower():
                     prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
@@ -160,24 +160,24 @@ class EffTable(NumTableNew):
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
                     tot_err /= baseline_count
-                    prec = "{0:17.0f}" if 'data' in s else self.get_precision(tot_err)
+                    prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
                         prec = "{0:17.0f}"
                         nom_val = round(nom_val)
                         tot_err = round(tot_err)
                     line += prec.format(nom_val/baseline_count)
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \% \pm " + prec.format(tot_err) + r" \%"
                 elif sym_errs:
                     line += prec.format(info[0]/baseline_count)
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
                     if len(info) == 4:
                         syst_err = max(abs(info[2]), abs(info[3]))
                         line += r" \pm " + prec.format(syst_err/baseline_count)
                 else:
                     line += prec.format(info[0]/baseline_count)
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
                     if len(info) == 4:
                         line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
@@ -216,7 +216,7 @@ class CountTable(NumTableNew):
                 if not info:
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
-                if 'data' in s:
+                if 'data' in s.lower():
                     prec = "{0:17.0f}"
                 else:
                     prec = self.get_precision(info[1])
@@ -225,24 +225,24 @@ class CountTable(NumTableNew):
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    prec = "{0:17.0f}" if 'data' in s else self.get_precision(tot_err)
+                    prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
                         prec = "{0:17.0f}"
                         nom_val = round(nom_val)
                         tot_err = round(tot_err)
                     line += prec.format(nom_val)
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \pm " + prec.format(tot_err)
                 elif sym_errs:
                     line += prec.format(info[0])
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \pm " + prec.format(info[1])
                     if len(info) == 4:
                         syst_err = max(abs(info[2]), abs(info[3]))
                         line += r" \pm " + prec.format(syst_err)
                 else:
                     line += prec.format(info[0])
-                    if 'data' not in s:
+                    if 'data' not in s.lower():
                         line += r" \pm " + prec.format(info[1])
                     if len(info) == 4:
                         line += "^{+"+prec.format(info[2])+"}_{"+prec.format(info[3])+"}"

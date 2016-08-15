@@ -117,7 +117,7 @@ def get_style():
         varial.rendering.Legend,
         varial.rendering.BottomPlotRatioSplitErr(poisson_errs=True),
         # varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
-        varial.rendering.TextBox(textbox=TLatex(0.68, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
+        varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
         ]
 
 mod_dict = {
@@ -163,12 +163,12 @@ mod_dict = {
             },
     'ST_rebin_flex' : {
             'title' : 'S_{T} [GeV]',
-            'y_max_log_fct' : 30000.,
+            'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
             'set_leg_2_col_log' : {
                     'x_pos': 0.7,
-                    'y_pos': 0.67,
+                    'y_pos': 0.65,
                     'label_width': 0.30,
                     'label_height': 0.045,
                     'box_text_size' : 0.035,
@@ -313,52 +313,52 @@ mod_dict = {
             'set_leg_2_col_lin' : True
             },
 
-    ##### HIGGS TAG VARIABLES ######
+    ##### p_{T}-leading HIGGS-TAG VARIABLES ######
     'mass_sj' : {
             'rebin' : 30,
-            'title' : 'M_{soft-drop}(Higgs tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'n_sjbtags_medium' : {
-            'title' : 'N(subjet b tags)',
+            'title' : 'N(subjet b-tags)_{p_{T}-leading Higgs-tag}',
             'y_max_log_fct' : 1000.,
             },
     # 'pt' : {
     #         'rebin' : 30,
-    #         'title' : 'p_{T} leading Higgs tag [GeV]',
+    #         'title' : 'p_{T} leading Higgs-tag [GeV]',
     #         'y_max_log_fct' : 1000.,
     #         'y_max_fct' : 1.5,
     #         },
     'nomass_boost_1b_mass' : {
             'rebin' : 30,
-            'title' : 'M_{soft-drop}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass' : {
             'rebin' : 15,
-            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            'scale' : 0.2
+            'scale' : 0.4
             },
     'nomass_boost_1b_mass_softdrop' : {
             'rebin' : 30,
-            'title' : 'M_{soft-drop}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass_softdrop' : {
-            'rebin_list' : list(i + 40 for i in xrange(0, 260, 10)),
+            'rebin_list' : list(i + 50 for i in xrange(0, 250, 10)),
             # 'rebin' : [40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 260., 280., 300.],
             'y_max_fct' : 1.8,
-            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            'scale' : 0.2,
+            'scale' : 0.4,
             'set_leg_1_col_lin' : {
-                    'x_pos': 0.67,
+                    'x_pos': 0.68,
                     'y_pos': 0.67,
                     'label_width': 0.30,
                     'label_height': 0.040,
@@ -370,16 +370,28 @@ mod_dict = {
                 }
             },
     'nomass_boost_2b_mass_softdrop_rebin_flex' : {
-            'y_max_fct' : 3.,
-            'title' : 'M_{soft-drop}(Higgs tag, 2 subjet b-tags) [GeV]',
-            'bin_width' : 10,
+            'y_max_fct' : 1.3,
+            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'bin_width' : 5,
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            'scale' : 0.2,
+            'scale' : 0.4,
             'no_exp' : True,
+            # 'set_leg_2_col_lin' : {
+            #         'x_pos': 0.7,
+            #         'y_pos': 0.65,
+            #         'label_width': 0.30,
+            #         'label_height': 0.045,
+            #         'box_text_size' : 0.035,
+            #         'opt': 'f',
+            #         'opt_data': 'pl',
+            #         'reverse': True,
+            #         'sort_legend' : lambda w: 'TT ' in w[1],
+            #     },
+            # 'text_box_lin' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'set_leg_1_col_lin' : {
-                    'x_pos': 0.65,
-                    'y_pos': 0.68,
+                    'x_pos': 0.74,
+                    'y_pos': 0.67,
                     'label_width': 0.30,
                     'label_height': 0.040,
                     'box_text_size' : 0.033,
@@ -392,11 +404,11 @@ mod_dict = {
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'nobtag_boost_mass_nsjbtags' : {
-            'title' : 'N(subjet b tags)',
+            'title' : 'N(subjet b-tags)_{p_{T}-leading Higgs-tag}',
             'y_min_gr_zero' : 100,
             'y_max_log_fct' : 50.,
             'set_leg_1_col_log' : {
-                    'x_pos': 0.65,
+                    'x_pos': 0.74,
                     'y_pos': 0.67,
                     'label_width': 0.30,
                     'label_height': 0.040,
@@ -410,28 +422,28 @@ mod_dict = {
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'noboost_mass_1b_pt' : {
-            'title' : 'p_{T}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
-            'scale' : 0.2
+            'scale' : 0.4
             },
     'noboost_mass_2b_pt' : {
-            'title' : 'p_{T}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
-            'scale' : 0.2
+            'scale' : 0.4
             },
     'noboost_mass_1b[0].m_pt' : {
-            'title' : 'p_{T}(Higgs tag, 1 subjet b-tag) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
-            'scale' : 0.2
+            'scale' : 0.4
             },
     'noboost_mass_2b[0].m_pt' : {
-            'title' : 'p_{T}(Higgs tag, 2 subjet b-tags) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
-            'scale' : 0.2
+            'scale' : 0.4
             },
 
     ##### FINAL CATEGORY VARIABLES ######
@@ -442,26 +454,26 @@ mod_dict = {
             'set_leg_2_col_log' : True
             },
     'n_higgs_tags_1b_med_sm10' : {
-            'title' : 'N(Higgs tag, 1 subjet b-tag)',
+            'title' : 'N(p_{T}-leading Higgs-tag, 1 subjet b-tag)',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 3e-3,
             # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_2b_med_sm10' : {
             'y_max_log_fct' : 1000.,
-            'title' : 'N(Higgs tag, 2 subjet b-tags)',
+            'title' : 'N(p_{T}-leading Higgs-tag, 2 subjet b-tags)',
             'y_min_gr_zero' : 1e-3,
             # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_1b_med' : {
-            'title' : 'N(Higgs tag, 1 subjet b-tag)',
+            'title' : 'N(p_{T}-leading Higgs-tag, 1 subjet b-tag)',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 3e-3,
             # 'set_leg_2_col_log' : True
             },
     'n_higgs_tags_2b_med' : {
             'y_max_log_fct' : 1000.,
-            'title' : 'N(Higgs tag, 2 subjet b-tags)',
+            'title' : 'N(Higgs-tag, 2 subjet b-tags)',
             'y_min_gr_zero' : 1e-3,
             # 'set_leg_2_col_log' : True
             },
@@ -660,7 +672,7 @@ def mod_legend(wrps):
         if w.legend.startswith('MC_'):
             w.legend = w.legend[3:]
         if w.is_data:
-            w.legend = 'data'
+            w.legend = 'Data'
         if w.legend.startswith('TpTp'):
             suf = w.legend[11:]
             mass = float(w.legend[7:11])/1000.
@@ -691,9 +703,11 @@ def mod_legend_eff_counts(wrps):
         if w.legend.endswith('_bwbw'):
             w.legend = w.legend[:-9] + '#rightarrowbW#bar{b}W'
         if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-4] + '#rightarrowtH+X'
+            w.legend = w.legend[:-13]
+            w.legend = w.legend + '#rightarrow tH+X'
         if w.legend.endswith('_other'):
-            w.legend = w.legend[:-6] + '#rightarrowother'
+            w.legend = w.legend[:-15]
+            w.legend = w.legend + '#rightarrow other'
         if w.legend.endswith('_incl'):
             w.legend = w.legend[:-5] + '#rightarrowincl.'
         yield w
@@ -912,7 +926,8 @@ def make_empty_bins_dat(g):
 def make_empty_bins_dat_error(g, bin_width=None):
     bkg = g.renderers[0]
     dat = g.renderers[-1]
-    assert dat.is_data, 'is not data!'
+    if not dat.is_data:
+        return
     bkg_hist = bkg.histo
     dat_hist = dat.histo
     for i in xrange(bkg_hist.GetNbinsX()+2):
@@ -952,7 +967,9 @@ def mod_pre_canv(grps):
                 g = dec(g)
         make_empty_bins_dat(g)
         if canv_attr.get('draw_x_errs'):
-            setattr(g, 'draw_x_errs', True)
+            g.draw_x_errs = True
+        if canv_attr.get('bin_width', None):
+            g.bin_width = canv_attr['bin_width']
         if canv_attr.get('err_empty_bins', None):
             make_empty_bins_dat_error(g, canv_attr.get('bin_width', None))
         yield g

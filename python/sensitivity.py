@@ -142,27 +142,6 @@ def loader_hook(brs, bounds=st_bounds):
         return wrps
     return temp
 
-# def loader_hook_postfit(wrps):
-#     wrps = common_plot.add_wrp_info(wrps)
-#     wrps = varial.generators.gen_add_wrp_info(
-#         wrps, category=lambda w: w.name.split('__')[0],
-#         is_data=lambda w: w.name.split('__')[1] == 'DATA',
-#         sample=lambda w: w.name.split('__')[1],
-#         legend=lambda w: w.name.split('__')[1],
-#         )
-#     wrps = common_plot.mod_legend(wrps)
-#     wrps = label_axes(wrps)
-#     wrps = common_plot.mod_title(wrps)
-#     wrps = sorted(wrps, key=lambda w: w.category)
-#     return wrps
-
-# def loader_hook_triangle(wrps):
-#     for w in wrps:
-#         if isinstance(w, wrappers.HistoWrapper):
-#             w.histo.GetZaxis().SetRangeUser(-100, 100)
-#         yield wrps
-
-
 
 def limit_curve_loader_hook(brs):
     def tmp(wrps):
@@ -446,14 +425,14 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
                 # name='HistogramsPostfit',
                 # lookup_aliases=varial.settings.lookup_aliases
                 ),
-            # plot.mk_toolchain('HistogramsPostfitCompareUncerts', plot.less_samples_to_plot_only_th,
-            #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
-            #         any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
-            #     plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
-            #         hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-            #     ),
-            #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-            #     ),
+            plot.mk_toolchain('HistogramsPostfitCompareUncerts', plot.less_samples_to_plot_only_th,
+                filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
+                    any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
+                plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
+                    hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
+                ),
+                pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
+                ),
             plot.mk_toolchain('HistogramsTables', plot.more_samples,
                 plotter_factory=plotter_factory_postfit(theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
                 pattern=None,
@@ -488,7 +467,12 @@ def mk_tc_lim_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_
     rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
     model_func=model_vlqpair.get_model(analysis.rate_uncertainties), filter_plots=lambda _: True, include_rate=False, **kws):
     def tmp():
-        sys_pat = list(sys_path+'/%s*/*.root'% i for i in sys_uncerts)
+        sys_pat = []
+        path = sys_path
+        if isinstance(path, str):
+            path = [path]
+        for pat in path:
+            sys_pat += list(pat+'/%s*/*.root'% i for i in sys_uncerts)
         return mk_limit_tc_single(brs, signal, sys_pat, selection, pattern, model_func, **kws) +\
                mk_tc_postfit_plot('../../../../ThetaLimit', signal, sys_pat, sys_uncerts, rate_uncertainties, pattern, filter_plots, include_rate)
     return tmp

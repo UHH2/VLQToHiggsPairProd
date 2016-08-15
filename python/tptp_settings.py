@@ -85,11 +85,42 @@ settings.tot_error_fill_main = 3644
 settings.tot_error_color_bot = (921, 0.6)
 settings.tot_error_fill_bot = 3644
 
+# Heiner's settings for total error:
+# style = 3475
+# color = ROOT.kGray+3
+
 settings.defaults_BottomPlot['y_min'] = -1.2
 settings.defaults_BottomPlot['y_max'] = 1.2
 settings.defaults_BottomPlot['draw_opt'] = 'E0'
 # settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
+
+legend_entries = [
+    'Background',
+    'nominal',
+    'plus',
+    'minus',
+    # 'TTbar',
+    # 'WJets',
+    # 'ZJets',
+    # 'DYJets',
+    # 'DYJetsToLL',
+    # 'SingleT',
+    # 'SingleTop',
+    # 'data',
+    'Diboson',
+    'QCD',
+    'Data',
+    'data',
+    'T#bar{T}',
+    't#bar{t}',
+    'W + jets',
+    'DY + jets',
+    'Single t',
+    'Stat. uncert. MC',
+    'Sys. uncert. MC',
+    'Tot. uncert. MC',
+    ]
 
 # if settings.style != 'AN':
 settings.defaults_Legend.update({
@@ -102,13 +133,17 @@ settings.defaults_Legend.update({
     'opt_data': 'pl',
     'reverse': True,
     'sort_legend' : lambda w: 'TT ' in w[1],
+    'clean_legend' : lambda w: any(a in w[1] for a in legend_entries),
 })
 
 settings.stacking_order = [
     'TTbar',
     'WJets',
     'SingleT',
+    'SingleTop',
     'DYJets',
+    'DYJetsToLL',
+    'Diboson',
     'QCD',
 ]
 
@@ -136,7 +171,7 @@ final_states = final_states = ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzb
 
 for s, c in signals.iteritems():
     settings.colors.update(dict((s + f, c) for f in final_states))
-    settings.colors.update({s+'_thX' : ROOT.kAzure, s+'_other' : ROOT.kOrange+10})
+    settings.colors.update({s+'_thX' : ROOT.kAzure, s+'_other' : ROOT.kMagenta})
 
 
 
@@ -152,6 +187,7 @@ settings.colors.update({
     'DYJetsToLL': 432-9,
     'SingleT': 416-9,
     'SingleTop': 416-9,
+    'Diboson' :616-9,
     'QCD': 851,
     # 'QCD' : 867,
     # 'TTbar': 632,
@@ -174,7 +210,6 @@ settings.colors.update({
 
 # analysis.all_samples = dict((s.name, s) for s in smpls)
 
-settings.stacking_order = ['TTBar', 'WJets', 'SingleT', 'SingleTop', 'DYJets', 'DYJetsToLL', 'QCD']
 
 # default_colors = [632, 814, 596, 870, 434, 840, 902, 797, 800, 891, 401, 800,
 #                   838, 420, 403, 893, 881, 804, 599, 615, 831, 403, 593, 872]

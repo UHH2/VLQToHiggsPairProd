@@ -451,10 +451,10 @@ def add_all_without_weight_uncertainties(base_path, regions, weights, samples, p
         sys_tps += treeproject_tptp.add_higgs_smear_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_jec_uncerts(base_path, regions, weights, samples, params)
         sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params)
-        sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
+        # sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params)
         if treeproject_tptp.ttbar_smpl in samples:
             sys_tps += treeproject_tptp.add_ttbar_scale_uncerts(base_path, base_path, regions, weights, samples, params)
-        sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
+        # sys_tps += treeproject_tptp.add_pdf_uncerts(base_path, regions, weights, samples, pdf_params)
         return sys_tps
     return tmp
 
@@ -490,30 +490,35 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.samples_w_data),
             # treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=treeproject_tptp.treeproject_tptp.bpbp_signals,
             #     name='TreeProjectorBB'),
+            treeproject_tptp.mk_tp(base_path, final_regions_all, weights, samples=['Diboson'],
+                name='TreeProjectorDiboson'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.samples_no_data, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectors'),
             # treeproject_tptp.mk_sys_tps(add_uncert_func(base_path, final_regions_all, weights,
             #     samples=treeproject_tptp.treeproject_tptp.bpbp_signals, params=treeproject_tptp.sys_params),
             #     name='SysTreeProjectorsBB'),
-            treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights, samples=treeproject_tptp.tptp_signal_samples,
-                name='TreeProjectorHTSignal'),
-            treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
-                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight+'/'+str(weight_dict_ht_rew_tptp[f])) for f in treeproject_tptp.tptp_signal_samples)
-                        })(base_path, final_regions_all, sig_ht_weights,
-                samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
-                name='SysTreeProjectorsHTSignal'),
-            treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights_rate, samples=treeproject_tptp.tptp_signal_samples,
-                name='TreeProjectorHTSignalRate'),
-            treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
-                        'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight) for f in treeproject_tptp.tptp_signal_samples)
-                        })(base_path, final_regions_all, sig_ht_weights_rate,
-                samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
-                name='SysTreeProjectorsHTSignalRate'),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights, samples=treeproject_tptp.tptp_signal_samples,
+            #     name='TreeProjectorHTSignal'),
+            # treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
+            #             'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight+'/'+str(weight_dict_ht_rew_tptp[f])) for f in treeproject_tptp.tptp_signal_samples)
+            #             })(base_path, final_regions_all, sig_ht_weights,
+            #     samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
+            #     name='SysTreeProjectorsHTSignal'),
+            # treeproject_tptp.mk_tp(base_path, final_regions_all, sig_ht_weights_rate, samples=treeproject_tptp.tptp_signal_samples,
+            #     name='TreeProjectorHTSignalRate'),
+            # treeproject_tptp.mk_sys_tps(add_only_weight_uncertainties({
+            #             'ht_reweight' : dict((f, ht_reweight_ttbar_no_top_pt_reweight) for f in treeproject_tptp.tptp_signal_samples)
+            #             })(base_path, final_regions_all, sig_ht_weights_rate,
+            #     samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.sys_params),
+            #     name='SysTreeProjectorsHTSignalRate'),
+            treeproject_tptp.mk_sys_tps(add_all_without_weight_uncertainties(base_path, final_regions_all, weights,
+                samples=['Diboson'], params=treeproject_tptp.sys_params),
+                name='SysTreeProjectorsDiboson'),
         ]
 
     sys_path = output_dir+'/%s/TreeProject/SysTreeProjectors' % name
-    
+
     def get_sys_dir():
         return set(sys.split('__')[0] for d in glob.glob(sys_path) for sys in os.listdir(d) if all(g not in sys for g in ['Norm', 'SysTreeProjectors']))
 
@@ -527,6 +532,14 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
         if 'PSScale' in wrp.file_path:
             return False
         return True
+        
+    uncerts = uncertainties or get_sys_dir()
+    nom_pattern = [output_dir+'/%s/TreeProject/TreeProjector/{0}.root'% name,
+                   output_dir+'/%s/TreeProject/TreeProjectorDiboson/{0}.root'% name]
+    sys_pattern = list(sys_path+'/%s*/{0}.root'% i for i in uncerts) +\
+                  list(sys_path+'Diboson/%s*/{0}.root'% i for i in uncerts)
+    input_pattern = nom_pattern+sys_pattern
+    
 
     def mk_tc_sens():
 
@@ -563,7 +576,6 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                 return tmp
             return sel_sig
 
-        uncerts = uncertainties or get_sys_dir()
         rate_uncerts_part = dict((s, r) for s, r in analysis.rate_uncertainties.iteritems() if s not in ['TTbar', 'WJets'])
         lim_list = [
             # # varial.tools.ToolChain(
@@ -608,11 +620,11 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                         br_list_th_only[0],
                         filter_keyfunc=lambda w: sensitivity.select_no_sig(cr_only_regions)(w) and unselect_theory_uncert(w),
                         selection='ThetaLimits',
-                        sys_path=sys_path,
+                        sys_path=[sys_path, sys_path+'Diboson'],
                         # sys_uncerts=list(i for i in all_uncerts if all(g not in i for g in ['ScaleVar', 'PSScale', 'PDF'])),
                         sys_uncerts=all_uncerts,
                         rate_uncertainties=analysis.rate_uncertainties,
-                        pattern=[os.path.join(output_dir, name)+'/TreeProject/TreeProjector/*.root'],
+                        pattern=map(lambda w: w.format('*'), nom_pattern),
                         model_func=model_vlqpair.get_model_with_norm(analysis.rate_uncertainties),
                         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15),
                         filter_plots=unselect_theory_uncert,
@@ -838,40 +850,33 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     # def mk_tc_plot(style='AN'):
     def mk_tc_plot():
         # def tmp():
-        uncerts = uncertainties or get_sys_dir()
         # varial.settings.style = style
         return [
 
                     ######## HISTOGRAMS WITH LEPTON CHANNELS SEPARATE ########
 
                     # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts)
+                    #             pattern=map(lambda w: w.format('*'), input_pattern)
                     #             ),
                     # plot.mk_toolchain('HistogramsNoTheory', plot.less_samples_to_plot_only_th, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'), input_pattern),
                     #             filter_keyfunc=unselect_theory_uncert,
                     #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True)
                     #             ),                                             
                     # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'), input_pattern),
                     #             filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
                     #             plotter_factory=plot.plotter_factory_uncerts()),                                             
                     # plot.mk_toolchain('HistogramsNormToInt', plot.less_samples_to_plot_only_th, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'), input_pattern),
                     #             filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
                     #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_norm_to_int,
                     #                 plot_setup=plot.stack_setup_norm_all_to_intgr)),
                     # plot.mk_toolchain('HistogramsNoData', plot.less_samples_to_plot_only_th, 
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'), input_pattern),
                     #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th if 'Run2015CD' not in f)),
                     # plot.mk_toolchain('HistogramsCompFinalStates', plot.less_samples_to_plot_only_th,
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*.root'%name]
-                    #             + list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'), input_pattern),
                     #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th if not any(g in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])),
                     #             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, hook_loaded_histos=plot.loader_hook_compare_finalstates),
                     #             ),
@@ -890,7 +895,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # # varial.tools.ToolChain('MergeChannelsHists', [
                     # #     varial.tools.ToolChainParallel('HistoLoader',
                     # #     list(varial.tools.HistoLoader(
-                    # #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    # #         pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
                     # #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples_to_plot_only_th) and\
                     # #             'Region_Comb' not in w.in_file_path and\
                     # #             any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
@@ -951,7 +956,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     varial.tools.ToolChain('MergeChannelsHistsNoTheory', [
                         varial.tools.ToolChainParallel('HistoLoader',
                         list(varial.tools.HistoLoader(
-                            pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                            pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
                             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.less_samples) and\
                                 'Region_Comb' not in w.in_file_path and\
                                 any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
@@ -964,21 +969,21 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             lookup_aliases=False,
                             raise_on_empty_result=False
                             ) for g in plot.less_samples)),
-                        plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
                         #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
                         #     plotter_factory=plot.plotter_factory_uncerts(
                         #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w), 
                         #             analysis.rate_uncertainties, uncerts, include_rate=True)),
                         #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                        # plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-                        #     filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
-                        #         hook_loaded_histos=plot.loader_hook_compare_finalstates,
-                        #         )
-                        #     ),
+                        plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
+                            filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
+                                hook_loaded_histos=plot.loader_hook_compare_finalstates,
+                                )
+                            ),
                         # plot.mk_toolchain('HistogramsNoDataHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
                         #     filter_keyfunc=lambda w: 'Run2015CD' not in w.file_path.split('/')[-1] and all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
                         #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
@@ -1023,7 +1028,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # # varial.tools.ToolChain('MergeChannelsTables', [
                     # #     varial.tools.ToolChainParallel('HistoLoader',
                     # #         list(varial.tools.HistoLoader(
-                    # #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    # #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
                     # #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
                     # #                 'Region_Comb' not in w.in_file_path and\
                     # #                 any(w.in_file_path.endswith(f) for f in ['ST']),
@@ -1064,18 +1069,18 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # #     ]),
 
                     # varial.tools.ToolChain('MergeChannelsTablesNoTheory', [
-                    #     # varial.tools.ToolChainParallel('HistoLoader',
-                    #     #     list(varial.tools.HistoLoader(
-                    #     #         pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
-                    #     #         filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
-                    #     #             'Region_Comb' not in w.in_file_path and\
-                    #     #             any(w.in_file_path.endswith(f) for f in ['ST']) and\
-                    #     #             unselect_theory_uncert(w),
-                    #     #         hook_loaded_histos=plot.loader_hook_merge_regions,
-                    #     #         name='HistoLoader_'+g,
-                    #     #         lookup_aliases=False,
-                    #     #         raise_on_empty_result=False
-                    #     #         ) for g in plot.more_samples)),
+                    #     varial.tools.ToolChainParallel('HistoLoader',
+                    #         list(varial.tools.HistoLoader(
+                    #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
+                    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                    #                 'Region_Comb' not in w.in_file_path and\
+                    #                 any(w.in_file_path.endswith(f) for f in ['ST']) and\
+                    #                 unselect_theory_uncert(w),
+                    #             hook_loaded_histos=plot.loader_hook_merge_regions,
+                    #             name='HistoLoader_'+g,
+                    #             lookup_aliases=False,
+                    #             raise_on_empty_result=False
+                    #             ) for g in plot.more_samples)),
                     #     # plot.mk_toolchain('Histograms',
                     #     #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                     #     #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
@@ -1135,7 +1140,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # # varial.tools.ToolChain('TablesSplitLepton', [
                     # #     varial.tools.ToolChainParallel('HistoLoader',
                     # #         list(varial.tools.HistoLoader(
-                    # #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    # #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
                     # #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
                     # #                 'Region_Comb' not in w.in_file_path and\
                     # #                 any(w.in_file_path.endswith(f) for f in ['ST']),
@@ -1187,7 +1192,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # varial.tools.ToolChain('TablesSplitLeptonNoTheory', [
                     #     varial.tools.ToolChainParallel('HistoLoader',
                     #         list(varial.tools.HistoLoader(
-                    #             pattern=[output_dir+'/%s/TreeProject/TreeProjector/*%s*.root'%(name, g)]+list(sys_path+'/%s*/*%s*.root'% (i, g) for i in uncerts),
+                    #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
                     #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
                     #                 'Region_Comb' not in w.in_file_path and\
                     #                 any(w.in_file_path.endswith(f) for f in ['ST']) and\
@@ -1396,12 +1401,12 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
-            # varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
+            varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),
 
         ])
 
 def run_treeproject_and_plot(output_dir):
-    base_path = os.path.join(os.getcwd(), 'Files_and_Plots')
+    base_path = os.path.join(os.getcwd(), 'Files_and_Plots2')
     tc = varial.tools.ToolChain(
         output_dir,
         [

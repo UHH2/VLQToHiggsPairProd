@@ -47,6 +47,7 @@ basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.QCD',
     'MC.WJets',
     'MC.DYJetsToLL',
+    'MC.Diboson',
     'MC.SingleTop',
     'MC.TTbar_incl',
     'MC.TTbar_split',
@@ -84,6 +85,7 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.QCD',
     'MC.WJets',
     'MC.DYJetsToLL',
+    'MC.Diboson',
     'MC.SingleTop',
     'MC.TTbar',
     'MC.TTJets_ScaleUp',
@@ -112,7 +114,6 @@ basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.BpBp_M-1600',
     'MC.BpBp_M-1700',
     'MC.BpBp_M-1800',
-    'MC.Diboson'
     ])
 
 normfactors_comp = {
@@ -300,7 +301,7 @@ def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertain
         grp = sorted(grp, key=lambda w: w.sys_info)
         grp = gen.group(grp, lambda w: w.sys_info)
         grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
-        nom = dict((w.sample, w) for w in grp[''] if not w.is_data)
+        nom = dict((w.sample, w) for w in grp.get('', []) if not w.is_data)
         samples = list(w for w in nom)
         uncertainties = grp.keys()
         for unc_name in uncertainties:
@@ -406,6 +407,7 @@ def loader_hook_merge_regions(wrps):
 def loader_hook_merge_lep_channels(wrps):
     # wrps = merge_regions(wrps)
     # wrps = itertools.ifilter(lambda w: all(f not in w.sample for f in ['_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']), wrps)
+    wrps = common_loader_hook(wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors)
     wrps = common_plot.mod_title(wrps)
     wrps = common_plot.mod_legend_no_thth(wrps)
@@ -431,7 +433,7 @@ def loader_hook_compare_finalstates(wrps):
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
     # wrps = itertools.ifilter(lambda w: not any(w.sample.endswith(g) for g in ['_thth','_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw']), wrps)
     # wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
-    wrps = common_plot.norm_smpl(wrps, normfactors_comp, calc_scl_fct=False)
+    # wrps = common_plot.norm_smpl(wrps, normfactors_comp, calc_scl_fct=False)
     wrps = common_plot.mod_legend_eff_counts(wrps)
     if not varial.settings.flex_sig_norm:
         wrps = common_plot.norm_to_fix_xsec(wrps, True)

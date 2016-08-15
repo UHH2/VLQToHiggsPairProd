@@ -220,6 +220,7 @@ background_samples = [
     'QCD',
     'DYJets',
     'WJets',
+    'Diboson'
 ]
 
 tptp_signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals))
@@ -254,6 +255,7 @@ sample_weights_def = {
     'QCD' : base_weight,
     'DYJets' : base_weight,
     'WJets' : base_weight,
+    'Diboson' : base_weight,
     'Run2015CD' : '1',
 }
 sample_weights_def.update(dict((f, 'weight') for f in tptp_signal_samples))
