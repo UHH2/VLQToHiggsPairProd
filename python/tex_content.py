@@ -462,17 +462,17 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
             cat+'_control_plots_jets': (
                 os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
                 os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
-                os.path.join(base, cat+'/topjets[0].m_pt_leg_log' + ext),
+                os.path.join(base, cat+'/topjets[0].m_pt_lin' + ext),
             ),
             cat+'_control_plots_ak4jets': (
                 os.path.join(base, cat+'/pt_ld_ak4_jet_leg_log' + ext),
                 os.path.join(base, cat+'/pt_subld_ak4_jet_leg_log' + ext),
-                os.path.join(base, cat+'/jets[2].m_pt_leg_log' + ext),
-                os.path.join(base, cat+'/jets[3].m_pt_leg_log' + ext),
+                os.path.join(base, cat+'/jets[2].m_pt_lin' + ext),
+                os.path.join(base, cat+'/jets[3].m_pt_lin' + ext),
             ),
             cat+'_control_plots_ak8jets': (
-                os.path.join(base, cat+'/topjets[0].m_pt_leg_log' + ext),
-                os.path.join(base, cat+'/topjets[1].m_pt_leg_log' + ext),
+                os.path.join(base, cat+'/topjets[0].m_pt_lin' + ext),
+                os.path.join(base, cat+'/topjets[1].m_pt_lin' + ext),
             ),
             cat+'_control_plots_njets': (
                 os.path.join(base, cat+'/n_ak4_leg_log' + ext),
@@ -551,9 +551,9 @@ def mk_autoContentSignalControlRegionCombined(base, name='AutoContentSignalContr
                 os.path.join(base, 'SidebandRegion/pt_subld_ak4_jet_leg_log' + ext),
             ),
             'pt_ld_ak8_jet': (
-                os.path.join(base, 'SignalRegion1b/topjets[0].m_pt_leg_log' + ext),
-                os.path.join(base, 'SignalRegion2b/topjets[0].m_pt_leg_log' + ext),
-                os.path.join(base, 'SidebandRegion/topjets[0].m_pt_leg_log' + ext),
+                os.path.join(base, 'SignalRegion1b/topjets[0].m_pt_lin' + ext),
+                os.path.join(base, 'SignalRegion2b/topjets[0].m_pt_lin' + ext),
+                os.path.join(base, 'SidebandRegion/topjets[0].m_pt_lin' + ext),
             ),
             'primary_muon_pt': (
                 os.path.join(base, 'SignalRegion1b/primary_muon_pt_log' + ext),
@@ -656,13 +656,13 @@ def mk_autoCompareReweightingMethods(base, categories, name='AutoContentSignalCo
             reg+'_pt_subld_ak4_jet' : list(
                 os.path.join(base, cat+int_path+reg+'/pt_subld_ak4_jet_leg_log' + ext) for cat in categories),
             reg+'__pt_third_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/jets[2].m_pt_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/jets[2].m_pt_lin' + ext) for cat in categories),
             reg+'__pt_fourth_ak4_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/jets[3].m_pt_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/jets[3].m_pt_lin' + ext) for cat in categories),
             reg+'_pt_ld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/topjets[0].m_pt_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/topjets[0].m_pt_lin' + ext) for cat in categories),
             reg+'_pt_subld_ak8_jet' : list(
-                os.path.join(base, cat+int_path+reg+'/topjets[1].m_pt_leg_log' + ext) for cat in categories),
+                os.path.join(base, cat+int_path+reg+'/topjets[1].m_pt_lin' + ext) for cat in categories),
             reg+'_primary_muon_pt' : list(
                 os.path.join(base, cat+int_path+reg+'/primary_muon_pt_log' + ext) for cat in categories),
             reg+'_primary_electron_pt' : list(

@@ -71,6 +71,12 @@ settings.pretty_names.update({
     'wjets_rate': 'w+jets rate',
     'zjets_rate': 'z+jets rate',
     'singlet_rate': 'single t rate',
+    'TTbar_rate': 'ttbar rate',
+    'QCD_rate': 'QCD rate',
+    'Diboson_rate': 'Diboson rate',
+    'WJets_rate': 'W+jets rate',
+    'DYJets_rate': 'Z+jets rate',
+    'SingleTop_rate': 'Single t rate',
     'jec' : 'JEC',
     'jer' : 'JER',
     'btag_bc' : 'btag eff.',
@@ -109,13 +115,13 @@ settings.tot_error_fill_bot = 3644
 # style = 3475
 # color = ROOT.kGray+3
 
-settings.defaults_BottomPlot['y_min'] = -0.2
-settings.defaults_BottomPlot['y_max'] = 2.2
+settings.defaults_BottomPlot['y_min'] = -0.9
+settings.defaults_BottomPlot['y_max'] = 1.1
 settings.defaults_BottomPlot['draw_opt'] = 'E0'
-# settings.defaults_BottomPlot['force_y_range'] = True
+settings.defaults_BottomPlot['force_y_range'] = True
 # settings.defaults_BottomPlot['poisson_errs'] = False
 
-legend_entries = [
+settings.__setattr__('legend_entries', [
     'Background',
     'nominal',
     'plus',
@@ -140,12 +146,17 @@ legend_entries = [
     'Stat. uncert. MC',
     'Sys. uncert. MC',
     'Tot. uncert. MC',
+    '#pm 2 #sigma Expected ',
+    '#pm 1 #sigma Expected ',
+    '#pm 2 #sigma Observed ',
+    '#pm 1 #sigma Observed ',
     ]
+    )
 
 # if settings.style != 'AN':
 settings.defaults_Legend.update({
     'x_pos': 0.7,
-    'y_pos': 0.67,
+    'y_pos': 0.66,
     'label_width': 0.30,
     'label_height': 0.040,
     'box_text_size' : 0.033,
@@ -153,7 +164,7 @@ settings.defaults_Legend.update({
     'opt_data': 'pl',
     'reverse': True,
     'sort_legend' : lambda w: 'TT ' in w[1],
-    'clean_legend' : lambda w: any(a in w[1] for a in legend_entries),
+    # 'clean_legend' : lambda w: any(a in w[1] for a in legend_entries),
 })
 
 settings.stacking_order = [

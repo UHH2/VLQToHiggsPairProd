@@ -23,9 +23,10 @@
 rate_uncertainties = {
     'TTbar' : 1.20,
     'WJets' : 1.20,
-    'QCD' : 2.00,
+    'QCD' : 2.0,
     'DYJets' : 1.20,
-    'SingleTop' : 1.20
+    'SingleTop' : 1.20,
+    'Diboson' : 1.20
 }
 
 shape_uncertainties = {}

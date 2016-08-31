@@ -520,6 +520,15 @@ def plot_grouper_by_in_file_path_mod(wrps, separate_th2=True):
     wrps = sorted(wrps, key=lambda w: w.scale+'___'+w.in_file_path)
     return gen.group(wrps, key_func=lambda w: w.scale+'___'+w.in_file_path)
 
+def plot_grouper_by_uncerts(wrps, separate_th2=True):
+    if separate_th2:
+        wrps = varial.plotter.rename_th2(wrps)
+    wrps = common_plot.copy_wrp_for_log(wrps)
+    wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.scale, w.in_file_path, w.sample))
+    wrps = group_by_uncerts(wrps, lambda w: '{0}___{1}___{2}'.format(w.scale, w.in_file_path, w.sample))
+    # wrps = sorted(wrps, key=lambda w: w.scale+'___'+w.in_file_path)
+    return wrps
+
 def plotter_factory_stack(rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False, **args):
     def tmp(**kws):
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
@@ -543,13 +552,20 @@ def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shap
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = lambda w: loader_hook_uncerts(loader_hook_finalstates_excl(w), rate_uncertainties, shape_uncertainties, include_rate)
-        kws['plot_grouper'] = lambda w: group_by_uncerts(w, 
-            lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
+        kws['plot_grouper'] = lambda g: group_by_uncerts(g, lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
         kws['plot_setup'] = plot_setup_uncerts
+        kws['hook_canvas_post_build'] = canvas_setup_post
         kws['canvas_decorators'] = [
-            varial.rendering.Legend,
+            varial.rendering.Legend(
+                x_pos=0.7,
+                y_pos=0.8,
+                label_width=0.30,
+                label_height=0.045,
+                box_text_size=0.04,
+                clean_legend=lambda w: any(a in w[1] for a in varial.settings.legend_entries)),
             common_plot.BottomPlotUncertRatio,
             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
+            varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}"))
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)

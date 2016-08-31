@@ -623,3 +623,87 @@ private:
     TH2F * hist_2d;
     // TH1F * hist_1d;
 };
+
+// SelectedSelHists
+class TriggerEffHists: public Hists {
+public:
+    explicit TriggerEffHists(Context & ctx,
+                         const string & dir,
+                         const SelItemsHelper & sel_helper,
+                         const vector<string> & dists,
+                         const vector<string> & veto_selections):
+        Hists(ctx, dir),
+        h_sel_res(ctx.get_handle<vector<bool>>(sel_helper.s_vec_bool())),
+        v_all_items(sel_helper.get_item_names()),
+        dists_(dists),
+        v_veto_selections(veto_selections)
+    {
+        for (const string & item : v_all_items) {
+            for (const string & dist : dists) {
+                if (dist == item) {
+                    v_hists_eff[dist+"_sub"] = move(unique_ptr<Hists>(sel_helper.get_sel_item(dist)->make_hists(ctx, dir, "_sub")));
+                    v_hists_eff[dist+"_tot"] = move(unique_ptr<Hists>(sel_helper.get_sel_item(dist)->make_hists(ctx, dir, "_tot")));
+                }
+            }
+        }
+    }
+
+    void insert_sel(unsigned pos, const string & sel) {
+        // v_hists.insert(v_hists.begin() + pos, move(unique_ptr<Hists>(hists)));
+        v_all_items.insert(v_all_items.begin() + pos, sel);
+    }
+
+    // void insert_additional_hist(Hists * hists) {
+    //     v_hists.push_back(move(unique_ptr<Hists>(hists)));
+    // }
+
+    virtual void fill(const Event & event) override {
+        // SelectedSelHists::fill(event);
+        const auto & v_accept = event.get(h_sel_res);
+        assert(v_accept.size() == v_all_items.size());
+        for (unsigned i = 0; i < dists_.size(); ++i) {
+            bool accept_all = true;
+            bool accept_sel = true;
+            string dist = dists_[i];
+            vector<string>::const_iterator it = v_all_items.begin();
+            for (;it != v_all_items.end(); ++it) {
+                if (*it == dist)
+                    break;
+            }
+            if (it == v_all_items.end())
+                continue;
+            for (unsigned j=0; j<v_accept.size(); ++j) {
+                bool ignore_sel = v_veto_selections.size() ? false : true;
+                if (dist == v_all_items[j])
+                    ignore_sel = true;
+                for (const string & sel : v_veto_selections) {
+                    if (sel == v_all_items[j]) {
+                        ignore_sel = true;  
+                        if (!v_accept[j])
+                            accept_sel = false;
+                        break;
+                    }
+                }
+                if (!ignore_sel) {
+                    if (!v_accept[j]) {
+                        accept_all = false;
+                        break;
+                    }
+                }
+            }
+            if (accept_all) {
+                v_hists_eff[dist+"_tot"]->fill(event);
+                if (accept_sel)
+                    v_hists_eff[dist+"_sub"]->fill(event);
+            }
+        }
+    }
+
+private:
+    Event::Handle<vector<bool>> h_sel_res;
+    vector<string> v_all_items;
+    // const vector<string> v_selections;
+    const vector<string> dists_;
+    const vector<string> v_veto_selections;
+    map<string, unique_ptr<Hists>> v_hists_eff;
+};

@@ -67,10 +67,10 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     common_modules.emplace_back(new ParticleCleaner<Muon>(ctx, AndId<Muon>(MuonIDMedium(), MuonIso(), PtEtaCut(20.0, 2.1)), "muons_iso"));
 
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu20"));
-    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoEl27"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele27_eta2p1_WPLoose_Gsf_v*"}, "trigger_accept_isoEl27"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_mu45"));
-    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el45"));
-    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele105_CaloIdVT_GsfTrkIdT_v*"}, {"HLT_Mu45_eta2p1_v*"}, "trigger_accept_el105"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, "trigger_accept_el45"));
+    common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Ele105_CaloIdVT_GsfTrkIdT_v*"}, "trigger_accept_el105"));
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_Mu45_eta2p1_v*", "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v*"}, "trigger_accept_lep_comb"));
     // common_modules.emplace_back(new PrimaryLepton(ctx, "PrimaryLeptonComb", 50., 47.));
 

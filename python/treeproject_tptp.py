@@ -100,15 +100,15 @@ more_histos = {
     # 'ak8_boost_diff_20'           : ('Mass [GeV]',           100, 0., 2000.),
     # 'ak8_boost_diff_before_sj'           : ('Mass [GeV]',           100, 0., 2000.),
     'nomass_boost_1b_gen_mass'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_1b_diff_before'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_1b_diff_10'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_1b_diff_20'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_1b_diff_before_sj'           : ('Mass [GeV]',           60, 0., 300.),
+    'nomass_boost_1b_diff_before'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_1b_diff_10'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_1b_diff_20'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_1b_diff_before_sj'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_2b_gen_mass'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_2b_diff_before'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_2b_diff_10'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_2b_diff_20'           : ('Mass [GeV]',           60, 0., 300.),
-    'nomass_boost_2b_diff_before_sj'           : ('Mass [GeV]',           60, 0., 300.),
+    'nomass_boost_2b_diff_before'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_2b_diff_10'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_2b_diff_20'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_2b_diff_before_sj'           : ('Mass [GeV]',           80, -1., 1.),
     'wtags_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'wtags_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
     'wtags_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
@@ -566,6 +566,32 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
     sample_weights_reweight_up = dict(sample_weights)
     sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*('+weight+')') for proc, weight in weight_dict.iteritems()))
     sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/('+weight+')') for proc, weight in weight_dict.iteritems()))
+    sys_sec_sel_weight_reweight_weight = (
+        (weight_name+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
+        (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
+    )
+    return list(
+        treeproject(
+            filenames,
+            params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+        )
+        for name, ssw in sys_sec_sel_weight_reweight_weight
+    )
+
+def add_one_sided_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params):
+    # def tmp():
+    nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
+    filenames = dict(
+        (sample, list(f for f in glob.glob(nominal_files) if sample in f))
+        for sample in samples
+    )
+    sample_weights_reweight_down = dict(sample_weights)
+    sample_weights_reweight_up = dict(sample_weights)
+    sample_weights_reweight_down.update(dict((proc, sample_weights[proc]+'*('+weight+')') for proc, weight in weight_dict.iteritems()))
+    # sample_weights_reweight_up.update(dict((proc, sample_weights[proc]+'/('+weight+')') for proc, weight in weight_dict.iteritems()))
     sys_sec_sel_weight_reweight_weight = (
         (weight_name+'__minus', list((g, f, sample_weights_reweight_down) for g, f in final_regions)),
         (weight_name+'__plus', list((g, f, sample_weights_reweight_up) for g, f in final_regions))
