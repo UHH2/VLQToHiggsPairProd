@@ -48,6 +48,9 @@ categories_pre = [ #"NoSelection",
         'el105',
         'el45',
         'el45cut55',
+        'isoEle27nonIsoMu',
+        'isoMuo20cut25',
+        'isoEle27cut30',
         # 'El45mva',
         ]
 
@@ -258,7 +261,7 @@ def mk_sframe_tools_and_plot(argv):
         sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
-        samples_to_plot = plot.less_samples_to_plot_pre
+        samples_to_plot = plot.almost_all_signals
         varial.settings.fix_presel_sample = True
         filter_func = lambda w: any(f in w.in_file_path for f in ['Nm1Selection', 'PostSelection'])
         # varial.settings.merge_decay_channels = True

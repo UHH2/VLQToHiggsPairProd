@@ -162,7 +162,7 @@ more_signals = [
     'TpTp_M-0900',
     'TpTp_M-1000',
     'TpTp_M-1100',
-    # 'TpTp_M-1200',
+    'TpTp_M-1200',
     'TpTp_M-1300',
     # 'TpTp_M-1400',
     'TpTp_M-1500',
@@ -363,7 +363,7 @@ def loader_hook_finalstates_excl(wrps):
 def loader_hook_norm_to_int(wrps):
     key = lambda w: '{0}___{1}___{2}___{3}'.format(w.in_file_path, w.is_data, w.is_signal if not w.is_signal else w.sample, w.sys_info)
 
-    wrps = loader_hook_finalstates_excl(wrps)
+    # wrps = loader_hook_finalstates_excl(wrps)
     wrps = sorted(wrps, key=key)
     wrps = varial.gen.group(wrps, key)
     wrps = varial.gen.gen_merge(wrps)
@@ -508,7 +508,8 @@ def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, s
     # grps = common_plot.make_empty_bin_error(grps)
     return grps
 
-def stack_setup_norm_all_to_intgr(grps):
+def stack_setup_norm_all_to_intgr(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
+    grps = make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=False)
     # grps = common_plot.norm_stack_to_integral(grps)
     return grps
@@ -565,7 +566,7 @@ def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shap
                 clean_legend=lambda w: any(a in w[1] for a in varial.settings.legend_entries)),
             common_plot.BottomPlotUncertRatio,
             # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
-            varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}"))
+            varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.6 fb^{-1} (13 TeV)}"))
             ]
         kws.update(**args)
         return varial.tools.Plotter(**kws)

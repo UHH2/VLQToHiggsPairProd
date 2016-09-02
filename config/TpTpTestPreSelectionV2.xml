@@ -628,7 +628,7 @@
 
             <Item Name="use_sframe_weight" Value="false" />
             <Item Name="make_lep_coll" Value="true" />
-            <Item Name="category" Value="NoSelection el45 el105 mu45" />
+            <Item Name="category" Value="NoSelection el45 el105 mu45 isoEle27nonIsoMu isoMuo20cut25 isoEle27cut30" />
 
             <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>
             <Item Name="pileup_directory_25ns" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>

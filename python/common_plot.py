@@ -17,10 +17,10 @@ import varial.util as util
 from ROOT import THStack, TH2, TLatex, kFALSE
 # from varial.settings import legend_entries
 
-lumi_times_pure_BR = 2630.*0.111
-lumi_times_mixed_BR = 2630.*0.222
-lumi = 2630.
-lumi_ele = 2540.
+lumi_times_pure_BR = 2690.*0.111
+lumi_times_mixed_BR = 2690.*0.222
+lumi = 2690.
+lumi_ele = 2600.
 
 normfactors = {
     # 'TpTp' : 20.,
@@ -118,7 +118,7 @@ def get_style():
         varial.rendering.Legend(clean_legend=lambda w: any(a in w[1] for a in varial.settings.legend_entries)),
         varial.rendering.BottomPlotRatioSplitErr(poisson_errs=True),
         # varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
-        varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.7 fb^{-1} (13 TeV)}")),
+        varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.6 fb^{-1} (13 TeV)}")),
         ]
 
 
@@ -186,7 +186,8 @@ mod_dict = {
             'y_max_fct' : 1.8,
             'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'err_empty_bins' : True,
-            'draw_x_errs' : True
+            'draw_x_errs' : True,
+            # 'draw_empty_bin_error' : True
             },
     'ST_rebin_flex__TpTp_M-1200_thth__ht_reweight' : {
             'title' : 'S_{T} [GeV]',
@@ -254,7 +255,7 @@ mod_dict = {
             'y_max_log_fct' : 100000.,
             'set_leg_2_col_log' : leg_2_col_def,
             'y_min_gr_zero' : 0.1,
-            'title' : 'Primary Lepton p_{T} [GeV]',
+            'title' : 'Primary Lepton #eta [GeV]',
             },
     'met' : {
             'rebin' : 30,
@@ -1050,6 +1051,14 @@ def mod_pre_canv(grps):
         make_empty_bins_dat(g)
         if canv_attr.get('draw_x_errs'):
             g.draw_x_errs = True
+        if canv_attr.get('draw_empty_bin_error'):
+            g.draw_empty_bin_error = True
+        # if canv_attr.get('y_bot_max'):
+        #     g.y_max = canv_attr['y_bot_max']
+        # if canv_attr.get('y_bot_min'):
+        #     g.y_min = canv_attr['y_bot_min']
+        # if 'SignalRegion2b/ST' in g.renderers[0].in_file_path:
+        #     g.y_max_bot = 15
         if canv_attr.get('bin_width', None):
             g.bin_width = canv_attr['bin_width']
         if canv_attr.get('err_empty_bins', None):
@@ -1289,8 +1298,8 @@ table_block_signal = [
 
 table_block_signal_small = [
     (r'$\mathrm{T\bar{T}}$ (0.7 TeV)', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.1 TeV)', lambda w: 'Integral___TpTp_M-1100_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.5 TeV)', lambda w: 'Integral___TpTp_M-1500_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV)', lambda w: 'Integral___TpTp_M-1200_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.7 TeV)', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
 ]
 
 table_block_signal_fs_700 = [
@@ -1317,6 +1326,7 @@ table_block_background = [
     ('Z + Jets', lambda w: 'Integral___DY + jets' in w, False, True),
     ('QCD', lambda w: 'Integral___QCD' in w, False, True),
     ('Single t', lambda w: 'Integral___Single t' in w, False, True),
+    ('Diboson', lambda w: 'Integral___Diboson' in w, False, True),
 ]
 
 norm_factors = [

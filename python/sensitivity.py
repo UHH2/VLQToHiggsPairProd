@@ -379,7 +379,7 @@ def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None,
             # save_name_func=lambda w: w.save_name,
             canvas_decorators=[
                         # varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                        varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                        varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),
                         ],
             raise_on_no_histograms=False
             )
@@ -607,7 +607,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 canvas_decorators=[DrawLess700,
                 varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),]
                 ),
 
             varial.plotter.Plotter(
@@ -619,7 +619,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 canvas_decorators=[DrawLess700,
                 varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),]
+                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),]
                 ),
             varial.plotter.Plotter(
                 name='PlotterCont',
