@@ -38,19 +38,19 @@ categories_final = [
 categories_pre = [ #"NoSelection",
         # 'IsoMuo20',
         # 'IsoEle27',
-        # 'Mu45',
-        # 'El45',
+        'Mu45',
+        'El45',
         # 'El105',
-        'isoMuo20',
-        'isoEle27',
-        'mu45',
-        'mu45cut55',
-        'el105',
-        'el45',
-        'el45cut55',
-        'isoEle27nonIsoMu',
-        'isoMuo20cut25',
-        'isoEle27cut30',
+        # 'isoMuo20',
+        # 'isoEle27',
+        # 'mu45',
+        # 'mu45cut55',
+        # 'el105',
+        # 'el45',
+        # 'el45cut55',
+        # 'isoEle27nonIsoMu',
+        # 'isoMuo20cut25',
+        # 'isoEle27cut30',
         # 'El45mva',
         ]
 
@@ -255,13 +255,15 @@ def mk_sframe_tools_and_plot(argv):
     if options.selection == 'pre':
         sframe_cfg = sframe_cfg_pre
         setup_for_ind_run = setup_for_presel
-        allowed_datasets=['TpTp']
+        # allowed_datasets=['TpTp']
         categories = categories_pre
-        analysis_module = 'TpTpTriggerStudy'
+        # analysis_module = 'TpTpTriggerStudy'
+        analysis_module = 'TpTpPreselectionV2'
         sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
-        samples_to_plot = plot.almost_all_signals
+        # samples_to_plot = plot.almost_all_signals
+        samples_to_plot = plot.less_samples_to_plot_pre
         varial.settings.fix_presel_sample = True
         filter_func = lambda w: any(f in w.in_file_path for f in ['Nm1Selection', 'PostSelection'])
         # varial.settings.merge_decay_channels = True
@@ -293,7 +295,7 @@ def mk_sframe_tools_and_plot(argv):
             # overwrite=False
         )]
         plot_chain += [varial.tools.ToolChainParallel(
-                    'Plots',
+                    'PlotsForML',
                     lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
                         # filter_keyfunc=lambda w: 'Baseline' in w.in_file_path
                         filter_keyfunc=filter_func
@@ -324,7 +326,7 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    sf_batch,
+                    # sf_batch,
                     varial.tools.ToolChain(
                         'Plots',
                         plot_chain
@@ -377,7 +379,7 @@ def mk_sframe_tools_and_plot(argv):
             options.outputdir,
             [
                 git.GitAdder(),
-                ToolChain('Files_and_Plots2',
+                ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
                 # mk_tex_tc_pre(options.outputdir+tex_base),

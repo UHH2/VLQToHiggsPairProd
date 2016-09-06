@@ -210,8 +210,7 @@ almost_all_signals = [
     # 'TpTp_M-1800',
 ]
 
-other_samples_to_plot = [
-    'TTbar_split',
+backgrounds_wo_ttbar = [
     'SingleTop',
     'QCD',
     'DYJets',
@@ -219,6 +218,9 @@ other_samples_to_plot = [
     'Run2015CD',
     'Diboson'
 ]
+
+other_samples_to_plot = backgrounds_wo_ttbar + ['TTbar_split']
+other_samples_to_plot_pre = backgrounds_wo_ttbar + ['TTbar']
 
 samples_to_plot_final = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in signals_to_plot))
 more_samples = other_samples_to_plot + reduce(lambda x, y: x+y, (list(g + f for f in final_states_to_plot) for g in more_signals))
@@ -229,8 +231,8 @@ samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in sign
 more_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in more_signals)
 less_samples_to_plot_only_th = other_samples_to_plot + list(g + '_thth' for g in less_signals)
 
-samples_to_plot_pre = other_samples_to_plot + less_signals
-less_samples_to_plot_pre = other_samples_to_plot + less_signals
+samples_to_plot_pre = other_samples_to_plot_pre + signals_to_plot
+less_samples_to_plot_pre = other_samples_to_plot_pre + less_signals
 
 get_samplename = vlq_common.get_samplename
 
