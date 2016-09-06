@@ -158,7 +158,7 @@ signals_to_plot = [
 
 more_signals = [
     'TpTp_M-0700',
-    # 'TpTp_M-0800',
+    'TpTp_M-0800',
     'TpTp_M-0900',
     'TpTp_M-1000',
     'TpTp_M-1100',
@@ -166,7 +166,7 @@ more_signals = [
     'TpTp_M-1300',
     # 'TpTp_M-1400',
     'TpTp_M-1500',
-    # 'TpTp_M-1600',
+    'TpTp_M-1600',
     'TpTp_M-1700',
     # 'TpTp_M-1800',
 ]

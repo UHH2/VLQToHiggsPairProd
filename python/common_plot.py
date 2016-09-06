@@ -118,7 +118,7 @@ def get_style():
         varial.rendering.Legend(clean_legend=lambda w: any(a in w[1] for a in varial.settings.legend_entries)),
         varial.rendering.BottomPlotRatioSplitErr(poisson_errs=True),
         # varial.rendering.TextBox(textbox=TLatex(0.23, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}")),
-        varial.rendering.TextBox(textbox=TLatex(0.69, 0.89, "#scale[0.6]{2.6 fb^{-1} (13 TeV)}")),
+        varial.rendering.TextBox(textbox=TLatex(0.55, 0.89, "#scale[0.6]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),
         ]
 
 
@@ -169,9 +169,7 @@ mod_dict = {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 1e-3,
-            'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-                              (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
-            'y_max_fct' : 1.8,
+            'y_max_fct' : 1.2,
             'bin_width' : 100,
             'err_empty_bins' : True
             },
@@ -181,8 +179,6 @@ mod_dict = {
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
             'set_leg_2_col_log' : leg_2_col_def,
-            # 'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-            #                   (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             'y_max_fct' : 1.8,
             'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'err_empty_bins' : True,
@@ -222,10 +218,7 @@ mod_dict = {
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
             'set_leg_2_col_log' : leg_2_col_def,
-            # 'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-            #                   (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             'y_max_fct' : 1.8,
-            # 'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'err_empty_bins' : True,
             'draw_x_errs' : True
             },
@@ -363,12 +356,12 @@ mod_dict = {
     ##### p_{T}-leading HIGGS-TAG VARIABLES ######
     'mass_sj' : {
             'rebin' : 30,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs cand.) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'n_sjbtags_medium' : {
-            'title' : 'N(subjet b-tags, p_{T}-leading Higgs candidate)',
+            'title' : 'N(subjet b-tags)',
             'y_max_log_fct' : 1000.,
             },
     # 'pt' : {
@@ -379,20 +372,20 @@ mod_dict = {
     #         },
     'nomass_boost_1b_mass' : {
             'rebin' : 30,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs cand., 1 subjet b-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass' : {
             'rebin' : 15,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'title' : 'M_{jet} [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.4
             },
     'nomass_boost_1b_mass_softdrop' : {
             'rebin' : 30,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
+            'title' : 'M_{jet}(p_{T}-leading Higgs cand., 1 subjet b-tag) [GeV]',
             'y_min_gr_zero' : 0.4,
             'y_max_log_fct' : 1000.,
             },
@@ -400,7 +393,7 @@ mod_dict = {
             'rebin_list' : list(i + 50 for i in xrange(0, 250, 10)),
             # 'rebin' : [40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 260., 280., 300.],
             'y_max_fct' : 1.8,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'title' : 'M_{jet} [GeV]',
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.4,
@@ -418,7 +411,7 @@ mod_dict = {
             },
     'nomass_boost_2b_mass_softdrop_rebin_flex' : {
             'y_max_fct' : 1.3,
-            'title' : 'M_{jet}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'title' : 'M_{jet} [GeV]',
             'bin_width' : 5,
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
@@ -435,7 +428,6 @@ mod_dict = {
             #         'reverse': True,
             #         'sort_legend' : lambda w: 'TT ' in w[1],
             #     },
-            # 'text_box_lin' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'set_leg_1_col_lin' : {
                     'x_pos': 0.74,
                     'y_pos': 0.67,
@@ -451,7 +443,7 @@ mod_dict = {
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'nobtag_boost_mass_nsjbtags' : {
-            'title' : 'N(subjet b-tags, p_{T}-leading Higgs candidate)',
+            'title' : 'N(subjet b-tags)',
             'y_min_gr_zero' : 100,
             'y_max_log_fct' : 50.,
             'set_leg_1_col_log' : {
@@ -469,25 +461,25 @@ mod_dict = {
                               (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'noboost_mass_1b_pt' : {
-            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs cand., 1 subjet b-tag) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'scale' : 0.4
             },
     'noboost_mass_2b_pt' : {
-            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'title' : 'p_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'scale' : 0.4
             },
     'noboost_mass_1b[0].m_pt' : {
-            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 1 subjet b-tag) [GeV]',
+            'title' : 'p_{T}(p_{T}-leading Higgs cand., 1 subjet b-tag) [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'scale' : 0.4
             },
     'noboost_mass_2b[0].m_pt' : {
-            'title' : 'p_{T}(p_{T}-leading Higgs-tag, 2 subjet b-tags) [GeV]',
+            'title' : 'p_{T} [GeV]',
             'y_max_log_fct' : 1000.,
             'y_min_gr_zero' : 1e-3,
             'scale' : 0.4
@@ -1297,27 +1289,27 @@ table_block_signal = [
 ]
 
 table_block_signal_small = [
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV)', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV)', lambda w: 'Integral___TpTp_M-0800_thth' in w, True),
     (r'$\mathrm{T\bar{T}}$ (1.2 TeV)', lambda w: 'Integral___TpTp_M-1200_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV)', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV)', lambda w: 'Integral___TpTp_M-1600_thth' in w, True),
 ]
 
-table_block_signal_fs_700 = [
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0700_thtz' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0700_thbw' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0700_noH_tztz' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0700_noH_tzbw' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0700_noH_bwbw' in w, True),
+table_block_signal_fs_800 = [
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0800_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-0800_thtz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-0800_thbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0800_noH_tztz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0800_noH_tzbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0800_noH_bwbw' in w, True),
 ]
 
-table_block_signal_fs_1700 = [
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1700_thth' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1700_thtz' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1700_thbw' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1700_noH_tztz' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1700_noH_tzbw' in w, True),
-    (r'$\mathrm{T\bar{T}}$ (1.7 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1700_noH_bwbw' in w, True),
+table_block_signal_fs_1600 = [
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1600_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1600_thtz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1600_thbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1600_noH_tztz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1600_noH_tzbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1600_noH_bwbw' in w, True),
 ]
 
 table_block_background = [
@@ -1331,40 +1323,46 @@ table_block_background = [
 
 norm_factors = [
     (r'$\mathrm{T\bar{T}}$ (0.7 TeV)', (1./normfactors['TpTp_M-0700'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (0.8 TeV)', (1./normfactors['TpTp_M-0800'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (0.9 TeV)', (1./normfactors['TpTp_M-0900'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.0 TeV)', (1./normfactors['TpTp_M-1000'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.1 TeV)', (1./normfactors['TpTp_M-1100'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV)', (1./normfactors['TpTp_M-1200'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.3 TeV)', (1./normfactors['TpTp_M-1300'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.4 TeV)', (1./normfactors['TpTp_M-1400'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.5 TeV)', (1./normfactors['TpTp_M-1500'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.6 TeV)', (1./normfactors['TpTp_M-1600'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.7 TeV)', (1./normfactors['TpTp_M-1700'])*lumi),
+    (r'$\mathrm{T\bar{T}}$ (1.8 TeV)', (1./normfactors['TpTp_M-1800'])*lumi),
 ]
 
 def get_table_category_block(hist_path='Histograms', style='AN'):
     return [
         ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
-        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path, 'ST')),
-        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
+        ('H1b category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path, 'ST')),
+        ('H2b category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
     ] if style == 'PAS' else [
         ('Preselection', get_dict('../%s/StackedAll/BaseLineSelection' % hist_path, 'ST')),
         ('0H category', get_dict('../%s/StackedAll/SidebandRegion' % hist_path, 'ST')),
-        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path , 'ST')),
-        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
+        ('H1b category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path , 'ST')),
+        ('H2b category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
     ]
 
 def get_table_category_block_split(chan, hist_path='Histograms'):
     return [
         ('Preselection', get_dict('../%s/StackedAll/BaseLineSelection_%s' % (hist_path, chan), 'ST')),
         ('0H category', get_dict('../%s/StackedAll/SidebandRegion_%s' % (hist_path, chan), 'ST')),
-        ('H1B category', get_dict('../%s/StackedAll/SignalRegion1b_%s' % (hist_path, chan) , 'ST')),
-        ('H2B category', get_dict('../%s/StackedAll/SignalRegion2b_%s' % (hist_path, chan), 'ST')),
+        ('H1b category', get_dict('../%s/StackedAll/SignalRegion1b_%s' % (hist_path, chan) , 'ST')),
+        ('H2b category', get_dict('../%s/StackedAll/SignalRegion2b_%s' % (hist_path, chan), 'ST')),
     ]
 
 # table_category_block_comp_fs = [
 #     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b', 'ST')),
-#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
+#     ('H1b category', get_dict('../Histograms/StackedAll/SignalRegion1b', 'ST')),
+#     ('H2b category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
 # ] if varial.settings.style == 'PAS' else [
 #     ('Preselection', get_dict('../Histograms/StackedAll/BaseLineSelection', 'ST')),
 #     ('0H category', get_dict('../Histograms/StackedAll/SidebandRegion', 'ST')),
-#     ('H1B category', get_dict('../Histograms/StackedAll/SignalRegion1b' , 'ST')),
-#     ('H2B category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
+#     ('H1b category', get_dict('../Histograms/StackedAll/SignalRegion1b' , 'ST')),
+#     ('H2b category', get_dict('../Histograms/StackedAll/SignalRegion2b', 'ST')),
 # ]

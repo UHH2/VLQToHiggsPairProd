@@ -113,7 +113,7 @@ br_list_thbw = [{
         }]
 
 def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions,
-        br_list=br_list_th_only, model_func=model_vlqpair.get_model(),
+        br_list=br_list_th_only, model_func=model_vlqpair.get_model_no_norm(),
         signals=treeproject_tptp.tptp_signals,
         filter_func=sensitivity.select_single_sig(all_regions),
         x_axis_lim="m_{T} [GeV]",
@@ -165,9 +165,9 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions,
                     keep_content_as_result=True,
                     # hook_canvas_post_build=lambda w: sensitivity.canvas_setup_post(w, max_y=100.),
                     canvas_decorators=[varial.rendering.Legend(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
-                            varial.rendering.TextBox(textbox=TLatex(0.19, 0.79, "#scale[0.7]{#bf{CMS}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.19, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                            # varial.rendering.TextBox(textbox=TLatex(0.19, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                            # varial.rendering.TextBox(textbox=TLatex(0.19, 0.73, "#scale[0.6]{#it{Preliminary}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.52, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),
                         # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                         ],
                     # save_lin_log_scale=True
@@ -197,9 +197,9 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions,
                     keep_content_as_result=True,
                     # hook_canvas_post_build=lambda w: sensitivity.canvas_setup_post(w, max_y=100.),
                     canvas_decorators=[varial.rendering.Legend(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
-                            varial.rendering.TextBox(textbox=TLatex(0.19, 0.79, "#scale[0.7]{#bf{CMS}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.19, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                            varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.7 fb^{-1} (13 TeV)}")),
+                            # varial.rendering.TextBox(textbox=TLatex(0.19, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                            # varial.rendering.TextBox(textbox=TLatex(0.19, 0.73, "#scale[0.6]{#it{Simulation}}")),
+                            varial.rendering.TextBox(textbox=TLatex(0.52, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),
                         # varial.rendering.TitleBox(text='#scale[1.2]{#bf{#it{Work in Progress}}}')
                         ],
                     # save_lin_log_scale=True
@@ -230,6 +230,7 @@ def mk_limit_list_syst(base_path, name, sys_pat=None, list_region=all_regions,
 baseline_selection = [
     'gendecay_accept          == 1',
     'n_ak8                    >= 2',
+    'n_ak4                    >= 3',
     'ST                       > 800',
 ]
 
@@ -623,7 +624,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             # #         hook_loaded_histos=sensitivity.loader_hook(br_list_th_only[0], 15)
             # #     )),
 
-            # compare the background modelling for different sets of systematic uncertainties
+            # # compare the background modelling for different sets of systematic uncertainties
             varial.tools.ToolChain('BackgroundOnlyFitNoTheory', lazy_eval_tools_func=lambda: [ 
                 varial.tools.ToolChain(
                     'CR',
@@ -771,7 +772,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     lookup_aliases=False
             #     )),
             
-            # # final limits with all BRs
+            # final limits with all BRs
             # sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsOnlyTH', mk_limit_list_syst(
             #     output_dir,
             #     name,
@@ -1089,9 +1090,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             lookup_aliases=False,
                             raise_on_empty_result=False
                             ) for g in plot.less_samples)),
-                        plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
-                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
+                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
                         #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
                         #     plotter_factory=plot.plotter_factory_uncerts(
@@ -1179,8 +1180,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # #         name='EffTable'
                     # #         ),
                     # #     EffTable([
-                    # #             common_plot.table_block_signal_fs_700,
-                    # #             common_plot.table_block_signal_fs_1700,
+                    # #             common_plot.table_block_signal_fs_800,
+                    # #             common_plot.table_block_signal_fs_1600,
                     # #         ],
                     # #         common_plot.get_table_category_block(),
                     # #         common_plot.norm_factors,
@@ -1193,7 +1194,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #     varial.tools.ToolChainParallel('HistoLoader',
                     #         list(varial.tools.HistoLoader(
                     #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
-                    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.more_samples) and\
+                    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.almost_all_signals) and\
                     #                 'Region_Comb' not in w.in_file_path and\
                     #                 any(w.in_file_path.endswith(f) for f in ['ST']) and\
                     #                 unselect_theory_uncert(w),
@@ -1201,7 +1202,7 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #             name='HistoLoader_'+g,
                     #             lookup_aliases=False,
                     #             raise_on_empty_result=False
-                    #             ) for g in plot.more_samples)),
+                    #             ) for g in plot.almost_all_signals)),
                     #     plot.mk_toolchain('Histograms',
                     #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
                     #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
@@ -1229,8 +1230,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         name='EffTable'
                     #         ),
                     #     EffTable([
-                    #             common_plot.table_block_signal_fs_700,
-                    #             common_plot.table_block_signal_fs_1700,
+                    #             common_plot.table_block_signal_fs_800,
+                    #             common_plot.table_block_signal_fs_1600,
                     #         ],
                     #         common_plot.get_table_category_block(),
                     #         common_plot.norm_factors,
@@ -1238,8 +1239,8 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     #         name='EffTableCompFS'
                     #         ),
                     #     EffTable([
-                    #             common_plot.table_block_signal_fs_700,
-                    #             common_plot.table_block_signal_fs_1700,
+                    #             common_plot.table_block_signal_fs_800,
+                    #             common_plot.table_block_signal_fs_1600,
                     #         ],
                     #         common_plot.get_table_category_block(style='PAS'),
                     #         common_plot.norm_factors,
@@ -1532,8 +1533,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
     
     return varial.tools.ToolChain(name, [
             # varial.tools.ToolChainParallel('TreeProject', lazy_eval_tools_func=mk_tc_tp, n_workers=1),
-            varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
+            # varial.tools.ToolChainParallel('Limit', lazy_eval_tools_func=mk_tc_sens, n_workers=1),
             varial.tools.ToolChainParallel('PlotAN', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
+            # varial.tools.ToolChainParallel('Plot', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('PlotPAS', lazy_eval_tools_func=mk_tc_plot, n_workers=1),
             # varial.tools.ToolChainParallel('TexAN', lazy_eval_tools_func=mk_tc_an, n_workers=1),
             varial.tools.ToolChainParallel('TexPAS', lazy_eval_tools_func=mk_tc_pas, n_workers=1),

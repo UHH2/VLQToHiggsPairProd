@@ -261,7 +261,7 @@ def mk_sframe_tools_and_plot(argv):
         analysis_module = 'TpTpPreselectionV2'
         sys_uncerts = no_sys_uncerts
         basenames = plot.basenames_pre
-        tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
+        tex_base = '/Files_and_Plots*/Files_and_Plots_nominal/Plots/'
         # samples_to_plot = plot.almost_all_signals
         samples_to_plot = plot.less_samples_to_plot_pre
         varial.settings.fix_presel_sample = True

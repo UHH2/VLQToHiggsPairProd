@@ -22,9 +22,10 @@ from ROOT import TLatex, gStyle, TColor
 import ROOT
 from varial.sample import Sample
 from varial.extensions.limits import *
-from UHH2.VLQSemiLepPreSel.common import TpTpThetaLimits, TriangleMassLimitPlots, label_axes
+from UHH2.VLQSemiLepPreSel.common import TriangleMassLimitPlots, label_axes
 
 import common_sensitivity
+from common_sensitivity import TpTpThetaLimits
 import common_plot
 import model_vlqpair
 import analysis
@@ -325,7 +326,7 @@ def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_un
     return tmp
 
 
-def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model(), **kws):
+def mk_limit_tc_single(brs, signal='', sys_pat=None, selection='', pattern=None, model_func=model_vlqpair.get_model_no_norm(), **kws):
     # def tmp():
     load_dict = {
         'hook_loaded_histos' : loader_hook(brs)
@@ -433,7 +434,7 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
                 ),
                 pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
                 ),
-            plot.mk_toolchain('HistogramsTables', plot.more_samples,
+            plot.mk_toolchain('HistogramsTables', plot.almost_all_samples,
                 plotter_factory=plotter_factory_postfit(theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
                 pattern=None,
                 input_result_path='../HistoLoaderPost/HistoLoader*',
@@ -465,7 +466,7 @@ def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_p
 
 def mk_tc_lim_postfit(brs, signal='', sys_path=None, sys_uncerts=analysis.shape_uncertainties,
     rate_uncertainties=analysis.rate_uncertainties, selection='', pattern=None,
-    model_func=model_vlqpair.get_model(analysis.rate_uncertainties), filter_plots=lambda _: True, include_rate=False, **kws):
+    model_func=model_vlqpair.get_model_no_norm(analysis.rate_uncertainties), filter_plots=lambda _: True, include_rate=False, **kws):
     def tmp():
         sys_pat = []
         path = sys_path
@@ -607,7 +608,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 canvas_decorators=[DrawLess700,
                 varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),]
+                varial.rendering.TextBox(textbox=TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
                 ),
 
             varial.plotter.Plotter(
@@ -619,7 +620,7 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 canvas_decorators=[DrawLess700,
                 varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 varial.rendering.TextBox(textbox=TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),]
+                varial.rendering.TextBox(textbox=TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
                 ),
             varial.plotter.Plotter(
                 name='PlotterCont',

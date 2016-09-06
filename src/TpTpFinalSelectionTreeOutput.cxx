@@ -968,88 +968,91 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     "HiggsTag2bMed-Signal", 
     //     }; // "CombinedElMu", "HiggsTag2bLoose-Signal", "AntiHiggsTagLoose-Control", "AntiHiggsTagMed-Control", "HiggsTag0Loose-Control", 
 
+
+    if (version.find("thth") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID))
+            ));
+    }
+    else if (version.find("thtz") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID))
+            ));
+    }
+    else if (version.find("thbw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
+            ));
+    }
+    else if (version.find("noH_tztz") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID))
+            ));
+    }
+    else if (version.find("noH_tzbw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
+            ));
+    }
+    else if (version.find("noH_bwbw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
+            ));
+    }
+    else if (version.find("bhbh") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID))
+            ));
+    }
+    else if (version.find("bhbz") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID))
+            ));
+    }
+    else if (version.find("bhtw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
+            ));
+    }
+    else if (version.find("noH_bzbz") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID))
+            ));
+    }
+    else if (version.find("noH_bztw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
+            ));
+    }
+    else if (version.find("noH_twtw") != string::npos) {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID)),
+            GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
+            ));
+    }
+
+    else {
+        other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
+            GenParticleId(TrueId<GenParticle>::is_true), GenParticleId(TrueId<GenParticle>::is_true)));
+    }
+
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
 
 
         SEL_ITEMS_FULL_SEL.push_back(SEL_ITEMS_BASELINE_SEL);
 
-        if (version.find("thth") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID))
-                ));
-        }
-        else if (version.find("thtz") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID))
-                ));
-        }
-        else if (version.find("thbw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
-                ));
-        }
-        else if (version.find("noH_tztz") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID))
-                ));
-        }
-        else if (version.find("noH_tzbw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::TopID, ParticleID::ZID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
-                ));
-        }
-        else if (version.find("noH_bwbw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::TprimeID, ParticleID::BottomID, ParticleID::WID))
-                ));
-        }
-        else if (version.find("bhbh") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID))
-                ));
-        }
-        else if (version.find("bhbz") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID))
-                ));
-        }
-        else if (version.find("bhtw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::HiggsID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
-                ));
-        }
-        else if (version.find("noH_bzbz") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID))
-                ));
-        }
-        else if (version.find("noH_bztw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::BottomID, ParticleID::ZID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
-                ));
-        }
-        else if (version.find("noH_twtw") != string::npos) {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID)),
-                GenParticleId(GenParticleDaughterId(ParticleID::BprimeID, ParticleID::TopID, ParticleID::WID))
-                ));
-        }
-        else {
-            other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
-                GenParticleId(TrueId<GenParticle>::is_true), GenParticleId(TrueId<GenParticle>::is_true)));
-        }
 
 
 
@@ -1086,6 +1089,14 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             for (auto const & sel_item : SEL_ITEMS_EL45TIGHT_SEL)
                 SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
         }
+        
+        if (version.find("SingleEle") != string::npos && split(cat, "_")[0] == "Mu45") {
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("chan_accept", "GenDecay Accept", 2, -.5, 1.5, 1));
+        }
+        else if (version.find("SingleMuon") != string::npos && split(cat, "_")[0] == "El45") {
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("chan_accept", "GenDecay Accept", 2, -.5, 1.5, 1));
+        }
+        
         // else if (split(cat, "_")[0] == "El45MVALoose") {
         //     for (auto const & sel_item : SEL_ITEMS_EL45MVALOOSE_SEL)
         //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
@@ -1120,94 +1131,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
         }
 
-        // if (split(cat, "-")[0] == "Mu45_Baseline") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5));
-        // }
-        // if (split(cat, "-")[0] == "El45_Baseline") {
-        //     for (auto const & sel_item : SEL_ITEMS_EL45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5));
-        // }
-        // else if (split(cat, "-")[0] == "El45_H2B") {
-        //     for (auto const & sel_item : SEL_ITEMS_EL45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "El45_H1B") {
-        //     for (auto const & sel_item : SEL_ITEMS_EL45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "El45_Sideband") {
-        //     for (auto const & sel_item : SEL_ITEMS_EL45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000, 100.));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_H2B") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_H1B") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_Sideband") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000, 100.));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_H2B") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_H1B") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
-        // }
-        // else if (split(cat, "-")[0] == "Mu45_Sideband") {
-        //     for (auto const & sel_item : SEL_ITEMS_Mu45_SEL)
-        //         SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000, 100.));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 0, 0));
-        //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5));
-        // }
 
 
         for (auto const & sel_item : ADDITIONAL_SEL_ITEMS)

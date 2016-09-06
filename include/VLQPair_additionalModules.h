@@ -40,6 +40,9 @@ public:
     static bool is_true(const T &, const Event &) {
         return true;
     }
+    static bool is_false(const T &, const Event &) {
+        return false;
+    }
 };
 
 class PrimaryLeptonPtProducer: public AnalysisModule {
@@ -588,6 +591,31 @@ private:
     Event::Handle<int> h_accept_;
     GenParticleId tp1d_, tp2d_;
 };  // GenSelectionAcceptProducer
+
+
+class TrueFalseProducer : public AnalysisModule {
+public:
+    explicit TrueFalseProducer(Context & ctx,
+            string const & h_accept = "gendecay_accept",
+            bool true_false = false) :
+    h_accept_(ctx.get_handle<int>(h_accept)),
+    true_false_(true_false) {}
+
+    virtual bool process(Event & event) override {
+        if (true_false_)
+            event.set(h_accept_, 1);
+        else 
+            event.set(h_accept_, 0);
+
+
+        return true;
+    }
+
+private:
+    Event::Handle<int> h_accept_;
+    bool true_false_;
+};  // TrueFalseProducer
+
 
 class GenMassTTbarSelection : public AnalysisModule {
 public:

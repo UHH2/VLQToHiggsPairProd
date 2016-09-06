@@ -62,8 +62,8 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     }
 
 
-    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.1)), "electrons_mva_loose"));
-    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_Spring15_25ns_medium, PtEtaCut(20.0, 2.1)), "electrons_iso"));
+    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.4)), "electrons_mva_loose"));
+    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_Spring15_25ns_medium, PtEtaCut(20.0, 2.4)), "electrons_iso"));
     common_modules.emplace_back(new ParticleCleaner<Muon>(ctx, AndId<Muon>(MuonIDMedium(), MuonIso(), PtEtaCut(20.0, 2.1)), "muons_iso"));
 
     common_modules.emplace_back(new TriggerAcceptProducer(ctx, {"HLT_IsoMu20_v*", "HLT_IsoTkMu20_v*"}, "trigger_accept_isoMu20"));
