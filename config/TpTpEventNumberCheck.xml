@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
+[
+<!ENTITY NEVT "-1">
+<!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
+<!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestFinalSelection/">
+
+
+<!ENTITY Data_SingleMu SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleMuon_Run2015CD.xml">
+<!ENTITY Data_SingleEle SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleEle_Run2015CD.xml">
+
+]
+>
+
+<!--
+   <ConfigParse NEventsBreak="10000" FileSplit="0" AutoResubmit="2" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="dominik.nowatschin@cern.de" Notification="as" Workdir="workdir"/>
+-->
+
+
+<JobConfiguration JobName="VLQToHPairProdCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2vlqToHPairProd"/>
+    <Package Name="SUHH2vlqToHPairProd.par" />
+
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2690" >
+    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="12" OutputDirectory="&SOURCEDIR;&OUTPUTDIR;" PostFix="" TargetLumi="2460" > -->
+    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="nowatsd@nafhh-cms06.desy.de:21001"  ProofWorkDir="/nfs/dust/cms/user/nowatsd/proof-wd/" ProofNodes="60" OutputDirectory="/nfs/dust/cms/user/nowatsd/sFrameNew/CMSSW_7_4_9/src/UHH2/VLQToHiggsPairProd/TpTpPreSelection-v5/" PostFix="" TargetLumi="1984.1" > -->
+        
+    <!--
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    data
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    -->
+
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
+        &Data_SingleMu;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleEle_Run2015CD" Cacheable="True">
+        &Data_SingleEle;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+
+
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+            <Item Name="TauCollection" Value="slimmedTaus" />
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDrop" />
+            <Item Name="TopJetCollection" Value="slimmedJetsAK8_SoftDrop" />
+            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="additionalBranches" Value="triggerNames triggerResults patJetsAk8CHSJetsSoftDropPacked_daughters patJetsCa15CHSJetsSoftDropPacked_daughters patJetsHepTopTagCHSPacked_daughters electrons_mva_loose" />
+            
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <Item Name="AnalysisModule" Value="TpTpEventNumberCheck" />
+
+            <!-- <Item Name="HepTopTagCollection" Value="patJetsHEPTopTagCHSPacked" />
+            <Item Name="CA8PrunedJetCollection" Value="patJetsCA8CHSprunedPacked" /> -->
+
+            <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
+                 MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
+                 event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
+            <Item Name="data_dir_path" Value="&SOURCEDIR;../common/data/" />
+            <Item Name="lumi_file" Value="" />
+            <!-- <Item Name="lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" /> -->
+            <Item Name="el_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver_NoBadBSRuns.root" />
+            <Item Name="mu_lumi_file" Value="&SOURCEDIR;../common/data/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver.root" />
+            
+            <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+
+            <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelection-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
+            <Item Name="BTagCalibration" Value="&SOURCEDIR;../common/data/CSVv2.csv" />
+
+            <!-- specific to analysis -->
+            <!-- "jecsmear_direction": either "nominal", "up", or "down" -->
+            <!-- "jersmear_direction": either "nominal", "up", or "down" -->
+            <Item Name="jecsmear_direction" Value="nominal" /> 
+            <Item Name="jersmear_direction" Value="nominal" /> 
+            <Item Name="jersmear_smear_met" Value="true" />
+
+            <Item Name="use_sframe_weight" Value="false" />
+            <Item Name="create_btag_eff" Value="false" />
+            <Item Name="category" Value="Mu45 El45" />
+
+            <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>
+            <Item Name="pileup_directory_data_up" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_72450.root" />
+            <Item Name="pileup_directory_data_down" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_65550.root" />
+            <Item Name="pileup_directory" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>
+
+            <!-- <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;kinematicBinSFele.root"/> -->
+            <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;CutBasedID_MediumWP_76X_18Feb.txt_SF2D.root"/>
+            
+            <!-- set this to the name of an AndSelection to control what is written to the output. If not given, *all* events are written to the output tree. -->
+            <Item Name="TestKey" Value="TestKeyValue" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
