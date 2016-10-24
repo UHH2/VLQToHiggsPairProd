@@ -5,7 +5,7 @@ import varial.wrappers as wrappers
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
-import common_plot
+import common_plot_new as common_plot
 from varial.extensions.limits import *
 
 theory_masses = [700., 800., 900., 1000., 1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800]
@@ -91,17 +91,20 @@ def scale_histo(wrp, factor=1.):
     info["lumi"] = 1.
     return wrappers.HistoWrapper(histo, **info)
 
-def final_state_scaling(wrps, brs):
-    dict_factors = make_finalstate_factors(make_factors_new(brs))
-    for w in wrps:
-        for final_state, factor in dict_factors.iteritems():
-            if hasattr(w, 'finalstate'):
-                if w.finalstate == final_state:
-                    w = scale_histo(w, factor)
-            else:
-                if w.sample.endswith(final_state):
-                    w = scale_histo(w, factor)
-        yield w
+def final_state_scaling(wrps, brs=None):
+    if brs:
+        dict_factors = make_finalstate_factors(make_factors_new(brs))
+        for w in wrps:
+            for final_state, factor in dict_factors.iteritems():
+                if hasattr(w, 'finalstate'):
+                    if w.finalstate == final_state:
+                        w = scale_histo(w, factor)
+                else:
+                    if w.sample.endswith(final_state):
+                        w = scale_histo(w, factor)
+            yield w
+    else:
+        for w in wrps: yield w
 
 # def set_category(wrps):
 #     for w in wrps:
@@ -143,9 +146,9 @@ def loader_hook_excl(wrps):
     return wrps
 
 def loader_hook_scale_excl(wrps, brs=None):
-    if not brs:
-        print 'WARNING: No branching ratios set, stop running!'
-        return None
+    # if not brs:
+    #     print 'WARNING: No branching ratios set, stop running!'
+    #     return None
     wrps = loader_hook_excl(wrps)
     wrps = final_state_scaling(wrps, brs)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.category, w.sys_info, w.sample))
@@ -183,11 +186,11 @@ class TpTpThetaLimits(ThetaLimits):
 
 class TpTpThetaLimitsFromFile(ThetaLimitsFromFile):
     def __init__(self, brs=None, *args ,**kws):
-        super(TpTpThetaLimits, self).__init__(*args, **kws)
+        super(TpTpThetaLimitsFromFile, self).__init__(*args, **kws)
         self.brs = brs
 
     def run(self):
-        super(TpTpThetaLimits, self).run()
+        super(TpTpThetaLimitsFromFile, self).run()
         self.result.__dict__.update({
             'brs' : self.brs,
             # 'masses' : list(int(x) for x in self.result.res_exp_x)

@@ -1,5 +1,5 @@
 from varial import settings
-from varial.sample import Sample
+# from varial.sample import Sample
 import varial.analysis as analysis
 import UHH2.VLQSemiLepPreSel.vlq_settings
 import ROOT
@@ -66,17 +66,17 @@ settings.pretty_names.update({
     'DYJetsToLL' : 'DY + jets',
     'SingleTop' : 'Single T',
     'WJets' : 'W + jets',
-    'ttbar_rate': 'ttbar rate',
-    'qcd_rate': 'qcd rate',
-    'wjets_rate': 'w+jets rate',
-    'zjets_rate': 'z+jets rate',
-    'singlet_rate': 'single t rate',
-    'TTbar_rate': 'ttbar rate',
-    'QCD_rate': 'QCD rate',
-    'Diboson_rate': 'Diboson rate',
-    'WJets_rate': 'W+jets rate',
-    'DYJets_rate': 'Z+jets rate',
-    'SingleTop_rate': 'Single t rate',
+    'ttbar_rate': 'BH ttbar rate',
+    'qcd_rate': 'BH qcd rate',
+    'wjets_rate': 'BH w+jets rate',
+    'zjets_rate': 'BH z+jets rate',
+    'singlet_rate': 'single BH t rate',
+    'TTbar_rate': 'BH ttbar rate',
+    'QCD_rate': 'BH QCD rate',
+    'Diboson_rate': 'BH Diboson rate',
+    'WJets_rate': 'BH W+jets rate',
+    'DYJets_rate': 'BH Z+jets rate',
+    'SingleTop_rate': 'Single BH t rate',
     'jec' : 'JEC',
     'jer' : 'JER',
     'btag_bc' : 'btag eff.',
@@ -84,14 +84,21 @@ settings.pretty_names.update({
     'pu' : 'pileup reweighting',
     'sfmu_id' : 'SF mu ID',
     'sfmu_trg' : 'SF mu trigger',
+    'sfmu_iso' : 'SF mu isolation',
     'sfel_id' : 'SF el ID',
     'sfel_trg' : 'SF el trigger',
+    'sfel_iso' : 'SF el isolation',
     'ScaleVar' : 'Q^{2} scale variations',
     'PDF' : 'PDF',
     'ttbar_scale' : 'PS scale variations',
     'PSScale' : 'PS scale variations',
     'top_pt_reweight' : 'top-p_{T} reweighting',
     'ht_reweight' : 'H_{T}-reweighting',
+    'q2' : 'PS scale variations',
+    'higgs_smear' : 'SD mass resolution',
+    'jmr' : 'Pruned mass resolution',
+    'jms' : 'Pruned mass scale',
+    'jsf' : 'Bkg reweighting',
 } )
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
@@ -186,6 +193,31 @@ settings.root_style.SetPadTopMargin(0.125)
 settings.root_style.SetPadBottomMargin(0.125)
 settings.root_style.SetPadRightMargin(0.1)
 
+def apply_split_pad_styles(cnv_wrp):
+    main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
+
+    main.SetTopMargin(0.1)
+    main.SetBottomMargin(0.25)
+    #main.SetRightMargin(0.04)
+    #main.SetLeftMargin(0.16)
+
+    scnd.SetTopMargin(0.)
+    scnd.SetBottomMargin(0.375)
+    #scnd.SetRightMargin(0.04)
+    #scnd.SetLeftMargin(0.16)
+    scnd.SetRightMargin(main.GetRightMargin())
+    scnd.SetLeftMargin(main.GetLeftMargin())
+    scnd.SetGridy()
+
+    first_obj = cnv_wrp.first_obj
+    first_obj.GetYaxis().CenterTitle(1)
+    first_obj.GetYaxis().SetTitleSize(0.045)
+    first_obj.GetYaxis().SetTitleOffset(1.3)
+    first_obj.GetYaxis().SetLabelSize(0.055)
+    first_obj.GetXaxis().SetNdivisions(505)
+
+settings.apply_split_pad_styles = apply_split_pad_styles
+
 # from vlq_settings
 # settings.colors = {
 #     'TTbar': 632, # Red
@@ -220,27 +252,4 @@ settings.colors.update({
     'SingleTop': 416-9,
     'Diboson' :616-9,
     'QCD': 851,
-    # 'QCD' : 867,
-    # 'TTbar': 632,
-    # 'WJets': 878,
-    # 'ZJets': 596,
-    # 'TpTp_M-800_thX' : 800, # Yellow
-    # 'TpTp_M-800_thX' : 634,
-    # 'TpTp_M-800_other' : 616,
-    # # 'TpTp_M-1600_thX' : 797, # Orange
-    # 'TpTp_M-1600_thX' : 418, # Green
-    # 'TpTp_M-1600_other' : 593,
-    # 'TpTp_M800': 416,
-    # 'TpTp_M1000_thth': 800,
-    # 'TpTp_M1000_thtz': 400,   # Yellow
-    # 'TpTp_M1000_thbw': 616,
-    # 'TpTp_M1000_tztz': 797,
-    # 'TpTp_M1000_tzbw': 902,
-    # 'TpTp_M1000_bwbw': 593,
 })
-
-# analysis.all_samples = dict((s.name, s) for s in smpls)
-
-
-# default_colors = [632, 814, 596, 870, 434, 840, 902, 797, 800, 891, 401, 800,
-#                   838, 420, 403, 893, 881, 804, 599, 615, 831, 403, 593, 872]

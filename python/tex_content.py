@@ -16,7 +16,6 @@ import os.path
 # p_postbase = p_base + 'TpTpFinalSelectionTreeOutput-%s/RunLimits/Histograms/' % post_version
 ext = '.pdf'
 target_ext = '.pdf'
-varial.settings.rootfile_postfixes += ['.pdf']
 mu_channel_def = 'Mu45_Baseline'
 el_channel_def = 'El45_Baseline'
 muel_comb_def = 'MuElComb_Baseline'
@@ -856,7 +855,8 @@ def my_mod_sys_table(table):
 
     lines = table.split('\n')
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
-        + find_column_string(lines[3], '---')
+        + find_column_string(lines[3], '---') + find_column_string(lines[1], 'lumiSys')\
+        + find_column_string(lines[3], '(r)')
         # + find_column_string(lines[1], 'el trg+id') + find_column_string(lines[1], 'mu trg+id')
     for i, line in enumerate(lines):
         lines[i] = remove_column(line, indizes)
@@ -865,7 +865,10 @@ def my_mod_sys_table(table):
         ('(gauss) ', '  '),
         ('TpTp ', 'TT '),
         (' (s) ', ''),
-        # ('process / nuisance parameter', 'pr./ns. par.'),
+        ('process / nuisance parameter', 'pr./ns. par.'),
+        ('jsf', 'bkg rew.'),
+        ('jsf', 'bkg rew.'),
+        ('jsf', 'bkg rew.'),
         ('$^{+0.00}_{+0.00}$', '---')
     ] + limits.tex_table_mod_list)
     return table

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import UHH2.VLQSemiLepPreSel.vlq_settings as vlq_settings
+# import UHH2.VLQSemiLepPreSel.vlq_settings as vlq_settings
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 from varial.extensions.hadd import Hadd
 import varial.extensions.make
@@ -773,19 +773,19 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
             #     )),
             
             # final limits with all BRs
-            # sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsOnlyTH', mk_limit_list_syst(
-            #     output_dir,
-            #     name,
-            #     list(sys_path+'/%s*/*.root'% i for i in uncerts),
-            #     all_regions,
-            #     br_list=br_list_th_only,
-            #     model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
-            #         '/Limit/BackgroundOnlyFitNoTheory/CR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
-            #         analysis.rate_uncertainties),
-            #     signals=treeproject_tptp.tptp_signals,
-            #     filter_func=unselect_theory_uncert_single_sig(all_regions),
-            #     y_axis_lim="Upper limit on #sigma_{T#bar{T}} #times BR(T #rightarrow tH)[pb]"
-            #     )),
+            sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsOnlyTH', mk_limit_list_syst(
+                output_dir,
+                name,
+                list(sys_path+'/%s*/*.root'% i for i in uncerts),
+                all_regions,
+                br_list=br_list_th_only,
+                model_func=model_vlqpair.get_model_constr_uncerts(os.path.join(os.path.join(analysis_base, output_dir), name)+\
+                    '/Limit/BackgroundOnlyFitNoTheory/CR/PostFitPlots/HistogramsPostfit/StackedAll/BaseLineSelection/_varial_infodata.pkl',
+                    analysis.rate_uncertainties),
+                signals=treeproject_tptp.tptp_signals,
+                filter_func=unselect_theory_uncert_single_sig(all_regions),
+                y_axis_lim="Upper limit on #sigma_{T#bar{T}} #times BR(T #rightarrow tH)[pb]"
+                )),
             # sensitivity.mk_tc('TTLimitsNoTheoryAllRegionsFinal', mk_limit_list_syst(
             #     output_dir,
             #     name,
@@ -1190,74 +1190,74 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                     # #         ),
                     # #     ]),
 
-                    # varial.tools.ToolChain('MergeChannelsTablesNoTheory', [
-                    #     varial.tools.ToolChainParallel('HistoLoader',
-                    #         list(varial.tools.HistoLoader(
-                    #             pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
-                    #             filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.almost_all_signals) and\
-                    #                 'Region_Comb' not in w.in_file_path and\
-                    #                 any(w.in_file_path.endswith(f) for f in ['ST']) and\
-                    #                 unselect_theory_uncert(w),
-                    #             hook_loaded_histos=plot.loader_hook_merge_regions,
-                    #             name='HistoLoader_'+g,
-                    #             lookup_aliases=False,
-                    #             raise_on_empty_result=False
-                    #             ) for g in plot.almost_all_signals)),
-                    #     plot.mk_toolchain('Histograms',
-                    #         plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                    #         pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     # plot.mk_toolchain('HistogramsCompUncerts',
-                    #     #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
-                    #     #     plotter_factory=plot.plotter_factory_uncerts(
-                    #     #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w),
-                    #     #             analysis.rate_uncertainties, uncerts, include_rate=True,)),
-                    #     #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
-                    #     CountTable([
-                    #             common_plot.table_block_signal,
-                    #             common_plot.table_block_background,
-                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    #             [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
-                    #         ],
-                    #         common_plot.get_table_category_block(),
-                    #         name='CountTable'
-                    #         ),
-                    #     EffTable([
-                    #             common_plot.table_block_signal,
-                    #         ],
-                    #         common_plot.get_table_category_block(),
-                    #         common_plot.norm_factors,
-                    #         squash_errs=True,
-                    #         name='EffTable'
-                    #         ),
-                    #     EffTable([
-                    #             common_plot.table_block_signal_fs_800,
-                    #             common_plot.table_block_signal_fs_1600,
-                    #         ],
-                    #         common_plot.get_table_category_block(),
-                    #         common_plot.norm_factors,
-                    #         squash_errs=True,
-                    #         name='EffTableCompFS'
-                    #         ),
-                    #     EffTable([
-                    #             common_plot.table_block_signal_fs_800,
-                    #             common_plot.table_block_signal_fs_1600,
-                    #         ],
-                    #         common_plot.get_table_category_block(style='PAS'),
-                    #         common_plot.norm_factors,
-                    #         squash_errs=True,
-                    #         name='EffTableCompFSPAS'
-                    #         ),
-                    #     CountTable([
-                    #             common_plot.table_block_signal,
-                    #             common_plot.table_block_background,
-                    #             [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-                    #             [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
-                    #         ],
-                    #         common_plot.get_table_category_block(style='PAS'),
-                    #         squash_errs=True,
-                    #         name='CountTablePAS'
-                    #         ),
-                    #     ]),
+                    varial.tools.ToolChain('MergeChannelsTablesNoTheory', [
+                        varial.tools.ToolChainParallel('HistoLoader',
+                            list(varial.tools.HistoLoader(
+                                pattern=map(lambda w: w.format('*'+g+'*'), input_pattern),
+                                filter_keyfunc=lambda w: any(f in w.file_path.split('/')[-1] for f in plot.almost_all_signals) and\
+                                    'Region_Comb' not in w.in_file_path and\
+                                    any(w.in_file_path.endswith(f) for f in ['ST']) and\
+                                    unselect_theory_uncert(w),
+                                hook_loaded_histos=plot.loader_hook_merge_regions,
+                                name='HistoLoader_'+g,
+                                lookup_aliases=False,
+                                raise_on_empty_result=False
+                                ) for g in plot.almost_all_signals)),
+                        plot.mk_toolchain('Histograms',
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        # plot.mk_toolchain('HistogramsCompUncerts',
+                        #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
+                        #     plotter_factory=plot.plotter_factory_uncerts(
+                        #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w),
+                        #             analysis.rate_uncertainties, uncerts, include_rate=True,)),
+                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        CountTable([
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            common_plot.get_table_category_block(),
+                            name='CountTable'
+                            ),
+                        EffTable([
+                                common_plot.table_block_signal,
+                            ],
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
+                            squash_errs=True,
+                            name='EffTable'
+                            ),
+                        EffTable([
+                                common_plot.table_block_signal_fs_800,
+                                common_plot.table_block_signal_fs_1600,
+                            ],
+                            common_plot.get_table_category_block(),
+                            common_plot.norm_factors,
+                            squash_errs=True,
+                            name='EffTableCompFS'
+                            ),
+                        EffTable([
+                                common_plot.table_block_signal_fs_800,
+                                common_plot.table_block_signal_fs_1600,
+                            ],
+                            common_plot.get_table_category_block(style='PAS'),
+                            common_plot.norm_factors,
+                            squash_errs=True,
+                            name='EffTableCompFSPAS'
+                            ),
+                        CountTable([
+                                common_plot.table_block_signal,
+                                common_plot.table_block_background,
+                                [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
+                                [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
+                            ],
+                            common_plot.get_table_category_block(style='PAS'),
+                            squash_errs=True,
+                            name='CountTablePAS'
+                            ),
+                        ]),
 
                     # # varial.tools.ToolChain('TablesSplitLepton', [
                     # #     varial.tools.ToolChainParallel('HistoLoader',

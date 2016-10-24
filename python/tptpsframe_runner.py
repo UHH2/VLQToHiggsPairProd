@@ -16,6 +16,81 @@ from varial.extensions import git
 
 varial.settings.max_num_processes = 12
 
+basenames_final = list('uhh2.AnalysisModuleRunner.'+f for f in [
+    'DATA.SingleMuon_Run2015CD',
+    'DATA.SingleEle_Run2015CD',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.Diboson',
+    'MC.SingleTop',
+    'MC.TTbar_incl',
+    'MC.TTbar_split',
+    'MC.TTJets_ScaleUp',
+    'MC.TTJets_ScaleDown',
+    'MC.TpTp_M-0700_thth', 'MC.TpTp_M-0700_thtz', 'MC.TpTp_M-0700_thbw', 'MC.TpTp_M-0700_noH_tztz', 'MC.TpTp_M-0700_noH_tzbw', 'MC.TpTp_M-0700_noH_bwbw',
+    'MC.TpTp_M-0800_thth', 'MC.TpTp_M-0800_thtz', 'MC.TpTp_M-0800_thbw', 'MC.TpTp_M-0800_noH_tztz', 'MC.TpTp_M-0800_noH_tzbw', 'MC.TpTp_M-0800_noH_bwbw',
+    'MC.TpTp_M-0900_thth', 'MC.TpTp_M-0900_thtz', 'MC.TpTp_M-0900_thbw', 'MC.TpTp_M-0900_noH_tztz', 'MC.TpTp_M-0900_noH_tzbw', 'MC.TpTp_M-0900_noH_bwbw',
+    'MC.TpTp_M-1000_thth', 'MC.TpTp_M-1000_thtz', 'MC.TpTp_M-1000_thbw', 'MC.TpTp_M-1000_noH_tztz', 'MC.TpTp_M-1000_noH_tzbw', 'MC.TpTp_M-1000_noH_bwbw',
+    'MC.TpTp_M-1100_thth', 'MC.TpTp_M-1100_thtz', 'MC.TpTp_M-1100_thbw', 'MC.TpTp_M-1100_noH_tztz', 'MC.TpTp_M-1100_noH_tzbw', 'MC.TpTp_M-1100_noH_bwbw',
+    'MC.TpTp_M-1200_thth', 'MC.TpTp_M-1200_thtz', 'MC.TpTp_M-1200_thbw', 'MC.TpTp_M-1200_noH_tztz', 'MC.TpTp_M-1200_noH_tzbw', 'MC.TpTp_M-1200_noH_bwbw',
+    'MC.TpTp_M-1300_thth', 'MC.TpTp_M-1300_thtz', 'MC.TpTp_M-1300_thbw', 'MC.TpTp_M-1300_noH_tztz', 'MC.TpTp_M-1300_noH_tzbw', 'MC.TpTp_M-1300_noH_bwbw',
+    'MC.TpTp_M-1400_thth', 'MC.TpTp_M-1400_thtz', 'MC.TpTp_M-1400_thbw', 'MC.TpTp_M-1400_noH_tztz', 'MC.TpTp_M-1400_noH_tzbw', 'MC.TpTp_M-1400_noH_bwbw',
+    'MC.TpTp_M-1500_thth', 'MC.TpTp_M-1500_thtz', 'MC.TpTp_M-1500_thbw', 'MC.TpTp_M-1500_noH_tztz', 'MC.TpTp_M-1500_noH_tzbw', 'MC.TpTp_M-1500_noH_bwbw',
+    'MC.TpTp_M-1600_thth', 'MC.TpTp_M-1600_thtz', 'MC.TpTp_M-1600_thbw', 'MC.TpTp_M-1600_noH_tztz', 'MC.TpTp_M-1600_noH_tzbw', 'MC.TpTp_M-1600_noH_bwbw',
+    'MC.TpTp_M-1700_thth', 'MC.TpTp_M-1700_thtz', 'MC.TpTp_M-1700_thbw', 'MC.TpTp_M-1700_noH_tztz', 'MC.TpTp_M-1700_noH_tzbw', 'MC.TpTp_M-1700_noH_bwbw',
+    'MC.TpTp_M-1800_thth', 'MC.TpTp_M-1800_thtz', 'MC.TpTp_M-1800_thbw', 'MC.TpTp_M-1800_noH_tztz', 'MC.TpTp_M-1800_noH_tzbw', 'MC.TpTp_M-1800_noH_bwbw',
+    'MC.BpBp_M-0700_bhbh', 'MC.BpBp_M-0700_bhbz', 'MC.BpBp_M-0700_bhtw', 'MC.BpBp_M-0700_noH_bzbz', 'MC.BpBp_M-0700_noH_bztw', 'MC.BpBp_M-0700_noH_twtw',
+    'MC.BpBp_M-0800_bhbh', 'MC.BpBp_M-0800_bhbz', 'MC.BpBp_M-0800_bhtw', 'MC.BpBp_M-0800_noH_bzbz', 'MC.BpBp_M-0800_noH_bztw', 'MC.BpBp_M-0800_noH_twtw',
+    'MC.BpBp_M-0900_bhbh', 'MC.BpBp_M-0900_bhbz', 'MC.BpBp_M-0900_bhtw', 'MC.BpBp_M-0900_noH_bzbz', 'MC.BpBp_M-0900_noH_bztw', 'MC.BpBp_M-0900_noH_twtw',
+    'MC.BpBp_M-1000_bhbh', 'MC.BpBp_M-1000_bhbz', 'MC.BpBp_M-1000_bhtw', 'MC.BpBp_M-1000_noH_bzbz', 'MC.BpBp_M-1000_noH_bztw', 'MC.BpBp_M-1000_noH_twtw',
+    'MC.BpBp_M-1100_bhbh', 'MC.BpBp_M-1100_bhbz', 'MC.BpBp_M-1100_bhtw', 'MC.BpBp_M-1100_noH_bzbz', 'MC.BpBp_M-1100_noH_bztw', 'MC.BpBp_M-1100_noH_twtw',
+    'MC.BpBp_M-1200_bhbh', 'MC.BpBp_M-1200_bhbz', 'MC.BpBp_M-1200_bhtw', 'MC.BpBp_M-1200_noH_bzbz', 'MC.BpBp_M-1200_noH_bztw', 'MC.BpBp_M-1200_noH_twtw',
+    'MC.BpBp_M-1300_bhbh', 'MC.BpBp_M-1300_bhbz', 'MC.BpBp_M-1300_bhtw', 'MC.BpBp_M-1300_noH_bzbz', 'MC.BpBp_M-1300_noH_bztw', 'MC.BpBp_M-1300_noH_twtw',
+    'MC.BpBp_M-1400_bhbh', 'MC.BpBp_M-1400_bhbz', 'MC.BpBp_M-1400_bhtw', 'MC.BpBp_M-1400_noH_bzbz', 'MC.BpBp_M-1400_noH_bztw', 'MC.BpBp_M-1400_noH_twtw',
+    'MC.BpBp_M-1500_bhbh', 'MC.BpBp_M-1500_bhbz', 'MC.BpBp_M-1500_bhtw', 'MC.BpBp_M-1500_noH_bzbz', 'MC.BpBp_M-1500_noH_bztw', 'MC.BpBp_M-1500_noH_twtw',
+    'MC.BpBp_M-1600_bhbh', 'MC.BpBp_M-1600_bhbz', 'MC.BpBp_M-1600_bhtw', 'MC.BpBp_M-1600_noH_bzbz', 'MC.BpBp_M-1600_noH_bztw', 'MC.BpBp_M-1600_noH_twtw',
+    'MC.BpBp_M-1700_bhbh', 'MC.BpBp_M-1700_bhbz', 'MC.BpBp_M-1700_bhtw', 'MC.BpBp_M-1700_noH_bzbz', 'MC.BpBp_M-1700_noH_bztw', 'MC.BpBp_M-1700_noH_twtw',
+    'MC.BpBp_M-1800_bhbh', 'MC.BpBp_M-1800_bhbz', 'MC.BpBp_M-1800_bhtw', 'MC.BpBp_M-1800_noH_bzbz', 'MC.BpBp_M-1800_noH_bztw', 'MC.BpBp_M-1800_noH_twtw',
+    ])
+
+basenames_pre = list('uhh2.AnalysisModuleRunner.'+f for f in [
+    'DATA.SingleMuon_Run2015CD',
+    'DATA.SingleEle_Run2015CD',
+    'MC.QCD',
+    'MC.WJets',
+    'MC.DYJetsToLL',
+    'MC.Diboson',
+    'MC.SingleTop',
+    'MC.TTbar',
+    'MC.TTJets_ScaleUp',
+    'MC.TTJets_ScaleDown',
+    'MC.TpTp_M-0700',
+    'MC.TpTp_M-0800',
+    'MC.TpTp_M-0900',
+    'MC.TpTp_M-1000',
+    'MC.TpTp_M-1100',
+    'MC.TpTp_M-1200',
+    'MC.TpTp_M-1300',
+    'MC.TpTp_M-1400',
+    'MC.TpTp_M-1500',
+    'MC.TpTp_M-1600',
+    'MC.TpTp_M-1700',
+    'MC.TpTp_M-1800',
+    'MC.BpBp_M-0700',
+    'MC.BpBp_M-0800',
+    'MC.BpBp_M-0900',
+    'MC.BpBp_M-1000',
+    'MC.BpBp_M-1100',
+    'MC.BpBp_M-1200',
+    'MC.BpBp_M-1300',
+    'MC.BpBp_M-1400',
+    'MC.BpBp_M-1500',
+    'MC.BpBp_M-1600',
+    'MC.BpBp_M-1700',
+    'MC.BpBp_M-1800',
+    ])
+
 categories_final = [
         # 'CombinedElMu',
         'El45_Baseline',
@@ -260,7 +335,7 @@ def mk_sframe_tools_and_plot(argv):
         # analysis_module = 'TpTpTriggerStudy'
         analysis_module = 'TpTpPreselectionV2'
         sys_uncerts = no_sys_uncerts
-        basenames = plot.basenames_pre
+        basenames = basenames_pre
         tex_base = '/Files_and_Plots*/Files_and_Plots_nominal/Plots/'
         # samples_to_plot = plot.almost_all_signals
         samples_to_plot = plot.less_samples_to_plot_pre
@@ -273,7 +348,7 @@ def mk_sframe_tools_and_plot(argv):
         setup_for_ind_run = setup_for_finalsel
         categories = categories_final
         analysis_module = 'TpTpFinalSelectionTreeOutput'
-        basenames = plot.basenames_final
+        basenames = basenames_final
         tex_base = '/Files_and_Plots/Files_and_Plots_nominal/Plots/'
         samples_to_plot = plot.less_samples_to_plot_only_th
         filter_func = lambda w: all(f in w.in_file_path for f in ['Baseline', 'PostSelection']) and\

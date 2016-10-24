@@ -14,6 +14,8 @@ import varial.operations as op
 import varial.wrappers
 import varial.util as util
 
+import analysis
+
 from ROOT import THStack, TH2, TLatex, kFALSE
 # from varial.settings import legend_entries
 
@@ -1183,6 +1185,53 @@ def mod_no_2D_leg(grps):
         g.legend.SetY2(y_pos + height/2.)
         yield g
 
+
+
+
+def make_uncertainty_histograms(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
+
+    grps = list(grps)
+    for grp in grps:
+        grp = sorted(grp, key=lambda w: w.sys_info)
+        grp = gen.group(grp, lambda w: w.sys_info)
+        grp = dict((ws[0].sys_info, list(ws)) for ws in grp)
+        nom = dict((w.sample, w) for w in grp.get('', []) if not w.is_data)
+        samples = list(w for w in nom)
+        uncertainties = grp.keys()
+        for unc_name in uncertainties:
+            if unc_name:
+                if unc_name.split('__')[0] not in shape_uncertainties:
+                    del grp[unc_name]
+                    continue
+                unc_dict = dict((w.sample, w) for w in grp[unc_name])
+                for s in samples:
+                    if s not in unc_dict:
+                        new_wrp = op.copy(nom[s])
+                        new_wrp.sys_info = unc_name
+                        grp[unc_name].append(new_wrp)
+        if not any(g in uncertainties for g in ['rate__plus', 'rate__minus']) and include_rate:
+            rate_unc = []
+            for s in samples:
+                new_wrp_up = op.copy(nom[s])
+                new_wrp_down = op.copy(nom[s])
+                rate = nom[s].histo.Integral()
+                new_wrp_up.sys_info = 'rate__plus'
+                new_wrp_down.sys_info = 'rate__minus'
+                # print 'NEW_WRP ', new_wrp_down.sample
+                if s in rate_uncertainties:
+                    unc = rate_uncertainties[s]-1.
+                    new_wrp_up.histo.Scale(1+unc)
+                    new_wrp_down.histo.Scale(1-unc)
+                    setattr(nom[s], s+'_rate_prior', unc*100.)
+                rate_unc += [new_wrp_up, new_wrp_down]
+            grp['rate'] = rate_unc
+        new_grp = []
+        for g in grp.itervalues():
+            new_grp += g
+        grp = varial.wrappers.WrapperWrapper(new_grp, name=new_grp[0].in_file_path)
+        yield grp
+    # wrps = list(w for grp in wrps for ws in grp.itervalues() for w in ws)
+    # return wrps
 
 
 class BottomPlotUncertRatio(varial.rendering.BottomPlot):

@@ -49,7 +49,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         shared_ptr<SelectionItem>(new SelDatI("n_additional_btags_medium", "N(AK4 b-tags)", 10, -.5, 9.5, 1)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5, 1)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5, 1)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
 
@@ -63,7 +63,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt", "Primary Lepton p_T", 100, 0., 1200.)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 100, 0., 1200.)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
@@ -77,7 +77,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt", "Primary Lepton p_T", 100, 0., 1200.)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 100, 0., 1200.)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
@@ -344,9 +344,9 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
     }
 
     if (version.find("SingleEle") != string::npos)
-        event_file.open("el_events.txt");
+        event_file.open("el_events_h2b_0.txt");
     else if (version.find("SingleMuon") != string::npos)
-        event_file.open("mu_events.txt");
+        event_file.open("mu_events_h2b_0.txt");
 
 
 }
@@ -385,7 +385,16 @@ bool TpTpEventNumberCheck::process(Event & event) {
         bool all_accepted = sel_modules[i]->process(event);
         sel_modules_passed.push_back(all_accepted);
         if (all_accepted) {
-            event_file << event.run << " " << event.luminosityBlock << " " << event.event << endl;
+            event_file << event.run << " " << event.luminosityBlock << " " << event.event << " : ";
+            for (auto const & tj : *event.topjets) {
+                event_file << tj.pt() << " " << tj.eta() << " " << tj.softdropmass() << " ";
+                for (auto const & sj : tj.subjets()) {
+                    event_file << sj.btag_combinedSecondaryVertex() << " ";
+                }
+                event_file << "-- ";
+            }
+            event_file << endl;
+
         }
         // if (categories[i] == "Mu45" && all_accepted) {
         //     event_file << event.run << " " << event.luminosityBlock << " " << event.event << endl;

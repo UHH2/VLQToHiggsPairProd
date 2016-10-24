@@ -13,23 +13,22 @@ import varial.generators as gen
 import varial.analysis
 import varial.wrappers as wrappers
 import varial.plotter
-import varial.rendering
+import varial.rendering as rnd
 import varial.settings
 import varial.operations
 import varial.util as util
 import varial.monitor
 from ROOT import TLatex, gStyle, TColor
 import ROOT
-from varial.sample import Sample
 from varial.extensions.limits import *
 from UHH2.VLQSemiLepPreSel.common import TriangleMassLimitPlots, label_axes
 
 import common_sensitivity
 from common_sensitivity import TpTpThetaLimits
-import common_plot
+import common_plot_new as common_plot
 import model_vlqpair
 import analysis
-import plot
+import plot_new as plot
 
 from get_eff_count import CountTable
 # import limit_plots
@@ -65,6 +64,7 @@ backgrounds_to_use = [
     'WJets',
     'DYJets',
     'SingleTop',
+    'Diboson'
 ]
 
 # signals_to_use = [
@@ -100,10 +100,6 @@ final_states_to_use = [
 
 back_plus_data = backgrounds_to_use + ['Run2015CD']
 
-datasets_not_to_use = [
-    # 'ak4_jetpt__minus/TpTp',
-    # 'ak4_jetpt__plus/TpTp',
-]
 
 # def select_files(categories=None, var=''):
 #     def tmp(wrp):
@@ -115,7 +111,6 @@ datasets_not_to_use = [
 #                 and ('Run2015CD' not in wrp.file_path or varial.settings.plot_obs)
 #                 and in_file_path.endswith(var)
 #                 and any(a in wrp.file_path for a in datasets_to_use)
-#                 and all(a not in wrp.file_path for a in datasets_not_to_use)
 #                 and (any(wrp.in_file_path.split('/')[0] == a for a in categories) if categories else True)) :
 #             return True
 #     return tmp
@@ -163,7 +158,6 @@ def select_no_sig(list_region):
                 and (any(a in wrp.file_path for a in back_plus_data)
                     # or any(signal+f in wrp.file_path for f in final_states_to_use)
                     )
-                and all(a not in wrp.file_path for a in datasets_not_to_use)
                 and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
             return True
     return tmp
@@ -177,11 +171,14 @@ def select_single_sig(list_region):
                     and wrp.in_file_path.endswith('ST')
                     and (any(a in wrp.file_path for a in back_plus_data)
                         or any(signal+f in wrp.file_path for f in final_states_to_use))
-                    and all(a not in wrp.file_path for a in datasets_not_to_use)
                     and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))) :
                 return True
         return tmp
     return sel_sig
+
+def default_selection(wrp):
+    if wrp.file_path.endswith('.root') and wrp.in_file_path.endswith('ST'):
+        return True
 
 def get_constr_uncerts(dict_path, prior_uncerts):
     path = dict_path if os.path.exists(dict_path) else os.path.join(varial.analysis.cwd, dict_path)
@@ -238,6 +235,9 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
     if not theta_res:
         theta_res = gen.dir_content(theta_res_path, '*.info', 'result')
+
+    if (isinstance(theta_res, list)):
+        theta_res = theta_res[0]
     bkg_scl_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
@@ -279,6 +279,9 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
     if not theta_res:
         theta_res = gen.dir_content(theta_res_path, '*.info', 'result')
+
+    if (isinstance(theta_res, list)):
+        theta_res = theta_res[0]
     unc_dict = {}
     try:
         postfit_vals = cPickle.loads(theta_res.postfit_vals)
@@ -303,7 +306,7 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
     for i in ['id', 'trg']:
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
-    grps = plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
+    grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
     grps = squash_unc_histos(grps, unc_dict, rate_uncertainties)
     # grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
@@ -313,14 +316,16 @@ def plotter_factory_postfit(theta_res_path, signal, rate_uncertainties, shape_un
         # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
         # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
         kws['hook_loaded_histos'] = lambda w: loader_hook_postfit(w, theta_res_path, signal, rate_uncertainties)
-        kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
+        # kws['plot_grouper'] = plot.plot_grouper_by_in_file_path_mod
         kws['plot_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate), calc_sys_integral=True)
         kws['stack_setup'] = lambda w: gen.mc_stack_n_data_sum(plot_setup_postfit(w, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate), calc_sys_integral=True)
         # kws['canvas_decorators'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
-        kws['hook_canvas_post_build'] = plot.canvas_setup_post
-        kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
-        kws['canvas_decorators'] = common_plot.get_style()
+        kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
+        # kws['hook_canvas_post_build'] = canvas_setup_post
+        # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
+        kws['canvas_post_build_funcs'] = common_plot.get_style()
+        kws['mod_log'] = common_plot.mod_log_usr()
         kws.update(**args)
         return varial.tools.Plotter(**kws)
     return tmp
@@ -523,11 +528,11 @@ def plot_calc_intersect(grps):
         obs_graph = None
         th_graph = None
         for w in g:
-            if hasattr(w, 'is_exp'):
+            if w.legend.startswith('Expected'):
                 exp_graph = w.graph
-            if hasattr(w, 'is_obs'):
+            if w.legend.startswith('Observed'):
                 obs_graph = w.graph
-            if hasattr(w, 'is_th'):
+            if w.legend.startswith('Theory'):
                 th_graph = w.graph
         if exp_graph and th_graph:
             expintersect = calc_intersection(exp_graph, th_graph)
@@ -539,7 +544,7 @@ def plot_calc_intersect(grps):
 
 def plot_setup_graphs(grps, th_x=None, th_y=None):
     # grps = varial.plotter.default_plot_colorizer(grps)
-    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend='T#bar{T} (NNLO)')
+    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend='Theory T#bar{T} (NNLO)')
     grps = plot_calc_intersect(grps)
     return grps
 
@@ -552,40 +557,35 @@ def canvas_setup_post(grps, max_y=1.):
 
 
 
-class DrawLess700(util.Decorator):
-    """
-    Draw Textbox.
+def DrawLess700():
 
-    Instanciate with textbox argument:
-    ``tb = TextBox(textbox=ROOT.TLatex(0.5, 0.5, 'My Box'))``.
-    """
-
-    def configure(self):
-        self.decoratee.configure()
-        rnd = self.renderers[0]
+    def configure(cnv_wrp, _):
+        rnd = cnv_wrp._renderers[0]
         rnd = rnd.histo
-        self.list_coords = []
+        cnv_wrp.list_coords = []
         for x_bin in xrange(rnd.GetNbinsX()+1):
             for y_bin in xrange(rnd.GetNbinsY()+1):
                 cont = rnd.GetBinContent(x_bin, y_bin)
                 # if cont > 0. and cont < 1.:
                 x = rnd.GetXaxis().GetBinCenter(x_bin)
                 y = rnd.GetYaxis().GetBinCenter(y_bin)
-                self.list_coords.append((x, y, cont))
+                cnv_wrp.list_coords.append((x, y, cont))
 
-    def do_final_cosmetics(self):
-        self.decoratee.do_final_cosmetics()
+    def run(cnv_wrp, _):
         boxes = TLatex()
         boxes.SetTextSize(0.040)
         boxes.SetTextAlign(22)
-        for x, y, cont in self.list_coords:
+        for x, y, cont in cnv_wrp.list_coords:
             if cont > 0.:
                 if cont < 700.:
                     boxes.DrawLatex(x, y, '< 700')
                 else:
                     boxes.DrawLatex(x, y, str(int(cont)))
-        # self.dec_par['textbox'].SetNDC()
-        # self.dec_par['textbox'].Draw()
+
+    return rnd.PostBuildFuncWithSetup(
+        run,
+        [configure]
+    )
 
 def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T #rightarrow tH)', leg_y='BR(T #rightarrow tZ)',
     limit_rel_path='../../Ind_Limits/Limit*/LimitsWithGraphs/LimitCurvesCompared'):
@@ -605,10 +605,10 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 filter_keyfunc=lambda w: 'exp' in w.save_name,
                 plot_setup=plot_setup_triangle('col'),
                 save_name_func=lambda w: w.save_name,
-                canvas_decorators=[DrawLess700,
-                varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
+                canvas_post_build_funcs=[DrawLess700(),
+                rnd.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                rnd.mk_tobject_draw_func(TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
+                rnd.mk_tobject_draw_func(TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
                 ),
 
             varial.plotter.Plotter(
@@ -617,18 +617,18 @@ def mk_tc(dir_limit='Limits', mk_limit_list=None, mk_triangle=True, leg_x='BR(T 
                 filter_keyfunc=lambda w: 'obs' in w.save_name,
                 plot_setup=plot_setup_triangle('col'),
                 save_name_func=lambda w: w.save_name,
-                canvas_decorators=[DrawLess700,
-                varial.rendering.TextBox(textbox=TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                varial.rendering.TextBox(textbox=TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
+                canvas_post_build_funcs=[DrawLess700(),
+                rnd.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                rnd.mk_tobject_draw_func(TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
+                rnd.mk_tobject_draw_func(TLatex(0.51, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
                 ),
-            varial.plotter.Plotter(
-                name='PlotterCont',
-                input_result_path='../TriangleMassLimitPlots',
-                plot_setup=plot_setup_triangle('contz'),
-                save_name_func=lambda w: w.save_name,
-                canvas_decorators=()
-                ),
+            # varial.plotter.Plotter(
+            #     name='PlotterCont',
+            #     input_result_path='../TriangleMassLimitPlots',
+            #     plot_setup=plot_setup_triangle('contz'),
+            #     save_name_func=lambda w: w.save_name,
+            #     canvas_decorators=()
+            #     ),
             ]))
     return varial.tools.ToolChain(dir_limit, tc)
 
