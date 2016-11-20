@@ -46,7 +46,7 @@ class TpTpPreselectionV2: public TpTpAnalysisModule {
 public:
 
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
-        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 600)),
+        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 500)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),

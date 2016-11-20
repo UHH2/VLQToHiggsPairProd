@@ -172,6 +172,11 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
                 "ak8_boost",
                 TopJetId(PtEtaCut(300., 2.4))
                 ));
+    common_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "ak8_less_boost",
+                TopJetId(PtEtaCut(200., 2.4))
+                ));
 
     // =====HIGGS TAGS AND STUFF======
 

@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "-1">
+<!ENTITY NEVT "10000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestFinalSelection/">
 
 
 <!ENTITY Data_SingleMu SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleMuon_Run2015CD.xml">
 <!ENTITY Data_SingleEle SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.DATA.SingleEle_Run2015CD.xml">
+
+
+<!ENTITY MC_TpTp_M-0700 SYSTEM   "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0700.xml">
+<!ENTITY MC_TpTp_M-0800 SYSTEM   "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0800.xml">
+<!ENTITY MC_TpTp_M-0900 SYSTEM   "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-0900.xml">
+<!ENTITY MC_TpTp_M-1000 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1000.xml">
+<!ENTITY MC_TpTp_M-1100 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1100.xml">
+<!ENTITY MC_TpTp_M-1200 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1200.xml">
+<!ENTITY MC_TpTp_M-1300 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1300.xml">
+<!ENTITY MC_TpTp_M-1400 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1400.xml">
+<!ENTITY MC_TpTp_M-1500 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1500.xml">
+<!ENTITY MC_TpTp_M-1600 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1600.xml">
+<!ENTITY MC_TpTp_M-1700 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1700.xml">
+<!ENTITY MC_TpTp_M-1800 SYSTEM  "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.TpTp_M-1800.xml">
 
 ]
 >
@@ -32,7 +46,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
+    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
         &Data_SingleMu;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -42,7 +56,80 @@
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+
+    <!-- <InputData Lumi="1769230" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0700" Cacheable="False">
+        &MC_TpTp_M-0700;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+    <InputData Lumi="4021428" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0800" Cacheable="False">
+        &MC_TpTp_M-0800;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
     </InputData>
+
+    <!-- <InputData Lumi="9196013" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-0900" Cacheable="False">
+        &MC_TpTp_M-0900;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="18604545" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1000" Cacheable="False">
+        &MC_TpTp_M-1000;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="36107142" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1100" Cacheable="False">
+        &MC_TpTp_M-1100;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+    <!-- <InputData Lumi="69305084" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1200" Cacheable="False">
+        &MC_TpTp_M-1200;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
+
+    <!-- <InputData Lumi="129577464" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1300" Cacheable="False">
+        &MC_TpTp_M-1300;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="233559322" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1400" Cacheable="False">
+        &MC_TpTp_M-1400;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="416000000" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1500" Cacheable="False">
+        &MC_TpTp_M-1500;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="704878048" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1600" Cacheable="False">
+        &MC_TpTp_M-1600;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="1194594594" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1700" Cacheable="False">
+        &MC_TpTp_M-1700;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData>
+
+    <InputData Lumi="2112020460" NEventsMax="&NEVT;" Type="MC" Version="TpTp_M-1800" Cacheable="False">
+        &MC_TpTp_M-1800;
+        <InputTree Name="AnalysisTree" />
+        <OutputTree Name="AnalysisTree" />
+    </InputData> -->
 
 
 
@@ -89,7 +176,7 @@
 
             <Item Name="use_sframe_weight" Value="false" />
             <Item Name="create_btag_eff" Value="false" />
-            <Item Name="category" Value="Mu45 El45" />
+            <Item Name="category" Value="Mu45_0H Mu45_H1B Mu45_H2B El45_0H El45_H1B El45_H2B All_0H All_H1B All_H2B" />
 
             <Item Name="pileup_directory_data" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver.root"/>
             <Item Name="pileup_directory_data_up" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_72450.root" />

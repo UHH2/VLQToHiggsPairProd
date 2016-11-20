@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
-<!ENTITY NEVT "100">
+<!ENTITY NEVT "1000">
 <!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestFinalSelection/">
 <!ENTITY MC_QCD_Pt15to20_MuEnrichedPt5 SYSTEM     "../NewSamples-76X-v1/Preselection-v11/Xml-files/uhh2.AnalysisModuleRunner.MC.QCD_Pt15to20_MuEnrichedPt5.xml">
@@ -116,7 +116,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
+    <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="SingleMuon_Run2015CD" Cacheable="True">
         &Data_SingleMu;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -126,7 +126,7 @@
         &Data_SingleEle;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData> -->
+    </InputData>
 
 
 
@@ -513,7 +513,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <InputData Lumi="8327.026" NEventsMax="&NEVT;" Type="MC" Version="Diboson_WW" Cacheable="True">
+    <!-- <InputData Lumi="8327.026" NEventsMax="&NEVT;" Type="MC" Version="Diboson_WW" Cacheable="True">
         &MC_WW;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -529,7 +529,7 @@
         &MC_ZZ;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
-    </InputData>
+    </InputData> -->
 
     <!--
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -537,13 +537,13 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     -->
 
-    <!-- <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl" Cacheable="True">
+    <InputData Lumi="117767" NEventsMax="&NEVT;" Type="MC" Version="TTbar_incl" Cacheable="True">
         &MC_TTbar;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
     </InputData>
     
-    <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="True">
+    <!-- <InputData Lumi="11926" NEventsMax="&NEVT;" Type="MC" Version="TTJets_ScaleUp" Cacheable="True">
         &MC_TTbar_ScaleUp;
         <InputTree Name="AnalysisTree" />
         <OutputTree Name="AnalysisTree" />
@@ -626,6 +626,7 @@
 
             <Item Name="MCBtagEfficiencies" Value="&SOURCEDIR;NewSamples-76X-v1/FinalSelection-v17/BTagMCEfficiencyHists/BTagMCEfficiencyHists.root" />
             <Item Name="BTagCalibration" Value="&SOURCEDIR;../common/data/CSVv2.csv" />
+            <Item Name="BTagCalibrationSubjet" Value="&SOURCEDIR;../common/data/CSVv2_subjets.csv" />
 
             <!-- specific to analysis -->
             <!-- "jecsmear_direction": either "nominal", "up", or "down" -->
@@ -642,6 +643,7 @@
             <Item Name="pileup_directory_data_up" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_72450.root" />
             <Item Name="pileup_directory_data_down" Value="&SOURCEDIR;../common/data/MyDataPileupHistogram_Silver_65550.root" />
             <Item Name="pileup_directory" Value="&SOURCEDIR;../common/data/MyMCPileupHistogram.root"/>
+            <Item Name="make_lep_coll" Value="true" />
 
             <!-- <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;kinematicBinSFele.root"/> -->
             <Item Name="ele_sf_trg_file" Value="&SOURCEDIR;CutBasedID_MediumWP_76X_18Feb.txt_SF2D.root"/>

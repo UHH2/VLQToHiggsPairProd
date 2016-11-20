@@ -1,28 +1,37 @@
 #!/usr/bin/env python
 
-from varial_ext.treeprojector import TreeProjector, BatchTreeProjector #, SGETreeProjector
+from varial_ext.treeprojector import TreeProjector
+import varial.monitor
+try:
+    from varial_ext.treeprojector_spark import SparkTreeProjector 
+except ImportError:
+    varial.monitor.message('treeproject_tptp', 'WARNING Run "use_spark" in order to use SparkTreeProjector')
+    class SparkTreeProjector: pass
 from os.path import join
 import varial.settings
 import varial.tools
 import glob
 import os
 import ast
-import multiprocessing as mp
+# import multiprocessing as mp
 import itertools
 
 # varial.settings.max_num_processes = 24
 
 def _start_job_submitter():
-    from varial_ext.sgeworker import SGESubmitter
-    import varial_ext.treeprojector as tp
-    SGESubmitter(100, tp.jug_work_dir_pat, tp.jug_file_search_pat).start()
+    import socket
+    hostname = socket.gethostname()
+    spark_url = 'spark://%s:7077' % hostname
+    from varial_ext.treeprojector_spark_sge import SGESubmitter
+    # import varial_ext.treeprojector as tp
+    SGESubmitter(40, spark_url).start()
 
-treeproject = TreeProjector
+# treeproject = TreeProjector
 
-if False:
-    treeproject = BatchTreeProjector
-    job_proc = mp.Process(target=_start_job_submitter)
-    job_proc.start()
+# if False:
+#     treeproject = BatchTreeProjector
+#     job_proc = mp.Process(target=_start_job_submitter)
+#     job_proc.start()
 
 iteration = [1]
 
@@ -34,8 +43,9 @@ st_plus_jets = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      20, -.5, 19.5),
     'pt_ld_ak4_jet'                 : ('p_{T} leading Ak4 Jet [GeV]',               100, 0., 2000.),
-    # 'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
+    'pt_subld_ak4_jet'              : ('p_{T} subleading Ak4 Jet [GeV]',             80, 0., 1600.),
     'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
+    'jets[].m_pt'                   : ('p_{T} Jets [GeV]',             100, 0., 2000.),
 }
 
 core_histos = {
@@ -94,6 +104,10 @@ more_histos = {
     'dR_higgs_tags_1b_med_1_jets_cl'               : ('dR(Higgs-Tag(1b), cl. AK4 jet)',   50, 0., 5.),
     'dR_higgs_tags_1b_med_1_topjets_cl'           : ('dR(Higgs-Tag(1b), cl. AK8 jet)',   50, 0., 5.),
     'dR_topjets_1_topjets_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
+    'dR_wtags_loose_1_leptonic_w_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
+    'dR_wtags_tight_1_leptonic_w_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
+    'dR_wtags_loose_1_leptonic_w_iso_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
+    'dR_wtags_tight_1_leptonic_w_iso_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
     # 'ak8_boost_gen_mass'           : ('Mass [GeV]',           100, 0., 2000.),
     # 'ak8_boost_diff_before'           : ('Mass [GeV]',           100, 0., 2000.),
     # 'ak8_boost_diff_10'           : ('Mass [GeV]',           100, 0., 2000.),
@@ -109,10 +123,14 @@ more_histos = {
     'nomass_boost_2b_diff_10'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_2b_diff_20'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_2b_diff_before_sj'           : ('Mass [GeV]',           80, -1., 1.),
-    'wtags_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_sm20_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_sm20_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_sm20_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'n_toptags'              : ('N(Top tags)',              5, -.5, 4.5),
     # 'pt_fifth_ak4_jet'              : ('p_{T} fifth Ak4 Jet',             60, 0., 1500.),
     # 'pt_sixth_ak4_jet'              : ('p_{T} sixth Ak4 Jet',             60, 0., 1500.),
@@ -227,8 +245,11 @@ tptp_signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_s
 tptp_signal_samples_important = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals_important))
 tptp_signal_samples_rest = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in tptp_signals_rest))
 tptp_signal_samples_reduced = reduce(lambda x, y: x+y, (list(g + f for f in tptp_final_states) for g in ['TpTp_M-0800', 'TpTp_M-1600']))
+tptp_signal_samples_only_thth = list(g + '_thth' for g in tptp_signals)
 bpbp_signal_samples = reduce(lambda x, y: x+y, (list(g + f for f in bpbp_final_states) for g in bpbp_signals))
 
+bkg_w_data = background_samples + ['Run2015CD']
+bkg_no_data = background_samples
 samples_w_data = background_samples + tptp_signal_samples + ['Run2015CD']
 samples_no_data = background_samples + tptp_signal_samples
 
@@ -289,7 +310,7 @@ sys_params = {
 }
 
 
-def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='TreeProjector'):
+def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='TreeProjector', treeproject=TreeProjector):
     sample_weights = weights or sample_weights_def
     sec_sel_weight = list((g, f, weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
@@ -298,14 +319,20 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='
         (sample, list(f for f in all_files if sample in f))
         for sample in samples
     )
+    kws = {}
+    if treeproject == SparkTreeProjector:
+        import socket
+        hostname = socket.gethostname()
+        kws['spark_url'] = 'spark://%s:7077' % hostname
 
     return treeproject(
         filenames, all_params, sec_sel_weight, 
         # suppress_job_submission=True, 
         name=name,
+        **kws
     )
 
-def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     jercs = list(
         (
@@ -326,12 +353,13 @@ def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, pat in jercs
     )
     # return tmp
 
-def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     files_ttbar_scale_up = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir*/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleUp_*.root')
     files_ttbar_scale_down = join(path_ttbar_scale_files, 'Files_and_Plots_nominal/SFrame/workdir*/uhh2.AnalysisModuleRunner.MC.TTJets_ScaleDown_*.root')
@@ -352,6 +380,7 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name='PSScale__plus',
+            **kws
         ),
         treeproject(
             dict_down_files, 
@@ -359,10 +388,11 @@ def add_ttbar_scale_uncerts(path_ttbar_scale_files, base_path_nominal_files, fin
             nominal_sec_sel_weight,
             add_aliases_to_analysis=False,
             name='PSScale__minus',
+            **kws
         )
     ]
 
-def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -383,11 +413,12 @@ def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=sa
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight_reweight_weight
     )
 
-def add_generic_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_generic_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -399,10 +430,10 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
             for g, f in final_regions) 
         )
         for name, w in (
-            ('btag_bc__minus', '*weight_btag_bc_down/weight_btag'),
-            ('btag_bc__plus', '*weight_btag_bc_up/weight_btag'),
-            ('btag_udsg__minus', '*weight_btag_udsg_down/weight_btag'),
-            ('btag_udsg__plus', '*weight_btag_udsg_up/weight_btag'),
+            ('btag_bc__minus', '*weight_btag_bc_down*weight_btag_bc_down_sj/weight_btag'),
+            ('btag_bc__plus', '*weight_btag_bc_up*weight_btag_bc_up_sj/weight_btag'),
+            ('btag_udsg__minus', '*weight_btag_udsg_down*weight_btag_udsg_down_sj/weight_btag'),
+            ('btag_udsg__plus', '*weight_btag_udsg_up*weight_btag_udsg_up_sj/weight_btag'),
             # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
             # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
             # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),
@@ -446,13 +477,14 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight
     )
     # return tmp
 
 
-def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=st_only_params):
+def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=st_only_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -490,6 +522,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight_pdf
     )
@@ -505,7 +538,7 @@ def add_pdf_uncerts(base_path, final_regions, sample_weights, samples=samples_no
     # return tmp
 
 
-def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params):
+def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -540,6 +573,7 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight_scalevar
     )
@@ -555,7 +589,7 @@ def add_scale_var_uncerts(base_path, final_regions, sample_weights, samples=samp
     # return tmp
 
 
-def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params):
+def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -577,11 +611,12 @@ def add_weight_uncerts(base_path, final_regions, sample_weights, weight_name, we
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight_reweight_weight
     )
 
-def add_one_sided_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params):
+def add_one_sided_weight_uncerts(base_path, final_regions, sample_weights, weight_name, weight_dict, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
     filenames = dict(
@@ -603,12 +638,13 @@ def add_one_sided_weight_uncerts(base_path, final_regions, sample_weights, weigh
             ssw,
             add_aliases_to_analysis=False,
             name=name,
+            **kws
         )
         for name, ssw in sys_sec_sel_weight_reweight_weight
     )
     # return tmp
 
-def mk_sys_tps(mk_sys_func, name='SysTreeProjectors'):
+def mk_sys_tps(mk_sys_func, name='SysTreeProjectors', treeproject=TreeProjector):
     # sample_weights = weights or sample_weights_def
     # some defs
     # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII-25ns-v2/'\
@@ -617,17 +653,15 @@ def mk_sys_tps(mk_sys_func, name='SysTreeProjectors'):
 
     # first put together jerc uncert with nominal weights
     if mk_sys_func:
-        sys_tps = mk_sys_func()
+        if treeproject == SparkTreeProjector:
+            import socket
+            hostname = socket.gethostname()
+            print hostname
+            sys_tps = mk_sys_func(treeproject=SparkTreeProjector, spark_url='spark://%s:7077' % hostname)
+        else:
+            sys_tps = mk_sys_func(treeproject=TreeProjector)
     else:
         sys_tps = []
-
-    # next put together nominal samples with with weight uncerts.
-    
-
-    # PDF uncertainties
-    
-
-    # Scale Variation uncertainties
     
 
     for tp in sys_tps:

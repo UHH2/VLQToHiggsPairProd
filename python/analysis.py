@@ -23,12 +23,12 @@ ttbar_smpl = 'TTbar_split'
 
 
 rate_uncertainties = {
-    'TTbar' : 1.20,
-    'WJets' : 1.20,
+    'TTbar' : 1.10,
+    'WJets' : 1.10,
     'QCD' : 2.0,
-    'DYJets' : 1.20,
-    'SingleTop' : 1.20,
-    'Diboson' : 1.20
+    # 'DYJets' : 1.20,
+    'SingleTop' : 1.16,
+    'Diboson' : 1.15
 }
 
 def_uncerts = [

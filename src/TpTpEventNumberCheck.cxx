@@ -49,7 +49,6 @@ public:
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         shared_ptr<SelectionItem>(new SelDatI("n_additional_btags_medium", "N(AK4 b-tags)", 10, -.5, 9.5, 1)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5, 1)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
 
@@ -63,7 +62,7 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("primary_muon_pt", "Primary Lepton p_T", 100, 0., 1200.)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 100, 0., 1200.)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
@@ -77,6 +76,27 @@ public:
         shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt", "Primary Lepton p_T", 100, 0., 1200.)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt", "Primary Lepton p_T", 100, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
+        };
+
+
+
+    const vector<shared_ptr<SelectionItem>> SEL_ITEMS_0H_SEL {
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5, 0, 0)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
+        };
+    const vector<shared_ptr<SelectionItem>> SEL_ITEMS_H1B_SEL {
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5, 0, 0)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5, 1)),
+        // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
+        };
+    const vector<shared_ptr<SelectionItem>> SEL_ITEMS_H2B_SEL {
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(Higgs-Tags, 2 subjet b-tags)", 6, -.5, 5.5, 1)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(Higgs-Tags, 1 subjet b-tags)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_electron_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
@@ -98,7 +118,7 @@ private:
     // vector<vector<unique_ptr<Hists>>> v_reweighted_hists_after_sel;
     vector<unique_ptr<Hists>> v_lep_combined_hists;
     vector<string> categories;
-    ofstream event_file;
+    vector<shared_ptr<ofstream>> event_files;
 
 };
 
@@ -265,6 +285,11 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
 
     other_modules.emplace_back(new TrueFalseProducer(ctx, "chan_accept", false));
 
+    shared_ptr<ofstream> file(new ofstream);
+    file->open(version+"_nosel_events.txt");
+
+    event_files.push_back(file);
+
     for (auto const & cat : categories) {
 
 
@@ -290,6 +315,19 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
         }
         else if (split(cat, "_")[0] == "El45") {
             for (auto const & sel_item : SEL_ITEMS_EL45_SEL)
+                SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
+        }
+
+        if (split(cat, "_")[1] == "0H") {
+            for (auto const & sel_item : SEL_ITEMS_0H_SEL)
+                SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
+        }
+        else if (split(cat, "_")[1] == "H1B") {
+            for (auto const & sel_item : SEL_ITEMS_H1B_SEL)
+                SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
+        }
+        else if (split(cat, "_")[1] == "H2B") {
+            for (auto const & sel_item : SEL_ITEMS_H2B_SEL)
                 SEL_ITEMS_FULL_SEL.back().push_back(sel_item);
         }
 
@@ -341,12 +379,22 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
             // v_hists_after_sel.emplace_back(new HistCollector(ctx, "EventHistsPost"));
 
         // }
+
+        shared_ptr<ofstream> file(new ofstream);
+        file->open(version+"_"+cat+"_events.txt");
+
+        event_files.push_back(file);
+
+        // if (version.find("SingleEle") != string::npos)
+        //     event_files.open("el_events_h2b_0.txt");
+        // else if (version.find("SingleMuon") != string::npos)
+        //     event_files.open("mu_events_h2b_0.txt");
     }
 
-    if (version.find("SingleEle") != string::npos)
-        event_file.open("el_events_h2b_0.txt");
-    else if (version.find("SingleMuon") != string::npos)
-        event_file.open("mu_events_h2b_0.txt");
+    // if (version.find("SingleEle") != string::npos)
+    //     event_files.open("el_events_h2b_0.txt");
+    // else if (version.find("SingleMuon") != string::npos)
+    //     event_files.open("mu_events_h2b_0.txt");
 
 
 }
@@ -379,25 +427,44 @@ bool TpTpEventNumberCheck::process(Event & event) {
     //         base_el_ind = i;
     // }
 
+    vector<GenParticle> const & genparticles = *event.genparticles;
+    Particle const * Tprime = NULL;
+
+    for (auto const & gp : genparticles) {
+        if (gp.pdgId() == 8000001)
+            Tprime = &gp;
+    }
+
+
+    *event_files[0] << Tprime->pt() << " " << Tprime->eta() << " " << Tprime->phi() << " " << Tprime->energy();
+    // for (auto const & tj : *event.topjets) {
+    //     event_files[i] << tj.pt() << " " << tj.eta() << " " << tj.softdropmass() << " ";
+    //     for (auto const & sj : tj.subjets()) {
+    //         event_files[i] << sj.btag_combinedSecondaryVertex() << " ";
+    //     }
+    //     event_files[i] << "-- ";
+    // }
+    *event_files[0] << endl;
+
     // index 0 corresponds to combined
     for (unsigned i = 0; i < sel_modules.size(); ++i) {
     
         bool all_accepted = sel_modules[i]->process(event);
         sel_modules_passed.push_back(all_accepted);
         if (all_accepted) {
-            event_file << event.run << " " << event.luminosityBlock << " " << event.event << " : ";
-            for (auto const & tj : *event.topjets) {
-                event_file << tj.pt() << " " << tj.eta() << " " << tj.softdropmass() << " ";
-                for (auto const & sj : tj.subjets()) {
-                    event_file << sj.btag_combinedSecondaryVertex() << " ";
-                }
-                event_file << "-- ";
-            }
-            event_file << endl;
+            *event_files[i+1] << Tprime->pt() << " " << Tprime->eta() << " " << Tprime->phi() << " " << Tprime->energy();
+            // for (auto const & tj : *event.topjets) {
+            //     event_files[i] << tj.pt() << " " << tj.eta() << " " << tj.softdropmass() << " ";
+            //     for (auto const & sj : tj.subjets()) {
+            //         event_files[i] << sj.btag_combinedSecondaryVertex() << " ";
+            //     }
+            //     event_files[i] << "-- ";
+            // }
+            *event_files[i+1] << endl;
 
         }
         // if (categories[i] == "Mu45" && all_accepted) {
-        //     event_file << event.run << " " << event.luminosityBlock << " " << event.event << endl;
+        //     event_files[i] << event.run << " " << event.luminosityBlock << " " << event.event << endl;
         //     cout << "Mu45: " << event.run << " " << event.luminosityBlock << " " << event.event << endl;
         // }
 
@@ -482,7 +549,8 @@ bool TpTpEventNumberCheck::process(Event & event) {
 }
 
 TpTpEventNumberCheck::~TpTpEventNumberCheck() {
-    event_file.close();
+    for (unsigned int i = 0; i < event_files.size(); ++i)
+        event_files[i]->close();
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(TpTpEventNumberCheck)

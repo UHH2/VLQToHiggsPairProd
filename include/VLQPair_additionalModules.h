@@ -1055,11 +1055,15 @@ public:
         vector<T1> const & in_coll = event.get(in_hndl);
         if (in_coll.size() >= (size_t)ind1_) {
             T1 const & part = in_coll[(size_t)ind1_-1];
+            if (!part.energy()) {
+                event.set(out_hndl_dR, -1.);
+                return false;
+            }
             if (event.is_valid(comp_hndl_vec)) {
                 vector<T2> const & comp_coll = event.get(comp_hndl_vec);
                 if (ind2_ < 0) {
                     auto const * closest_comp_part = closestParticleMod(part, comp_coll, overlap_);
-                    if (closest_comp_part)
+                    if (closest_comp_part && closest_comp_part->energy())
                         dR = deltaR(part, *closest_comp_part);
                 }
                 else {
@@ -1067,12 +1071,20 @@ public:
                     clean_collection(clean_comp_coll, event, ID(MinMaxDeltaRId<T1>(in_hndl, overlap_, false)));
                     if (clean_comp_coll.size() >= (size_t)ind2_) {
                         T2 const & comp_part = clean_comp_coll[ind2_-1];
-                        dR = deltaR(part, comp_part);
+                        if (comp_part.energy())
+                            dR = deltaR(part, comp_part);
                     }
                 }
             } else if (event.is_valid(comp_hndl_sing)) {
                 T2 const & comp_part = event.get(comp_hndl_sing);
-                dR = deltaR(part, comp_part);
+                if (comp_part.energy())
+                    dR = deltaR(part, comp_part);
+
+                if (std::isnan(dR))
+                    std::cout << part.pt() << " " << part.eta() << " " << part.phi() << " "
+                        << part.energy() << " " << part.v4().M() << " " << comp_part.pt() << " "
+                        << comp_part.eta() << " " << comp_part.phi() << " " << comp_part.energy() << " "
+                        << comp_part.v4().M() << " " << std::endl;
             }
         }
         event.set(out_hndl_dR, dR);
@@ -1474,6 +1486,42 @@ private:
 };
 
 
+class LeptonicWProducer: public uhh2::AnalysisModule {
+public:
+
+    explicit LeptonicWProducer(uhh2::Context & ctx, 
+                           const std::string & h_primlep,
+                           const std::string & h_out) :
+            h_primlep_(ctx.get_handle<FlavorParticle>(h_primlep)),
+            h_out_(ctx.declare_event_output<Particle>(h_out)) {}
+
+    virtual bool process(uhh2::Event & event) override {
+
+        if (!event.is_valid(h_primlep_))
+            throw;
+
+        FlavorParticle const & lepton = event.get(h_primlep_);
+        Particle lep_w;
+        if (!lepton.energy()) {
+            event.set(h_out_, lep_w);
+            return false;
+        }
+        std::vector<LorentzVector> neutrinos = NeutrinoReconstruction( lepton.v4(), event.met->v4());
+
+        for(const auto & neutrino_p4 : neutrinos) {
+            LorentzVector w_hyp = lepton.v4() + neutrino_p4;
+            if (w_hyp.pt() > lep_w.v4().pt())
+                lep_w.set_v4(w_hyp);
+        }
+        event.set(h_out_, lep_w);
+        return true;
+    }
+
+private:
+    uhh2::Event::Handle<FlavorParticle> h_primlep_;
+    uhh2::Event::Handle<Particle> h_out_;
+};
+
 // template<typename TYPE>
 // class JetPtAndMultFixer {
 // public:
@@ -1664,7 +1712,33 @@ private:
 //     vector<Event::Handle>
 // };
 
+class GenHiggsId
+{
+public:
+    GenHiggsId(int daughter_id = 0) :
+        daughter_id_(daughter_id)
+        {}
 
+    bool operator()(const TopJet & tj, const Event & event) const
+    {
+        for (const GenParticle & gp : *event.genparticles) {
+            if (deltaR(tj, gp) <= 0.4 && abs(gp.pdgId()) == 25) {
+                if (daughter_id_) {
+                    GenParticle const * daughter1 = gp.daughter(event.genparticles, 1);
+                    if (daughter1 && abs(daughter1->pdgId() == daughter_id_))
+                        return true;
+                }
+                else
+                    return true;
+            }
+        }
+        // cout << "  Found right mother!\n";
+        return false;
+    }
+
+private:
+    int daughter_id_;
+};  // GenHiggsId
 
 
 

@@ -75,7 +75,7 @@ def get_model_with_norm(dict_uncerts=None):
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')
         # model.add_lognormal_uncertainty('zjets_rate', math.log(dict_uncerts['DYJets']), 'DYJets')
         # model.add_lognormal_uncertainty('singlet_rate', math.log(dict_uncerts['SingleTop']), 'SingleTop')
-        bkg_model_width = {'width': float('inf')}
+        # bkg_model_width = {'width': float('inf')}
         dist_dict = {'mean': 0.0,
                     'range': [float('-inf'), float('inf')],
                     'typ': 'gauss',

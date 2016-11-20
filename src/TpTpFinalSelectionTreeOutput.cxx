@@ -46,13 +46,13 @@ public:
 
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
         shared_ptr<SelectionItem>(new SelDatI("gendecay_accept", "GenDecay Accept", 2, -.5, 1.5, 1)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
-        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 800.)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
         };
     
     const vector<shared_ptr<SelectionItem>> ADDITIONAL_SEL_ITEMS {
+        shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 10, -.5, 9.5, 2)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         shared_ptr<SelectionItem>(new SelDatI("is_muon", "Prim Lep is Muon", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_isoMu20", "Trigger Accept IsoMu20", 2, -.5, 1.5)),
         shared_ptr<SelectionItem>(new SelDatI("trigger_accept_isoEl27", "Trigger Accept IsoEl27", 2, -.5, 1.5)),
@@ -135,10 +135,14 @@ public:
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_1b_med_sm20_mass_softdrop", "higgs_tags_1b_med_sm20_mass", 100, 0., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_2b_med_mass_softdrop", "higgs_tags_2b_med_mass", 100, 0., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_2b_med_sm20_mass_softdrop", "higgs_tags_2b_med_sm20_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_mass_softdrop", "wtags_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_mass_sj", "wtags_mass_sj", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_sm10_mass_softdrop", "wtags_sm10_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_sm20_mass_softdrop", "wtags_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_mass_softdrop", "wtags_tight_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_mass_sj", "wtags_tight_mass_sj", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm10_mass_softdrop", "wtags_tight_sm10_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm20_mass_softdrop", "wtags_tight_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_mass_softdrop", "wtags_loose_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_mass_sj", "wtags_loose_mass_sj", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm10_mass_softdrop", "wtags_loose_sm10_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm20_mass_softdrop", "wtags_loose_sm20_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_mass_softdrop", "nomass_boost_1b_med_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_mass_sj", "nomass_boost_1b_med_mass_sj", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_sm10_mass_softdrop", "nomass_boost_1b_med_sm10_mass", 100, 0., 300.)),
@@ -282,10 +286,13 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // ctx.declare_event_output<vector<TopJet>>("nobtag_boost_mass");
     ctx.declare_event_output<vector<TopJet>>("ak8_higgs_cand");
     ctx.declare_event_output<vector<Jet>>("jets");
+    ctx.declare_event_output<vector<Muon>>("muons");
+    ctx.declare_event_output<vector<Electron>>("electrons");
     ctx.declare_event_output<vector<TopJet>>("topjets");
     ctx.declare_event_output<FlavorParticle>("PrimaryLepton");
-    if (version.find("TTbar_split") == string::npos) 
-        ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
+    ctx.declare_event_output<FlavorParticle>("PrimaryLeptonIso");
+    // if (version.find("TTbar_split") == string::npos) 
+    //     ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
     // ctx.declare_event_output<FlavorParticle>("PrimaryMuon");
     // ctx.declare_event_output<FlavorParticle>("PrimaryElectron");
     // ctx.declare_event_output<vector<TopJet>>("ak8_boost");
@@ -325,14 +332,15 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
     }
     if (version.find("WJets") != string::npos) {
-        other_modules.emplace_back(new HTReweighting(ctx, 1.146709, -0.00026451, 3000., "weight_htrew_wjets"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.12, -0.00024, 3000., "weight_htrew_wjets"));
         other_modules.emplace_back(new HTReweighting(ctx, 1.201648, -0.000250984, 3000., "weight_htrew_wjets_toppt"));
+        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.245, -0.0006648, 0.568, 200., 1020., "weight_jetpt"));
     }
     if (version.find("TT") != string::npos || version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
-        other_modules.emplace_back(new HTReweighting(ctx, 1.268084, -0.000390272, 3000., "weight_htrew_tt"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.24, -0.00036, 3000., "weight_htrew_tt"));
         other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
+        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.038, -0.0004778, 0.747, 200., 725., "weight_jetpt"));
     }
-
 
     auto ak8_corr_bef = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
     : JERFiles::Fall15_25ns_L23_AK8PFchs_DATA;
@@ -403,6 +411,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         ctx.declare_event_output<double>("parton_ht");
     }
     pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, JetPFID(JetPFID::WP_LOOSE), "topjets"));
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
         data_dir_path + "MuonID_Z_RunCD_Reco76X_Feb15.root", 
         "MC_NUM_MediumID_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));
@@ -459,8 +468,18 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     // DISABLE WHEN CALCULATING PRODUCING THE BTAG EFFICIENCY HISTS!
     bool create_btag_eff = string2bool(ctx.get("create_btag_eff", "false"));
-    if (!create_btag_eff)
-        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+    if (!create_btag_eff) {
+        // other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "jets_no_overlap"));
+        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand",
+                                                            "central",
+                                                            "lt",
+                                                            "incl",
+                                                            "MCBtagEfficiencies",
+                                                            "_sj",
+                                                            "BTagCalibrationSubjet"));
+
+    }
         // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 
     other_modules.emplace_back(new LeadingPartInvMassproducer<Muon>(ctx,
@@ -503,23 +522,55 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ));
 
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost",
-                "wtags",
+                "ak8_less_boost",
+                "wtags_tight",
                 TopJetId(Tau21(0.4))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm10",
-                "wtags_sm10",
+                "ak8_less_boost_sm10",
+                "wtags_tight_sm10",
                 TopJetId(Tau21(0.4))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm20",
-                "wtags_sm20",
+                "ak8_less_boost_sm20",
+                "wtags_tight_sm20",
                 TopJetId(Tau21(0.4))
                 // true
                 ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_less_boost",
+                "wtags_loose",
+                TopJetId(Tau21(0.6))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_less_boost_sm10",
+                "wtags_loose_sm10",
+                TopJetId(Tau21(0.6))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_less_boost_sm20",
+                "wtags_loose_sm20",
+                TopJetId(Tau21(0.6))
+                // true
+                ));
+    other_modules.emplace_back(new LeptonicWProducer(ctx,
+                "PrimaryLepton",
+                "leptonic_w"
+                // true
+                ));
+    other_modules.emplace_back(new LeptonicWProducer(ctx,
+                "PrimaryLeptonIso",
+                "leptonic_w_iso"
+                // true
+                ));
+
+
+
+
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "ak8_boost_sm10",
                 "higgs_tags_1b_med_sm10",
@@ -557,18 +608,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 "toptags",
                 "n_toptags"
                 ));
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "wtags",
-    //             "n_wtags"
-    //             ));
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "wtags_sm10",
-    //             "n_wtags_sm10"
-    //             ));
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "wtags_sm20",
-    //             "n_wtags_sm20"
-    //             ));
     other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
                 "higgs_tags_1b_med",
                 "n_higgs_tags_1b_med"
@@ -618,50 +657,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //             2
     //             ));
 
-    // other_modules.emplace_back(new HiggsMassSmear(ctx,
-    //             "higgs_tags_1b_med",
-    //             false
-    //             ));
-    // other_modules.emplace_back(new HiggsMassSmear(ctx,
-    //             "higgs_tags_2b_med",
-    //             false
-    //             ));
-    // other_modules.emplace_back(new HiggsMassSmear(ctx,
-    //             "topjets"
-    //             ));
-    // other_modules.emplace_back(new HiggsMassSmear(ctx,
-    //             "ak8_boost"
-    //             ));
-    // other_modules.emplace_back(new HiggsMassSmear(ctx,
-    //             "wtags",
-    //             false,
-    //             false
-    //             ));
 
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_1b_med",
-    //             "higgs_tags_1b_med_mass"
-    //             ));
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_1b_med_sm10",
-    //             "higgs_tags_1b_med_sm10_mass"
-    //             ));
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_1b_med_sm20",
-    //             "higgs_tags_1b_med_sm20_mass"
-    //             ));
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_2b_med",
-    //             "higgs_tags_2b_med_mass"
-    //             ));
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_2b_med_sm10",
-    //             "higgs_tags_2b_med_sm10_mass"
-    //             ));
-    // other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-    //             "higgs_tags_2b_med_sm20",
-    //             "higgs_tags_2b_med_sm20_mass"
-    //             ));
     other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
                 "nomass_boost_1b",
                 "nomass_boost_1b_mass"
@@ -687,16 +683,28 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 "nomass_boost_2b_sm20_mass"
                 ));
     other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags",
-                "wtags_mass"
+                "wtags_tight",
+                "wtags_tight_mass"
                 ));
     other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_sm10",
-                "wtags_sm10_mass"
+                "wtags_tight_sm10",
+                "wtags_tight_sm10_mass"
                 ));
     other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_sm20",
-                "wtags_sm20_mass"
+                "wtags_tight_sm20",
+                "wtags_tight_sm20_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose",
+                "wtags_loose_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose_sm10",
+                "wtags_loose_sm10_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose_sm20",
+                "wtags_loose_sm20_mass"
                 ));
 
 
@@ -792,6 +800,35 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ));
     deltaR_plots.push_back("dR_topjets_1_topjets_cl");
 
+
+    other_modules.emplace_back(new DeltaRProducer<TopJet, Particle>(ctx,
+                "wtags_loose",
+                "leptonic_w",
+                1
+                ));
+    deltaR_plots.push_back("dR_wtags_loose_1_leptonic_w_cl");
+
+    other_modules.emplace_back(new DeltaRProducer<TopJet, Particle>(ctx,
+                "wtags_tight",
+                "leptonic_w",
+                1
+                ));
+    deltaR_plots.push_back("dR_wtags_tight_1_leptonic_w_cl");
+
+    other_modules.emplace_back(new DeltaRProducer<TopJet, Particle>(ctx,
+                "wtags_loose",
+                "leptonic_w_iso",
+                1
+                ));
+    deltaR_plots.push_back("dR_wtags_loose_1_leptonic_w_iso_cl");
+
+    other_modules.emplace_back(new DeltaRProducer<TopJet, Particle>(ctx,
+                "wtags_tight",
+                "leptonic_w_iso",
+                1
+                ));
+    deltaR_plots.push_back("dR_wtags_tight_1_leptonic_w_iso_cl");
+
     // other_modules.emplace_back(new DeltaRProducer<TopJet, TopJet>(ctx,
     //             "higgs_tags_1b_med",
     //             "topjets",
@@ -829,96 +866,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
 
 
-
-    //////////// SOON DEPRECATED??
-
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "noboost_mass_1b",
-    //             "noboost_mass_1b",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "noboost_mass_2b",
-    //             "noboost_mass_2b",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "topjets",
-    //             "topjets",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "topjets_sm10",
-    //             "topjets_sm10",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "topjets_sm20",
-    //             "topjets_sm20",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "wtags",
-    //             "wtags",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "wtags_sm10",
-    //             "wtags_sm10",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "wtags_sm20",
-    //             "wtags_sm20",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "nobtag_boost_mass",
-    //             "nobtag_boost_mass",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "higgs_tags_1b_med",
-    //             "higgs_tags_1b_med",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-    // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
-    //             "higgs_tags_2b_med",
-    //             "higgs_tags_2b_med",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-
-    // other_modules.emplace_back(new JetVarProducer<Jet>(ctx,
-    //             "ak4_jets_btagged",
-    //             "ak4_jets_btagged",
-    //             "higgs_tags_1b_med",
-    //             "PrimaryLepton",
-    //             CSVBTag(CSVBTag::WP_MEDIUM),
-    //             1
-    //             ));
-
     // other_modules.emplace_back(new TopJetDeltaRProducer(ctx,
     //             "topjets",
     //             1
@@ -935,19 +882,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //             "higgs_tags_2b_med",
     //             1
     //             ));
-
-    
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_ld_ak4_jet", 1, "pt_ld_ak4_genjet"));
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_subld_ak4_jet", 2, "pt_subld_ak4_genjet"));
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_third_ak4_jet", 3, "pt_third_ak4_genjet"));
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_fourth_ak4_jet", 4, "pt_fourth_ak4_genjet"));
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_fifth_ak4_jet", 5, "pt_fifth_ak4_genjet"));
-    // other_modules.emplace_back(new GenRecoPtProducer(ctx, "pt_reco_gen_sixth_ak4_jet", 6, "pt_sixth_ak4_genjet"));
-
-    
-
-
-
 
 
     // check if there is exactly 1 Higgs Tag; if yes, make sure that all higgs tags are
@@ -1046,6 +980,8 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         other_modules.emplace_back(new GenSelectionAcceptProducer(ctx, "gendecay_accept",
             GenParticleId(TrueId<GenParticle>::is_true), GenParticleId(TrueId<GenParticle>::is_true)));
     }
+
+    other_modules.emplace_back(new TrueFalseProducer(ctx, "chan_accept", false));
 
     // for (auto const & fs : final_states) {
     for (auto const & cat : categories) {
@@ -1313,11 +1249,6 @@ bool TpTpFinalSelectionTreeOutput::process(Event & event) {
     // btag_sf_cr->process(event);
     
     // all hists
-    for (auto & hist_vec : v_hists) {
-        for (auto & hist : hist_vec) {
-            hist->fill(event);
-        }
-    }
     for (auto & hist_vec : v_hists) {
         for (auto & hist : hist_vec) {
             hist->fill(event);

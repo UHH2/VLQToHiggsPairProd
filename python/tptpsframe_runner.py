@@ -11,6 +11,7 @@ import varial
 import sys
 import os
 import copy
+import analysis
 
 from varial.extensions import git
 
@@ -302,10 +303,10 @@ sframe_cfg_final = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_
 sframe_cfg_pre = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpPreselectionV2.xml'
 
 
-import common_plot
-import plot as plot
+import common_plot_new as common_plot
+import plot_new as plot
 from optparse import OptionParser
-import tex_content
+import tex_content_new as tex_content
 from varial.extensions.hadd import Hadd
 
 def mk_sframe_tools_and_plot(argv):
@@ -369,23 +370,29 @@ def mk_sframe_tools_and_plot(argv):
             # filter_keyfunc=lambda w: any(f in w for f in samples_to_plot)
             # overwrite=False
         )]
-        plot_chain += [varial.tools.ToolChainParallel(
-                    'PlotsForML',
-                    lazy_eval_tools_func=plot.mk_plots_and_cf(categories=categories, datasets=samples_to_plot,
-                        # filter_keyfunc=lambda w: 'Baseline' in w.in_file_path
-                        filter_keyfunc=filter_func
-                        )
-                )]
+        plot_chain += [plot.mk_toolchain('Histograms', samples_to_plot,
+            plotter_factory=plot.plotter_factory_stack( 
+            #     hook_loaded_histos=plot.loader_hook_merge_lep_channels,
+            #     mod_log=common_plot.mod_log_usr(mod_dict),
+            #     canvas_post_build_funcs=get_style()
+                ),
+            pattern='../Hadd/*.root',
+            parallel=False,
+            # input_result_path='../HistoLoader/HistoLoader*',
+            # auto_legend=False,
+            # name='HistogramsPostfit',
+            # lookup_aliases=varial.settings.lookup_aliases
+            )]
         # if options.selection == 'final':
-        #     plot_chain += [varial.tools.ToolChainParallel(
-        #                 'PlotsCompFinalStates',
-        #                 lazy_eval_tools_func=plot.mk_plots_and_cf(
-        #                     datasets=plot.less_samples,
-        #                     filter_keyfunc=lambda w: all(g not in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])\
-        #                         and filter_func(w),
-        #                     plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
-        #                 )
-        #             )]
+            # plot_chain += [varial.tools.ToolChainParallel(
+            #             'PlotsCompFinalStates',
+            #             lazy_eval_tools_func=plot.mk_plots_and_cf(
+            #                 datasets=plot.less_samples,
+            #                 filter_keyfunc=lambda w: all(g not in w.file_path.split('/')[-1] for g in ['TpTp_M-0800', 'TpTp_M-1600'])\
+            #                     and filter_func(w),
+            #                 plotter_factory=plot.plotter_factory_stack(hook_loaded_histos=plot.loader_hook_compare_finalstates)
+            #             )
+            #         )]
         tc_list = []
         for uncert in sys_uncerts:
             sf_batch = MySFrameBatch(
@@ -401,7 +408,7 @@ def mk_sframe_tools_and_plot(argv):
                 )
             if uncert == 'nominal':
                 tc_list.append(varial.tools.ToolChain('Files_and_Plots_'+uncert,[
-                    # sf_batch,
+                    sf_batch,
                     varial.tools.ToolChain(
                         'Plots',
                         plot_chain
@@ -453,26 +460,26 @@ def mk_sframe_tools_and_plot(argv):
         return varial.tools.ToolChain(
             options.outputdir,
             [
-                git.GitAdder(),
+                # git.GitAdder(),
                 ToolChain('Files_and_Plots',
                     sf_batch_tc()
                 ),
                 # mk_tex_tc_pre(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
-                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+                # git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
     else:
         return varial.tools.ToolChain(
             options.outputdir,
             [
-                git.GitAdder(),
+                # git.GitAdder(),
                 ToolChain('Files_and_Plots2',
                     sf_batch_tc()
                 ),
                 # mk_tex_tc_final(options.outputdir+tex_base),
                 varial.tools.WebCreator(no_tool_check=False),
-                git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
+                # git.GitTagger(commit_prefix='In {0}'.format(options.outputdir)),
             ]
         )
 
@@ -480,4 +487,4 @@ if __name__ == '__main__':
     # if len(sys.argv) != 3:
     #     print 'Provide output dir and whether you want to run preselecton (pre) or final selection (final)!'
     #     exit(-1)
-    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), True)
+    varial.tools.Runner(mk_sframe_tools_and_plot(sys.argv), False)

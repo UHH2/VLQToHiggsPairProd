@@ -9,7 +9,7 @@ import sys
 
 
 import common_plot_new as common_plot
-import plot_new as plot
+# import plot_new as plot
 from varial.extensions import git, limits
 import varial.generators as gen
 import varial.rendering as rnd
@@ -32,40 +32,37 @@ from get_eff_count import CountTable, EffTable # EffNumTable,
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
-
-# base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
-#     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24'
 base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
-    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24'
 
 base_path_julie = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2'\
     '/VLQToHiggsPairProd/NewSamples-76X-v1/Julie_files/templates_minMlb_'
 
 file_suffix = '_2p318fb_rebinnedDV.root'
 
-# pattern_tt = [base_path+'/Run8_withHighMassTTbarSample/'\
-#     'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root',
-#     base_path+'/Run8_withHighMassTTbarSample/'\
-#     'RunAnalysis/HTReweighting/TreeProject/TreeProjectorDiboson/*.root']
-pattern_tt = [base_path+'/FullTreeProject/HTReweighting/TreeProject/TreeProjectorBkg/*.root',
-    base_path+'/FullTreeProject/HTReweighting/TreeProject/TreeProjectorTT/*.root']
-
-pattern_bb = [base_path+'/Run8_withHighMassTTbarSample/'\
-    'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root',base_path+'/Run8_withHighMassTTbarSample/'\
-    'RunAnalysis/HTReweighting/TreeProject/TreeProjectorBB/*.root',
-    base_path+'/Run8_withHighMassTTbarSample/'\
+pattern_tt = ['/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
+    'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root',
+    '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
     'RunAnalysis/HTReweighting/TreeProject/TreeProjectorDiboson/*.root']
 
+pattern_bb = ['/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
+    'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root','/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
+    'RunAnalysis/HTReweighting/TreeProject/TreeProjectorBB/*.root',
+    '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
+    'RunAnalysis/HTReweighting/TreeProject/TreeProjectorDiboson/*.root']
 
-# sys_path = base_path+'/Run8_withHighMassTTbarSample/'\
-#     'RunAnalysis/HTReweighting/TreeProject/SysTreeProjectors'
-sys_path = base_path+'/FullTreeProject/HTReweighting/TreeProject/SysTreeProjectors'
+sys_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24/Run8_withHighMassTTbarSample/'\
+    'RunAnalysis/HTReweighting/TreeProject/SysTreeProjectors'
 
-uncerts = analysis.all_uncerts + ['jsf']
+uncerts = analysis.all_uncerts
 
-# sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
-sys_pat_tt = list(sys_path+'Bkg/%s*/*.root'% i for i in uncerts) + list(sys_path+'TT*/%s*/*.root'% i for i in uncerts)
-
+sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
 sys_pat_bb = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts) + list(sys_path+'BB/%s*/*.root'% i for i in uncerts)
 
 br_list_tt = [
@@ -218,8 +215,7 @@ samples = [
     'QCD',
     'DYJets',
     'SingleTop',
-    'Diboson',
-    'Run2015'
+    # 'Diboson'
 ]
 
 x_axis_lim="m_{T} [GeV]"
@@ -238,7 +234,7 @@ def unselect_theory_uncert_single_sig(list_region):
     def sel_sig(signal):
         def tmp(wrp):
             if (sensitivity.default_selection(wrp)
-                    and (any(a in os.path.basename(wrp.file_path) for a in samples)
+                    and (any(a in wrp.file_path for a in samples)
                         or any(rename_signals.get(signal, '')+f in wrp.file_path for f in sensitivity.final_states_to_use))
                     and (any(wrp.in_file_path.split('/')[0] == a for a in list_region))
                     and common_plot.unselect_theory_uncert(wrp)):
@@ -272,7 +268,7 @@ def loader_hook(wrps, brs):
     wrps = sensitivity.loader_hook(brs)(wrps)
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     wrps = gen.group(wrps, lambda w: w.in_file_path)
-    wrps = common_plot.make_uncertainty_histograms(wrps, None, uncerts, False, False)
+    wrps = common_plot.make_uncertainty_histograms(wrps, [], uncerts, False)
     wrps = list(w for ws in wrps for w in ws)
     # wrps = remove_nom_wrps(wrps)
     wrps = rename_uncerts(wrps)
@@ -282,70 +278,6 @@ def loader_hook(wrps, brs):
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__WJets', '__DYJets', '__Diboson'], print_warning=False)
     return wrps
 
-def filter_func_postfit_morphed(wrp):
-    if not 'MLE' in wrp.file_path:
-        # if 'DATA' in wrp.in_file_path:
-        #     print wrp.file_path, wrp.in_file_path
-        return 'DATA' in wrp.in_file_path
-    else:
-        # print wrp.file_path, wrp.in_file_path
-        return True
-
-def loader_hook_postfit_morphed(wrps):
-    wrps = add_wrp_info(wrps)
-    wrps = mod_in_file_path(wrps)
-    wrps = common_plot.mod_legend(wrps)
-    return wrps
-
-def plot_grouper_postfit_morphed(wrps):
-    wrps = sorted(wrps, key=lambda w: w.in_file_path.split('__')[0])
-    return gen.group(wrps, key_func=lambda w: w.in_file_path.split('__')[0])
-
-def mod_in_file_path(wrps):
-    for w in wrps:
-        yield varial.operations.add_wrp_info(
-            w,
-            in_file_path=lambda w: w.in_file_path.split('__')[0]
-        )
-
-def add_wrp_info(wrps, sig_ind=None):
-    def get_samplename(wrp):
-        if 'MLE' in wrp.file_path:
-            return w.in_file_path.split('__')[1]
-        else:
-            return 'Data'
-        
-    for w in wrps:
-        yield varial.operations.add_wrp_info(
-            w,
-            sample=get_samplename,
-            legend=get_samplename,
-            # in_file_path=lambda w: w.in_file_path if 'jug-file' not in w.file_path else batch_tp_infilepath,
-            # is_signal=lambda w: any(s in w.file_path for s in sig_ind),
-            is_data=lambda w: 'DATA' in w.in_file_path,
-            # variable=lambda w: w.in_file_path.split('/')[-1],
-            # sys_info=vlq_common.get_sys_info,
-            # is_set=lambda _: True,
-        )
-
-def plotter_factory_postfit_morphed(**args):
-    def tmp(**kws):
-        # common_plot.plotter_factory_stack(common_plot.normfactors, **kws)
-        # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
-        kws['hook_loaded_histos'] = loader_hook_postfit_morphed
-        kws['plot_grouper'] = plot_grouper_postfit_morphed
-        kws['plot_setup'] = lambda w: gen.mc_stack_n_data_sum(w, calc_sys_integral=True)
-        kws['stack_setup'] = lambda w: gen.mc_stack_n_data_sum(w, calc_sys_integral=True)
-        # kws['canvas_post_build_funcs'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
-        # kws['y_axis_scale'] = 'lin'
-        kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
-        # kws['hook_canvas_post_build'] = canvas_setup_post
-        # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
-        kws['canvas_post_build_funcs'] = common_plot.get_style()
-        kws['mod_log'] = common_plot.mod_log_usr()
-        kws.update(**args)
-        return varial.tools.Plotter(**kws)
-    return tmp
 
 
 def create_rootfiles(br_string, brs, signal, pattern=pattern_tt, sys_pat=sys_pat_tt, filter_keyfunc=None):
@@ -428,74 +360,10 @@ def mk_bkg_only_fit(output_name):
             lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
             '',
         )),
-        sensitivity.mk_tc_postfit_plot(theta_lim_path='../../ThetaLimit', pattern=pattern_tt, sys_pat=sys_pat_tt,
-            sys_uncerts=uncerts, plots=['ST']),
         varial.tools.WebCreator()
     ]
         
     return varial.tools.ToolChain(output_name, tc)
-
-
-def mk_bkg_only_fit_compare_comb(output_name):
-    tc = [varial.tools.ToolChain(
-            'BackgroundOnlyFitCombined', 
-            create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
-            mk_limit_tc(
-                [],
-                ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
-                    base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
-                '',
-            ) +\
-            sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
-                sys_uncerts=uncerts, plots=['ST'])+\
-            [plot.mk_toolchain('PostFitMorphed', flat=True, pattern=['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
-                base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix,
-                '../ThetaLimit/ThetaMLE_.root'],
-                filter_keyfunc=filter_func_postfit_morphed,
-                plotter_factory=plotter_factory_postfit_morphed(),
-                )]
-        ),
-        varial.tools.ToolChain(
-            'BackgroundOnlyFitOnlyBW', 
-            # create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
-            mk_limit_tc(
-                [],
-                [base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
-                '',
-            ) +\
-            sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
-                sys_uncerts=uncerts, plots=['ST'])+\
-            [plot.mk_toolchain('PostFitMorphed', flat=True, pattern=['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
-                base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix,
-                '../ThetaLimit/ThetaMLE_.root'],
-                filter_keyfunc=filter_func_postfit_morphed,
-                plotter_factory=plotter_factory_postfit_morphed(),
-                )]
-        ),
-        varial.tools.ToolChain(
-            'BackgroundOnlyFitOnlyBH', 
-            create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
-            mk_limit_tc(
-                [],
-                ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root'],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
-                '',
-            ) +\
-            sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
-                sys_uncerts=uncerts, plots=['ST'])+\
-            [plot.mk_toolchain('PostFitMorphed', flat=True, pattern=['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
-                base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix,
-                '../ThetaLimit/ThetaMLE_.root'],
-                filter_keyfunc=filter_func_postfit_morphed,
-                plotter_factory=plotter_factory_postfit_morphed(),
-                )]
-        ),
-        varial.tools.WebCreator()
-    ]
-        
-    return varial.tools.ToolChainParallel(output_name, tc, n_workers=1)
 
 def mk_limit_list(output_name):
     # def tmp():
@@ -591,10 +459,10 @@ def mk_limit_list(output_name):
         #     ),
         ])
     return varial.tools.ToolChainParallel(output_name, [
-        ind_limits,
-        tr_list,
+        # ind_limits,
+        # tr_list,
         mk_bkg_only_fit('BkgFit'),
-        # mk_tc_tex(output_name),
+        mk_tc_tex(output_name),
         varial.tools.WebCreator()], n_workers=1)
     # return tmp
     # return tmp
@@ -648,28 +516,17 @@ def mk_tc_tex(source_dir):
         ])
     return tc_tex_pas
 
-def mk_all_templates(source_dir):
+def mk_bb_templates(source_dir):
     limit_list = []
-    # for br_str, brs in br_list_bb:
-    #     # if ind > 5: break
-    #     tc = []
-    #     tc.append(varial.tools.ToolChainParallel(
-    #         'ThetaLimits', list(varial.tools.ToolChain(
-    #             sig, 
-    #             create_rootfiles(br_str, brs, sig, pattern=pattern_bb, sys_pat=sys_pat_bb,
-    #                 filter_keyfunc=lambda w: unselect_theory_uncert_single_sig(all_regions)(sig)(w) and 'TpTp' not in w.file_path))
-    #         for sig in bb_signals.keys())
-    #     ))
-    #     limit_list.append(
-    #         varial.tools.ToolChain('Limit_'+br_str, tc))
-    for br_str, brs in br_list_tt:
+    for br_str, brs in br_list_bb:
         # if ind > 5: break
         tc = []
         tc.append(varial.tools.ToolChainParallel(
             'ThetaLimits', list(varial.tools.ToolChain(
                 sig, 
-                create_rootfiles(br_str, brs, sig, pattern=pattern_tt, sys_pat=sys_pat_tt))
-            for sig in tt_signals.keys())
+                create_rootfiles(br_str, brs, sig, pattern=pattern_bb, sys_pat=sys_pat_bb,
+                    filter_keyfunc=lambda w: unselect_theory_uncert_single_sig(all_regions)(sig)(w) and 'TpTp' not in w.file_path))
+            for sig in bb_signals.keys())
         ))
         limit_list.append(
             varial.tools.ToolChain('Limit_'+br_str, tc))
@@ -679,24 +536,9 @@ def mk_all_templates(source_dir):
 
 if __name__ == '__main__':
     output_name = sys.argv[1]
-    if len(sys.argv) > 2:
-        version = sys.argv[2]
-        if version == 'v24':
-            base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
-                'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24'
-            pattern_tt = [base_path+'/Run8_withHighMassTTbarSample/'\
-                'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root',
-                base_path+'/Run8_withHighMassTTbarSample/'\
-                'RunAnalysis/HTReweighting/TreeProject/TreeProjectorDiboson/*.root']
-            sys_path = base_path+'/Run8_withHighMassTTbarSample/'\
-                'RunAnalysis/HTReweighting/TreeProject/SysTreeProjectors'
-            sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
-
     # all_tools = mk_limit_list()
     # varial.tools.Runner(mk_limit_list(output_name), default_reuse=True)
-    # varial.tools.Runner(mk_bb_templates(output_name), default_reuse=True)
-    # varial.tools.Runner(mk_all_templates(output_name), default_reuse=True)
-    varial.tools.Runner(mk_bkg_only_fit_compare_comb(output_name), default_reuse=True)
+    varial.tools.Runner(mk_bb_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_bkg_only_fit(output_name), default_reuse=True)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',
     #     src=final_dir, use_rsync=True).run()

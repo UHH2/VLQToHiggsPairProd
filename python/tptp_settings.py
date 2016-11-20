@@ -226,7 +226,7 @@ settings.apply_split_pad_styles = apply_split_pad_styles
 #     'ST': 434, # Orange
 #     'QCD': 870,   # Light blue
 # }
-signals = {'TpTp_M-800' : ROOT.kGreen,
+signals = {'TpTp_M-0800' : ROOT.kViolet,
     'TpTp_M-1200' : ROOT.kBlue,
     'TpTp_M-1600' : ROOT.kRed
     }

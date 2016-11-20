@@ -707,3 +707,58 @@ private:
     const vector<string> v_veto_selections;
     map<string, unique_ptr<Hists>> v_hists_eff;
 };
+
+
+// SelectedSelHists
+template<typename T>
+class TagEffHists: public Hists {
+public:
+
+    typedef std::function<bool (const T &, const uhh2::Event &)> TYPE_ID;
+
+    explicit TagEffHists(Context & ctx,
+                         const string & dir,
+                         const string & h_name,
+                         const string & h_in,
+                         TYPE_ID const & id_den = TrueId<T>::is_true,
+                         TYPE_ID const & id_num = TrueId<T>::is_true
+                         ):
+        Hists(ctx, dir),
+        h_in_(ctx.get_handle<std::vector<T>>(h_in)),
+        h_num_pt_(book<TH1F>(h_name+"_pt_sub", h_name+"_pt_sub", 120, 0., 2400.)),
+        h_den_pt_(book<TH1F>(h_name+"_pt_tot", h_name+"_pt_tot", 120, 0., 2400.)),
+        h_num_eta_(book<TH1F>(h_name+"_eta_sub", h_name+"_eta_sub", 50, -3., 3.)),
+        h_den_eta_(book<TH1F>(h_name+"_eta_tot", h_name+"_eta_tot", 50, -3., 3.)),
+        id_den_(id_den),
+        id_num_(id_num)
+    {}
+
+    // void insert_additional_hist(Hists * hists) {
+    //     v_hists.push_back(move(unique_ptr<Hists>(hists)));
+    // }
+
+    virtual void fill(const Event & event) override {
+        // SelectedSelHists::fill(event);
+        double w = event.weight;
+
+        if (!event.is_valid(h_in_))
+            throw;
+        const std::vector<T> coll_in = event.get(h_in_);
+
+        for (const T & p : coll_in) {
+            if (id_den_(p, event)) {
+                h_den_pt_->Fill(p.pt(), w);
+                h_den_eta_->Fill(p.eta(), w);
+            }
+            if (id_den_(p, event) && id_num_(p, event)) {
+                h_num_pt_->Fill(p.pt(), w);
+                h_num_eta_->Fill(p.eta(), w);
+            }
+        }
+    }
+
+private:
+    Event::Handle<vector<T>> h_in_;
+    TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_;
+    TYPE_ID id_den_, id_num_;
+};

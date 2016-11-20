@@ -246,19 +246,19 @@ comb_lep_chan = [
 
 sr2b_channel = baseline_selection_btag + [
     'n_higgs_tags_2b_med_sm10    >= 1',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sr1b_channel = baseline_selection_btag + [
     'n_higgs_tags_2b_med_sm10    == 0',
     'n_higgs_tags_1b_med_sm10    >= 1',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_channel = baseline_selection_btag + [
     'n_higgs_tags_1b_med_sm10        == 0',
     'met                        >= 100',
-    'n_additional_btags_medium  >= 1',
+    # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_ttbar_channel = baseline_selection + [
@@ -1090,9 +1090,9 @@ def make_tp_plot_chain(name, base_path, output_dir, add_uncert_func,
                             lookup_aliases=False,
                             raise_on_empty_result=False
                             ) for g in plot.less_samples)),
-                        # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
-                        #     plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
-                        #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
+                        plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th,
+                            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, hook_loaded_histos=plot.loader_hook_merge_lep_channels),
+                            pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
                         # plot.mk_toolchain('HistogramsCompUncerts', plot.less_samples_to_plot_only_th,
                         #     filter_keyfunc=lambda w: any(f in w.file_path for f in [treeproject_tptp.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
                         #     plotter_factory=plot.plotter_factory_uncerts(

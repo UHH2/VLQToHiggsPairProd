@@ -401,23 +401,25 @@ def loader_hook_split_uncert(wrps, theta_res_path, signal, rate_uncertainties, s
     wrps = gen.group(wrps, lambda w: w.in_file_path)
     wrps = plot_setup_postfit(wrps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate)
     wrps = list(w for ws in wrps for w in ws)
-    wrps = plot.set_line_width(wrps)
+    wrps = common_plot.set_line_width(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     wrps = list(wrps)
     return wrps
 
+post_fit_plots = ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
+                                    'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
+                                    'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
+                                    'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']
+
 def mk_tc_postfit_plot(theta_lim_path='../../../../ThetaLimit', signal='', sys_pat=None, sys_uncerts=analysis.shape_uncertainties,
-    rate_uncertainties=analysis.rate_uncertainties, pattern=None, filter_plots=lambda _: True, include_rate=False):
+    rate_uncertainties=analysis.rate_uncertainties, pattern=None, filter_plots=lambda _: True, include_rate=False, plots=post_fit_plots):
     return [varial.tools.ToolChain('PostFitPlots', [
             varial.tools.ToolChainParallel('HistoLoaderPost',
                 list(varial.tools.HistoLoader(
                     pattern=[i for pat in pattern for i in glob.glob(pat) if g in i]+[i for pat in sys_pat for i in glob.glob(pat) if g in i],
                     filter_keyfunc=lambda w: filter_plots(w) and any(f in w.file_path.split('/')[-1] for f in plot.almost_all_samples) and\
                         'Region_Comb' not in w.in_file_path and\
-                        any(w.in_file_path.endswith(f) for f in ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
-                                    'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
-                                    'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
-                                    'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']),
+                        any(w.in_file_path.endswith(f) for f in plots),
                     hook_loaded_histos=plot.loader_hook_merge_regions,
                     name='HistoLoader_'+g,
                     lookup_aliases=False,
