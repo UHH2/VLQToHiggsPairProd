@@ -411,7 +411,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         ctx.declare_event_output<double>("parton_ht");
     }
     pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, JetPFID(JetPFID::WP_LOOSE), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets"));
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
         data_dir_path + "MuonID_Z_RunCD_Reco76X_Feb15.root", 
         "MC_NUM_MediumID_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));

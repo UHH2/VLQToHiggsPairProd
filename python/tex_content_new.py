@@ -4,6 +4,7 @@ from varial.extensions import tex
 import varial.settings
 import varial.tools
 import varial.monitor
+import varial.analysis
 import os.path
 
 # base path
@@ -772,6 +773,12 @@ def mk_autoContentLimits(base, name='AutoContentLimits', size='0.48'):
     )
 
 def mk_plot_ind(path_tup, name='AutoContentLimits', size='0.48'):
+
+    # def get_path(path):
+    #     if path.startswith('..'):
+    #         path = os.path.join(varial.analysis.cwd, path)
+    #     print path, os.getcwd()
+    #     return path
 
 
     def tmp():

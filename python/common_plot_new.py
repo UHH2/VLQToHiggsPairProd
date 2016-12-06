@@ -392,7 +392,8 @@ mod_dict_default = {
             'y_max_log_fct' : 1000.,
             },
     'nomass_boost_2b_mass_softdrop' : {
-            'rebin_list' : list(i + 50 for i in xrange(0, 250, 10)),
+            'rebin' : 30,
+            # 'rebin_list' : list(i + 50 for i in xrange(0, 250, 10)),
             # 'rebin' : [40., 60., 80., 100., 120., 140., 160., 180., 200., 220., 240., 260., 280., 300.],
             'y_max_fct' : 1.8,
             'title' : 'M_{jet} [GeV]',
@@ -633,7 +634,7 @@ def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=Tr
         yield do_merging(buf)
 
 
-def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True):
+def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True, mk_legend=False):
     for w in wrps:
         if smpl_fct:
             for fct_key, fct_val in smpl_fct.iteritems():
@@ -644,12 +645,18 @@ def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True):
                             w.scl_fct *= fct_val
                         else:
                             op.add_wrp_info(w, scl_fct=lambda _: fct_val)
-                    w.histo.Scale(fct_val)
-        if hasattr(w, 'scl_fct'):
-            w.scl_fct *= norm_all
+                    if mk_legend:
+                        scale_signal(w, fct_val, True)
+                    else:
+                        w.histo.Scale(fct_val)
+        if mk_legend:
+            scale_signal(w, norm_all, True)
         else:
-            op.add_wrp_info(w, scl_fct=lambda _: norm_all)
-        w.histo.Scale(norm_all)
+            if hasattr(w, 'scl_fct'):
+                w.scl_fct *= norm_all
+            else:
+                op.add_wrp_info(w, scl_fct=lambda _: norm_all)
+            w.histo.Scale(norm_all)
         yield w
 
 def norm_to_int(wrps, use_bin_width=False):
@@ -1275,6 +1282,15 @@ table_block_signal_fs_800 = [
     (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-0800_noH_tztz' in w, True),
     (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-0800_noH_tzbw' in w, True),
     (r'$\mathrm{T\bar{T}}$ (0.8 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-0800_noH_bwbw' in w, True),
+]
+
+table_block_signal_fs_1200 = [
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-1200_thth' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ tHtZ', lambda w: 'Integral___TpTp_M-1200_thtz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ tHbW', lambda w: 'Integral___TpTp_M-1200_thbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ tZtZ', lambda w: 'Integral___TpTp_M-1200_noH_tztz' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ tZbW', lambda w: 'Integral___TpTp_M-1200_noH_tzbw' in w, True),
+    (r'$\mathrm{T\bar{T}}$ (1.2 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1200_noH_bwbw' in w, True),
 ]
 
 table_block_signal_fs_1600 = [

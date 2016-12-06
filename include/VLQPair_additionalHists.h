@@ -729,6 +729,8 @@ public:
         h_den_pt_(book<TH1F>(h_name+"_pt_tot", h_name+"_pt_tot", 120, 0., 2400.)),
         h_num_eta_(book<TH1F>(h_name+"_eta_sub", h_name+"_eta_sub", 50, -3., 3.)),
         h_den_eta_(book<TH1F>(h_name+"_eta_tot", h_name+"_eta_tot", 50, -3., 3.)),
+        h_num_incl_(book<TH1F>(h_name+"_incl_sub", h_name+"_incl_sub", 1, 0.5, 1.5)),
+        h_den_incl_(book<TH1F>(h_name+"_incl_tot", h_name+"_incl_tot", 1, 0.5, 1.5)),
         id_den_(id_den),
         id_num_(id_num)
     {}
@@ -739,26 +741,135 @@ public:
 
     virtual void fill(const Event & event) override {
         // SelectedSelHists::fill(event);
-        double w = event.weight;
+        // double w = event.weight;
 
         if (!event.is_valid(h_in_))
             throw;
         const std::vector<T> coll_in = event.get(h_in_);
 
+        std::cout << "  NEW HISTOGRAM" << std::endl;
         for (const T & p : coll_in) {
             if (id_den_(p, event)) {
-                h_den_pt_->Fill(p.pt(), w);
-                h_den_eta_->Fill(p.eta(), w);
+                // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+                // if (p.subjets().size())
+                //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+                // if (p.subjets().size() > 1)
+                //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+                // std::cout << std::endl;
+                // std::cout << "   DENOMINATOR:" << std::endl;
+                h_den_pt_->Fill(p.pt());
+                h_den_eta_->Fill(p.eta());
+                h_den_incl_->Fill(1.);
             }
             if (id_den_(p, event) && id_num_(p, event)) {
-                h_num_pt_->Fill(p.pt(), w);
-                h_num_eta_->Fill(p.eta(), w);
+                // std::cout << "    topjet TAGGED pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+                // if (p.subjets().size())
+                //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+                // if (p.subjets().size() > 1)
+                //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+                // std::cout << std::endl;
+                // std::cout << "   NUMERATOR:" << std::endl;
+                h_num_pt_->Fill(p.pt());
+                h_num_eta_->Fill(p.eta());
+                h_num_incl_->Fill(1.);
             }
         }
     }
 
 private:
     Event::Handle<vector<T>> h_in_;
-    TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_;
+    TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_, *h_num_incl_, *h_den_incl_;
+    TYPE_ID id_den_, id_num_;
+};
+
+
+class AK8TagEffHists: public Hists {
+public:
+
+    typedef std::function<bool (const TopJet &, const uhh2::Event &)> TYPE_ID;
+
+    explicit AK8TagEffHists(Context & ctx,
+                         const string & dir,
+                         const string & h_name,
+                         const string & h_in,
+                         TYPE_ID const & id_den = TrueId<TopJet>::is_true,
+                         TYPE_ID const & id_num = TrueId<TopJet>::is_true
+                         ):
+        Hists(ctx, dir),
+        h_in_(ctx.get_handle<std::vector<TopJet>>(h_in)),
+        h_num_pt_(book<TH1F>(h_name+"_pt_sub", h_name+"_pt_sub", 120, 0., 2400.)),
+        h_den_pt_(book<TH1F>(h_name+"_pt_tot", h_name+"_pt_tot", 120, 0., 2400.)),
+        h_num_eta_(book<TH1F>(h_name+"_eta_sub", h_name+"_eta_sub", 50, -3., 3.)),
+        h_den_eta_(book<TH1F>(h_name+"_eta_tot", h_name+"_eta_tot", 50, -3., 3.)),
+        h_num_mass_(book<TH1F>(h_name+"_mass_sub", h_name+"_mass_sub", 100, 0., 300.)),
+        h_den_mass_(book<TH1F>(h_name+"_mass_tot", h_name+"_mass_tot", 100, 0., 300.)),
+        h_num_nsjbtags_(book<TH1F>(h_name+"_nsjbtags_sub", h_name+"_nsjbtags_sub", 6, -0.5, 5.5)),
+        h_den_nsjbtags_(book<TH1F>(h_name+"_nsjbtags_tot", h_name+"_nsjbtags_tot", 6, -0.5, 5.5)),
+        h_num_incl_(book<TH1F>(h_name+"_incl_sub", h_name+"_incl_sub", 1, 0.5, 1.5)),
+        h_den_incl_(book<TH1F>(h_name+"_incl_tot", h_name+"_incl_tot", 1, 0.5, 1.5)),
+        id_den_(id_den),
+        id_num_(id_num)
+    {}
+
+    // void insert_additional_hist(Hists * hists) {
+    //     v_hists.push_back(move(unique_ptr<Hists>(hists)));
+    // }
+
+    virtual void fill(const Event & event) override {
+        // SelectedSelHists::fill(event);
+        // double w = event.weight;
+
+        if (!event.is_valid(h_in_))
+            throw;
+        const std::vector<TopJet> coll_in = event.get(h_in_);
+
+        // std::cout << "  NEW HISTOGRAM" << std::endl;
+        for (const TopJet & p : coll_in) {
+            if (id_den_(p, event)) {
+                // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+                // if (p.subjets().size())
+                //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+                // if (p.subjets().size() > 1)
+                //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+                // std::cout << std::endl;
+                // std::cout << "   DENOMINATOR:" << std::endl;
+                CSVBTag btag_(CSVBTag::WP_MEDIUM);
+                int n_sj = 0;
+                for (auto const & sj : p.subjets()) {
+                    if (btag_(sj, event))
+                        n_sj++;
+                }
+                h_den_pt_->Fill(p.pt());
+                h_den_eta_->Fill(p.eta());
+                h_den_mass_->Fill(p.softdropmass());
+                h_den_nsjbtags_->Fill(n_sj);
+                h_den_incl_->Fill(1.);
+            }
+            if (id_den_(p, event) && id_num_(p, event)) {
+                // std::cout << "    topjet TAGGED pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+                // if (p.subjets().size())
+                //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+                // if (p.subjets().size() > 1)
+                //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+                // std::cout << std::endl;
+                // std::cout << "   NUMERATOR:" << std::endl;
+                CSVBTag btag_(CSVBTag::WP_MEDIUM);
+                int n_sj = 0;
+                for (auto const & sj : p.subjets()) {
+                    if (btag_(sj, event))
+                        n_sj++;
+                }
+                h_num_pt_->Fill(p.pt());
+                h_num_eta_->Fill(p.eta());
+                h_num_mass_->Fill(p.softdropmass());
+                h_num_nsjbtags_->Fill(n_sj);
+                h_num_incl_->Fill(1.);
+            }
+        }
+    }
+
+private:
+    Event::Handle<vector<TopJet>> h_in_;
+    TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_, *h_num_mass_, *h_den_mass_, *h_num_nsjbtags_, *h_den_nsjbtags_, *h_num_incl_, *h_den_incl_;
     TYPE_ID id_den_, id_num_;
 };

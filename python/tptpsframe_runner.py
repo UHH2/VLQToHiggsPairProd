@@ -195,6 +195,11 @@ def clean_input_data(element_tree, allowed_datasets):
             if all(f not in item.get('Version') for f in allowed_datasets):
                 tree_cycle.remove(item)
 
+def set_cacheable_false(element_tree, cacheable='False'):
+    tree_cycle = element_tree.getroot().find('Cycle')
+    for item in tree_cycle.findall('InputData'):
+        item.set('Cacheable', cacheable)
+
 def set_analysis_module(element_tree, analysis_module=''):
     if analysis_module:
         user_config = element_tree.getroot().find('Cycle').find('UserConfig')

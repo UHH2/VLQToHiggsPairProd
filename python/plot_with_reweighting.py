@@ -55,7 +55,7 @@ samples_to_plot_all = hists_to_plot + reduce(lambda x, y: x+y, (list(g + f for f
 base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
 source_dir = os.path.join(base_path, 
-    'FullTreeProject/NoReweighting/TreeProject')
+    'FullTreeProject/HTReweighting/TreeProject')
 uncerts = list(analysis.all_uncerts) # or get_sys_dir()
 uncerts.remove('sfmu_trg')
 uncerts.remove('sflep_trg')
@@ -317,28 +317,6 @@ def mk_histograms_no_sig(uncerts=uncerts, name='HistogramsNoSig', samples=sample
         # lookup_aliases=varial.settings.lookup_aliases
         )
 
-def mk_histograms_sig_inj(name, excl_signal, samples=samples_to_plot_thth):
-    return plot.mk_toolchain(name, samples,
-        plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
-            filter_keyfunc=lambda w: all(g not in w.sample for g in excl_signal) and w.sys_info == '',
-            hook_loaded_histos=loader_hook_merge_sig_data,
-            mod_log=common_plot.mod_log_usr(mod_dict),
-            canvas_post_build_funcs= [
-                common_plot.mod_pre_bot_hist(),
-                common_plot.mk_split_err_ratio_plot_func_mod(),  # mk_pull_plot_func()
-                # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
-                rnd.mk_legend_func(),
-                common_plot.mod_post_canv(mod_dict),
-                common_plot.mk_tobject_draw_func(TLatex(0.51, 0.91, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}"))
-            ]),
-        pattern=None,
-        input_result_path='../HistoLoader/HistoLoader*',
-        # parallel=False
-        # auto_legend=False,
-        # name='HistogramsPostfit',
-        # lookup_aliases=varial.settings.lookup_aliases
-        )
-
 
 def mk_tc_tex(source_dir):
     tc_tex_an = [
@@ -380,7 +358,7 @@ def mk_tc_tex(source_dir):
                 ('topjets_1_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[0].m_pt_lin.pdf'),
                 ('topjets_2_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/topjets[1].m_pt_lin.pdf'),
                 ('topjets_2_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[1].m_pt_lin.pdf'),
-            ), name='NoReweightingPlots'),
+            ), name='HTReweightingPlots'),
         # tex_content.mk_plot_ind(
         #     (
         #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
@@ -444,36 +422,6 @@ def plot_merged_channels(final_dir):
         #     ),
         varial.tools.WebCreator()
         ])
-
-def mk_sig_inj_test(final_dir):
-
-    return varial.tools.ToolChainParallel(final_dir, [
-        varial.tools.ToolChain('TT_test', [
-            mk_histoloader_merge(input_pattern_tt, samples=samples_to_plot_tt),
-            mk_histograms_merge(uncerts, 'HistogramsBW', samples=samples_to_plot_bwbw),
-            mk_histograms_merge(uncerts, 'HistogramsTH', samples=samples_to_plot_thth),
-            # mk_histograms_merge_ratio_sb(uncerts),
-            mk_histograms_no_sig(uncerts, samples=samples_to_plot_tt),
-            mk_histograms_sig_inj('HistogramsSigInjBW800', ['TpTp_M-1200', 'TpTp_M-1600'], samples=samples_to_plot_bwbw),
-            mk_histograms_sig_inj('HistogramsSigInjBW1200', ['TpTp_M-0800', 'TpTp_M-1600'], samples=samples_to_plot_bwbw),
-            mk_histograms_sig_inj('HistogramsSigInjBW1600', ['TpTp_M-0800', 'TpTp_M-1200'], samples=samples_to_plot_bwbw),
-            mk_histograms_sig_inj('HistogramsSigInjTH800', ['TpTp_M-1200', 'TpTp_M-1600'], samples=samples_to_plot_thth),
-            mk_histograms_sig_inj('HistogramsSigInjTH1200', ['TpTp_M-0800', 'TpTp_M-1600'], samples=samples_to_plot_thth),
-            mk_histograms_sig_inj('HistogramsSigInjTH1600', ['TpTp_M-0800', 'TpTp_M-1200'], samples=samples_to_plot_thth),
-            varial.tools.WebCreator()
-        ]),
-        varial.tools.ToolChain('BB_test', [
-            mk_histoloader_merge(input_pattern_bb, samples=samples_to_plot_bb),
-            mk_histograms_merge(uncerts, 'HistogramsBW', samples=samples_to_plot_bb),
-            mk_histograms_no_sig(uncerts, samples=samples_to_plot_bb),
-            mk_histograms_sig_inj('HistogramsSigInjTW800', ['BpBp_M-1200', 'BpBp_M-1600'], samples=samples_to_plot_bb),
-            mk_histograms_sig_inj('HistogramsSigInjTW1200', ['BpBp_M-0800', 'BpBp_M-1600'], samples=samples_to_plot_bb),
-            mk_histograms_sig_inj('HistogramsSigInjTW1600', ['BpBp_M-0800', 'BpBp_M-1200'], samples=samples_to_plot_bb),
-            varial.tools.WebCreator()
-        ]),
-
-
-        ], n_workers=1)
 
 
 # sframe_tools = mk_sframe_and_plot_tools()

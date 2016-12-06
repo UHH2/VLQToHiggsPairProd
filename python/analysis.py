@@ -53,7 +53,7 @@ def_uncerts = [
     # 'sflep_trg'
 ]
 
-all_uncerts = def_uncerts + ['ht_reweight']
+all_uncerts = def_uncerts + ['ht_reweight', 'jsf']
 shape_uncertainties = all_uncerts
 
 more_uncerts = def_uncerts + ['ht_reweight_one_side', 'top_pt_reweight_one_side']

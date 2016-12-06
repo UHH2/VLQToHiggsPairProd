@@ -466,8 +466,8 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
             # ('sfel_id_trg__plus', '*1.05'),
             ('sfel_id__minus', '*weight_sfel_id_down/weight_sfel_id'),
             ('sfel_id__plus', '*weight_sfel_id_up/weight_sfel_id'),
-            ('sfel_trg__minus', '*weight_sfel_trg_down/weight_sfel_trg'),
-            ('sfel_trg__plus', '*weight_sfel_trg_up/weight_sfel_trg'),
+            # ('sfel_trg__minus', '*weight_sfel_trg_down/weight_sfel_trg'),
+            # ('sfel_trg__plus', '*weight_sfel_trg_up/weight_sfel_trg'),
         )
     )
     return list(

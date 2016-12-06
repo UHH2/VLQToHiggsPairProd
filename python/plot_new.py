@@ -53,6 +53,12 @@ normfactors_ind_fs = {
     '_thtz' : 1./0.222,
     '_thbw' : 1./0.222,
     '_tzbw' : 1./0.222,
+    '_bhbh' : 1./0.111,
+    '_bzbz' : 1./0.111,
+    '_twtw' : 1./0.111,
+    '_bhbz' : 1./0.222,
+    '_bhtw' : 1./0.222,
+    '_bztw' : 1./0.222,
 }
 
 normfactors_ind_fs_rev = {
@@ -204,6 +210,7 @@ def loader_hook_norm_to_int(wrps):
     wrps = common_plot.norm_to_int(wrps)
     return wrps
 
+# def add_sfel_trg_uncert():
 
 
 def loader_hook_merge_regions(wrps):

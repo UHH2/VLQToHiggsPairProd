@@ -68,13 +68,14 @@ class NumTableNew(varial.tools.Tool):
 
     def get_precision(self, num):
         if num >= 1.0:
-            return "{0:17.0f}"
+            return "{0:17.1f}"
         elif num > 0:
             ex_dim = abs(floor(log10(num)))
-            add_prec = 0
-            if num*10**ex_dim < 3.55:
-                add_prec = 1
-            prec = int(ex_dim+add_prec)
+            # add_prec = 0
+            # if num*10**ex_dim < 3.55:
+            #     add_prec = 1
+            # prec = int(ex_dim+add_prec)
+            prec = int(ex_dim)
             prec = "{0:17."+str(prec)+"f}"
             return prec
         else:
@@ -162,9 +163,9 @@ class EffTable(NumTableNew):
                     tot_err /= baseline_count
                     prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
-                        prec = "{0:17.0f}"
-                        nom_val = round(nom_val)
-                        tot_err = round(tot_err)
+                        prec = "{0:17.1f}"
+                        nom_val = nom_val
+                        tot_err = tot_err
                     line += prec.format(nom_val/baseline_count)
                     if 'data' not in s.lower():
                         line += r" \% \pm " + prec.format(tot_err) + r" \%"
@@ -227,9 +228,9 @@ class CountTable(NumTableNew):
                     tot_err = sqrt(stat_err**2+syst_err**2)
                     prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
-                        prec = "{0:17.0f}"
-                        nom_val = round(nom_val)
-                        tot_err = round(tot_err)
+                        prec = "{0:17.1f}"
+                        nom_val = nom_val
+                        tot_err = tot_err
                     line += prec.format(nom_val)
                     if 'data' not in s.lower():
                         line += r" \pm " + prec.format(tot_err)

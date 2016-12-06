@@ -1712,21 +1712,28 @@ private:
 //     vector<Event::Handle>
 // };
 
-class GenHiggsId
+class JetClosestGenPartId
 {
 public:
-    GenHiggsId(int daughter_id = 0) :
-        daughter_id_(daughter_id)
+    JetClosestGenPartId(int id, int daughter_id = 0, float dR = 0.4, float pt_cut = 0., bool d_in_tj = false) :
+        id_(id), daughter_id_(daughter_id), dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj)
         {}
 
     bool operator()(const TopJet & tj, const Event & event) const
     {
         for (const GenParticle & gp : *event.genparticles) {
-            if (deltaR(tj, gp) <= 0.4 && abs(gp.pdgId()) == 25) {
+            if (deltaR(tj, gp) <= dR_ && abs(gp.pdgId()) == id_ && gp.pt() >= pt_cut_) {
                 if (daughter_id_) {
                     GenParticle const * daughter1 = gp.daughter(event.genparticles, 1);
-                    if (daughter1 && abs(daughter1->pdgId() == daughter_id_))
+                    GenParticle const * daughter2 = gp.daughter(event.genparticles, 2);
+                    if (daughter1 && daughter2 && (abs(daughter1->pdgId()) == daughter_id_ || abs(daughter2->pdgId()) == daughter_id_)) {
+                        float dR_d1 = deltaR(tj, *daughter1);
+                        float dR_d2 = deltaR(tj, *daughter2);
+                        if (d_in_tj_ && (dR_d1 > dR_ || dR_d2 > dR_))
+                            continue;
+                        // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
                         return true;
+                    }
                 }
                 else
                     return true;
@@ -1737,8 +1744,266 @@ public:
     }
 
 private:
-    int daughter_id_;
-};  // GenHiggsId
+    int id_, daughter_id_;
+    float dR_, pt_cut_;
+    bool d_in_tj_;
+};  // JetClosestGenPartId
+
+
+class JetClosestGenPartDaughterRangeId
+{
+public:
+    JetClosestGenPartDaughterRangeId(int id, int daughter_id_min = 0, int daughter_id_max = 25, float dR = 0.4, float pt_cut = 0., bool d_in_tj = false) :
+        id_(id), daughter_id_min_(daughter_id_min), daughter_id_max_(daughter_id_max), dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj)
+        {}
+
+    bool operator()(const TopJet & tj, const Event & event) const
+    {
+        for (const GenParticle & gp : *event.genparticles) {
+            if (deltaR(tj, gp) <= dR_ && abs(gp.pdgId()) == id_ && gp.pt() >= pt_cut_) {
+                GenParticle const * daughter1 = gp.daughter(event.genparticles, 1);
+                GenParticle const * daughter2 = gp.daughter(event.genparticles, 2);
+                if (daughter1 && abs(daughter1->pdgId()) >= daughter_id_min_ && abs(daughter1->pdgId()) <= daughter_id_max_ &&
+                    daughter2 && abs(daughter2->pdgId()) >= daughter_id_min_ && abs(daughter2->pdgId()) <= daughter_id_max_) {
+                    float dR_d1 = deltaR(tj, *daughter1);
+                    float dR_d2 = deltaR(tj, *daughter2);
+                    if (d_in_tj_ && (dR_d1 > dR_ || dR_d2 > dR_))
+                        continue;
+                    // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
+                    return true;
+                }
+                else
+                    return true;
+            }
+        }
+        // cout << "  Found right mother!\n";
+        return false;
+    }
+
+private:
+    int id_, daughter_id_min_, daughter_id_max_;
+    float dR_, pt_cut_;
+    bool d_in_tj_;
+};  // JetClosestGenPartDaughterRangeId
+
+
+class JetClosestGenPartRangeId
+{
+public:
+    JetClosestGenPartRangeId(int id_min, int id_max, float dR = 0.4, float pt_cut = 0.) :
+        id_min_(id_min), id_max_(id_max), dR_(dR), pt_cut_(pt_cut)
+        {}
+
+    bool operator()(const TopJet & tj, const Event & event) const
+    {
+        for (const GenParticle & gp : *event.genparticles) {
+            if (deltaR(tj, gp) <= dR_ && abs(gp.pdgId()) >= id_min_ && abs(gp.pdgId()) <= id_max_ && gp.pt() >= pt_cut_) {
+                return true;
+            }
+        }
+        // cout << "  Found right mother!\n";
+        return false;
+    }
+
+private:
+    int id_min_, id_max_;
+    float dR_, pt_cut_;
+};  // JetClosestGenPartRangeId
+
+
+class HadronicTopId
+{
+public:
+    HadronicTopId(float dR = 0.4, float pt_cut = 0., int d_in_tj = 0) :
+        dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj)
+        {}
+
+    bool operator()(const TopJet & tj, const Event & event)
+    {
+        bool found = false;
+        for (const GenParticle & gp : *event.genparticles) {
+            // GenParticle const * mother1 = gp.mother(event.genparticles, 1);
+            // GenParticle const * mother2 = gp.mother(event.genparticles, 2);
+            // if (abs(gp.pdgId()) == 5 && mother1 && abs(mother1->pdgId()) != 6) {
+            //     std::cout << "occurence " << ++counter << std::endl;
+            //     std::cout << gp.pdgId();
+            //     if (mother1)
+            //         std::cout << " " << mother1->pdgId();
+            //     if (mother2)
+            //         std::cout << " " << mother2->pdgId();
+            //     // if (daughter1)
+            //     //     std::cout << " " << daughter1->pdgId();
+            //     // if (daughter2)
+            //     //     std::cout << " " << daughter2->pdgId();
+            //     std::cout << std::endl;
+            // }
+            if (deltaR(tj, gp) <= dR_ && abs(gp.pdgId()) == 6 && gp.pt() >= pt_cut_) {
+                GenParticle const * daughter1 = gp.daughter(event.genparticles, 1);
+                GenParticle const * daughter2 = gp.daughter(event.genparticles, 2);
+                GenParticle const * daughterW1 = NULL;
+                GenParticle const * daughterW2 = NULL;
+                GenParticle const * daughterB = NULL;
+                if (abs(daughter1->pdgId()) ==  24) {
+                    daughterW1 = daughter1->daughter(event.genparticles, 1);
+                    daughterW2 = daughter1->daughter(event.genparticles, 2);
+                    daughterB = daughter2;
+                }
+                else if (abs(daughter2->pdgId()) ==  24) {
+                    daughterW1 = daughter2->daughter(event.genparticles, 1);
+                    daughterW2 = daughter2->daughter(event.genparticles, 2);
+                    daughterB = daughter1;
+                }
+                if (daughterB && daughterW1 && daughterW2 && abs(daughterW1->pdgId()) >= 1 && abs(daughterW1->pdgId()) <= 5 &&
+                    abs(daughterW2->pdgId()) >= 1 && abs(daughterW2->pdgId()) <= 5) {
+                    float dR_d1 = deltaR(tj, *daughterW1);
+                    float dR_d2 = deltaR(tj, *daughterW2);
+                    float dR_B = deltaR(tj, *daughterB);
+                    if (d_in_tj_ == 1 && (dR_d1 > dR_ && dR_d2 > dR_ && dR_B > dR_))
+                        continue;
+                    else if (d_in_tj_ == 2 && !((dR_d1 <= dR_ && dR_d2 <= dR_) || (dR_d1 <= dR_ && dR_B <= dR_) || (dR_d2 <= dR_ && dR_B <= dR_)))
+                        continue;
+                    else if (d_in_tj_ == 3 && (dR_d1 > dR_ || dR_d2 > dR_ || dR_B > dR_))
+                        continue;
+                    // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
+                    // return true;
+                    found = true;
+                }
+            }
+        }
+        // cout << "  Found right mother!\n";
+        // return false;
+        return found;
+    }
+
+private:
+    float dR_, pt_cut_;
+    int d_in_tj_;
+    int counter = 0;
+};  // HadronicTopId
+
+
+class GluonToBBId
+{
+public:
+    GluonToBBId(float dR = 0.4, float pt_cut = 0., bool d_in_tj = false) :
+        dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj)
+        {}
+
+    bool operator()(const TopJet & tj, const Event & event) const
+    {
+        int n_g_to_bb = 0;
+        bool found = false;
+        std::vector<GenParticle const *> bs;
+
+        for (const GenParticle & gp : *event.genparticles) {
+            if (abs(gp.pdgId()) == 5) {
+                GenParticle const * mother1 = gp.mother(event.genparticles, 1);
+                GenParticle const * mother2 = gp.mother(event.genparticles, 2);
+                if (((mother1 && abs(mother1->pdgId()) != 6 && mother2 && abs(mother2->pdgId()) != 6)) ||
+                    ((mother1 && !mother2 && abs(mother1->pdgId()) != 6) || (mother2 && !mother1 && abs(mother2->pdgId()) != 6)))
+                    bs.push_back(&gp);
+            }
+        }
+        if (bs.size() >= 2) {
+            std::vector<LorentzVector> g_hyps;
+            std::vector<std::pair<GenParticle const *, GenParticle const *>> b_hyps;
+
+            for (unsigned i = 0; i < bs.size() - 1; ++i) {
+                for (unsigned ii = i + 1; ii < bs.size(); ++ii) {
+                    LorentzVector g_hyp(bs[i]->v4());
+                    g_hyp += bs[ii]->v4();
+                    g_hyps.push_back(g_hyp);
+                    b_hyps.push_back(std::make_pair(bs[i], bs[ii]));
+                }
+            }
+
+            for (unsigned i = 0; i < g_hyps.size(); ++i) {
+                if (deltaR(tj, g_hyps[i]) <= dR_ && g_hyps[i].pt() >= pt_cut_) {
+                    float dR_db1 = deltaR(tj, *(b_hyps[i].first));
+                    float dR_db2 = deltaR(tj, *(b_hyps[i].second));
+                    if (d_in_tj_ && (dR_db1 > dR_ || dR_db2 > dR_))
+                        continue;
+                    std::cout << "    Gluon splitting to BB found!" << std::endl;
+                    found = true;
+                    n_g_to_bb++;
+                }
+            }
+        }
+        // cout << "  Found right mother!\n";
+        if (n_g_to_bb > 1)
+            std::cout << "More than one gluon splitting case found, n_g_to_bb/n_bs: " << n_g_to_bb << "/" << bs.size() << std::endl;
+        return found;
+    }
+
+private:
+    float dR_, pt_cut_;
+    bool d_in_tj_;
+};  // GluonToBBId
+
+
+
+
+template<typename T>
+class GenPartClosestJetID
+{
+public:
+    typedef std::function<bool (const T &, const uhh2::Event &)> TYPE_ID;
+
+    GenPartClosestJetID(Context & ctx, string const & h_in, int id = 25, int daughter_id = 0, float dR = 0.4, float pt_cut = 0., bool d_in_tj = false,
+           boost::optional<TYPE_ID> const & type_id = boost::none) :
+        h_in_(ctx.get_handle<std::vector<T>>(h_in)), id_(id), daughter_id_(daughter_id), dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj),
+        type_id_(type_id)
+        {}
+
+    bool operator()(const GenParticle & gp, const Event & event) const
+    {
+        std::vector<T> const & in_coll = event.get(h_in_);
+        // for (const GenParticle & gp : *event.genparticles) {
+        GenParticle const * daughter1 = NULL;
+        GenParticle const * daughter2 = NULL;
+        if (abs(gp.pdgId()) == id_) {
+            if (gp.pt() < pt_cut_)
+                return false;
+            if (daughter_id_) {
+                daughter1 = gp.daughter(event.genparticles, 1);
+                daughter2 = gp.daughter(event.genparticles, 2);
+                if (!(daughter1 && abs(daughter1->pdgId()) == daughter_id_ && daughter2 && abs(daughter2->pdgId()) == daughter_id_)) {
+                    // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
+                    return false;
+                }
+            }
+            // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
+            for (const T & p : in_coll) {
+                if (deltaR(p, gp) <= dR_) {
+                    if (type_id_ && !((*type_id_)(p, event))) {
+                        continue;
+                    }
+                    float dR_d1 = deltaR(p, *daughter1);
+                    float dR_d2 = deltaR(p, *daughter2);
+                    if (d_in_tj_ && (dR_d1 > dR_ || dR_d2 > dR_))
+                        continue;
+                    // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+                    // if (p.subjets().size())
+                    //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+                    // if (p.subjets().size() > 1)
+                    //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+                    // std::cout << std::endl;
+                    return true;
+                }
+            }
+        }
+        // }
+        // cout << "  Found right mother!\n";
+        return false;
+    }
+
+private:
+    Event::Handle<std::vector<T>> h_in_;
+    int id_, daughter_id_;
+    float dR_, pt_cut_;
+    bool d_in_tj_;
+    boost::optional<TYPE_ID> type_id_; 
+};  // GenPartClosestJetID
 
 
 

@@ -516,11 +516,11 @@ def plot_setup_triangle(opt):
 
 
 def calc_intersection(graph1, graph2):
-    for x in xrange(700, 1800, 10):
+    for x in xrange(700, 1800, 1):
         y11 = graph1.Eval(x)
         y21 = graph2.Eval(x)
-        y12 = graph1.Eval(x+10)
-        y22 = graph2.Eval(x+10)
+        y12 = graph1.Eval(x+1)
+        y22 = graph2.Eval(x+1)
         if (y11 > y21 and y12 < y22) or (y11 < y21 and y12 > y22) or y11 == y21:
             return x
 

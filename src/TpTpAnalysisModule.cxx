@@ -5,7 +5,8 @@
 #include "UHH2/common/test/TestJetLeptonCleaner.cpp"
 
 using namespace std;
-using namespace uhh2;   
+using namespace uhh2;
+
 
 TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     // If needed, access the configuration of the module here, e.g.:
