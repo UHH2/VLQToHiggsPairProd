@@ -1335,60 +1335,73 @@ public:
                             const std::string & htags,
                             bool write_out2 = true,
                             bool write_out1 = true,
+                            float smear_fct = 1.,
+                            float unc = 0.,
                             const std::string & gentopjets = "gentopjets"
                             ):
         h_htags    (ctx.get_handle<vector<TopJet>>(htags)),
-        h_sm_htags10    (ctx.get_handle<vector<TopJet>>(htags+"_sm10")),
-        h_sm_htags20    (ctx.get_handle<vector<TopJet>>(htags+"_sm20")),
+        // h_sm_down    (ctx.get_handle<vector<TopJet>>(htags+"_sm_down")),
+        h_sm_down    (ctx.get_handle<vector<TopJet>>(htags+"_sm_down")),
+        h_sm_up    (ctx.get_handle<vector<TopJet>>(htags+"_sm_up")),
         h_gen_mass    (ctx.get_handle<float>(htags+"_gen_mass")),
         h_gen_diff_before    (ctx.get_handle<float>(htags+"_diff_before")),
+        h_gen_diff_smeared    (ctx.get_handle<float>(htags+"_diff_smeared")),
         h_gen_diff_before_sj    (ctx.get_handle<float>(htags+"_diff_before_sj")),
-        h_gen_diff_10    (ctx.get_handle<float>(htags+"_diff_10")),
-        // h_gen_diff_10_sj    (ctx.get_handle<float>(htags+"_diff_10_sj")),
-        h_gen_diff_20    (ctx.get_handle<float>(htags+"_diff_20")),
-        // h_gen_diff_20_sj    (ctx.get_handle<float>(htags+"_diff_20_sj")),
+        h_gen_diff_down    (ctx.get_handle<float>(htags+"_diff_down")),
+        // h_gen_diff_down_sj    (ctx.get_handle<float>(htags+"_diff_down_sj")),
+        h_gen_diff_up    (ctx.get_handle<float>(htags+"_diff_up")),
+        // h_gen_diff_up_sj    (ctx.get_handle<float>(htags+"_diff_up_sj")),
+        smear_fct_(smear_fct),
+        unc_(unc),
         h_genjets(ctx.get_handle<vector<GenTopJet>>(gentopjets))
         {
             if (write_out1)
-                h_sm_htags10 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm10");
+                h_sm_down = ctx.declare_event_output<vector<TopJet>>(htags+"_sm_down");
             if (write_out2)
-                h_sm_htags20 = ctx.declare_event_output<vector<TopJet>>(htags+"_sm20");
+                h_sm_up = ctx.declare_event_output<vector<TopJet>>(htags+"_sm_up");
         }
 
     virtual bool process(Event & e) override {
         assert(e.is_valid(h_htags));
 
         if (e.isRealData) {
-            e.set(h_sm_htags10, e.get(h_htags));
-            e.set(h_sm_htags20, e.get(h_htags));
+            e.set(h_sm_down, e.get(h_htags));
+            e.set(h_sm_up, e.get(h_htags));
             e.set(h_gen_mass, -1.);
             e.set(h_gen_diff_before, -1000.);
-            e.set(h_gen_diff_10, -1000.);
-            e.set(h_gen_diff_20, -1000.);
+            e.set(h_gen_diff_smeared, -1000.);
+            e.set(h_gen_diff_down, -1000.);
+            e.set(h_gen_diff_up, -1000.);
             e.set(h_gen_diff_before_sj, -1000.);
-            // e.set(h_gen_diff_10_sj, -1000.);
-            // e.set(h_gen_diff_20_sj, -1000.);
+            // e.set(h_gen_diff_down_sj, -1000.);
+            // e.set(h_gen_diff_up_sj, -1000.);
             return true;
         }
         float gen_mass = -1.;
         float gen_diff_before = -1000.;
-        float gen_diff_10 = -1000.;
-        float gen_diff_20 = -1000.;
+        float gen_diff_smeared = -1000.;
+        float gen_diff_down = -1000.;
+        float gen_diff_up = -1000.;
         float gen_diff_before_sj = -1000.;
-        // float gen_diff_10_sj = -1000.;
-        // float gen_diff_20_sj = -1000.;
+        // float gen_diff_down_sj = -1000.;
+        // float gen_diff_up_sj = -1000.;
 
-        vector<TopJet> new_htags10;
-        vector<TopJet> new_htags20;
-        vector<TopJet> const & htags = e.get(h_htags);
+        vector<TopJet> new_ak8jets;
+        vector<TopJet> new_ak8jets_down;
+        vector<TopJet> new_ak8jets_up;
+        vector<TopJet> & htags = e.get(h_htags);
         for (size_t i = 0; i < htags.size(); ++i) {
             auto const & hj = htags[i];
             auto closest_genjet = closestParticle(hj, e.get(h_genjets));
             if (closest_genjet == nullptr || deltaR(*closest_genjet, hj) > 0.3) {
+                new_ak8jets.push_back(hj);
+                new_ak8jets_down.push_back(hj);
+                new_ak8jets_up.push_back(hj);
                 continue;
             }
-            TopJet new_hj10 = hj;  // hj is a jet, not vector
-            TopJet new_hj20 = hj;  // hj is a jet, not vector
+            TopJet new_hj = hj;  // hj is a jet, not vector
+            TopJet new_hj_down = hj;  // hj is a jet, not vector
+            TopJet new_hj_up = hj;  // hj is a jet, not vector
             float hm = hj.softdropmass();
             float hm_sj = hj.softdropmass();
             if (hj.subjets().size()){
@@ -1402,34 +1415,42 @@ public:
             float gen_sj_mass = (gen_sj.size() > 1) ?
                                 (gen_sj[0].v4() + gen_sj[1].v4()).mass() : hm;
 
-            auto mass_10 = max(0.0f, gen_sj_mass + 1.1f * (hm - gen_sj_mass));  // - 9.1998f
-            auto mass_20 = max(0.0f, gen_sj_mass + 1.2f * (hm - gen_sj_mass));  // - 9.1998f
-            // auto mass_10_sj = max(0.0f, gen_sj_mass + 1.1f * (hm_sj - gen_sj_mass));  // - 9.1998f
-            // auto mass_20_sj = max(0.0f, gen_sj_mass + 1.2f * (hm_sj - gen_sj_mass));  // - 9.1998f
-            new_hj10.set_softdropmass(mass_10);
-            new_hj20.set_softdropmass(mass_20);
-            new_htags10.push_back(new_hj10);
-            new_htags20.push_back(new_hj20);
+            auto mass_sm = gen_sj_mass + smear_fct_ * (hm - gen_sj_mass);
+            auto mass_sm_down = gen_sj_mass + (smear_fct_ - unc_) * (hm - gen_sj_mass);
+            auto mass_sm_up = gen_sj_mass + (smear_fct_ + unc_) * (hm - gen_sj_mass);
+
+            // auto mass_sm_down_sj = max(0.0f, gen_sj_mass + 1.1f * (hm_sj - gen_sj_mass));  // - 9.1998f
+            // auto mass_sm_up_sj = max(0.0f, gen_sj_mass + 1.2f * (hm_sj - gen_sj_mass));  // - 9.1998f
+            new_hj.set_softdropmass(mass_sm);
+            new_hj_down.set_softdropmass(mass_sm_down);
+            new_hj_up.set_softdropmass(mass_sm_up);
+            new_ak8jets.push_back(new_hj);
+            new_ak8jets_down.push_back(new_hj_down);
+            new_ak8jets_up.push_back(new_hj_up);
             if (!i) {
                 gen_mass = gen_sj_mass;
                 gen_diff_before = (hm - gen_sj_mass)/gen_sj_mass;
-                gen_diff_10 = (mass_10 - gen_sj_mass)/gen_sj_mass;
-                gen_diff_20 = (mass_20 - gen_sj_mass)/gen_sj_mass;
+                gen_diff_smeared = (mass_sm - gen_sj_mass)/gen_sj_mass;
+                gen_diff_down = (mass_sm_down - gen_sj_mass)/gen_sj_mass;
+                gen_diff_up = (mass_sm_up - gen_sj_mass)/gen_sj_mass;
                 gen_diff_before_sj = (hm_sj - gen_sj_mass)/gen_sj_mass;
-                // gen_diff_10_sj = (mass_10_sj - gen_sj_mass)/gen_sj_mass;
-                // gen_diff_20_sj = (mass_20_sj - gen_sj_mass)/gen_sj_mass;
+                // gen_diff_down_sj = (mass_sm_down_sj - gen_sj_mass)/gen_sj_mass;
+                // gen_diff_up_sj = (mass_sm_up_sj - gen_sj_mass)/gen_sj_mass;
             }
 
         }
-        e.set(h_sm_htags10, new_htags10);
-        e.set(h_sm_htags20, new_htags20);
+        htags = new_ak8jets;
+        // e.set(h_sm_nom, new_ak8jets);
+        e.set(h_sm_down, new_ak8jets_down);
+        e.set(h_sm_up, new_ak8jets_up);
         e.set(h_gen_mass, gen_mass);
         e.set(h_gen_diff_before, gen_diff_before);
-        e.set(h_gen_diff_10, gen_diff_10);
-        e.set(h_gen_diff_20, gen_diff_20);
+        e.set(h_gen_diff_smeared, gen_diff_smeared);
+        e.set(h_gen_diff_down, gen_diff_down);
+        e.set(h_gen_diff_up, gen_diff_up);
         e.set(h_gen_diff_before_sj, gen_diff_before_sj);
-        // e.set(h_gen_diff_10_sj, gen_diff_10_sj);
-        // e.set(h_gen_diff_20_sj, gen_diff_20_sj);
+        // e.set(h_gen_diff_down_sj, gen_diff_down_sj);
+        // e.set(h_gen_diff_up_sj, gen_diff_up_sj);
 
         return true;
 
@@ -1437,27 +1458,30 @@ public:
     }
 private:
     Event::Handle<vector<TopJet>> h_htags;
-    Event::Handle<vector<TopJet>> h_sm_htags10, h_sm_htags20;
+    Event::Handle<vector<TopJet>> h_sm_down, h_sm_up;
     Event::Handle<float> h_gen_mass;
-    Event::Handle<float> h_gen_diff_before, h_gen_diff_before_sj;
-    Event::Handle<float> h_gen_diff_10; // , h_gen_diff_10_sj
-    Event::Handle<float> h_gen_diff_20; // , h_gen_diff_20_sj
+    Event::Handle<float> h_gen_diff_before, h_gen_diff_smeared, h_gen_diff_before_sj;
+    Event::Handle<float> h_gen_diff_down; // , h_gen_diff_down_sj
+    Event::Handle<float> h_gen_diff_up; // , h_gen_diff_up_sj
+    float smear_fct_, unc_;
     Event::Handle<vector<GenTopJet>> h_genjets;
     // Event::Handle<float> h_mass;
     // Event::Handle<float> h_mass_gen;
     // Event::Handle<float> h_mass_gen_sd;
     // Event::Handle<float> h_mass_diff;
-    // Event::Handle<float> h_mass_10;
-    // Event::Handle<float> h_mass_20;
+    // Event::Handle<float> h_mass_sm_down;
+    // Event::Handle<float> h_mass_sm_up;
 };
 
 
 class AK8SoftDropCorr: public AnalysisModule {
 public:
     explicit AK8SoftDropCorr(Context & ctx,
-                            const std::string & ak8jets
+                            const std::string & ak8jets,
+                            float dir = 0.
                             ):
-        h_ak8jets (ctx.get_handle<vector<TopJet>>(ak8jets))
+        h_ak8jets (ctx.get_handle<vector<TopJet>>(ak8jets)),
+        dir_(dir)
         {}
 
     virtual bool process(Event & e) override {
@@ -1472,8 +1496,30 @@ public:
             //         sum_subjets += subjet.v4();
             //     sj_mass = sum_subjets.M();
             // }
-            float new_mass = ak8jet.softdropmass()*1/ak8jet.JEC_factor_raw();
-            ak8jet.set_softdropmass(new_mass);
+            if (!dir_) {
+                // float old_mass = ak8jet.softdropmass();
+                // float jec_corr = abs(1 - 1/ak8jet.JEC_factor_raw());
+                // float corr_fct = 1 + sqrt(jec_corr*jec_corr);
+                float new_mass = ak8jet.softdropmass()*1/ak8jet.JEC_factor_raw();
+                // std::cout << "Nominal old_mass/jec_corr_fct/corr_fct/new_mass:  " << old_mass << " / " << 1/ak8jet.JEC_factor_raw() << " / " << corr_fct << " / " << new_mass << std::endl;
+                ak8jet.set_softdropmass(new_mass);
+            }
+            else if (dir_ < 0.) {
+                // float old_mass = ak8jet.softdropmass();
+                float jec_corr = 1/ak8jet.JEC_factor_raw() - 1;
+                float corr_fct = jec_corr < 0 ? 1 - sqrt(jec_corr*jec_corr + dir_*dir_) : 1 + sqrt(jec_corr*jec_corr - dir_*dir_);
+                float new_mass = ak8jet.softdropmass()*corr_fct;
+                // std::cout << "Down old_mass/jec_corr_fct/corr_fct/new_mass:  " << old_mass << " / " << 1/ak8jet.JEC_factor_raw() << " / " << corr_fct << " / " << new_mass << std::endl;
+                ak8jet.set_softdropmass(new_mass);
+            }
+            else {
+                // float old_mass = ak8jet.softdropmass();
+                float jec_corr = 1/ak8jet.JEC_factor_raw() - 1;
+                float corr_fct = jec_corr < 0 ? 1 - sqrt(jec_corr*jec_corr - dir_*dir_) : 1 + sqrt(jec_corr*jec_corr + dir_*dir_);
+                float new_mass = ak8jet.softdropmass()*corr_fct;
+                // std::cout << "Up old_mass/jec_corr_fct/corr_fct/new_mass:  " << old_mass << " / " << 1/ak8jet.JEC_factor_raw() << " / " << corr_fct << " / " << new_mass << std::endl;
+                ak8jet.set_softdropmass(new_mass);
+            }
             // cout << "Old/Subjet/New: " << old_mass << " " << sj_mass << " " << ak8jet.softdropmass() << endl;
         }
 
@@ -1483,6 +1529,7 @@ public:
     }
 private:
     Event::Handle<vector<TopJet>> h_ak8jets;
+    float dir_;
 };
 
 

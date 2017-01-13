@@ -333,7 +333,7 @@ def plot_setup_uncerts(grps):
 
 def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
     grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
-    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
+    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, add_sys_errs=True)
     if varial.settings.flex_sig_norm:
         grps = common_plot.norm_to_bkg(grps)
     # grps = common_plot.make_empty_bin_error(grps)
@@ -341,7 +341,7 @@ def stack_setup_norm_sig(grps, rate_uncertainties=analysis.rate_uncertainties, s
 
 def stack_setup_norm_all_to_intgr(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
     grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
-    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=False)
+    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=False, add_sys_errs=True)
     # grps = common_plot.norm_stack_to_integral(grps)
     return grps
 

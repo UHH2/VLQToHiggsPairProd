@@ -147,8 +147,8 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
     ctx.declare_event_output<vector<Jet>>("jets");
     ctx.declare_event_output<vector<TopJet>>("topjets");
     ctx.declare_event_output<FlavorParticle>("PrimaryLepton");
-    if (version.find("TTbar_split") == string::npos) 
-        ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
+    // if (version.find("TTbar_split") == string::npos) 
+    //     ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
     // ctx.declare_event_output<FlavorParticle>("PrimaryMuon");
     // ctx.declare_event_output<FlavorParticle>("PrimaryElectron");
     // ctx.declare_event_output<vector<TopJet>>("ak8_boost");

@@ -63,7 +63,7 @@ pattern_bb = [base_path+'/FullTreeProject/HTReweighting/TreeProject/TreeProjecto
 #     'RunAnalysis/HTReweighting/TreeProject/SysTreeProjectors'
 sys_path = base_path+'/FullTreeProject/HTReweighting/TreeProject/SysTreeProjectors'
 
-uncerts = analysis.all_uncerts + ['jsf']
+uncerts = analysis.all_uncerts
 
 # sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
 sys_pat_tt = list(sys_path+'Bkg/%s*/*.root'% i for i in uncerts) + list(sys_path+'TT*/%s*/*.root'% i for i in uncerts)
@@ -73,28 +73,28 @@ sys_pat_bb = list(sys_path+'Bkg/%s*/*.root'% i for i in uncerts) + list(sys_path
 
 br_list_tt = [
     ('bW0p5_tZ0p25_tH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
-    ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
-    ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
-    ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
-    ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
-    ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
-    ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
-    ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
-    ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
-    ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
-    ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
-    ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
-    ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
-    ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
-    ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
-    ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
-    ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
-    ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
-    ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
-    ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
-    ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
-    ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
-    ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    # ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    # ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
+    # ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
+    # ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
+    # ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
+    # ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
+    # ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
+    # ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
+    # ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
+    # ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
+    # ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
+    # ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
+    # ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
+    # ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
+    # ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
+    # ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
+    # ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
+    # ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
+    # ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
+    # ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
+    # ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
+    # ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
     ]
 
 br_list_bb = [
@@ -420,7 +420,7 @@ def mk_limit_tc(brs, input_path, model_func, signal='', asymptotic=True):
     return [limits, postfit] #, corr_mat, corr_plotter, post_loader, plotter_postfit, 
         # return tmp
 
-def mk_bkg_only_fit(output_name):
+def mk_bkg_only_fit(output_name, model=theta_combined_template.get_full_model):
     tc = [varial.tools.ToolChain(
         'BackgroundOnlyFit', 
         create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
@@ -428,11 +428,11 @@ def mk_bkg_only_fit(output_name):
             [],
             ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
                 base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-            lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+            lambda w: model(w, None, lambda w: 'TpTp' not in w),
             '',
         )),
-        sensitivity.mk_tc_postfit_plot(theta_lim_path='../../ThetaLimit', pattern=pattern_tt, sys_pat=sys_pat_tt,
-            sys_uncerts=uncerts, plots=['ST']),
+        # sensitivity.mk_tc_postfit_plot(theta_lim_path='../../ThetaLimit', pattern=pattern_tt, sys_pat=sys_pat_tt,
+        #     sys_uncerts=uncerts, plots=['ST']),
         varial.tools.WebCreator()
     ]
         
@@ -500,11 +500,11 @@ def mk_bkg_only_fit_compare_comb(output_name):
         
     return varial.tools.ToolChainParallel(output_name, tc, n_workers=1)
 
-def mk_ind_graphs(brs):
-    return varial.tools.ToolChain('LimitsWithGraphs',[
+def mk_ind_graphs(brs, name='LimitWithGraphs', plot_obs=True):
+    return varial.tools.ToolChain(name,[
         limits.LimitGraphsNew(
             limit_path='../../ThetaLimits/*/ThetaLimit',
-            plot_obs=True,
+            plot_obs=plot_obs,
             split_mass=True,
             plot_1sigmabands=True,
             plot_2sigmabands=True,
@@ -566,7 +566,7 @@ def mk_triangle():
             ),
         ])
 
-def limits_only_boostH(br_str, brs, asymptotic):
+def limits_only_boostH(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model):
     return varial.tools.ToolChainParallel(
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
@@ -574,28 +574,28 @@ def limits_only_boostH(br_str, brs, asymptotic):
             mk_limit_tc(
                 brs,
                 ['../HiggsTagTemplates/HiggsTagTemplate_'+br_str+'_'+sig+'.root'],
-                theta_combined_template.get_full_model,
+                model,
                 sig,
                 asymptotic
             ))
         for sig, file_path in tt_signals.iteritems())
     )
 
-def limits_only_boostW(br_str, brs, asymptotic):
+def limits_only_boostW(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model):
     return varial.tools.ToolChainParallel(
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
             mk_limit_tc(
                 brs,
                 [base_path_julie+file_path+'_'+br_str+file_suffix],
-                theta_combined_template.get_full_model,
+                model,
                 sig,
                 asymptotic
             ))
         for sig, file_path in tt_signals.iteritems())
     )
 
-def limits_only_comb(br_str, brs, asymptotic):
+def limits_comb(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model):
     return varial.tools.ToolChainParallel(
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
@@ -604,21 +604,22 @@ def limits_only_comb(br_str, brs, asymptotic):
                 brs,
                 ['../HiggsTagTemplates/HiggsTagTemplate_'+br_str+'_'+sig+'.root',
                 base_path_julie+file_path+'_'+br_str+file_suffix],
-                theta_combined_template.get_full_model,
+                model,
                 sig,
                 asymptotic
             ))
         for sig, file_path in tt_signals.iteritems())
     )
 
-def mk_limit_list(output_name, lim_func, asymptotic=True):
+def mk_limit_list(output_name, lim_func, asymptotic=True, model=theta_combined_template.get_full_model):
     # def tmp():
     limit_list = []
     for br_str, brs in br_list_tt:
         # if ind > 5: break
         tc = []
-        tc.append(lim_func(br_str, brs, asymptotic))
-        tc.append(mk_ind_graphs(brs))
+        tc.append(lim_func(br_str, brs, asymptotic, model=model))
+        tc.append(mk_ind_graphs(brs, 'LimitsWithGraphs', True))
+        tc.append(mk_ind_graphs(brs, 'LimitsWithGraphsNoObs', False))
         limit_list.append(
             varial.tools.ToolChain('Limit_'+br_str, tc))
 
@@ -627,10 +628,11 @@ def mk_limit_list(output_name, lim_func, asymptotic=True):
     tr_list = mk_triangle()
     return varial.tools.ToolChain(output_name, [
         ind_limits,
-        # mk_bkg_only_fit('BkgFit'),
+        mk_bkg_only_fit('BkgFit', model=model),
         tr_list,
         # mk_tc_tex(output_name),
-        varial.tools.WebCreator()])
+        varial.tools.WebCreator()
+        ])
     # return tmp
     # return tmp
 
@@ -727,9 +729,15 @@ if __name__ == '__main__':
             sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
 
     # all_tools = mk_limit_list()
-    varial.tools.Runner(varial.tools.ToolChain(output_name, [
-        mk_limit_list('LimitsBoostedHOnly', limits_only_boostH, False)
-        ]), default_reuse=True)
+    varial.tools.Runner(varial.tools.ToolChainParallel(output_name, [
+        # mk_limit_list('LimitsBoostedHOnly', limits_only_boostH, False),
+        mk_limit_list('LimitsNoExtraUncert', limits_comb, False, model=theta_combined_template.get_full_model),
+        mk_limit_list('LimitsAntiCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_chan),
+        mk_limit_list('LimitsCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_chan),
+        mk_limit_list('LimitsAntiCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_btag),
+        mk_limit_list('LimitsCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_btag),
+        varial.tools.WebCreator()
+        ], n_workers=1), default_reuse=True)
     # varial.tools.Runner(mk_bb_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_all_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_bkg_only_fit_compare_comb(output_name), default_reuse=True)

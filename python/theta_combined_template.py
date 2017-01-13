@@ -124,6 +124,66 @@ def get_full_model(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambd
 
     return model
 
+def get_model_ex_anticorr_chan(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
+    model = get_full_model(input_file, signal, histogram_filter)
+    
+    obsvs = model.observables.keys()
+
+    for obs in obsvs:
+        if 'SignalRegion' in obs or 'SidebandRegion' in obs:
+            try: model.add_lognormal_uncertainty('htag_eff',  math.log(1.03), '*', obs) # from ttbar CR
+            except RuntimeError: pass
+        if 'minMlb' in obs:
+            try: model.add_lognormal_uncertainty('htag_eff', math.log(0.97), '*', obs)
+            except RuntimeError: pass
+
+    return model
+
+def get_model_ex_corr_chan(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
+    model = get_full_model(input_file, signal, histogram_filter)
+    
+    obsvs = model.observables.keys()
+    
+    for obs in obsvs:
+        # if 'SignalRegion' in obs or 'SidebandRegion' in obs:
+        try: model.add_lognormal_uncertainty('htag_eff',  math.log(1.03), '*', obs) # from ttbar CR
+        except RuntimeError: pass
+        # if 'minMlb' in obs:
+        #     try: model.add_lognormal_uncertainty('htag_eff', math.log(1.03), '*', obs)
+        #     except RuntimeError: pass
+
+    return model
+
+def get_model_ex_corr_btag(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
+    model = get_full_model(input_file, signal, histogram_filter)
+    
+    obsvs = model.observables.keys()
+
+    for obs in obsvs:
+        # if 'SignalRegion' in obs or 'SidebandRegion' in obs:
+        try: model.add_lognormal_uncertainty('btag_bc',  math.log(1.03), '*', obs) # from ttbar CR
+        except RuntimeError: pass
+        # if 'minMlb' in obs:
+        #     try: model.add_lognormal_uncertainty('btag_bc', math.log(0.97), '*', obs)
+        #     except RuntimeError: pass
+
+    return model
+
+def get_model_ex_anticorr_btag(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
+    model = get_full_model(input_file, signal, histogram_filter)
+    
+    obsvs = model.observables.keys()
+
+    for obs in obsvs:
+        if 'SignalRegion' in obs or 'SidebandRegion' in obs:
+            try: model.add_lognormal_uncertainty('btag_bc',  math.log(1.03), '*', obs) # from ttbar CR
+            except RuntimeError: pass
+        if 'minMlb' in obs:
+            try: model.add_lognormal_uncertainty('btag_bc', math.log(0.97), '*', obs)
+            except RuntimeError: pass
+
+    return model
+
 def get_bkg_only_model(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
     model = theta_auto.build_model_from_rootfile(input_file, histogram_filter=histogram_filter, include_mc_uncertainties=True)#,histogram_filter = (lambda s: s.count('jec')==0 and s.count('jer')==0)
     

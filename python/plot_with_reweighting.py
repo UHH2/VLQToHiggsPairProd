@@ -195,57 +195,57 @@ def loader_hook_nominal_brs(wrps):
     return wrps
 
 
-def merge_sig_data(wrps, print_warning=True):
-    """histos must be sorted!!"""
+# def merge_sig_data(wrps, print_warning=True):
+#     """histos must be sorted!!"""
 
-    def do_merging(buf):
-        if len(buf) > 2:
-            raise RuntimeError('ERROR Need exactly two histograms (data+signal) to merge.')
+#     def do_merging(buf):
+#         if len(buf) > 2:
+#             raise RuntimeError('ERROR Need exactly two histograms (data+signal) to merge.')
 
-        # buf = sorted(buf, key=lambda w: w.is_signal)
-        res = varial.operations.merge(buf)
-        res.file_path = ''
-        # res.histo.Sumw2()
-        for i in xrange(1, res.histo.GetNbinsX() + 1):
-            err = math.sqrt(res.histo.GetBinContent(i))
-            res.histo.SetBinError(i, err)
-        del buf[:]
-        return res
+#         # buf = sorted(buf, key=lambda w: w.is_signal)
+#         res = varial.operations.merge(buf)
+#         res.file_path = ''
+#         # res.histo.Sumw2()
+#         for i in xrange(1, res.histo.GetNbinsX() + 1):
+#             err = math.sqrt(res.histo.GetBinContent(i))
+#             res.histo.SetBinError(i, err)
+#         del buf[:]
+#         return res
 
-    buf = []
-    for w in wrps:
-        if w.is_data or w.is_signal:
-            buf.append(w)
-            if len(buf) == 2:
-                yield do_merging(buf)
-        else:
-            if buf:
-                if print_warning:
-                    print 'WARNING In merge_sig_data: buffer not empty.\n' \
-                          'Flushing remaining items:\n' + ' | '.join(
-                        '%s, %s' % (w.sample, w.in_file_path) for w in buf
-                    )
-                yield do_merging(buf)
-            yield w
-    if buf:
-        yield do_merging(buf)
+#     buf = []
+#     for w in wrps:
+#         if w.is_data or w.is_signal:
+#             buf.append(w)
+#             if len(buf) == 2:
+#                 yield do_merging(buf)
+#         else:
+#             if buf:
+#                 if print_warning:
+#                     print 'WARNING In merge_sig_data: buffer not empty.\n' \
+#                           'Flushing remaining items:\n' + ' | '.join(
+#                         '%s, %s' % (w.sample, w.in_file_path) for w in buf
+#                     )
+#                 yield do_merging(buf)
+#             yield w
+#     if buf:
+#         yield do_merging(buf)
 
-def loader_hook_merge_sig_data(wrps):
-    def sort_signal_data(wrp):
-        if wrp.is_data:
-            return '0'
-        elif wrp.is_signal:
-            return '1'
-        else:
-            return '2'
+# def loader_hook_merge_sig_data(wrps):
+#     def sort_signal_data(wrp):
+#         if wrp.is_data:
+#             return '0'
+#         elif wrp.is_signal:
+#             return '1'
+#         else:
+#             return '2'
 
-    wrps = common_plot.mod_title(wrps)
-    # wrps = common_plot.mod_legend_no_thth(wrps)
-    wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.name+'___'+sort_signal_data(w))
-    wrps = merge_sig_data(wrps, False)
-    wrps = common_plot.rebin_st_and_nak4(wrps)
-    wrps = sorted(wrps, key=lambda w: w.region+'___'+w.name)
-    return wrps
+#     wrps = common_plot.mod_title(wrps)
+#     # wrps = common_plot.mod_legend_no_thth(wrps)
+#     wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.name+'___'+sort_signal_data(w))
+#     wrps = merge_sig_data(wrps, False)
+#     wrps = common_plot.rebin_st_and_nak4(wrps)
+#     wrps = sorted(wrps, key=lambda w: w.region+'___'+w.name)
+#     return wrps
 
 def mk_histoloader_merge(input_pattern, plot_hists=plot_hists, samples=samples_to_plot_thth):
     return varial.tools.ToolChainParallel('HistoLoader',
@@ -394,7 +394,7 @@ def plot_merged_channels(final_dir):
         # mk_histograms_sig_inj('HistogramsSigInj1200', ['TpTp_M-0800', 'TpTp_M-1600']),
         # mk_histograms_sig_inj('HistogramsSigInj1600', ['TpTp_M-0800', 'TpTp_M-1200']),
         plot.mk_toolchain('HistogramsCompUncerts', samples_to_plot_all,
-            filter_keyfunc=lambda w: any(f in w.file_path for f in [analysis.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT', 'primary_electron_pt']),   
+            filter_keyfunc=lambda w: any(f in w.file_path for f in [analysis.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
             plotter_factory=plot.plotter_factory_uncerts(
                 hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w), 
                     analysis.rate_uncertainties, uncerts, include_rate=False)),

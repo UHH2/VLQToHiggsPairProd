@@ -4,9 +4,10 @@ import sys
 import os
 import time
 
-import varial.settings
+import varial.settings as settings
 import varial.rendering as rnd
 import varial.generators as gen
+import varial.tools
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 
@@ -24,6 +25,55 @@ import tex_content_new as tex_content
 from get_eff_count import CountTable, EffTable # EffNumTable, 
 
 from ROOT import TLatex, TH2
+import ROOT
+
+settings.canvas_size_x = 600
+settings.canvas_size_y = 500
+
+settings.colors.update({
+    # 'Background' : 920,
+    # 'nominal' : 1,
+    # 'plus' : 2,
+    # 'minus' : 3,
+    # 'TTbar': 632 - 7,
+    # 'WJets': 400-9,
+    # 'ZJets': 432-9,
+    # 'DYJets': 432-9,
+    # 'DYJetsToLL': 432-9,
+    # 'SingleT': 416-9,
+    # 'SingleTop': 416-9,
+    # 'Diboson' :616-9,
+    'TOP' : ROOT.kAzure + 8,
+    'EWK' : ROOT.kMagenta - 2,
+    'QCD': ROOT.kOrange + 5,
+    'TpTp_M-0800' : ROOT.kBlack,
+    'TpTp_M-1200' : ROOT.kBlack,
+    'TpTp_M-1200_thX' : ROOT.kBlack,
+    'TpTp_M-1200_other' : ROOT.kBlack,
+})
+
+settings.stacking_order = [
+    'QCD',
+    'EWK',
+    'TOP',
+]
+
+line_styles = {
+    'TpTp_M-0800' : 1,
+    'TpTp_M-1200' : 2,
+    'TpTp_M-1200_thX' : 1,
+    'TpTp_M-1200_other' : 2,
+}
+
+# signals = {'TpTp_M-0800' : ROOT.kViolet,
+#     'TpTp_M-1200' : ROOT.kBlue,
+#     'TpTp_M-1600' : ROOT.kRed
+#     }
+# final_states = final_states = ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']
+
+# for s, c in signals.iteritems():
+#     settings.colors.update(dict((s + f, c) for f in final_states))
+#     settings.colors.update({s+'_thX' : ROOT.kAzure, s+'_other' : ROOT.kMagenta})
 
 bkgs_to_plot = [
     'SingleTop',
@@ -74,7 +124,7 @@ mod_dict = {
                     'reverse': True,
                     'sort_legend' : lambda w: 'TT ' in w[1],
                 },
-            'y_max_fct' : 1.8,
+            'y_max_fct' : 1.2,
             'text_box_log' : (0.16, 0.91, "#scale[0.8]{#bf{CMS}}"),
             'err_empty_bins' : True,
             'draw_x_errs' : True,
@@ -190,7 +240,10 @@ plot.normfactors_ind_fs_rev = None
 source_dir = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/'\
     'UHH2/VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25/'\
     'FullTreeProject/HTReweighting/TreeProject/'
-uncerts = analysis.all_uncerts + ['sfel_trg'] # or get_sys_dir()
+
+uncerts = list(analysis.all_uncerts) # or get_sys_dir()
+uncerts.remove('sfmu_trg')
+uncerts.remove('sflep_trg')
 # nom_pattern = [source_dir+'/TreeProjector/{0}.root',
 #                source_dir+'/TreeProjectorDiboson/{0}.root']
 nom_pattern = [source_dir+'/TreeProjectorBkg/{0}.root',
@@ -207,6 +260,33 @@ theta_lim_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/
     'BackgroundOnlyFitNoTheory/CR/ThetaLimit/'
 
 
+def rename_samples(wrps):
+    for w in wrps:
+        if w.sample in ['TTbar', 'TTbar_split', 'SingleTop']:
+            w.sample = 'TOP__'+w.sample
+            w.legend = 'TOP'
+        if w.sample in ['WJets', 'DYJets', 'Diboson']:
+            w.sample = 'EWK__'+w.sample
+            w.legend = 'EWK'
+        # if w.sample == 'QCD':
+        #     w.sample = 'qcd'
+        yield w
+
+def set_line_style(wrps):
+    for w in wrps:
+        if w.sample in line_styles.keys():
+            w.histo.SetLineStyle(line_styles[w.sample])
+        yield w
+
+# def stack_setup(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
+#     grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
+#     grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
+#     # if varial.settings.flex_sig_norm:
+#     #     grps = common_plot.norm_to_bkg(grps)
+#     # grps = common_plot.make_empty_bin_error(grps)
+#     return grps
+
+
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = plot.common_loader_hook(wrps)
@@ -215,10 +295,33 @@ def loader_hook_compare_finalstates(wrps):
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
+    wrps = set_line_style(wrps)
     wrps = common_plot.mod_legend_eff_counts(wrps)
     wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors, mk_legend=False)
+    # wrps = rename_samples(wrps)
+    # wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.sys_info+'___'+w.sample)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__TTbar', '__TTbar_split', '__SingleTop'], print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__WJets', '__DYJets', '__Diboson'], print_warning=False)
     wrps = gen.sort(wrps, ['in_file_path'])
+    # wrps = list(wrps)
+    # for w in wrps: print w.in_file_path, w.sample, w.legend, w.sys_info
     return wrps
+
+def merge_bkgs(grps):
+    for wrps in grps:
+        name = wrps.name
+        wrps = rename_samples(wrps)
+        wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.sys_info+'___'+w.sample)
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__TTbar', '__TTbar_split', '__SingleTop'], print_warning=False)
+        wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__WJets', '__DYJets', '__Diboson'], print_warning=False)
+        yield varial.wrappers.WrapperWrapper(list(wrps), name=name)
+
+def stack_setup(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False, stack_order=settings.stacking_order):
+    grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
+    grps = merge_bkgs(grps)
+    grps = gen.mc_stack_n_data_sum(grps, merge_mc_key_func=lambda w: varial.analysis.get_stack_position(w, stack_order), calc_sys_integral=True, add_sys_errs=True)
+    # grps = common_plot.make_empty_bin_error(grps)
+    return grps
 
 def plot_merged_channels_higgs(final_dir):
     # plot_hists = ['ST', 'HT', 'n_ak4', 'topjets[0].m_pt', 'topjets[1].m_pt',
@@ -226,6 +329,12 @@ def plot_merged_channels_higgs(final_dir):
     #                 'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
     #                 'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']
     plot_hists = ['ST', 'HT', 'n_ak4', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt', 'nobtag_boost_mass_nsjbtags']
+
+    stacking_order = [
+        'TOP',
+        'EWK',
+        'QCD',
+    ]
 
     return varial.tools.ToolChain(final_dir, [
         varial.tools.ToolChainParallel('HistoLoader',
@@ -241,11 +350,11 @@ def plot_merged_channels_higgs(final_dir):
             raise_on_empty_result=False,
             quiet_mode=True
             ) for g in samples_to_plot_all)),
-        # plot.mk_toolchain('HistogramsCompUncerts', samples_to_plot,
+        # plot.mk_toolchain('HistogramsCompUncerts', samples_to_plot_all,
         #     filter_keyfunc=lambda w: any(f in w.file_path for f in [analysis.ttbar_smpl, 'QCD', 'WJets', 'TpTp_M-0800', 'TpTp_M-1600']) and any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),   
         #     plotter_factory=plot.plotter_factory_uncerts(
-        #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(plot.loader_hook_merge_lep_channels(w), 
-        #             analysis.rate_uncertainties, uncerts, include_rate=True)),
+        #         hook_loaded_histos=lambda w: plot.loader_hook_uncerts(loader_hook_compare_finalstates(w), 
+        #             analysis.rate_uncertainties, uncerts, include_rate=False)),
         #     pattern=None, input_result_path='../HistoLoader/HistoLoader*'),
         # mk_toolchain('HistogramsNormToInt',
         #     filter_keyfunc=lambda w: 'TpTp' not in w.file_path,
@@ -254,8 +363,10 @@ def plot_merged_channels_higgs(final_dir):
         #         plot_setup=stack_setup_norm_all_to_intgr)),
         plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
             filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']),
-            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
+            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
                 hook_loaded_histos=loader_hook_compare_finalstates,
+                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False, stack_order=stacking_order),
+                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False, stack_order=stacking_order),
                 mod_log=common_plot.mod_log_usr(mod_dict),
                 canvas_post_build_funcs=get_style()
                 ),
@@ -285,6 +396,11 @@ def loader_hook_nominal_brs(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=True, yield_orig=False)
+    wrps = set_line_style(wrps)
+    # wrps = rename_samples(wrps)
+    # wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.sys_info+'___'+w.sample)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__TTbar', '__TTbar_split', '__SingleTop'], print_warning=False)
+    # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__WJets', '__DYJets', '__Diboson'], print_warning=False)
     # wrps = remove_final_states(wrps)
     # wrps = common_plot.norm_smpl(wrps, {'_thth' : 1./0.0625}, calc_scl_fct=False)
     # wrps = common_plot.mod_legend_no_thth(wrps)
@@ -296,7 +412,22 @@ def loader_hook_postfit_nominal_brs(wrps, theta_res_path, signal, rate_uncertain
     wrps = sensitivity.scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties)
     return wrps
 
+
+def stack_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate):
+    grps = sensitivity.plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate)
+    grps = merge_bkgs(grps)
+    grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True, add_sys_errs=True)
+    # grps = common_plot.make_empty_bin_error(grps)
+    return grps
+
 def plot_merged_channels_postfit(final_dir):
+
+    # settings.stacking_order = [
+    #     'QCD',
+    #     'EWK',
+    #     'TOP',
+    # ]
+
     return varial.tools.ToolChain(final_dir, [
         varial.tools.ToolChainParallel('HistoLoaderPost',
             list(varial.tools.HistoLoader(
@@ -314,6 +445,8 @@ def plot_merged_channels_postfit(final_dir):
         plot.mk_toolchain('HistogramsPostfit',
             plotter_factory=sensitivity.plotter_factory_postfit(theta_lim_path, '', analysis.rate_uncertainties, uncerts, True,
                 hook_loaded_histos=lambda w: loader_hook_postfit_nominal_brs(w, theta_lim_path, '', analysis.rate_uncertainties),
+                stack_setup=lambda w: stack_setup_postfit(w, theta_lim_path, '', analysis.rate_uncertainties, uncerts, True),
+                plot_setup=lambda w: stack_setup_postfit(w, theta_lim_path, '', analysis.rate_uncertainties, uncerts, True),
                 mod_log=common_plot.mod_log_usr(mod_dict),
                 canvas_post_build_funcs=get_style()),
             pattern=None,
@@ -322,45 +455,17 @@ def plot_merged_channels_postfit(final_dir):
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
             ),
-        # plot.mk_toolchain('HistogramsPostfitCompareUncerts', samples_to_plot,
-        #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
-        #         any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
-        #     plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
-        #         hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-        #     ),
-        #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-        #     ),
-        # plot.mk_toolchain('HistogramsTables', samples_for_tables,
-        #     plotter_factory=plotter_factory_postfit(theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-        #     pattern=None,
-        #     input_result_path='../HistoLoaderPost/HistoLoader*',
-        #     # auto_legend=False,
-        #     # name='HistogramsPostfit',
-        #     # lookup_aliases=varial.settings.lookup_aliases
-        #     ),
-        # CountTable([
-        #         common_plot.table_block_signal,
-        #         common_plot.table_block_background,
-        #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-        #         [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
-        #     ],
-        #     common_plot.get_table_category_block('HistogramsTables'),
-        #     name='CountTablePostFit'
-        #     ),
-        # CountTable([
-        #         common_plot.table_block_signal_small,
-        #         common_plot.table_block_background,
-        #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-        #         [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
-        #     ],
-        #     common_plot.get_table_category_block('HistogramsTables', style='PAS'),
-        #     squash_errs=True,
-        #     name='CountTablePostFitPAS'
-        #     ),
         varial.tools.WebCreator()
         ])
 
 def plot_merged_channels_prefit(final_dir):
+
+    # settings.stacking_order = [
+    #     'QCD',
+    #     'EWK',
+    #     'TOP',
+    # ]
+
     return varial.tools.ToolChain(final_dir, [
         varial.tools.ToolChainParallel('HistoLoaderPre',
             list(varial.tools.HistoLoader(
@@ -376,51 +481,19 @@ def plot_merged_channels_prefit(final_dir):
                 quiet_mode=True
                 ) for g in samples_to_plot_all)),
         plot.mk_toolchain('HistogramsPrefit', samples_to_plot_all,
-            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, True,
+            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
                 hook_loaded_histos=loader_hook_nominal_brs,
+                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
+                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
                 mod_log=common_plot.mod_log_usr(mod_dict),
-                canvas_post_build_funcs=get_style()),
+                canvas_post_build_funcs=get_style()
+                ),
             pattern=None,
             input_result_path='../HistoLoaderPre/HistoLoader*',
             # auto_legend=False,
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
             ),
-        # plot.mk_toolchain('HistogramsPostfitCompareUncerts', samples_to_plot,
-        #     filter_keyfunc=lambda w: any(f in w.file_path for f in ['TTbar_split', 'WJets', 'DYJets', 'TpTp_M-0800', 'TpTp_M-1600']) and\
-        #         any(w.in_file_path.endswith(g) for g in ['ST', 'HT']),
-        #     plotter_factory=plot.plotter_factory_uncerts(rate_uncertainties, sys_uncerts,
-        #         hook_loaded_histos=lambda w: loader_hook_split_uncert(w, theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-        #     ),
-        #     pattern=None, input_result_path='../HistoLoaderPost/HistoLoader*'
-        #     ),
-        # plot.mk_toolchain('HistogramsTables', samples_for_tables,
-        #     plotter_factory=plotter_factory_postfit(theta_lim_path, signal, rate_uncertainties, sys_uncerts, include_rate),
-        #     pattern=None,
-        #     input_result_path='../HistoLoaderPost/HistoLoader*',
-        #     # auto_legend=False,
-        #     # name='HistogramsPostfit',
-        #     # lookup_aliases=varial.settings.lookup_aliases
-        #     ),
-        # CountTable([
-        #         common_plot.table_block_signal,
-        #         common_plot.table_block_background,
-        #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-        #         [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
-        #     ],
-        #     common_plot.get_table_category_block('HistogramsTables'),
-        #     name='CountTablePostFit'
-        #     ),
-        # CountTable([
-        #         common_plot.table_block_signal_small,
-        #         common_plot.table_block_background,
-        #         [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
-        #         [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
-        #     ],
-        #     common_plot.get_table_category_block('HistogramsTables', style='PAS'),
-        #     squash_errs=True,
-        #     name='CountTablePostFitPAS'
-        #     ),
         varial.tools.WebCreator()
         ])
 
@@ -428,6 +501,12 @@ table_block_signal_small = [
     (r'$\mathrm{T\bar{T}}$ (0.8 TeV)', lambda w: 'Integral___TpTp_M-0800' in w, True),
     (r'$\mathrm{T\bar{T}}$ (1.2 TeV)', lambda w: 'Integral___TpTp_M-1200' in w, True),
     # (r'$\mathrm{T\bar{T}}$ (1.6 TeV)', lambda w: 'Integral___TpTp_M-1600' in w, True),
+]
+
+table_block_background = [
+    ('TOP', lambda w: 'Integral___TOP' in w, False, True),
+    ('EWK', lambda w: 'Integral___EWK' in w, False, True),
+    ('QCD', lambda w: 'Integral___QCD' in w, False, True),
 ]
 
 def plot_merged_channels_tables(final_dir):
@@ -447,8 +526,11 @@ def plot_merged_channels_tables(final_dir):
                 ) for g in samples_for_tables)),
         plot.mk_toolchain('HistogramsTablesPostfit', samples_for_tables,
             plotter_factory=sensitivity.plotter_factory_postfit(theta_lim_path, '', analysis.rate_uncertainties, uncerts, True,
-                hook_loaded_histos=lambda w: loader_hook_postfit_nominal_brs(w, theta_lim_path, '', analysis.rate_uncertainties)
-                ),
+                hook_loaded_histos=lambda w: loader_hook_postfit_nominal_brs(w, theta_lim_path, '', analysis.rate_uncertainties),
+                stack_setup=lambda w: stack_setup_postfit(w, theta_lim_path, '', analysis.rate_uncertainties, uncerts, True),
+                plot_setup=lambda w: stack_setup_postfit(w, theta_lim_path, '', analysis.rate_uncertainties, uncerts, True),
+                mod_log=common_plot.mod_log_usr(mod_dict),
+                canvas_post_build_funcs=get_style()),
             pattern=None,
             input_result_path='../HistoLoaderPost/HistoLoader*',
             # auto_legend=False,
@@ -456,8 +538,13 @@ def plot_merged_channels_tables(final_dir):
             # lookup_aliases=varial.settings.lookup_aliases
             ),
         plot.mk_toolchain('HistogramsTablesPrefit', samples_for_tables,
-            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True,
-                hook_loaded_histos=loader_hook_nominal_brs),
+            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
+                hook_loaded_histos=loader_hook_nominal_brs,
+                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
+                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
+                mod_log=common_plot.mod_log_usr(mod_dict),
+                canvas_post_build_funcs=get_style()
+                ),
             pattern=None,
             input_result_path='../HistoLoaderPost/HistoLoader*',
             # auto_legend=False,
@@ -475,7 +562,7 @@ def plot_merged_channels_tables(final_dir):
             ),
         CountTable([
                 table_block_signal_small,
-                common_plot.table_block_background,
+                table_block_background,
                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                 [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
             ],
@@ -485,7 +572,7 @@ def plot_merged_channels_tables(final_dir):
             ),
         CountTable([
                 table_block_signal_small,
-                common_plot.table_block_background,
+                table_block_background,
                 [(r'\textbf{Total Background}', lambda w: 'Integral___bkg_sum' in w)],
                 [(r'\textbf{Data}', lambda w: 'Integral___Run2015CD' in w)],
             ],
@@ -515,18 +602,18 @@ def mk_tc_tex(source_dir):
                 ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
                 ('st_h1b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
                 ('st_h2b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
-            ), name='PaperPlots'),
+            ), name='PaperPlotsNew'),
         tex_content.mk_plot_ind(
             (
                 ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
                 ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
                 ('st_h1b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
                 ('st_h2b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
-            ), name='PaperPlotsPrefit'),
-        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS'),
+            ), name='PaperPlotsPrefitNew'),
+        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFS/count_table_content.tex', name='EffTableCompFSNew'),
         # tex_content.mk_autoTable(path_an+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable'),
-        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePostFit/count_table_content.tex', name='CountTablePostFit'),
-        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePreFit/count_table_content.tex', name='CountTablePreFit'),
+        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePostFit/count_table_content.tex', name='CountTablePostFitNew'),
+        tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePreFit/count_table_content.tex', name='CountTablePreFitNew'),
         # tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),

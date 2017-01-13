@@ -44,12 +44,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     //             "electrons_mva_tight"
     //             ));
     if (make_lep_coll) {
-        common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
-                    "electrons",
-                    "electrons_mva_loose",
-                    boost::none,
-                    true
-                    ));
+        // common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
+        //             "electrons",
+        //             "electrons_mva_loose",
+        //             boost::none,
+        //             true
+        //             ));
         common_modules.emplace_back(new CollectionProducer<Electron>(ctx,
                     "electrons",
                     "electrons_iso",
@@ -63,7 +63,7 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
     }
 
 
-    common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.4)), "electrons_mva_loose"));
+    // common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_MVAnotrig_Spring15_25ns_loose, PtEtaCut(20.0, 2.4)), "electrons_mva_loose"));
     common_modules.emplace_back(new ParticleCleaner<Electron>(ctx, AndId<Electron>(ElectronID_Spring15_25ns_medium, PtEtaCut(20.0, 2.4)), "electrons_iso"));
     common_modules.emplace_back(new ParticleCleaner<Muon>(ctx, AndId<Muon>(MuonIDMedium(), MuonIso(), PtEtaCut(20.0, 2.1)), "muons_iso"));
 
@@ -77,12 +77,12 @@ TpTpAnalysisModule::TpTpAnalysisModule(Context & ctx) {
 
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLepton", "trigger_accept_el45", "trigger_accept_mu45", 50., 47.));
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonEl105", "trigger_accept_el105", "trigger_accept_mu45", "prim_ele_coll_el105", "prim_mu_coll_el105", 115., 47.));
-    common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonMVALoose", "trigger_accept_el45", "trigger_accept_mu45", "prim_ele_coll_mva_loose", "prim_ele_coll_mva_loose", 50., 47., "electrons_mva_loose", "muons"));
+    // common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonMVALoose", "trigger_accept_el45", "trigger_accept_mu45", "prim_ele_coll_mva_loose", "prim_ele_coll_mva_loose", 50., 47., "electrons_mva_loose", "muons"));
     common_modules.emplace_back(new TriggerAwarePrimaryLepton(ctx, "PrimaryLeptonIso", "trigger_accept_isoEl27", "trigger_accept_isoMu20", "prim_ele_coll_iso", "prim_mu_coll_iso", 40., 40., "electrons_iso", "muons_iso"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons", "PrimaryMuon"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Muon>(ctx, "muons_iso", "PrimaryMuonIso"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons", "PrimaryElectron"));
-    common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons_mva_loose", "PrimaryElectronMVALoose"));
+    // common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons_mva_loose", "PrimaryElectronMVALoose"));
     common_modules.emplace_back(new PrimaryLeptonOwn<Electron>(ctx, "electrons_iso", "PrimaryElectronIso"));
 
     common_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryLepton", "TwoDcut_Dr_noIso", "TwoDcut_Dpt_noIso", true));

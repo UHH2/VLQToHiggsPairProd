@@ -39,6 +39,11 @@ st_only = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
 }
 
+st_plus_ht = {
+    'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
+    'HT'                            : ('H_{T} [GeV]',                               65, 0, 6500),
+}
+
 st_plus_jets = {
     'ST'                            : ('S_{T} [GeV]',                               65, 0, 6500),
     'n_ak4'                         : ('N(Ak4 Jets)',                      20, -.5, 19.5),
@@ -297,6 +302,12 @@ st_only_params = {
     'nm1' : False,
 }
 
+st_plus_ht_params = {
+    'histos': st_plus_ht,
+    'treename': 'AnalysisTree',
+    'nm1' : False,
+}
+
 st_plus_jets_params = {
     'histos': st_plus_jets,
     'treename': 'AnalysisTree',
@@ -310,7 +321,7 @@ sys_params = {
 }
 
 
-def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='TreeProjector', treeproject=TreeProjector):
+def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='TreeProjector', treeproject=TreeProjector, params=all_params):
     sample_weights = weights or sample_weights_def
     sec_sel_weight = list((g, f, weights) for g, f in final_regions)
     all_files = glob.glob(join(input_pat, 'Files_and_Plots_nominal/SFrame/workdir/uhh2.AnalysisModuleRunner.*.root'))
@@ -326,7 +337,7 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='
         kws['spark_url'] = 'spark://%s:7077' % hostname
 
     return treeproject(
-        filenames, all_params, sec_sel_weight, 
+        filenames, params, sec_sel_weight, 
         # suppress_job_submission=True, 
         name=name,
         **kws

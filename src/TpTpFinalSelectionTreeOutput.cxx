@@ -82,43 +82,50 @@ public:
         // shared_ptr<SelectionItem>(new SelDatF("dR_ak4_btagged_higgs_tags_1b_med", "dR(b-tag ak4, htag)", 50, 0., 5.)),
         shared_ptr<SelectionItem>(new SelDatI("n_toptags", "N(t-tags)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_wtags", "N(W-tags)", 6, -.5, 5.5)),
-        // shared_ptr<SelectionItem>(new SelDatI("n_wtags_sm10", "N(W-tags, sm10)", 6, -.5, 5.5)),
-        // shared_ptr<SelectionItem>(new SelDatI("n_wtags_sm20", "N(W-tags, sm20)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_wtags_sm_down", "N(W-tags, sm10)", 6, -.5, 5.5)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_wtags_sm_up", "N(W-tags, sm_up)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(H-tags, 1b)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(H-tags, 2b)", 6, -.5, 5.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm10", "N(H-tags, 1b, sm10)", 6, -.5, 5.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm10", "N(H-tags, 2b, sm10)", 6, -.5, 5.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm20", "N(H-tags, 1b, sm20)", 6, -.5, 5.5)),
-        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm20", "N(H-tags, 2b, sm20)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm_down", "N(H-tags, 1b, sm10)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm_down", "N(H-tags, 2b, sm10)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm_up", "N(H-tags, 1b, sm_up)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm_up", "N(H-tags, 2b, sm_up)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sc_up", "N(H-tags, 1b, sc up)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sc_up", "N(H-tags, 2b, sc up)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sc_down", "N(H-tags, 1b, sc down)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sc_down", "N(H-tags, 2b, sc down)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8_cleaned", "N(Ak8 Jets, cleaned)", 10, -.5, 9.5)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt_mva_loose", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt_mva_tight", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatF("primary_lepton_pt_el105", "Primary Lepton p_T", 100, 0., 1200.)),
         // shared_ptr<SelectionItem>(new SelDatF("wtags_mass", "mass sj", 100, 0., 300.)),
-        // shared_ptr<SelectionItem>(new SelDatF("wtags_sm10_mass", "mass sj", 100, 0., 300.)),
-        // shared_ptr<SelectionItem>(new SelDatF("wtags_sm20_mass", "mass sj", 100, 0., 300.)),
+        // shared_ptr<SelectionItem>(new SelDatF("wtags_sm_down_mass", "mass sj", 100, 0., 300.)),
+        // shared_ptr<SelectionItem>(new SelDatF("wtags_sm_up_mass", "mass sj", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("ak8_boost_gen_mass", "gen mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_before", "diff before", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_10", "diff 10", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_20", "diff 20", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_smeared", "diff smeared", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_down", "diff smeared down", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_up", "diff smeared up", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_before_sj", "diff before sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_10_sj", "diff 10 sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_20_sj", "diff 20 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_down_sj", "diff 10 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("ak8_boost_diff_up_sj", "diff 20 sj", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_gen_mass", "gen mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_before", "diff before", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_10", "diff 10", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_20", "diff 20", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_smeared", "diff smeared", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_down", "diff smeared down", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_up", "diff smeared up", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_before_sj", "diff before sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_10_sj", "diff 10 sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_20_sj", "diff 20 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_down_sj", "diff 10 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_diff_up_sj", "diff 20 sj", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_gen_mass", "gen mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_before", "diff before", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_10", "diff 10", 50, -1., 1.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_20", "diff 20", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_smeared", "diff smeared", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_down", "diff smeared down", 50, -1., 1.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_up", "diff smeared up", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_before_sj", "diff before sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_10_sj", "diff 10 sj", 50, -1., 1.)),
-        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_20_sj", "diff 20 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_down_sj", "diff 10 sj", 50, -1., 1.)),
+        // shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_diff_up_sj", "diff 20 sj", 50, -1., 1.)),
         shared_ptr<SelectionItem>(new SelDatF("nobtag_boost_mass_nsjbtags", "N sjbtags medium", 6, -0.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatF("dR_ak8_higgs_cand_1_ak4_jets_btagged_cl", "dR_ak8_higgs_cand_1_ak4_jets_btagged_cl", 50, 0., 5.)),
         // shared_ptr<SelectionItem>(new SelDatF("dR_jets_1_PrimaryLepton_cl", "dR_jets_1_PrimaryLepton_cl", 50, 0., 5.)),
@@ -132,25 +139,25 @@ public:
         // shared_ptr<SelectionItem>(new SelDatF("dR_topjets_1_jets_2", "dR_topjets_1_jets_2", 50, 0., 5.)),
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_1b_med_mass_softdrop", "higgs_tags_1b_med_mass", 100, 0., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_1b_med_mass_sj", "higgs_tags_1b_med_mass", 100, 0., 300.)),
-        // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_1b_med_sm20_mass_softdrop", "higgs_tags_1b_med_sm20_mass", 100, 0., 300.)),
+        // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_1b_med_sm_up_mass_softdrop", "higgs_tags_1b_med_sm_up_mass", 100, 0., 300.)),
         // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_2b_med_mass_softdrop", "higgs_tags_2b_med_mass", 100, 0., 300.)),
-        // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_2b_med_sm20_mass_softdrop", "higgs_tags_2b_med_sm20_mass", 100, 0., 300.)),
+        // shared_ptr<SelectionItem>(new SelDatF("higgs_tags_2b_med_sm_up_mass_softdrop", "higgs_tags_2b_med_sm_up_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("wtags_tight_mass_softdrop", "wtags_tight_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("wtags_tight_mass_sj", "wtags_tight_mass_sj", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm10_mass_softdrop", "wtags_tight_sm10_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm20_mass_softdrop", "wtags_tight_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm_down_mass_softdrop", "wtags_tight_sm_down_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_tight_sm_up_mass_softdrop", "wtags_tight_sm_up_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("wtags_loose_mass_softdrop", "wtags_loose_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("wtags_loose_mass_sj", "wtags_loose_mass_sj", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm10_mass_softdrop", "wtags_loose_sm10_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm20_mass_softdrop", "wtags_loose_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm_down_mass_softdrop", "wtags_loose_sm_down_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("wtags_loose_sm_up_mass_softdrop", "wtags_loose_sm_up_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_mass_softdrop", "nomass_boost_1b_med_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_mass_sj", "nomass_boost_1b_med_mass_sj", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_sm10_mass_softdrop", "nomass_boost_1b_med_sm10_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_sm20_mass_softdrop", "nomass_boost_1b_med_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_sm_down_mass_softdrop", "nomass_boost_1b_med_sm_down_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_1b_sm_up_mass_softdrop", "nomass_boost_1b_med_sm_up_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_mass_softdrop", "nomass_boost_2b_med_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_mass_sj", "nomass_boost_2b_med_mass_sj", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm10_mass_softdrop", "nomass_boost_2b_med_sm10_mass", 100, 0., 300.)),
-        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm20_mass_softdrop", "nomass_boost_2b_med_sm20_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm_down_mass_softdrop", "nomass_boost_2b_med_sm_down_mass", 100, 0., 300.)),
+        shared_ptr<SelectionItem>(new SelDatF("nomass_boost_2b_sm_up_mass_softdrop", "nomass_boost_2b_med_sm_up_mass", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("mass_muons", "mass_muons", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("mass_muons_iso", "mass_muons_iso", 100, 0., 300.)),
         shared_ptr<SelectionItem>(new SelDatF("mass_electrons", "mass_electrons", 100, 0., 300.)),
@@ -295,7 +302,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     ctx.declare_event_output<vector<Electron>>("electrons_mva_loose");
     // ctx.declare_event_output<FlavorParticle>("PrimaryMuon");
     // ctx.declare_event_output<FlavorParticle>("PrimaryElectron");
-    // ctx.declare_event_output<vector<TopJet>>("ak8_boost");
+    ctx.declare_event_output<vector<TopJet>>("ak8_boost");
 
     weight_hndl = ctx.declare_event_output<double>("weight");
     // use_sr_sf_hndl = ctx.declare_event_output<int>("use_sr_sf");
@@ -319,28 +326,9 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     other_modules.emplace_back(new MCPileupReweight(ctx));
     
-
-    // Top-pt reweighting (see https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting#Eventweight):
-    // a and b parameters from the 8 TeV l+jets channel (see twiki) are used, these are
-    // a = 0.159, b = -0.00141
-    // the overall event weight ratio between not applying and applying the top pt reweighting is
-    // 9.910819e-01 = 0.9910819 as calculated with TpTpTTbarWeight.cxx
-    // In the end, the overall weight that you apply thus needs to be multiplied by 1./0.9919819
-
-    if (version.find("TT") != string::npos) {
-        other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen", false));
-        other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141));
-    }
-    if (version.find("WJets") != string::npos) {
-        other_modules.emplace_back(new HTReweighting(ctx, 1.12, -0.00024, 3000., "weight_htrew_wjets"));
-        other_modules.emplace_back(new HTReweighting(ctx, 1.201648, -0.000250984, 3000., "weight_htrew_wjets_toppt"));
-        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.245, -0.0006648, 0.568, 200., 1020., "weight_jetpt"));
-    }
-    if (version.find("TT") != string::npos || version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
-        other_modules.emplace_back(new HTReweighting(ctx, 1.24, -0.00036, 3000., "weight_htrew_tt"));
-        other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
-        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.038, -0.0004778, 0.747, 200., 725., "weight_jetpt"));
-    }
+    //////////////////////
+    ///// Jet energy corrections, jet mass scale factors 
+    //////////////////////
 
     auto ak8_corr_bef = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
     : JERFiles::Fall15_25ns_L23_AK8PFchs_DATA;
@@ -348,16 +336,65 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     : JERFiles::Fall15_25ns_L123_AK8PFchs_DATA;
     auto ak4_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK4PFchs_MC 
     : JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
-    // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
+
+    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "topjets_no_corr",
+                boost::none,
+                true
+                ));
+    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "topjets_sc_up",
+                boost::none,
+                true
+                ));
+    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets",
+                "topjets_sc_down",
+                boost::none,
+                true
+                ));
+
     pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
-        ak8_corr_bef, "topjets"));
+        ak8_corr_bef, "topjets", "nominal"));
+    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        ak8_corr_bef, "topjets_sc_up", "up"));
+    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        ak8_corr_bef, "topjets_sc_down", "down"));
+    pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets"));
+    pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets_sc_up", 0.02));
+    pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets_sc_down", -0.02));
+
+
+    // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
     pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
         ak4_corr, "topjets"));
-    pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets"));
     pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
         ak8_corr_aft, "topjets"));
+    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        ak8_corr_aft, "topjets_sc_up"));
+    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+        ak8_corr_aft, "topjets_sc_down"));
     pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
     // }
+
+    if (type == "MC") {
+        pre_modules.emplace_back(new JetResolutionSmearer(ctx));
+        ctx.declare_event_output<double>("gen_ht");
+        ctx.declare_event_output<double>("parton_ht");
+    }
+
+    pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets_sc_up"));
+    pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets_sc_down"));
+
+
+
+    //////////////////////
+    ///// DEPRECATED: top jet delta R (to lepton) cleaner
+    //////////////////////
 
     // pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
     //             "topjets",
@@ -371,6 +408,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     "n_ak8_cleaned"
     //     ));
 
+
+
+    //////////////////////
+    ///// OPTIONAL: Lepton ID stuff
+    //////////////////////
 
     // pre_modules.emplace_back(new CollectionProducer<Muon>(ctx,
     //             "muons",
@@ -405,13 +447,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     // other_modules.emplace_back(new PrimaryLeptonPtProducer(ctx, "PrimaryLeptonMVATight", "primary_lepton_pt_mva_tight"));
 
 
-    if (type == "MC") {
-        pre_modules.emplace_back(new JetResolutionSmearer(ctx));
-        ctx.declare_event_output<double>("gen_ht");
-        ctx.declare_event_output<double>("parton_ht");
-    }
-    pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
-    pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets"));
+
+    //////////////////////
+    ///// Lepton scale factors
+    //////////////////////
+    
     other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
         data_dir_path + "MuonID_Z_RunCD_Reco76X_Feb15.root", 
         "MC_NUM_MediumID_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));
@@ -428,6 +468,39 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 0.99, 0.02, "sfel_trg", true));
     ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
                 1., 0., "sfel_trg", true));
+
+    weight_ele_hndl = ctx.get_handle<float>("weight_el_trg");
+
+    //////////////////////
+    ///// Generator stuff => generator reweighting, PDF and scale variation weights
+    //////////////////////
+
+    // Top-pt reweighting (see https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting#Eventweight):
+    // a and b parameters from the 8 TeV l+jets channel (see twiki) are used, these are
+    // a = 0.159, b = -0.00141
+    // the overall event weight ratio between not applying and applying the top pt reweighting is
+    // 9.910819e-01 = 0.9910819 as calculated with TpTpTTbarWeight.cxx
+    // In the end, the overall weight that you apply thus needs to be multiplied by 1./0.9919819
+
+    if (version.find("TT") != string::npos) {
+        other_modules.emplace_back(new TTbarGenProducer(ctx, "ttbargen", false));
+        other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141, "weight_ttbar"));
+        other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.159, -0.00141, "weight_ttbar_nomax", 999999.));
+        other_modules.emplace_back(new TopPtWeight(ctx, "ttbargen", 0.0615, -0.0005, "weight_ttbar_new", 999999.));
+    }
+    if (version.find("WJets") != string::npos) {
+        other_modules.emplace_back(new HTReweighting(ctx, 1.12, -0.00024, 3000., "weight_htrew_wjets_old"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.08, -0.00025, 3000., "weight_htrew_wjets"));
+        // other_modules.emplace_back(new HTReweighting(ctx, 1.201648, -0.000250984, 3000., "weight_htrew_wjets_toppt"));
+        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.245, -0.0006648, 0.568, 200., 1020., "weight_jetpt"));
+    }
+    if (version.find("TT") != string::npos || version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
+        other_modules.emplace_back(new HTReweighting(ctx, 1.24, -0.00036, 3000., "weight_htrew_tt_old"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.16, -0.00035, 3000., "weight_htrew_tt"));
+        // other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
+        other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.038, -0.0004778, 0.747, 200., 725., "weight_jetpt"));
+    }
+
     if (version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
         other_modules.emplace_back(new PDFWeightBranchCreator(ctx, 110, false));
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx));
@@ -446,9 +519,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
         other_modules.emplace_back(new ScaleVariationWeightBranchCreator(ctx, true));   
     }
 
-    weight_ele_hndl = ctx.get_handle<float>("weight_el_trg");
 
-    // =====PRODUCERS========
+    //////////////////////
+    ///// Some important producers
+    //////////////////////
 
     // other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
     //             "topjets",
@@ -463,6 +537,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 "ak4_jets_btagged",
                 JetId(CSVBTag(CSVBTag::WP_MEDIUM))
                 ));
+
+
+    //////////////////////
+    ///// B-tagging efficiency scale factors
+    //////////////////////
 
     // btag_sf_sr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand"));
 
@@ -481,6 +560,33 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     }
         // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+
+    //////////////////////
+    ///// N-tree producer for some important collections
+    //////////////////////
+
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "ak8_higgs_cand",
+                "n_ak8_higgs_cand"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
+                "jets_no_overlap",
+                "n_additional_btags_medium",
+                JetId(CSVBTag(CSVBTag::WP_MEDIUM))
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med",
+                "n_higgs_tags_1b_med"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med",
+                "n_higgs_tags_2b_med"
+                ));
+
+
+    //////////////////////
+    ///// Leading lepton invariant mass producer => in case you need a control region for Z+jets
+    //////////////////////
 
     other_modules.emplace_back(new LeadingPartInvMassproducer<Muon>(ctx,
                 "muons",
@@ -501,18 +607,149 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ElectronId(ElectronID_Spring15_25ns_medium)
                 ));
 
+    //////////////////////
+    ///// produce collections for jet mass smearing 
+    //////////////////////
+
+    // other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    //             "ak8_boost",
+    //             "ak8_boost_no_corr",
+    //             boost::none,
+    //             true
+    //             ));
+
     other_modules.emplace_back(new HiggsMassSmear(ctx,
                 "ak8_boost",
-                false, false
+                false, false,
+                1., 0.103
                 ));
     other_modules.emplace_back(new HiggsMassSmear(ctx,
                 "nomass_boost_1b",
-                false, false
+                false, false,
+                1., 0.103
                 ));
     other_modules.emplace_back(new HiggsMassSmear(ctx,
                 "nomass_boost_2b",
-                false, false
+                false, false,
+                1., 0.103
                 ));
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost_sm_down",
+                "higgs_tags_1b_med_sm_down",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost_sm_down",
+                "higgs_tags_2b_med_sm_down",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost_sm_up",
+                "higgs_tags_1b_med_sm_up",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost_sm_up",
+                "higgs_tags_2b_med_sm_up",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+                ));
+
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med_sm_down",
+                "n_higgs_tags_1b_med_sm_down"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med_sm_down",
+                "n_higgs_tags_2b_med_sm_down"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med_sm_up",
+                "n_higgs_tags_1b_med_sm_up"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med_sm_up",
+                "n_higgs_tags_2b_med_sm_up"
+                ));
+
+
+
+    //////////////////////
+    ///// produce collections and N-trees for jet mass scale up/down variations 
+    //////////////////////
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_up",
+                "nomass_boost_1b_med_sc_up",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(-99999., 99999., CSVBTag(CSVBTag::WP_MEDIUM)))),
+                true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_up",
+                "nomass_boost_2b_med_sc_up",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(-99999., 99999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))),
+                true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_down",
+                "nomass_boost_1b_med_sc_down",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(-99999., 99999., CSVBTag(CSVBTag::WP_MEDIUM)))),
+                true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_down",
+                "nomass_boost_2b_med_sc_down",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(-99999., 99999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))),
+                true
+                ));
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_up",
+                "higgs_tags_1b_med_sc_up",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_up",
+                "higgs_tags_2b_med_sc_up",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM))))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_down",
+                "higgs_tags_1b_med_sc_down",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "topjets_sc_down",
+                "higgs_tags_2b_med_sc_down",
+                TopJetId(AndId<TopJet>(PtEtaCut(300., 2.4), HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM))))
+                // true
+                ));
+
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med_sc_up",
+                "n_higgs_tags_1b_med_sc_up"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med_sc_up",
+                "n_higgs_tags_2b_med_sc_up"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_med_sc_down",
+                "n_higgs_tags_1b_med_sc_down"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_med_sc_down",
+                "n_higgs_tags_2b_med_sc_down"
+                ));
+
+    //////////////////////
+    ///// Top tags => not really needed
+    //////////////////////
 
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
@@ -520,6 +757,15 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 TopJetId(AndId<TopJet>(PtEtaCut(400., 2.4), Type2TopTag(140, 250, Type2TopTag::MassType::groomed), Tau32(0.74)))
                 // true
                 ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "toptags",
+                "n_toptags"
+                ));
+
+    //////////////////////
+    ///// W tags and leptonic W
+    ///// => not really needed, in case you have to measure jet mass scale and resolution yourself!
+    //////////////////////
 
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "ak8_less_boost",
@@ -528,14 +774,14 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_less_boost_sm10",
-                "wtags_tight_sm10",
+                "ak8_less_boost_sm_down",
+                "wtags_tight_sm_down",
                 TopJetId(Tau21(0.4))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_less_boost_sm20",
-                "wtags_tight_sm20",
+                "ak8_less_boost_sm_up",
+                "wtags_tight_sm_up",
                 TopJetId(Tau21(0.4))
                 // true
                 ));
@@ -546,14 +792,14 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_less_boost_sm10",
-                "wtags_loose_sm10",
+                "ak8_less_boost_sm_down",
+                "wtags_loose_sm_down",
                 TopJetId(Tau21(0.6))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_less_boost_sm20",
-                "wtags_loose_sm20",
+                "ak8_less_boost_sm_up",
+                "wtags_loose_sm_up",
                 TopJetId(Tau21(0.6))
                 // true
                 ));
@@ -569,79 +815,72 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 ));
 
 
+    //////////////////////
+    ///// Mass producer for Higgs tags and W tags (for up/down smeared cases as well)
+    ///// => also needed if you need to measure jet mass scale and resolution
+    ///// => TODO: need this for scale up/down as well??
+    //////////////////////
 
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_1b",
+                "nomass_boost_1b_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_1b_sm_down",
+                "nomass_boost_1b_sm_down_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_1b_sm_up",
+                "nomass_boost_1b_sm_up_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_2b",
+                "nomass_boost_2b_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_2b_sm_down",
+                "nomass_boost_2b_sm_down_mass"
+                ));
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "nomass_boost_2b_sm_up",
+                "nomass_boost_2b_sm_up_mass"
+                ));
 
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm10",
-                "higgs_tags_1b_med_sm10",
-                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
-                // true
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_tight",
+                "wtags_tight_mass"
                 ));
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm10",
-                "higgs_tags_2b_med_sm10",
-                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
-                // true
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_tight_sm_down",
+                "wtags_tight_sm_down_mass"
                 ));
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm20",
-                "higgs_tags_1b_med_sm20",
-                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_tight_sm_up",
+                "wtags_tight_sm_up_mass"
                 ));
-    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm20",
-                "higgs_tags_2b_med_sm20",
-                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose",
+                "wtags_loose_mass"
                 ));
-
-
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "ak8_higgs_cand",
-                "n_ak8_higgs_cand"
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose_sm_down",
+                "wtags_loose_sm_down_mass"
                 ));
-    other_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
-                "jets_no_overlap",
-                "n_additional_btags_medium",
-                JetId(CSVBTag(CSVBTag::WP_MEDIUM))
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "toptags",
-                "n_toptags"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_1b_med",
-                "n_higgs_tags_1b_med"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_2b_med",
-                "n_higgs_tags_2b_med"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_1b_med_sm10",
-                "n_higgs_tags_1b_med_sm10"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_2b_med_sm10",
-                "n_higgs_tags_2b_med_sm10"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_1b_med_sm20",
-                "n_higgs_tags_1b_med_sm20"
-                ));
-    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-                "higgs_tags_2b_med_sm20",
-                "n_higgs_tags_2b_med_sm20"
+    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
+                "wtags_loose_sm_up",
+                "wtags_loose_sm_up_mass"
                 ));
 
 
+
+    //////////////////////
+    ///// DEPRECATED STUFF
+    //////////////////////
 
     // other_modules.emplace_back(new CollectionSizeProducer<Jet>(ctx,
     //             "jets_no_overlap",
     //             "n_jets_no_overlap"
     //             ));
-
-
-
     // other_modules.emplace_back(new JetVarProducer<TopJet>(ctx,
     //             "topjets",
     //             "first_ak8jet",
@@ -658,55 +897,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //             ));
 
 
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_1b",
-                "nomass_boost_1b_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_1b_sm10",
-                "nomass_boost_1b_sm10_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_1b_sm20",
-                "nomass_boost_1b_sm20_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_2b",
-                "nomass_boost_2b_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_2b_sm10",
-                "nomass_boost_2b_sm10_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "nomass_boost_2b_sm20",
-                "nomass_boost_2b_sm20_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_tight",
-                "wtags_tight_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_tight_sm10",
-                "wtags_tight_sm10_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_tight_sm20",
-                "wtags_tight_sm20_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_loose",
-                "wtags_loose_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_loose_sm10",
-                "wtags_loose_sm10_mass"
-                ));
-    other_modules.emplace_back(new LeadingTopjetMassProducer(ctx,
-                "wtags_loose_sm20",
-                "wtags_loose_sm20_mass"
-                ));
 
+
+    //////////////////////
+    ///// N-subjet b-tag producer => needed??
+    //////////////////////
 
     other_modules.emplace_back(new NSubjetBtagProducer(ctx,
                 "nobtag_boost_mass",
@@ -715,25 +910,10 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
                 1
                 ));
 
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "higgs_tags_1b_med_sm10",
-    //             "n_higgs_tags_1b_med_sm10"
-    //             ));
-
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "higgs_tags_1b_med_sm20",
-    //             "n_higgs_tags_1b_med_sm20"
-    //             ));
-
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "higgs_tags_2b_med_sm10",
-    //             "n_higgs_tags_2b_med_sm10"
-    //             ));
-
-    // other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
-    //             "higgs_tags_2b_med_sm20",
-    //             "n_higgs_tags_2b_med_sm20"
-    //             ));
+    //////////////////////
+    ///// Delta R-tree producer
+    ///// => in case you want to make more studies on this and if you need this for your control region
+    //////////////////////
 
     vector<string> deltaR_plots;
 
@@ -884,6 +1064,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //             ));
 
 
+
+    //////////////////////
+    ///// DEPRECATED STUFF
+    //////////////////////
+
     // check if there is exactly 1 Higgs Tag; if yes, make sure that all higgs tags are
     // well separated from it by making a dR requirement of 1.5
     // other_modules.emplace_back(new XTopTagProducer(ctx, "toptags_boost", "min_dr_higgs", "one_top", 1.5, 1));
@@ -894,6 +1079,13 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     //     final_states = {"thth", "thtz", "thbw", "noH_tztz", "noH_tzbw", "noH_bwbw"};
     // else
     //     final_states = {"All"};
+
+
+
+
+    //////////////////////
+    ///// Categorization starts here
+    //////////////////////
         
     categories = split(ctx.get("category", ""));
     // std::vector<string> categories = {"CombinedElMu",
