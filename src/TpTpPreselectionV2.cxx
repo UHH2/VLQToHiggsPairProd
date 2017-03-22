@@ -45,10 +45,15 @@ using namespace uhh2;
 class TpTpPreselectionV2: public TpTpAnalysisModule {
 public:
 
+    // NEW VALUES FOR CUTS BELOW, OLD ONES COMMENTED OUT! USE THE NEW ONES WHEN RERUNNING PRESELECTION (and make sure you implement tighter cuts in TpTpFinalSelectionTreeOutput.cxx)
+
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
+        // shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 700)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
+        // shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 500)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 1)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 2)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
@@ -86,7 +91,7 @@ public:
 private:
     unique_ptr<AnalysisModule> common_module;
     vector<unique_ptr<AnalysisModule>> pre_modules;
-    vector<unique_ptr<Hists>> v_hists_nosel;
+    vector<shared_ptr<Hists>> v_hists_nosel;
 
 };
 
@@ -306,8 +311,8 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
 
         // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-        v_hists.emplace_back(vector<unique_ptr<Hists>>());
-        v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        v_hists.emplace_back(vector<shared_ptr<Hists>>());
+        v_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
 
         if (cat == "NoSelection") {
             sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
@@ -406,7 +411,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             gen_hists->add_genhistcoll(6, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
-            v_hists.back().push_back(unique_ptr<CustomizableGenHists>(gen_hists));
+            v_hists.back().push_back(shared_ptr<CustomizableGenHists>(gen_hists));
         }
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt"));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));

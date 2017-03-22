@@ -341,46 +341,50 @@ def mk_histograms_sig_inj(name, excl_signal, samples=samples_to_plot_thth):
 
 
 def mk_tc_tex(source_dir):
-    tc_tex_an = [
-        tex_content.mk_plot_ind(
-            (
-                ('ST_log_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
-                ('ST_log_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
-                ('HT_log_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/HT_rebin_flex_log.pdf'),
-                ('HT_log_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/HT_rebin_flex_log.pdf'),
-                ('n_ak4_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/n_ak4_lin.pdf'),
-                ('n_ak4_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/n_ak4_lin.pdf'),
-                ('n_ak8_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/n_ak8_lin.pdf'),
-                ('n_ak8_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/n_ak8_lin.pdf'),
-                ('nomass_boost_1b_mass_softdrop_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nomass_boost_1b_mass_softdrop_lin.pdf'),
-                ('nomass_boost_1b_mass_softdrop_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nomass_boost_1b_mass_softdrop_lin.pdf'),
-                ('nomass_boost_2b_mass_softdrop_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nomass_boost_2b_mass_softdrop_lin.pdf'),
-                ('nomass_boost_2b_mass_softdrop_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nomass_boost_2b_mass_softdrop_lin.pdf'),
-                ('noboost_mass_1b_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/noboost_mass_1b[0].m_pt_lin.pdf'),
-                ('noboost_mass_1b_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/noboost_mass_1b[0].m_pt_lin.pdf'),
-                ('noboost_mass_2b_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/noboost_mass_2b[0].m_pt_lin.pdf'),
-                ('noboost_mass_2b_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/noboost_mass_2b[0].m_pt_lin.pdf'),
-                ('nobtag_boost_mass_nsjbtags_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nobtag_boost_mass_nsjbtags_lin.pdf'),
-                ('nobtag_boost_mass_nsjbtags_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nobtag_boost_mass_nsjbtags_lin.pdf'),
-                ('primary_muon_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/primary_muon_pt_lin.pdf'),
-                ('primary_muon_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/primary_muon_pt_lin.pdf'),
-                ('primary_electron_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/primary_electron_pt_lin.pdf'),
-                ('primary_electron_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/primary_electron_pt_lin.pdf'),
-                ('met_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/met_lin.pdf'),
-                ('met_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/met_lin.pdf'),
-                ('jets_1_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/pt_ld_ak4_jet_lin.pdf'),
-                ('jets_1_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/pt_ld_ak4_jet_lin.pdf'),
-                ('jets_2_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/pt_subld_ak4_jet_lin.pdf'),
-                ('jets_2_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/pt_subld_ak4_jet_lin.pdf'),
-                ('jets_3_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/jets[2].m_pt_lin.pdf'),
-                ('jets_3_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/jets[2].m_pt_lin.pdf'),
-                ('jets_4_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/jets[3].m_pt_lin.pdf'),
-                ('jets_4_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/jets[3].m_pt_lin.pdf'),
-                ('topjets_1_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/topjets[0].m_pt_lin.pdf'),
-                ('topjets_1_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[0].m_pt_lin.pdf'),
-                ('topjets_2_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/topjets[1].m_pt_lin.pdf'),
-                ('topjets_2_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[1].m_pt_lin.pdf'),
-            ), name='NoReweightingPlots'),
+    tc_tex_an = []
+    for a, b in [('pdf', ''), ('png', 'PNG')]:
+        tc_tex_an += [
+            tex_content.mk_plot_ind(
+                (
+                    ('ST_log_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.%s' % a),
+                    ('ST_log_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.%s' % a),
+                    ('HT_log_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/HT_rebin_flex_log.%s' % a),
+                    ('HT_log_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/HT_rebin_flex_log.%s' % a),
+                    ('n_ak4_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/n_ak4_lin.%s' % a),
+                    ('n_ak4_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/n_ak4_lin.%s' % a),
+                    ('n_ak8_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/n_ak8_lin.%s' % a),
+                    ('n_ak8_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/n_ak8_lin.%s' % a),
+                    ('nomass_boost_1b_mass_softdrop_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nomass_boost_1b_mass_softdrop_lin.%s' % a),
+                    ('nomass_boost_1b_mass_softdrop_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nomass_boost_1b_mass_softdrop_lin.%s' % a),
+                    ('nomass_boost_2b_mass_softdrop_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nomass_boost_2b_mass_softdrop_lin.%s' % a),
+                    ('nomass_boost_2b_mass_softdrop_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nomass_boost_2b_mass_softdrop_lin.%s' % a),
+                    ('noboost_mass_1b_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/noboost_mass_1b[0].m_pt_lin.%s' % a),
+                    ('noboost_mass_1b_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/noboost_mass_1b[0].m_pt_lin.%s' % a),
+                    ('noboost_mass_2b_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/noboost_mass_2b[0].m_pt_lin.%s' % a),
+                    ('noboost_mass_2b_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/noboost_mass_2b[0].m_pt_lin.%s' % a),
+                    ('nobtag_boost_mass_nsjbtags_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/nobtag_boost_mass_nsjbtags_lin.%s' % a),
+                    ('nobtag_boost_mass_nsjbtags_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/nobtag_boost_mass_nsjbtags_lin.%s' % a),
+                    ('primary_muon_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/primary_muon_pt_lin.%s' % a),
+                    ('primary_muon_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/primary_muon_pt_lin.%s' % a),
+                    ('primary_electron_pt_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/primary_electron_pt_lin.%s' % a),
+                    ('primary_electron_pt_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/primary_electron_pt_lin.%s' % a),
+                    ('met_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/met_lin.%s' % a),
+                    ('met_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/met_lin.%s' % a),
+                    ('jets_1_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/pt_ld_ak4_jet_lin.%s' % a),
+                    ('jets_1_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/pt_ld_ak4_jet_lin.%s' % a),
+                    ('jets_2_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/pt_subld_ak4_jet_lin.%s' % a),
+                    ('jets_2_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/pt_subld_ak4_jet_lin.%s' % a),
+                    ('jets_3_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/jets[2].m_pt_lin.%s' % a),
+                    ('jets_3_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/jets[2].m_pt_lin.%s' % a),
+                    ('jets_4_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/jets[3].m_pt_lin.%s' % a),
+                    ('jets_4_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/jets[3].m_pt_lin.%s' % a),
+                    ('topjets_1_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/topjets[0].m_pt_lin.%s' % a),
+                    ('topjets_1_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[0].m_pt_lin.%s' % a),
+                    ('topjets_2_lin_sideband_ttbar', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandTTJetsRegion/topjets[1].m_pt_lin.%s' % a),
+                    ('topjets_2_lin_sideband_wjets', os.path.join(base_path, source_dir)+'/Histograms/StackedAll/SidebandWPlusJetsRegion/topjets[1].m_pt_lin.%s' % a),
+                ), name='NoReweightingPlots' + b
+            )
+        ]
         # tex_content.mk_plot_ind(
         #     (
         #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
@@ -397,7 +401,6 @@ def mk_tc_tex(source_dir):
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
         
-    ]
     tc_tex_an = varial.tools.ToolChain('CopyPlots', [
         varial.tools.ToolChain('Tex', tc_tex_an),
         varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-16-343/trunk/', src='../Tex/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True),

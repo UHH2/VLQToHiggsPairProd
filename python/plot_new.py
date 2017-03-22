@@ -307,6 +307,24 @@ def group_by_uncerts(wrps, first_sort_func):
             nom_copy.name = nom_copy.name+'__'+nom_copy.sample+'__'+k2
             yield wrappers.WrapperWrapper([nom_copy]+list(sys), name=k1+'__'+k2)
 
+def mk_style_uncert_plots(wrps, colors):
+    n = 0
+    col_dict = {}
+    for wrp in wrps:
+        u, d = wrp.legend.split(' ') if len(wrp.legend.split(' ')) == 2 else ('nominal', '')
+        if u in col_dict:
+            color = col_dict[u]
+        else:
+            color = colors[n % len(colors)]
+            col_dict[u] = color
+            n += 1
+        wrp.obj.SetLineColor(color)
+        wrp.color = color
+        if d == 'up':
+            wrp.obj.SetLineStyle(2)
+        elif d == 'down':
+            wrp.obj.SetLineStyle(3)
+        yield wrp
 
 def plot_setup_uncerts(grps):
     def set_legend(wrps):
@@ -314,11 +332,14 @@ def plot_setup_uncerts(grps):
             if not w.sys_info:
                 w.legend = 'nominal'
             else:
-                w.legend = w.sys_info.split('__')[1]
+                w.legend = ' '.join(w.sys_info.split('__'))
+                w.legend = w.legend.replace('plus', 'up').replace('minus', 'down')
+                w.histo.SetTitle(w.legend)
             yield w
 
     grps = (set_legend(ws) for ws in grps)
-    grps = varial.plotter.default_plot_colorizer(grps)
+    grps = (mk_style_uncert_plots(ws, [1, 2, 4, 3, 5]) for ws in grps)
+    # grps = varial.plotter.default_plot_colorizer(grps)
     return grps
 
 # def canvas_setup_pre(grps):
@@ -391,9 +412,9 @@ def plotter_factory_uncerts(rate_uncertainties=analysis.rate_uncertainties, shap
         kws['hook_canvas_post_build'] = common_plot.add_sample_integrals
         kws['canvas_post_build_funcs'] = [
             # common_plot.mod_pre_bot_hist(),
+            rnd.mk_legend_func(),
             common_plot.mk_bottom_plot_ratio_uncerts(),  # mk_pull_plot_func()
             # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
-            rnd.mk_legend_func(),
             # common_plot.mod_post_canv(mod_dict),
             ]
         kws.update(**args)

@@ -74,10 +74,14 @@ core_histos = {
     'PrimaryLepton.Particle.m_eta'                : ('#eta primary lepton',                  50, -3., 3.),
     'n_higgs_tags_1b_med'           : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
     'n_higgs_tags_2b_med'           : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
-    'n_higgs_tags_1b_med_sm10'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
-    'n_higgs_tags_2b_med_sm10'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
-    'n_higgs_tags_1b_med_sm20'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
-    'n_higgs_tags_2b_med_sm20'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sm_up'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sm_up'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sm_down'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sm_down'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sc_up'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sc_up'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_1b_med_sc_down'      : ('N(type-I Higgs-Tags)',           5, -.5, 4.5),
+    'n_higgs_tags_2b_med_sc_down'      : ('N(type-II Higgs-Tags)',           5, -.5, 4.5),
     'noboost_mass_1b[0].m_pt'           : ('p_{T} type-I Higgs tag mass [GeV]',           100, 0., 2000.),
     'noboost_mass_2b[0].m_pt'           : ('p_{T} type-II Higgs tag mass [GeV]',           100, 0., 2000.),
     'nomass_boost_1b_mass_softdrop'           : ('groomed type-I Higgs tag mass [GeV]',           60, 0., 300.),
@@ -115,27 +119,27 @@ more_histos = {
     'dR_wtags_tight_1_leptonic_w_iso_cl'                 : ('dR(ld. AK8 jet, cl. AK8 jet)',   50, 0., 5.),
     # 'ak8_boost_gen_mass'           : ('Mass [GeV]',           100, 0., 2000.),
     # 'ak8_boost_diff_before'           : ('Mass [GeV]',           100, 0., 2000.),
-    # 'ak8_boost_diff_10'           : ('Mass [GeV]',           100, 0., 2000.),
-    # 'ak8_boost_diff_20'           : ('Mass [GeV]',           100, 0., 2000.),
+    # 'ak8_boost_diff_down'           : ('Mass [GeV]',           100, 0., 2000.),
+    # 'ak8_boost_diff_up'           : ('Mass [GeV]',           100, 0., 2000.),
     # 'ak8_boost_diff_before_sj'           : ('Mass [GeV]',           100, 0., 2000.),
     'nomass_boost_1b_gen_mass'           : ('Mass [GeV]',           60, 0., 300.),
     'nomass_boost_1b_diff_before'           : ('Mass [GeV]',           80, -1., 1.),
-    'nomass_boost_1b_diff_10'           : ('Mass [GeV]',           80, -1., 1.),
-    'nomass_boost_1b_diff_20'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_1b_diff_down'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_1b_diff_up'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_1b_diff_before_sj'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_2b_gen_mass'           : ('Mass [GeV]',           60, 0., 300.),
     'nomass_boost_2b_diff_before'           : ('Mass [GeV]',           80, -1., 1.),
-    'nomass_boost_2b_diff_10'           : ('Mass [GeV]',           80, -1., 1.),
-    'nomass_boost_2b_diff_20'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_2b_diff_down'           : ('Mass [GeV]',           80, -1., 1.),
+    'nomass_boost_2b_diff_up'           : ('Mass [GeV]',           80, -1., 1.),
     'nomass_boost_2b_diff_before_sj'           : ('Mass [GeV]',           80, -1., 1.),
     'wtags_tight_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'wtags_tight_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_tight_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_tight_sm20_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_sm_down_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_tight_sm_up_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'wtags_loose_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'wtags_loose_mass_sj'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_loose_sm10_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
-    'wtags_loose_sm20_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_sm_down_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
+    'wtags_loose_sm_up_mass_softdrop'           : ('Mass [GeV]',           60, 0., 300.),
     'n_toptags'              : ('N(Top tags)',              5, -.5, 4.5),
     # 'pt_fifth_ak4_jet'              : ('p_{T} fifth Ak4 Jet',             60, 0., 1500.),
     # 'pt_sixth_ak4_jet'              : ('p_{T} sixth Ak4 Jet',             60, 0., 1500.),
@@ -343,6 +347,59 @@ def mk_tp(input_pat, final_regions, weights=None, samples=samples_w_data, name='
         **kws
     )
 
+
+# def add_corr_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
+#     # def tmp():
+#     nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
+#     jercs = list(
+#         (
+#             name.replace('_down', '_corr__minus').replace('_up', '_corr__plus'), 
+#             join(base_path, 'Files_and_Plots_' + name + '/SFrame/workdir/uhh2*.root')
+#         ) 
+#         for name in ('jec_down', 'jec_up', 'jer_down', 'jer_up')
+#     )
+
+
+#     final_regions_sm_up = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_up').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_up'), f)) for g, f in final_regions)
+#     final_regions_sm_down = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_down').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_down'), f)) for g, f in final_regions)
+
+#     final_regions_sc_up = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sc_up').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sc_up'), f)) for g, f in final_regions)
+#     final_regions_sc_down = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sc_down').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sc_down'), f)) for g, f in final_regions)
+
+#     sys_sec_sel_weight_reweight_weight = (
+#         ('higgs_scale__minus', list((g, f, sample_weights) for g, f in final_regions_sc_down)),
+#         ('higgs_scale__plus', list((g, f, sample_weights) for g, f in final_regions_sc_up)),
+#         ('higgs_smear__minus', list((g, f, sample_weights) for g, f in final_regions_sm_down)),
+#         ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_sm_up))
+#     )
+    
+#     # nominal_sec_sel_weight = list((g, f, sample_weights) for g, f in final_regions)
+#     return list(
+#         treeproject(
+#             dict(
+#                 (sample, list(f for f in glob.glob(pat) if (sample in f and 'Scale' not in f)))
+#                 for sample in samples
+#             ), 
+#             params, 
+#             sys_sec_sel_weight_reweight_weight,
+#             add_aliases_to_analysis=False,
+#             name=name,
+#             **kws
+#         )
+#         for name, pat in jercs
+#     )
+#     return list(
+#         treeproject(
+#             filenames,
+#             params, 
+#             ssw,
+#             add_aliases_to_analysis=False,
+#             name=name,
+#             **kws
+#         )
+#         for name, ssw in sys_sec_sel_weight_reweight_weight
+#     )
+
 def add_jec_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
     # def tmp():
     jercs = list(
@@ -410,12 +467,38 @@ def add_higgs_smear_uncerts(base_path, final_regions, sample_weights, samples=sa
         (sample, list(f for f in glob.glob(nominal_files) if sample in f))
         for sample in samples
     )
-    final_regions_up = list((g, map(lambda w: w.replace('_sm10', ''), f)) for g, f in final_regions)
-    final_regions_down = list((g, map(lambda w: w.replace('_sm10', '_sm20'), f)) for g, f in final_regions)
+    final_regions_up = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_up').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_up'), f)) for g, f in final_regions)
+    final_regions_down = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_down').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_down'), f)) for g, f in final_regions)
 
     sys_sec_sel_weight_reweight_weight = (
         ('higgs_smear__minus', list((g, f, sample_weights) for g, f in final_regions_down)),
         ('higgs_smear__plus', list((g, f, sample_weights) for g, f in final_regions_up))
+    )
+    return list(
+        treeproject(
+            filenames,
+            params, 
+            ssw,
+            add_aliases_to_analysis=False,
+            name=name,
+            **kws
+        )
+        for name, ssw in sys_sec_sel_weight_reweight_weight
+    )
+
+def add_higgs_scale_uncerts(base_path, final_regions, sample_weights, samples=samples_no_data, params=sys_params, treeproject=TreeProjector, **kws):
+    # def tmp():
+    nominal_files = join(base_path, 'Files_and_Plots_nominal/SFrame/workdir/uhh2*.root') 
+    filenames = dict(
+        (sample, list(f for f in glob.glob(nominal_files) if sample in f))
+        for sample in samples
+    )
+    final_regions_up = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_up').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_up'), f)) for g, f in final_regions)
+    final_regions_down = list((g, map(lambda w: w.replace('n_higgs_tags_1b_med', 'n_higgs_tags_1b_med_sm_down').replace('n_higgs_tags_2b_med', 'n_higgs_tags_2b_med_sm_down'), f)) for g, f in final_regions)
+    
+    sys_sec_sel_weight_reweight_weight = (
+        ('higgs_scale__minus', list((g, f, sample_weights) for g, f in final_regions_down)),
+        ('higgs_scale__plus', list((g, f, sample_weights) for g, f in final_regions_up))
     )
     return list(
         treeproject(
@@ -441,10 +524,10 @@ def add_generic_uncerts(base_path, final_regions, sample_weights, samples=sample
             for g, f in final_regions) 
         )
         for name, w in (
-            ('btag_bc__minus', '*weight_btag_bc_down*weight_btag_bc_down_sj/weight_btag'),
-            ('btag_bc__plus', '*weight_btag_bc_up*weight_btag_bc_up_sj/weight_btag'),
-            ('btag_udsg__minus', '*weight_btag_udsg_down*weight_btag_udsg_down_sj/weight_btag'),
-            ('btag_udsg__plus', '*weight_btag_udsg_up*weight_btag_udsg_up_sj/weight_btag'),
+            ('btag_bc__minus', '*weight_btag_bc_down*weight_btag_bc_down_sj/(weight_btag*weight_btag_sj)'),
+            ('btag_bc__plus', '*weight_btag_bc_up*weight_btag_bc_up_sj/(weight_btag*weight_btag_sj)'),
+            ('btag_udsg__minus', '*weight_btag_udsg_down*weight_btag_udsg_down_sj/(weight_btag*weight_btag_sj)'),
+            ('btag_udsg__plus', '*weight_btag_udsg_up*weight_btag_udsg_up_sj/(weight_btag*weight_btag_sj)'),
             # ('sfmu_id__minus', '*weight_sfmu_id_down/weight_sfmu_id'),
             # ('sfmu_id__plus', '*weight_sfmu_id_up/weight_sfmu_id'),
             # ('sfmu_trg__minus', '*weight_sfmu_trg_down/weight_sfmu_trg'),

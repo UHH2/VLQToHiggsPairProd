@@ -3,6 +3,9 @@ import copy
 import pprint
 import cPickle
 import math
+import glob
+import ctypes
+
 
 import varial.analysis
 import varial.generators as gen
@@ -16,14 +19,14 @@ import varial.util as util
 
 import analysis
 
-from ROOT import THStack, TH2, TLatex, kFALSE, TPaveText, TH1, TGraphAsymmErrors, TPad
+from ROOT import THStack, TH2, TLatex, kFALSE, TPaveText, TH1, TGraphAsymmErrors, TPad, TF1
 # from varial.settings import legend_entries
 from varial import settings 
 
 lumi_times_pure_BR = 2690.*0.111
 lumi_times_mixed_BR = 2690.*0.222
-lumi = 2690.
-lumi_ele = 2600.
+lumi = 2621.
+lumi_ele = 2530.
 
 normfactors = {
     # 'TpTp' : 20.,
@@ -637,17 +640,26 @@ def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=Tr
 def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True, mk_legend=False):
     for w in wrps:
         if smpl_fct:
+            # print 'new sample', w.sample, norm_all
             for fct_key, fct_val in smpl_fct.iteritems():
                 if fct_key in w.sample:
+                    # print '  key found', fct_key, fct_val
                     # if w.analyzer = 'NoSelection' or
-                    if calc_scl_fct:
-                        if hasattr(w, 'scl_fct'):
-                            w.scl_fct *= fct_val
-                        else:
-                            op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+                    # if calc_scl_fct:
+                    #     if hasattr(w, 'scl_fct'):
+                    #         w.scl_fct *= fct_val
+                    #         print '  scl_fct found', w.scl_fct, fct_val
+                    #     else:
+                    #         op.add_wrp_info(w, scl_fct=lambda _: fct_val)
                     if mk_legend:
                         scale_signal(w, fct_val, True)
                     else:
+                        if calc_scl_fct:
+                            if hasattr(w, 'scl_fct'):
+                                w.scl_fct *= fct_val
+                                # print '  scl_fct found', w.scl_fct, fct_val
+                            else:
+                                op.add_wrp_info(w, scl_fct=lambda _: fct_val)
                         w.histo.Scale(fct_val)
         if mk_legend:
             scale_signal(w, norm_all, True)
@@ -670,7 +682,7 @@ def norm_to_int(wrps, use_bin_width=False):
         yield w
 
 # @history.track_history
-def scale_signal(wrp, fct=1., show_tot_scl=False):
+def scale_signal(wrp, fct=1., show_tot_scl=False, calc_scl_fct=True):
     if not hasattr(wrp, 'is_scaled'):
         if fct >= 5:
             fct = int(fct)
@@ -685,6 +697,7 @@ def scale_signal(wrp, fct=1., show_tot_scl=False):
             fct *= 5
         if hasattr(wrp, 'scl_fct'):
             wrp.scl_fct *= fct
+            # print '    scl_found again', wrp.scl_fct, fct
         else:
             op.add_wrp_info(wrp, scl_fct=lambda _: fct)
         wrp.histo.Scale(fct)
@@ -958,10 +971,10 @@ def add_sample_integrals(canvas_builders):
 
 
 
-def rebin_st_and_nak4(wrps):
+def rebin_st_and_nak4(wrps, mod_dict=None):
     for w in wrps:
         if not isinstance(w.histo, TH2):
-            mod_wrp_dict = mod_dict_default.get(w.name, None)
+            mod_wrp_dict = mod_dict.get(w.name, None) if mod_dict else mod_dict_default.get(w.name, None)
             rebin_ind = False
             if mod_wrp_dict:
                 rebin_list = mod_wrp_dict.get('rebin_list', None)
@@ -983,13 +996,13 @@ def rebin_st_and_nak4(wrps):
 #         dict_leg.update({'n_col' : 2})
 #         leg_mod(rnd, dict_leg)
 
-def leg_mod(wrp, dict_leg=varial.settings.defaults_Legend, n_col=1, set_ndc=True):
+def leg_mod(wrp, dict_leg=varial.settings.defaults_Legend, n_col=1, set_ndc=True, y_fct=1.):
     # if varial.settings.style != 'AN':
     wrp.legend.SetNColumns(n_col)
     wrp.legend.SetTextSize(dict_leg.get('box_text_size', varial.settings.box_text_size))
     n_entries = len(wrp.legend.GetListOfPrimitives())
     x_pos   = dict_leg['x_pos']
-    y_pos   = dict_leg['y_pos']
+    y_pos   = dict_leg['y_pos'] * y_fct
     width   = dict_leg['label_width']
     height  = dict_leg['label_height'] * n_entries / float(n_col)
     if set_ndc:
@@ -1104,11 +1117,12 @@ default_canv_attr = {
     'no_exp' : False,
 }
 
-def mod_pre_bot_hist():
+def mod_pre_bot_hist(dict_cnv_attr=None):
 
     def tmp(wrp, _):
         canv_attr = dict(default_canv_attr)
-        mod_wrp_dict = mod_dict_default.get(wrp.name, None)
+        mod_dict = dict_cnv_attr or mod_dict_default
+        mod_wrp_dict = mod_dict.get(wrp.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
         # if wrp.renderers[0].scale == 'lin' and canv_attr.get('text_box_lin', None):
@@ -1128,6 +1142,10 @@ def mod_pre_bot_hist():
             wrp.draw_empty_bin_error = True
         if canv_attr.get('bin_width', None):
             wrp.bin_width = canv_attr['bin_width']
+        if 'rebin_flex' in wrp.name:
+            for w in wrp._renderers:
+                if w.is_data:
+                    w.draw_option_legend = 'pl'
         # if canv_attr.get('err_empty_bins', None):
         #     make_empty_bins_dat_error(g, canv_attr.get('bin_width', None))
         # return wrp
@@ -1168,18 +1186,19 @@ def mod_pre_bot_hist():
 #     return wrp
 
 
-def mod_post_canv(dict_cnv_attr=None):
+def mod_post_canv(dict_cnv_attr=None, default_attr=None):
 # for g in grps:
     def tmp(wrp, _):
         # print wrp.file_path, wrp.in_file_path
         y_min, y_max = wrp.y_bounds
-        canv_attr = dict(default_canv_attr)
+        canv_attr = default_attr or dict(default_canv_attr)
         mod_dict = dict_cnv_attr or mod_dict_default
         mod_wrp_dict = mod_dict.get(wrp.name, None)
         y_exp = None
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
         if not wrp.has_data:
+            leg_mod(wrp, set_ndc=False, y_fct=.88)
             wrp.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         if canv_attr['no_exp']:
             wrp.first_obj.GetYaxis().SetNoExponent()
@@ -1260,6 +1279,32 @@ def get_dict(hist_path, var):
         return res[var]
     return tmp
 
+def get_dict_comb(hist_path, var):
+    def tmp(base_path):
+        path = glob.glob(hist_path)
+        if not path:
+            path = glob.glob(os.path.join(base_path, hist_path))
+        dicts = []
+        res = {}
+        for p in path:
+            with open(os.path.join(p, '_varial_infodata.pkl')) as f:
+                r = cPickle.load(f)
+                dicts.append(r[var])
+        for d in dicts:
+            for key, val in d.iteritems():
+                if key in res and (len(val) == len(res[key])):
+                    old_t = res[key]
+                    if len(old_t) == 2:
+                        new_t = (old_t[0] + val[0], math.sqrt(old_t[1]*old_t[1] + val[1]*val[1]))
+                    elif len(old_t) == 4:
+                        new_t = (old_t[0] + val[0], math.sqrt(old_t[1]*old_t[1] + val[1]*val[1]),
+                            old_t[2] + val[2], old_t[3] + val[3])
+                    res[key] = new_t
+                elif isinstance(val, tuple) and (len(val) == 2 or len(val) == 4):
+                    res[key] = val
+        return res
+    return tmp
+
 table_block_signal = [
     (r'$\mathrm{T\bar{T}}$ (0.7 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0700_thth' in w, True),
     (r'$\mathrm{T\bar{T}}$ (0.9 TeV) $\rightarrow$ tHtH', lambda w: 'Integral___TpTp_M-0900_thth' in w, True),
@@ -1302,6 +1347,33 @@ table_block_signal_fs_1600 = [
     (r'$\mathrm{T\bar{T}}$ (1.6 TeV) $\rightarrow$ bWbW', lambda w: 'Integral___TpTp_M-1600_noH_bwbw' in w, True),
 ]
 
+table_block_signal_bb_fs_800 = [
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ bHbH', lambda w: 'Integral___BpBp_M-0800_bhbh' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ bHbZ', lambda w: 'Integral___BpBp_M-0800_bhbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ bHtW', lambda w: 'Integral___BpBp_M-0800_bhtw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ bZbZ', lambda w: 'Integral___BpBp_M-0800_noH_bzbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ bZtW', lambda w: 'Integral___BpBp_M-0800_noH_bztw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV) $\rightarrow$ tWtW', lambda w: 'Integral___BpBp_M-0800_noH_twtw' in w, True),
+]
+
+table_block_signal_bb_fs_1200 = [
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ bHbH', lambda w: 'Integral___BpBp_M-1200_bhbh' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ bHbZ', lambda w: 'Integral___BpBp_M-1200_bhbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ bHtW', lambda w: 'Integral___BpBp_M-1200_bhtw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ bZbZ', lambda w: 'Integral___BpBp_M-1200_noH_bzbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ bZtW', lambda w: 'Integral___BpBp_M-1200_noH_bztw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV) $\rightarrow$ tWtW', lambda w: 'Integral___BpBp_M-1200_noH_twtw' in w, True),
+]
+
+table_block_signal_bb_fs_1600 = [
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ bHbH', lambda w: 'Integral___BpBp_M-1600_bhbh' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ bHbZ', lambda w: 'Integral___BpBp_M-1600_bhbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ bHtW', lambda w: 'Integral___BpBp_M-1600_bhtw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ bZbZ', lambda w: 'Integral___BpBp_M-1600_noH_bzbz' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ bZtW', lambda w: 'Integral___BpBp_M-1600_noH_bztw' in w, True),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV) $\rightarrow$ tWtW', lambda w: 'Integral___BpBp_M-1600_noH_twtw' in w, True),
+]
+
 table_block_background_no_dib = [
     (r'$\mathrm{t\bar{t}}$', lambda w: 'Integral___t#bar{t}' in w, False, True),
     ('W + Jets', lambda w: 'Integral___W + jets' in w, False, True),
@@ -1327,6 +1399,18 @@ norm_factors = [
     (r'$\mathrm{T\bar{T}}$ (1.6 TeV)', (1./normfactors['TpTp_M-1600'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.7 TeV)', (1./normfactors['TpTp_M-1700'])*lumi),
     (r'$\mathrm{T\bar{T}}$ (1.8 TeV)', (1./normfactors['TpTp_M-1800'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (0.7 TeV)', (1./normfactors['BpBp_M-0700'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (0.8 TeV)', (1./normfactors['BpBp_M-0800'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (0.9 TeV)', (1./normfactors['BpBp_M-0900'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.0 TeV)', (1./normfactors['BpBp_M-1000'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.1 TeV)', (1./normfactors['BpBp_M-1100'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.2 TeV)', (1./normfactors['BpBp_M-1200'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.3 TeV)', (1./normfactors['BpBp_M-1300'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.4 TeV)', (1./normfactors['BpBp_M-1400'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.5 TeV)', (1./normfactors['BpBp_M-1500'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.6 TeV)', (1./normfactors['BpBp_M-1600'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.7 TeV)', (1./normfactors['BpBp_M-1700'])*lumi),
+    (r'$\mathrm{B\bar{B}}$ (1.8 TeV)', (1./normfactors['BpBp_M-1800'])*lumi),
 ]
 
 def get_table_category_block(hist_path='Histograms', style='AN'):
@@ -1340,6 +1424,7 @@ def get_table_category_block(hist_path='Histograms', style='AN'):
         return [
             ('H1b category', get_dict('../%s/StackedAll/SignalRegion1b' % hist_path , 'ST')),
             ('H2b category', get_dict('../%s/StackedAll/SignalRegion2b' % hist_path, 'ST')),
+            ('boosted Higgs comb.', get_dict_comb('../%s/StackedAll/SignalRegion*' % hist_path, 'ST')),
         ]
     else:
         return [
@@ -1413,22 +1498,43 @@ def mod_log_usr(dict_cnv_attr=None):
     return tmp
 
 
+def _def_bottom_plot_check(wrp):
+    return (
+        len(wrp._renderers) > 1 and
+        isinstance(wrp._renderers[0], varial.wrappers.HistoWrapper) and
+        isinstance(wrp._renderers[1], varial.wrappers.HistoWrapper) and
+        any(w.is_data for w in wrp._renderers) and
+        'TH2' not in wrp._renderers[0].type
+    )
+
+
+
+def def_bottom_plot_prep_main_pad(wrp, _):
+    if not _def_bottom_plot_check(wrp) or wrp.main_pad != wrp.canvas:
+        return
+
+    # make separate main pad
+    main_pad = TPad(
+        'main_pad_' + wrp._renderers[0].name,
+        'main_pad_' + wrp._renderers[0].name,
+        0, 0, 1, 1
+    )
+    wrp.canvas.cd()
+    main_pad.Draw()
+    main_pad.cd()
+    wrp.main_pad = main_pad
+
+
+
+
+
 def mk_split_err_ratio_plot_func_mod(**outer_kws):
     """
     Ratio of either stack and data or first and second histogram with uncertainties split up.
     """
 
-    def _bottom_plot_check(wrp):
-        return (
-            len(wrp._renderers) > 1 and
-            isinstance(wrp._renderers[0], varial.wrappers.HistoWrapper) and
-            isinstance(wrp._renderers[1], varial.wrappers.HistoWrapper) and
-            any(w.is_data for w in wrp._renderers) and
-            'TH2' not in wrp._renderers[0].type
-        )
-
     def _bottom_plot_make_pad(wrp):
-        if not _bottom_plot_check(wrp):
+        if not _def_bottom_plot_check(wrp):
             return False
 
         if wrp.second_pad:
@@ -1438,7 +1544,7 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
         wrp.second_pad = TPad(
             'bottom_pad_' + name,
             'bottom_pad_' + name,
-            0, 0, 1, 0.25
+            0, 0, 1, settings.bottom_pad_height
         )
         settings.apply_split_pad_styles(wrp)
         wrp.canvas.cd()
@@ -1447,7 +1553,7 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
         return True
 
     def mk_bkg_errors(histo, ref_histo):
-        for i in xrange(histo.GetNbinsX() + 2):
+        for i in xrange(histo.GetNbinsX() + 1):
             val = histo.GetBinContent(i)
             ref_val = ref_histo.GetBinContent(i)
             err = histo.GetBinError(i)
@@ -1455,25 +1561,34 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
             histo.SetBinError(i, err/(ref_val or 1e20))
         return histo
 
-    def mk_sys_tot_histos(cnv_wrp, mcee_rnd):
+    def mk_sys_tot_histos(cnv_wrp, mcee_rnd, par):
+        # stat_fill_col, stat_fill_style = par.get('stat_fill_col', None), par.get('stat_fill_style', None)
+        # sys_fill_col, sys_fill_style = par.get('sys_fill_col', None), par.get('sys_fill_style', None)
+        # tot_fill_col, tot_fill_style = par.get('tot_fill_col', None), par.get('tot_fill_style', None)
+        stt_histo = mcee_rnd.histo.Clone()
+        mk_bkg_errors(stt_histo, stt_histo)
+        settings.stat_error_style(stt_histo, **par)
+        rnd._bottom_plot_fix_bkg_err_values(cnv_wrp, stt_histo)
+
         sys_histo = mcee_rnd.histo_sys_err.Clone()
         mk_bkg_errors(sys_histo, mcee_rnd.histo)
-        settings.sys_error_style(sys_histo)
+        settings.sys_error_style(sys_histo, **par)
         rnd._bottom_plot_fix_bkg_err_values(cnv_wrp, sys_histo)
 
         tot_histo = mcee_rnd.histo_tot_err.Clone()
         mk_bkg_errors(tot_histo, mcee_rnd.histo)
-        settings.tot_error_style(tot_histo)
+        settings.tot_error_style(tot_histo, **par)
         rnd._bottom_plot_fix_bkg_err_values(cnv_wrp, tot_histo)
 
-        cnv_wrp.bottom_hist_stt_err = None
+        cnv_wrp.bottom_hist_stt_err = stt_histo
         cnv_wrp.bottom_hist_sys_err = sys_histo
         cnv_wrp.bottom_hist_tot_err = tot_histo
 
-    def mk_stat_histo(cnv_wrp, mcee_rnd):
+    def mk_stat_histo(cnv_wrp, mcee_rnd, par):
+        # stat_fill_col, stat_fill_style = par.get('stat_fill_col', None), par.get('stat_fill_style', None)
         stt_histo = mcee_rnd.histo.Clone()
         mk_bkg_errors(stt_histo, stt_histo)
-        settings.stat_error_style(stt_histo)
+        settings.stat_error_style(stt_histo, **par)
         rnd._bottom_plot_fix_bkg_err_values(cnv_wrp, stt_histo)
 
         cnv_wrp.bottom_hist_stt_err = stt_histo
@@ -1485,7 +1600,7 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
             '#frac{data-MC}{MC}'if data_rnd.is_data else '#frac{sig-bkg}{bkg}')
         rnds = cnv_wrp._renderers
         data_hist = data_rnd.histo
-        data_hist.SetBinErrorOption(TH1.kPoisson)  # TODO: poisson erros for main histo
+        data_hist.SetBinErrorOption(TH1.kPoisson)  # CHECK: doesn't this have to go after the loop below and correction for bin_width??
         data_hist.Sumw2(False)                          # should be set elsewhere!
         gtop = TGraphAsymmErrors(data_hist)
         gbot = TGraphAsymmErrors(div_hist)
@@ -1556,7 +1671,7 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
         return gbot
 
     def make_bottom_hist(cnv_wrp, kws):
-        if not _bottom_plot_check(cnv_wrp):
+        if not _def_bottom_plot_check(cnv_wrp):
             return cnv_wrp
 
         par = dict(settings.defaults_BottomPlot)
@@ -1587,10 +1702,10 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
 
         # underlying error bands
         if mcee_rnd.histo_sys_err:                      # w/ sys uncerts
-            mk_sys_tot_histos(cnv_wrp, mcee_rnd)
+            mk_sys_tot_histos(cnv_wrp, mcee_rnd, par)
             cnv_wrp.bottom_hist_tot_err.SetYTitle(y_title)
         else:                                           # w/o sys uncerts
-            mk_stat_histo(cnv_wrp, mcee_rnd)
+            mk_stat_histo(cnv_wrp, mcee_rnd, par)
             cnv_wrp.bottom_hist_stt_err.SetYTitle(y_title)
 
         # poisson errs or not..
@@ -1602,37 +1717,23 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
             if not (div_hist.GetBinContent(i) or div_hist.GetBinError(i)):
                 div_hist.SetBinContent(i, -200)
 
-    def bottom_plot_prep_main_pad(wrp, _):
-        if not _bottom_plot_check(wrp) or wrp.main_pad != wrp.canvas:
-            return
-
-        # make separate main pad
-        main_pad = TPad(
-            'main_pad_' + wrp._renderers[0].name,
-            'main_pad_' + wrp._renderers[0].name,
-            0, 0, 1, 1
-        )
-        wrp.canvas.cd()
-        main_pad.Draw()
-        main_pad.cd()
-        wrp.main_pad = main_pad
-
 
     def ratio_plot_func(cnv_wrp, _):
         # TODO: improve case where no data are in plot (e.g. adjust canvas size, make labels appear etc.)
-        if not _bottom_plot_make_pad(cnv_wrp) or not _bottom_plot_check(cnv_wrp):
+        if not _bottom_plot_make_pad(cnv_wrp) or not _def_bottom_plot_check(cnv_wrp):
             return cnv_wrp
         par = cnv_wrp._par_mk_split_err_ratio_plot_func
-        del cnv_wrp._par_mk_split_err_ratio_plot_func
+        # del cnv_wrp._par_mk_split_err_ratio_plot_func
 
         # draw bottom histos
         cnv_wrp.second_pad.cd()
         if cnv_wrp.bottom_hist_stt_err:
-            cnv_wrp.bottom_hist_stt_err.Draw('sameE2')
-        else:
-            cnv_wrp.bottom_hist_tot_err.Draw('sameE2')
+            if cnv_wrp.bottom_hist_tot_err:
+                cnv_wrp.bottom_hist_tot_err.Draw('sameE2')
             if par.get('draw_sys_sep', 0):
                 cnv_wrp.bottom_hist_sys_err.Draw('sameE2')
+        if par.get('draw_stat_err', True):
+            cnv_wrp.bottom_hist_stt_err.Draw('sameE2')
         if par['poisson_errs']:
             cnv_wrp.bottom_graph.Draw('same' + par['draw_opt'])
         else:
@@ -1642,12 +1743,40 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
 
     return rnd.PostBuildFuncWithSetup(
         ratio_plot_func,
-        (bottom_plot_prep_main_pad, make_bottom_hist)
+        (def_bottom_plot_prep_main_pad, make_bottom_hist)
     )
+
+
+
+
+
+
+
+
+
 
 
 def mk_bottom_plot_ratio_uncerts():
     """Same as BottomPlotRatio, but split MC and data uncertainties."""
+
+    def _bottom_plot_make_pad(wrp):
+        # if not _def_bottom_plot_check(wrp):
+        #     return False
+
+        if wrp.second_pad:
+            return True
+
+        name = wrp.name
+        wrp.second_pad = TPad(
+            'bottom_pad_' + name,
+            'bottom_pad_' + name,
+            0, 0, 1, settings.bottom_pad_height
+        )
+        settings.apply_split_pad_styles(wrp)
+        wrp.canvas.cd()
+        wrp.second_pad.Draw()
+        wrp.main_pad.cd()
+        return True
 
     def _bottom_plot_check(wrp):
         n_hists = len(wrp._renderers)
@@ -1655,11 +1784,11 @@ def mk_bottom_plot_ratio_uncerts():
         # if 'TH2' in self.renderers[0].type:
         #     return False
 
-        if n_hists != 3:
+        if n_hists < 2:
             print wrp._renderers
             raise RuntimeError('ERROR BottomPlotControlSignalRatio can only be created '
                                'with exactly three histograms!')
-        return n_hists == 3
+        return n_hists >= 2
 
     def define_bottom_hist(wrp, _):
         def plus_minus_key(w):
@@ -1676,67 +1805,88 @@ def mk_bottom_plot_ratio_uncerts():
         rnds = wrp._renderers
         rnds = sorted(rnds, key=plus_minus_key) 
         nom_histo = rnds[0].histo.Clone()
-        div_hist_down = rnds[1].histo.Clone()
-        div_hist_up = rnds[2].histo.Clone()
-        div_hist_down.Add(nom_histo, -1)
-        div_hist_up.Add(nom_histo, -1)
-        div_hist_down.Divide(nom_histo)
-        div_hist_up.Divide(nom_histo)
+        div_hists = list(r.histo.Clone() for r in rnds[1:])
+        div_cols = dict((r.histo.GetTitle(), r.color) for r in rnds[1:] if hasattr(r, 'color'))
+        # div_hist_down = rnds[1].histo.Clone()
+        # div_hist_up = rnds[2].histo.Clone()
+        nom_histo.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+        for d in div_hists:
+            d.Add(nom_histo, -1)
+            d.Divide(nom_histo)
+            d.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+            d.SetMarkerSize(0)
+            if d.GetTitle() in div_cols:
+                d.SetLineColor(div_cols[d.GetTitle()])
         for i in xrange(1, nom_histo.GetNbinsX() + 1):
             if nom_histo.GetBinContent(i) == 0. and\
-             div_hist_up.GetBinContent(i) == 0. and\
-             div_hist_down.GetBinContent(i) == 0.:
-                nom_histo.SetBinError(i, 0.) 
-                div_hist_down.SetBinContent(i, 0.)
-                div_hist_up.SetBinContent(i, 0.)
+             all(d.GetBinContent(i) == 0. for d in div_hists):
+                nom_histo.SetBinError(i, 0.)
+                for d in div_hists:
+                    d.SetBinContent(i, 0.)
             if nom_histo.GetBinContent(i):
                 nom_histo.SetBinError(i, nom_histo.GetBinError(i)/nom_histo.GetBinContent(i)) 
-            nom_histo.SetBinContent(i, 0.) 
-            div_hist_down.SetBinError(i, 0.)
-            div_hist_up.SetBinError(i, 0.)
-        div_hist_down.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
-        div_hist_up.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
-        nom_histo.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+            nom_histo.SetBinContent(i, 0.)
+            for d in div_hists:
+                d.SetBinError(i, 0.)
         varial.settings.stat_error_style(nom_histo)
-        div_hist_up.SetLineColor(varial.settings.colors['plus'])
-        div_hist_down.SetLineColor(varial.settings.colors['minus'])
-        if abs(div_hist_up.GetMaximum()) > abs(div_hist_down.GetMinimum()):
-            wrp.bottom_hist = div_hist_up
-            wrp.bottom_hist_sec = div_hist_down
-        else:
-            wrp.bottom_hist = div_hist_down
-            wrp.bottom_hist_sec = div_hist_up
+        # div_hist_up.SetLineColor(varial.settings.colors['plus'])
+        # div_hist_down.SetLineColor(varial.settings.colors['minus'])
+        div_hists = sorted(div_hists, key=lambda w: - max(abs(w.GetMaximum()), abs(w.GetMinimum())))
+        wrp._bottom_hists = div_hists
+        # if abs(div_hist_up.GetMaximum()) > abs(div_hist_down.GetMinimum()):
+        #     wrp.bottom_hist = div_hist_up
+        #     wrp.bottom_hist_sec = div_hist_down
+        # else:
+        #     wrp.bottom_hist = div_hist_down
+        #     wrp.bottom_hist_sec = div_hist_up
         wrp.bottom_hist_mc_err = nom_histo
         return wrp
 
 
     def draw_full_plot(wrp, _):
         """Draw mc error histo below data ratio."""
-        if not rnd._bottom_plot_make_pad(wrp) or not _bottom_plot_check(wrp):
+        if not _bottom_plot_make_pad(wrp) or not _bottom_plot_check(wrp):
             return wrp
 
         wrp.second_pad.cd()
-        n_bins = wrp.bottom_hist.GetNbinsX()
-        mini = min(wrp.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins))
-        maxi = max(wrp.bottom_hist.GetBinContent(i+1) for i in xrange(n_bins))
-        y_range = max(abs(mini), abs(maxi))
-        y_range = min(y_range, 2.)
+        n_bins = wrp._bottom_hists[0].GetNbinsX()
+        mini = min(wrp._bottom_hists[0].GetBinContent(i+1) for i in xrange(n_bins))
+        maxi = max(wrp._bottom_hists[0].GetBinContent(i+1) for i in xrange(n_bins))
+        if getattr(wrp, 'y_range', None):
+            y_range = wrp.y_range
+        else:
+            y_range = max(abs(mini), abs(maxi))
+            y_range = min(y_range, 2.)
         y_range += .1*y_range
         y_min, y_max = -y_range, y_range
-        wrp.bottom_hist.GetYaxis().SetRangeUser(y_min, y_max)
-        wrp.bottom_hist.GetYaxis().SetNoExponent()
-        wrp.bottom_hist.SetMarkerSize(0)
-        wrp.bottom_hist.GetYaxis().SetTitleSize(0.10)
-        wrp.bottom_hist_sec.SetMarkerSize(0)
-        wrp.bottom_hist.Draw('E0')
-        wrp.bottom_hist_sec.Draw('sameE0')
+        wrp._bottom_hists[0].GetYaxis().SetRangeUser(y_min, y_max)
+        wrp._bottom_hists[0].GetYaxis().SetNoExponent()
+        # wrp._bottom_hists[0].GetYaxis().SetTitleSize(0.10)
+        wrp._bottom_hists[0].GetYaxis().CenterTitle(1)
+        wrp._bottom_hists[0].GetYaxis().SetTitleOffset(0.4)
+        wrp._bottom_hists[0].GetYaxis().SetTitleSize(0.08)
+        wrp._bottom_hists[0].GetYaxis().SetLabelSize(0.13)
+        wrp._bottom_hists[0].GetXaxis().SetTitleSize(0.13)
+        wrp._bottom_hists[0].GetXaxis().SetLabelSize(0.13)
+        wrp._bottom_hists[0].SetTitle('')
+        wrp._bottom_hists[0].Draw('E0')
+        for w in wrp._bottom_hists[1:]:
+            w.SetTitle('')
+            w.Draw('sameE0')
         wrp.bottom_hist_mc_err.Draw('sameE2')
         wrp.main_pad.cd()
+        wrp.legend.AddEntry(wrp.bottom_hist_mc_err, 'Stat. Uncert. MC', 'f')
 
     return rnd.PostBuildFuncWithSetup(
         draw_full_plot,
         (rnd.bottom_plot_prep_main_pad, define_bottom_hist)
     )
+
+
+
+
+
+
 
 
 def mk_bottom_plot_sig_bkg_ratio():
@@ -1758,8 +1908,6 @@ def mk_bottom_plot_sig_bkg_ratio():
 
         if not _bottom_plot_check(wrp):
             return wrp
-
-        rnds = wrp._renderers
         bkg_rnds = list(r for r in rnds if r.is_background)
         sig_rnds = list(r for r in rnds if r.is_signal)
         assert len(bkg_rnds) == 1, 'can only have one background histogram if ratio is used.'
@@ -1842,6 +1990,281 @@ def mk_bottom_plot_sig_bkg_ratio():
     )
 
 
+
+
+
+
+
+def mk_pull_plot_func_poisson(**outer_kws):
+    """
+    Ratio of first and second histogram in canvas.
+    """
+
+    def _bottom_plot_make_pad(wrp):
+        if not _def_bottom_plot_check(wrp):
+            return False
+
+        if wrp.second_pad:
+            return True
+
+        name = wrp.name
+        wrp.second_pad = TPad(
+            'bottom_pad_' + name,
+            'bottom_pad_' + name,
+            0, 0, 1, settings.bottom_pad_height
+        )
+        settings.apply_split_pad_styles(wrp)
+        wrp.canvas.cd()
+        wrp.second_pad.Draw()
+        wrp.main_pad.cd()
+        return True
+
+    def make_bottom_hist(cnv_wrp, kws):
+        if not _def_bottom_plot_check(cnv_wrp):
+            return cnv_wrp
+
+        par = dict(settings.defaults_BottomPlot)
+        par.update(outer_kws)
+        par.update(kws)
+        cnv_wrp._par_mk_pull_plot_func = par
+
+        rnds = cnv_wrp._renderers
+        mcee_rnd, data_rnd = rnd.bottom_plot_get_div_hists(rnds)
+        y_title = par['y_title'] or (
+            '#frac{(data-bkg)}{std. dev.}' if data_rnd.is_data else '#frac{Sig-Bkg}{Bkg}')
+
+        # produce pull histogram
+        mc_histo = mcee_rnd.histo
+        data_hist = data_rnd.histo                      # NO CLONE HERE
+        sigma_histo = mcee_rnd.histo.Clone()
+        data_hist.SetBinErrorOption(TH1.kPoisson)       # can be done here, doesn't have to go after the next loop
+        data_hist.Sumw2(False)                          # should be set elsewhere!
+        mc_histo.SetBinErrorOption(TH1.kPoisson)
+
+        # test_string = 'BEFORE ' + cnv_wrp.name
+        # for i in xrange(data_hist.GetNbinsX()+2):
+        #     test_string += ' %s/%s/%s' % (data_hist.GetBinContent(i), data_hist.GetBinErrorLow(i), data_hist.GetBinErrorUp(i)) 
+        # if cnv_wrp.name == ST_rebin_flex:
+        #     print test_string
+
+        # test_string = 'AFTER ' + cnv_wrp.name
+
+          # TODO: poisson erros for main histo
+        gtop = TGraphAsymmErrors(data_hist)
+
+        # empty graphs implemented - still needed? already implemented in Heiner's function?
+        gtop_empty = TGraphAsymmErrors(data_hist)
+
+        # for i in xrange(data_hist.GetNbinsX()+2):
+        #     test_string += ' %s/%s/%s' % (data_hist.GetBinContent(i), data_hist.GetBinErrorLow(i), data_hist.GetBinErrorUp(i)) 
+        # if cnv_wrp.name == ST_rebin_flex:
+        #     print test_string
+
+        gtop_empty.SetMarkerStyle(1)
+
+        # test_string = cnv_wrp.in_file_path + ' data nom/low/up -- mc nom/low/up -- mc_syst nom/low/up -- scl_fct - dat_stat/mc_stat/mc_syst/sqr_quad/sigma\n'
+        
+        div_hist = data_hist.Clone()                    # NOW CLONING!
+
+        if hasattr(cnv_wrp, 'bin_width'):
+            for i in xrange(data_hist.GetNbinsX()+2):
+                bin_count = data_hist.GetBinContent(i)*data_hist.GetBinWidth(i)/cnv_wrp.bin_width
+                data_hist.SetBinContent(i, bin_count)
+        for i in xrange(mc_histo.GetNbinsX()+2):
+            dat_val = data_hist.GetBinContent(i)
+            x_val = mc_histo.GetBinCenter(i)
+            x_err = 0.
+            if hasattr(cnv_wrp, 'draw_x_errs'):
+                x_err = data_hist.GetBinWidth(i)/2.
+            # if dat_val <= 0.:
+            #     x_val = mc_histo.GetBinCenter(i)
+            #     gtop.SetPoint(i -1, x_val, -1.)
+            # if mc_val:
+            scl_fct = 1.
+            if hasattr(cnv_wrp, 'bin_width'):
+                scl_fct = data_hist.GetBinWidth(i)/cnv_wrp.bin_width
+
+            sigma_histo.SetBinError(i, 0.)
+            # pm stands for plusminus
+            pm = 1. if data_hist.GetBinContent(i)/scl_fct > mc_histo.GetBinContent(i) else -1.
+            mc_sig_stat = mc_histo.GetBinErrorUp(i) if pm > 0 else mc_histo.GetBinErrorLow(i)
+            data_sig_stat = data_hist.GetBinErrorLow(i)/scl_fct if pm > 0 else data_hist.GetBinErrorUp(i)/scl_fct
+            # if not data_hist.GetBinContent(i):
+            #     data_sig_stat = 1.8
+            # if not mc_histo.GetBinContent(i):
+            #     mc_sig_stat = 1.8
+            mc_sig_syst = 0.
+            if mcee_rnd.histo_sys_err:
+                mc_sys_hist = mcee_rnd.histo_sys_err
+                mc_sig_syst = mc_sys_hist.GetBinError(i) + pm*(
+                                        mc_sys_hist.GetBinContent(i) - mc_histo.GetBinContent(i))
+            sqr_quad = math.sqrt(mc_sig_stat**2+data_sig_stat**2+mc_sig_syst**2) or 1e-10
+            # test_string += '  %s/%s/%s --' % (data_hist.GetBinContent(i)/scl_fct, data_hist.GetBinErrorLow(i)/scl_fct, data_hist.GetBinErrorUp(i)/scl_fct) 
+            # test_string += ' %s/%s/%s --' % (mc_histo.GetBinContent(i), mc_histo.GetBinErrorLow(i), mc_histo.GetBinErrorUp(i)) 
+            # test_string += ' %s/%s/%s\n' % (mcee_rnd.histo_sys_err.GetBinContent(i), mcee_rnd.histo_sys_err.GetBinErrorLow(i), mcee_rnd.histo_sys_err.GetBinErrorUp(i)) 
+            # test_string += '   %s - %s/%s/%s/%s/%s\n' % (scl_fct, data_sig_stat, mc_sig_stat, mc_sig_syst, sqr_quad, (data_hist.GetBinContent(i)/scl_fct - mc_histo.GetBinContent(i))/sqr_quad) 
+            sigma_histo.SetBinContent(i, sqr_quad)
+        
+            if dat_val > 0.:
+                e_up = data_hist.GetBinErrorUp(i)
+                e_lo = data_hist.GetBinErrorLow(i)
+                gtop.SetPoint(i - 1, x_val, dat_val/scl_fct)
+                gtop.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
+                gtop_empty.RemovePoint(i - 1)
+            elif hasattr(cnv_wrp, 'draw_empty_bin_error') and any(r.histo.GetBinContent(i) > 0. for r in rnds):
+                e_up = data_hist.GetBinErrorUp(i)
+                e_lo = data_hist.GetBinErrorLow(i)
+                gtop_empty.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
+                gtop.RemovePoint(i - 1)
+            else:
+                gtop.RemovePoint(i - 1)
+                gtop_empty.RemovePoint(i - 1)
+
+
+        # if cnv_wrp.in_file_path == 'SignalRegion2b/ST_rebin_flex':
+        #     print test_string
+        div_hist.Add(mc_histo, -1)
+        div_hist.Divide(sigma_histo)
+        div_hist.SetYTitle(y_title)
+
+
+        gtop.SetTitle('Data')
+        gtop_empty.SetTitle('dummy')
+        data_hist.Sumw2()
+        data_rnd.graph_draw = gtop
+        data_rnd.draw_option = '0P'
+        # par['draw_opt'] = '0P'
+        # par['draw_opt_first'] = '0P'
+
+        cnv_wrp.bottom_hist = div_hist
+        settings.set_bottom_plot_general_style(cnv_wrp.bottom_hist)
+        settings.set_bottom_plot_pull_style(cnv_wrp.bottom_hist)
+        rnd._bottom_plot_y_bounds(cnv_wrp, cnv_wrp.bottom_hist, par)
+        par['draw_opt'] = 'hist'
+
+    def ratio_plot_func(cnv_wrp, _):
+
+
+        # TODO: improve case where no data are in plot (e.g. adjust canvas size, make labels appear etc.)
+        if not _bottom_plot_make_pad(cnv_wrp):
+            return cnv_wrp
+
+        par = cnv_wrp._par_mk_pull_plot_func
+        del cnv_wrp._par_mk_pull_plot_func
+
+        # draw histo
+        cnv_wrp.second_pad.cd()
+        cnv_wrp.bottom_hist.Draw(par['draw_opt'])
+        cnv_wrp.main_pad.cd()
+        return cnv_wrp
+
+    return rnd.PostBuildFuncWithSetup(
+        ratio_plot_func,
+        (def_bottom_plot_prep_main_pad, make_bottom_hist)
+    )
+
+
+# def mk_pull_plot_func(**outer_kws):
+#     """
+#     Ratio of first and second histogram in canvas.
+#     """
+
+#     def _bottom_plot_make_pad(wrp):
+#         if not _def_bottom_plot_check(wrp):
+#             return False
+
+#         if wrp.second_pad:
+#             return True
+
+#         name = wrp.name
+#         wrp.second_pad = TPad(
+#             'bottom_pad_' + name,
+#             'bottom_pad_' + name,
+#             0, 0, 1, settings.bottom_pad_height
+#         )
+#         settings.apply_split_pad_styles(wrp)
+#         wrp.canvas.cd()
+#         wrp.second_pad.Draw()
+#         wrp.main_pad.cd()
+#         return True
+
+#     def make_bottom_hist(cnv_wrp, kws):
+#         if not _def_bottom_plot_check(cnv_wrp):
+#             return cnv_wrp
+
+#         par = dict(settings.defaults_BottomPlot)
+#         par.update(outer_kws)
+#         par.update(kws)
+#         cnv_wrp._par_mk_pull_plot_func = par
+
+#         rnds = cnv_wrp._renderers
+#         mcee_rnd, data_rnd = rnd.bottom_plot_get_div_hists(rnds)
+#         y_title = par['y_title'] or (
+#             '#frac{(data-bkg)}{#sigma}' if data_rnd.is_data else '#frac{Sig-Bkg}{Bkg}')
+
+#         # produce pull histogram
+#         mc_histo = mcee_rnd.histo
+#         data_hist = data_rnd.histo                      # NO CLONE HERE!
+#         sigma_histo = mcee_rnd.histo.Clone()
+#         data_hist.SetBinErrorOption(TH1.kPoisson)
+#         mc_histo.SetBinErrorOption(TH1.kPoisson)
+
+#         # test_string = cnv_wrp.in_file_path + ' data nom/low/up -- mc nom/low/up -- mc_syst nom/low/up -- dat_stat/mc_stat/mc_syst/sqr_quad/sigma\n'
+#         for i in xrange(mc_histo.GetNbinsX()+2):
+#             sigma_histo.SetBinError(i, 0.)
+#             # pm stands for plusminus
+#             pm = 1. if data_hist.GetBinContent(i) > mc_histo.GetBinContent(i) else -1.
+#             mc_sig_stat = mc_histo.GetBinErrorUp(i) if pm > 0 else mc_histo.GetBinErrorLow(i)
+#             data_sig_stat = data_hist.GetBinErrorLow(i) if pm > 0 else data_hist.GetBinErrorUp(i)
+#             if not data_hist.GetBinContent(i):
+#                 data_sig_stat = 1.8
+#             if not mc_histo.GetBinContent(i):
+#                 mc_sig_stat = 1.8
+#             mc_sig_syst = 0.
+#             if mcee_rnd.histo_sys_err:
+#                 mc_sys_hist = mcee_rnd.histo_sys_err
+#                 mc_sig_syst = mc_sys_hist.GetBinError(i) + pm*(
+#                                         mc_sys_hist.GetBinContent(i) - mc_histo.GetBinContent(i))
+#             sqr_quad = math.sqrt(mc_sig_stat**2+data_sig_stat**2+mc_sig_syst**2) or 1e-10
+#             # test_string += '  %s/%s/%s --' % (data_hist.GetBinContent(i), data_hist.GetBinErrorLow(i), data_hist.GetBinErrorUp(i)) 
+#             # test_string += ' %s/%s/%s --' % (mc_histo.GetBinContent(i), mc_histo.GetBinErrorLow(i), mc_histo.GetBinErrorUp(i)) 
+#             # test_string += ' %s/%s/%s\n' % (mcee_rnd.histo_sys_err.GetBinContent(i), mcee_rnd.histo_sys_err.GetBinErrorLow(i), mcee_rnd.histo_sys_err.GetBinErrorUp(i)) 
+#             # test_string += '   %s/%s/%s/%s/%s\n' % (data_sig_stat, mc_sig_stat, mc_sig_syst, sqr_quad, (data_hist.GetBinContent(i) - mc_histo.GetBinContent(i))/sqr_quad) 
+#             sigma_histo.SetBinContent(i, sqr_quad)
+
+#         # if cnv_wrp.in_file_path == 'SignalRegion2b/ST_rebin_flex':
+#         #     print test_string
+
+#         div_hist = data_hist.Clone()                    # NOW CLONING!
+#         div_hist.Add(mc_histo, -1)
+#         div_hist.Divide(sigma_histo)
+#         div_hist.SetYTitle(y_title)
+
+#         cnv_wrp.bottom_hist = div_hist
+#         settings.set_bottom_plot_general_style(cnv_wrp.bottom_hist)
+#         settings.set_bottom_plot_pull_style(div_hist)
+#         rnd._bottom_plot_y_bounds(cnv_wrp, cnv_wrp.bottom_hist, par)
+#         par['draw_opt'] = 'hist'
+
+#     def ratio_plot_func(cnv_wrp, _):
+#         if not _bottom_plot_make_pad(cnv_wrp):
+#             return cnv_wrp
+
+#         par = cnv_wrp._par_mk_pull_plot_func
+#         del cnv_wrp._par_mk_pull_plot_func
+
+#         # draw histo
+#         cnv_wrp.second_pad.cd()
+#         cnv_wrp.bottom_hist.Draw(par['draw_opt'])
+#         cnv_wrp.main_pad.cd()
+#         return cnv_wrp
+
+#     return rnd.PostBuildFuncWithSetup(
+#         ratio_plot_func,
+#         (def_bottom_plot_prep_main_pad, make_bottom_hist)
+#     )
+
+
 def mk_tobject_draw_func(tobject):
     """
     Draw any TObject. Like a TLatex.
@@ -1859,3 +2282,73 @@ def mk_tobject_draw_func(tobject):
         return wrp
 
     return tobject_draw_func
+
+
+def mk_fit_bottom_plot(**outer_kws):
+    """
+    Ratio of first and second histogram in canvas.
+    """
+
+    def _bottom_plot_make_pad(wrp):
+        if not _def_bottom_plot_check(wrp):
+            return False
+
+        if not wrp.second_pad:
+            return False
+
+        # name = wrp.name
+        # wrp.second_pad = TPad(
+        #     'bottom_pad_' + name,
+        #     'bottom_pad_' + name,
+        #     0, 0, 1, settings.bottom_pad_height
+        # )
+        # settings.apply_split_pad_styles(wrp)
+        # wrp.canvas.cd()
+        # wrp.second_pad.Draw()
+        # wrp.main_pad.cd()
+        return True
+
+    def mk_fit(cnv_wrp, _):
+
+
+        # TODO: improve case where no data are in plot (e.g. adjust canvas size, make labels appear etc.)
+        if not _bottom_plot_make_pad(cnv_wrp):
+            return cnv_wrp
+
+
+        # par = cnv_wrp._par_mk_pull_plot_func
+        # del cnv_wrp._par_mk_pull_plot_func
+
+        # draw histo
+        # if cnv_wrp.name == 'HT_rebin_flex':
+        par = cnv_wrp._par_mk_split_err_ratio_plot_func
+
+        x, y = ctypes.c_double(), ctypes.c_double()
+        cnv_wrp.second_pad.cd()
+        cnv_wrp.bottom_graph.Fit("pol1", "0")
+        # cnv_wrp.bottom_graph.Fit("pol0")
+        tf1 = cnv_wrp.bottom_graph.GetFunction("pol1")
+        tf1.SetLineWidth(2)
+        tf1.SetLineColor(2)
+        # tf1.GetRange(x, y)
+        const_val = tf1.Eval(3000)
+        tf2 = TF1("tf2","[0]",3000,6500)
+        tf2.SetParameter(0, const_val)
+        tf2.SetLineWidth(2)
+        tf2.SetLineColor(2)
+        tf1.SetRange(400, 3000)
+        tf1.Draw('LSAME')
+        tf2.DrawCopy('LSAME')
+        cnv_wrp.second_pad.Update()
+        cnv_wrp.main_pad.cd()
+        legend = cnv_wrp.legend
+        legend.AddEntry(tf1, 'Linear Fit', 'l')
+        # for o in cnv_wrp.second_pad.GetListOfPrimitives():
+        #     print type(o)
+        # cnv_wrp.bottom_hist.Draw(par['draw_opt'])
+        # return cnv_wrp
+
+    return rnd.PostBuildFuncWithSetup(
+        mk_fit,
+        []
+    )

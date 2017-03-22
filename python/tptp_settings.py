@@ -89,17 +89,18 @@ settings.pretty_names.update({
     'sfel_id' : 'ID: e',
     'sfel_trg' : 'Trigger: e',
     'sfel_iso' : 'Iso: e',
-    'ScaleVar' : 'ME Scale',
+    'ScaleVar' : '#mu_{R/F} scale',
     'PDF' : 'PDF',
-    'ttbar_scale' : 'Top shower',
-    'PSScale' : 'Top shower',
+    'ttbar_scale' : 'PS scale',
+    'PSScale' : 'PS scale',
     'top_pt_reweight' : 'top-p_{T} reweighting',
     'ht_reweight' : 'H_{T}-reweighting',
     'q2' : 'Top shower',
-    'higgs_smear' : 'H tag: smear',
+    'higgs_smear' : 'Jet mass res.',
+    'higgs_scale' : 'Jet mass scale',
     'jmr' : 'Pruned mass resolution',
     'jms' : 'Pruned mass scale',
-    'jsf' : 'Bkg reweighting',
+    'jsf' : 'H_{T} reweighting',
 } )
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
@@ -118,6 +119,8 @@ settings.tot_error_color_main = (921, 0.6)
 settings.tot_error_fill_main = 3644
 settings.tot_error_color_bot = (921, 0.6)
 settings.tot_error_fill_bot = 3644
+settings.stack_line_color = None
+settings.signal_linewidth = 2
 
 # Heiner's settings for total error:
 # style = 3475
@@ -194,11 +197,50 @@ settings.root_style.SetPadTopMargin(0.125)
 settings.root_style.SetPadBottomMargin(0.125)
 settings.root_style.SetPadRightMargin(0.1)
 
+settings.bottom_pad_height = 0.3
+# def apply_split_pad_styles(cnv_wrp):
+#     main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
+
+#     main.SetTopMargin(0.1)
+#     main.SetBottomMargin(0.3)
+#     #main.SetRightMargin(0.04)
+#     #main.SetLeftMargin(0.16)
+
+#     scnd.SetTopMargin(0.)
+#     scnd.SetBottomMargin(0.375)
+#     #scnd.SetRightMargin(0.04)
+#     #scnd.SetLeftMargin(0.16)
+#     scnd.SetRightMargin(main.GetRightMargin())
+#     scnd.SetLeftMargin(main.GetLeftMargin())
+#     scnd.SetGridy()
+
+#     first_obj = cnv_wrp.first_obj
+#     first_obj.GetYaxis().CenterTitle(1)
+#     first_obj.GetYaxis().SetTitleSize(0.045)
+#     first_obj.GetYaxis().SetTitleOffset(1.3)
+#     first_obj.GetYaxis().SetLabelSize(0.055)
+#     first_obj.GetXaxis().SetNdivisions(505)
+
+# def set_bottom_plot_general_style(obj):
+#     obj.GetYaxis().CenterTitle(1)
+#     obj.GetYaxis().SetTitleSize(0.15) #0.11
+#     obj.GetYaxis().SetTitleOffset(0.44) #0.55
+#     obj.GetYaxis().SetLabelSize(0.16)
+#     obj.GetYaxis().SetNdivisions(205)
+#     obj.GetXaxis().SetNoExponent()
+#     obj.GetXaxis().SetTitleSize(0.16)
+#     obj.GetXaxis().SetLabelSize(0.17)
+#     obj.GetXaxis().SetTitleOffset(1)
+#     obj.GetXaxis().SetLabelOffset(0.006)
+#     obj.GetXaxis().SetNdivisions(505)
+#     obj.GetXaxis().SetTickLength(obj.GetXaxis().GetTickLength() * 3.)
+#     obj.SetTitle('')
+
 def apply_split_pad_styles(cnv_wrp):
     main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
 
-    main.SetTopMargin(0.1)
-    main.SetBottomMargin(0.25)
+    main.SetTopMargin(0.125)
+    main.SetBottomMargin(settings.bottom_pad_height)
     #main.SetRightMargin(0.04)
     #main.SetLeftMargin(0.16)
 
@@ -212,12 +254,21 @@ def apply_split_pad_styles(cnv_wrp):
 
     first_obj = cnv_wrp.first_obj
     first_obj.GetYaxis().CenterTitle(1)
-    first_obj.GetYaxis().SetTitleSize(0.045)
-    first_obj.GetYaxis().SetTitleOffset(1.3)
+    first_obj.GetYaxis().SetTitleSize(0.055)
+    first_obj.GetYaxis().SetTitleOffset(1.1)
     first_obj.GetYaxis().SetLabelSize(0.055)
     first_obj.GetXaxis().SetNdivisions(505)
 
+def set_bottom_plot_pull_style(obj):
+    obj.SetFillColor(ROOT.kGray + 2)
+    obj.SetLineColor(ROOT.kGray + 2)
+    obj.GetYaxis().SetTitleSize(0.14) #0.11
+    obj.GetYaxis().SetNdivisions(7) #0.11
+    obj.GetYaxis().SetTitleOffset(0.3)
+    obj.GetYaxis().SetLabelSize(0.16)
+
 settings.apply_split_pad_styles = apply_split_pad_styles
+settings.set_bottom_plot_pull_style = set_bottom_plot_pull_style
 
 # from vlq_settings
 # settings.colors = {

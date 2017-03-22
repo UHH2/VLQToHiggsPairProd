@@ -86,6 +86,8 @@ public:
         // shared_ptr<SelectionItem>(new SelDatI("n_wtags_sm_up", "N(W-tags, sm_up)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med", "N(H-tags, 1b)", 6, -.5, 5.5)),
         // shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med", "N(H-tags, 2b)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_loose", "N(H-tags, 1b, loose)", 6, -.5, 5.5)),
+        shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_loose", "N(H-tags, 2b, loose)", 6, -.5, 5.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm_down", "N(H-tags, 1b, sm10)", 6, -.5, 5.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_2b_med_sm_down", "N(H-tags, 2b, sm10)", 6, -.5, 5.5)),
         shared_ptr<SelectionItem>(new SelDatI("n_higgs_tags_1b_med_sm_up", "N(H-tags, 1b, sm_up)", 6, -.5, 5.5)),
@@ -268,7 +270,7 @@ private:
     // Event::Handle<float> jetpt_weight_hndl;
     // Event::Handle<int> use_sr_sf_hndl;
     // vector<vector<unique_ptr<Hists>>> v_reweighted_hists_after_sel;
-    vector<unique_ptr<Hists>> v_lep_combined_hists;
+    vector<shared_ptr<Hists>> v_lep_combined_hists;
     vector<string> categories;
 
 };
@@ -337,12 +339,12 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     auto ak4_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK4PFchs_MC 
     : JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
 
-    pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "topjets",
-                "topjets_no_corr",
-                boost::none,
-                true
-                ));
+    // pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+    //             "topjets",
+    //             "topjets_no_corr",
+    //             boost::none,
+    //             true
+    //             ));
     pre_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
                 "topjets",
                 "topjets_sc_up",
@@ -389,7 +391,6 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets"));
     pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets_sc_up"));
     pre_modules.emplace_back(new TopJetCleaner(ctx, AndId<TopJet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(200.0,2.4)), "topjets_sc_down"));
-
 
 
     //////////////////////
@@ -560,6 +561,53 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
     }
         // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+
+
+    //////////////////////
+    ///// Test other working points for H-tagger
+    //////////////////////
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "higgs_tags_1b_loose",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_LOOSE)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "higgs_tags_2b_loose",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_LOOSE), CSVBTag(CSVBTag::WP_LOOSE)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_loose",
+                "n_higgs_tags_1b_loose"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_loose",
+                "n_higgs_tags_2b_loose"
+                ));
+
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "higgs_tags_1b_tight",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_TIGHT)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
+                "ak8_boost",
+                "higgs_tags_2b_tight",
+                TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_TIGHT), CSVBTag(CSVBTag::WP_TIGHT)))
+                // true
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_1b_tight",
+                "n_higgs_tags_1b_tight"
+                ));
+    other_modules.emplace_back(new CollectionSizeProducer<TopJet>(ctx,
+                "higgs_tags_2b_tight",
+                "n_higgs_tags_2b_tight"
+                ));
 
     //////////////////////
     ///// N-tree producer for some important collections
@@ -1252,7 +1300,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_2b_med", "N(Higgs-Tags, 2 med b)", 6, -.5, 5.5, 0, 0));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000));
         }
-        else if (split(cat, "_")[1] == "Sideband") {
+        else if (split(cat, "_")[1] == "0H") {
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("met", "MET", 50, 0, 1000, 100.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_additional_btags_medium", "N(non-overlapping medium b-tags)", 10, -.5, 9.5, 1));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_higgs_tags_1b_med", "N(Higgs-Tags, 1 med b)", 6, -.5, 5.5, 0, 0));
@@ -1293,11 +1341,11 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
 
         // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-        v_hists.emplace_back(vector<unique_ptr<Hists>>());
-        v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_reweighted_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_2h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_1h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        v_hists.emplace_back(vector<shared_ptr<Hists>>());
+        v_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_reweighted_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_2h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_1h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
 
 
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
@@ -1368,7 +1416,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
             gen_hists->add_genhistcoll(6, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
-            v_hists_after_sel.back().push_back(unique_ptr<CustomizableGenHists>(gen_hists)); 
+            v_hists_after_sel.back().push_back(shared_ptr<CustomizableGenHists>(gen_hists)); 
             v_hists_after_sel.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/PostSelection/RecoGenComparisons", "HT", "parton_ht", "HT_parton")); 
             v_hists_after_sel.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/PostSelection/RecoGenComparisons", "HT", "gen_ht", "HT_gen")); 
             // v_hists_after_sel.back().emplace_back(new RecoGenVarComp<float>(ctx, cat+"/PostSelection/RecoGenComparisons", "pt_ld_ak4_jet", "pt_ld_ak4_genjet", "pt_ld_ak4_jet")); 

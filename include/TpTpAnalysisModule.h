@@ -71,9 +71,9 @@ protected:
     // unique_ptr<AnalysisModule> writer_module; // for TMVA stuff
 
     // store the Hists collection
-    unique_ptr<Hists> gen_hists;
-    vector<vector<unique_ptr<Hists>>> v_hists;
-    vector<vector<unique_ptr<Hists>>> v_hists_after_sel;
+    shared_ptr<Hists> gen_hists;
+    vector<vector<shared_ptr<Hists>>> v_hists;
+    vector<vector<shared_ptr<Hists>>> v_hists_after_sel;
 
     vector<vector<shared_ptr<SelectionItem>>> SEL_ITEMS_FULL_SEL;
 

@@ -174,9 +174,9 @@ mod_dict = {
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
             'set_leg_2_col_log' : {
-                    'x_pos': 0.75,
+                    'x_pos': 0.7,
                     'y_pos': 0.7,
-                    'label_width': 0.25,
+                    'label_width': 0.30,
                     'label_height': 0.045,
                     'box_text_size' : 0.035,
                     'opt': 'f',
@@ -185,9 +185,8 @@ mod_dict = {
                     'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             'y_max_fct' : 1.2,
-            'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-            'text_box_log' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-            # 'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}}"),
+            'text_box_lin' : [(0.19, 0.8, "#scale[0.7]{#bf{CMS}}"), (0.19, 0.745, "#scale[0.6]{#it{Preliminary}}")],
+            'text_box_log' : (0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}"),
             'err_empty_bins' : True,
             'draw_x_errs' : True,
             # 'draw_empty_bin_error' : True
@@ -213,7 +212,7 @@ mod_dict = {
                     'reverse': True,
                     'sort_legend' : lambda w: 'TT ' in w[1],
                 },
-            'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            'text_box_lin' : [(0.19, 0.8, "#scale[0.7]{#bf{CMS}}"), (0.19, 0.745, "#scale[0.6]{#it{Preliminary}}")],
             },
     'nomass_boost_2b_mass_softdrop_rebin_flex' : {
             # 'rebin_list' : list(x for x in xrange(0, 310, 10)) # [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
@@ -235,7 +234,7 @@ mod_dict = {
                     'reverse': True,
                     'sort_legend' : lambda w: 'TT ' in w[1],
                 },
-            'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            'text_box_lin' : (0.19, 0.79, "#scale[0.7]{#bf{CMS}}"),
             },
     'nobtag_boost_mass_nsjbtags' : {
             'title' : 'N(subjet b-tags)',
@@ -252,7 +251,7 @@ mod_dict = {
                     'reverse': True,
                     'sort_legend' : lambda w: 'TT ' in w[1],
                 },
-            'text_box_log' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            'text_box_log' : [(0.19, 0.8, "#scale[0.7]{#bf{CMS}}"), (0.19, 0.745, "#scale[0.6]{#it{Preliminary}}")],
             },
     }
 
@@ -696,7 +695,7 @@ table_block_background = [
 
 def plot_merged_channels_tables(final_dir):
     return varial.tools.ToolChain(final_dir, [
-        varial.tools.ToolChainParallel('HistoLoader',
+        varial.tools.ToolChainParallel('HistoLoaderPost',
             list(varial.tools.HistoLoader(
                 pattern=map(lambda w: w.format('*'+g+'*'), input_pattern + bpbp_pattern),
                 filter_keyfunc=lambda w: common_plot.unselect_theory_uncert(w) and\
@@ -717,7 +716,7 @@ def plot_merged_channels_tables(final_dir):
                 mod_log=common_plot.mod_log_usr(mod_dict),
                 canvas_post_build_funcs=get_style()),
             pattern=None,
-            input_result_path='../HistoLoader/HistoLoader*',
+            input_result_path='../HistoLoaderPost/HistoLoader*',
             # auto_legend=False,
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
@@ -731,7 +730,7 @@ def plot_merged_channels_tables(final_dir):
                 canvas_post_build_funcs=get_style()
                 ),
             pattern=None,
-            input_result_path='../HistoLoader/HistoLoader*',
+            input_result_path='../HistoLoaderPost/HistoLoader*',
             # auto_legend=False,
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
@@ -740,7 +739,7 @@ def plot_merged_channels_tables(final_dir):
             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False,
                 hook_loaded_histos=lambda w: common_plot.norm_smpl(w, normfactors_ind_fs_rev, calc_scl_fct=False)),
             pattern=None,
-            input_result_path='../HistoLoader/HistoLoader*',
+            input_result_path='../HistoLoaderPost/HistoLoader*',
             # auto_legend=False,
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
@@ -830,7 +829,7 @@ def mk_tc_tex(source_dir):
     ]
     tc_tex_an = varial.tools.ToolChain('CopyPlots', [
         varial.tools.ToolChain('TexPaper', tc_tex_an),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:Paper-Dir/papers/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True),
+        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:Paper-Dir/notes/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True),
         ])
     return tc_tex_an
 
@@ -845,9 +844,9 @@ if __name__ == '__main__':
     all_tools = varial.tools.ToolChainParallel(final_dir,
         [
             plot_merged_channels_higgs('HiggsPlots'),
-            # plot_merged_channels_postfit('PostFitPlots'),
+            plot_merged_channels_postfit('PostFitPlots'),
             plot_merged_channels_prefit('PreFitPlots'),
-            # plot_merged_channels_tables('Tables'),
+            plot_merged_channels_tables('Tables'),
             mk_tc_tex(final_dir),
             varial.tools.WebCreator()
             # combination_limits.mk_limit_list('Limits')

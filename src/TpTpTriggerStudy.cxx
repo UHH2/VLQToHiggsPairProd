@@ -86,7 +86,7 @@ public:
 private:
     unique_ptr<AnalysisModule> common_module;
     vector<unique_ptr<AnalysisModule>> pre_modules;
-    vector<unique_ptr<Hists>> v_hists_nosel;
+    vector<shared_ptr<Hists>> v_hists_nosel;
 
 };
 
@@ -357,8 +357,8 @@ TpTpTriggerStudy::TpTpTriggerStudy(Context & ctx) : TpTpAnalysisModule(ctx) {
 
         // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-        v_hists.emplace_back(vector<unique_ptr<Hists>>());
-        v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        v_hists.emplace_back(vector<shared_ptr<Hists>>());
+        v_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
 
         if (cat == "NoSelection") {
             sel_helpers.back()->fill_hists_vector(v_hists_nosel, "NoSelection");
@@ -473,7 +473,7 @@ TpTpTriggerStudy::TpTpTriggerStudy(Context & ctx) : TpTpAnalysisModule(ctx) {
             gen_hists->add_genhistcoll(6, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
             gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
-            v_hists.back().push_back(unique_ptr<CustomizableGenHists>(gen_hists));
+            v_hists.back().push_back(shared_ptr<CustomizableGenHists>(gen_hists));
         }
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlots", "weight_ak4_jetpt"));
         // v_hists_after_sel.back().emplace_back(new JetCleaningControlPlots(ctx, cat+"/PostSelection/JetCleaningControlPlotsUp", "weight_ak4_jetpt_up"));

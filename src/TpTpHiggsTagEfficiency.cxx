@@ -87,7 +87,7 @@ private:
     // Event::Handle<float> jetpt_weight_hndl;
     // Event::Handle<int> use_sr_sf_hndl;
     // vector<vector<unique_ptr<Hists>>> v_reweighted_hists_after_sel;
-    vector<unique_ptr<Hists>> v_lep_combined_hists;
+    vector<shared_ptr<Hists>> v_lep_combined_hists;
     vector<string> categories;
 
 };
@@ -110,53 +110,53 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
     commonObjectCleaning->init(ctx);
     common_module.reset(commonObjectCleaning);
 
-    other_modules.emplace_back(new MCPileupReweight(ctx));
+    // other_modules.emplace_back(new MCPileupReweight(ctx));
     
     weight_hndl = ctx.declare_event_output<double>("weight");
 
 
-    auto ak8_corr_bef = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
-    : JERFiles::Fall15_25ns_L23_AK8PFchs_DATA;
-    auto ak8_corr_aft = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK8PFchs_MC 
-    : JERFiles::Fall15_25ns_L123_AK8PFchs_DATA;
-    auto ak4_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK4PFchs_MC 
-    : JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
-    // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
-    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
-        ak8_corr_bef, "topjets"));
-    pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
-        ak4_corr, "topjets"));
-    pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets"));
-    pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
-        ak8_corr_aft, "topjets"));
-    pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
+    // auto ak8_corr_bef = (type == "MC") ? JERFiles::Fall15_25ns_L23_AK8PFchs_MC 
+    // : JERFiles::Fall15_25ns_L23_AK8PFchs_DATA;
+    // auto ak8_corr_aft = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK8PFchs_MC 
+    // : JERFiles::Fall15_25ns_L123_AK8PFchs_DATA;
+    // auto ak4_corr = (type == "MC") ? JERFiles::Fall15_25ns_L123_AK4PFchs_MC 
+    // : JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
+    // // if (ctx.get("jecsmear_direction", "nominal") != "nominal") {
+    // pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+    //     ak8_corr_bef, "topjets"));
+    // pre_modules.emplace_back(new GenericSubJetCorrector(ctx,
+    //     ak4_corr, "topjets"));
+    // pre_modules.emplace_back(new AK8SoftDropCorr(ctx, "topjets"));
+    // pre_modules.emplace_back(new GenericTopJetCorrector(ctx,
+    //     ak8_corr_aft, "topjets"));
+    // pre_modules.emplace_back(new JetCorrector(ctx, ak4_corr));
+    // // }
+
+
+    // if (type == "MC") {
+    //     pre_modules.emplace_back(new JetResolutionSmearer(ctx));
     // }
 
-
-    if (type == "MC") {
-        pre_modules.emplace_back(new JetResolutionSmearer(ctx));
-    }
-
-    pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
-    other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
-        data_dir_path + "MuonID_Z_RunCD_Reco76X_Feb15.root", 
-        "MC_NUM_MediumID_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));
-    other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
-        data_dir_path + "SingleMuonTrigger_Z_RunCD_Reco76X_Feb15.root", 
-        "runD_Mu45_eta2p1_PtEtaBins", 0.5, "trg", "nominal", "prim_mu_coll"));
+    // pre_modules.emplace_back(new JetCleaner(ctx, AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(30.0,2.4))));
+    // other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
+    //     data_dir_path + "MuonID_Z_RunCD_Reco76X_Feb15.root", 
+    //     "MC_NUM_MediumID_DEN_genTracks_PAR_pt_spliteta_bin1", 1., "id", "nominal", "prim_mu_coll"));
+    // other_modules.emplace_back(new MCMuonScaleFactor(ctx, 
+    //     data_dir_path + "SingleMuonTrigger_Z_RunCD_Reco76X_Feb15.root", 
+    //     "runD_Mu45_eta2p1_PtEtaBins", 0.5, "trg", "nominal", "prim_mu_coll"));
+    // // other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
+    // //     ctx.get("ele_sf_trg_file"), 
+    // //     "CutBasedMedium", 0., "id", "nominal", "prim_ele_coll"));
     // other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
     //     ctx.get("ele_sf_trg_file"), 
-    //     "CutBasedMedium", 0., "id", "nominal", "prim_ele_coll"));
-    other_modules.emplace_back(new MCElectronScaleFactor(ctx, 
-        ctx.get("ele_sf_trg_file"), 
-        "EGamma_SF2D", 0., "id", "nominal", "prim_ele_coll", true));
-    ele_trg_sf.reset(new MCConstantScalefactor(ctx, 
-                0.99, 0.02, "sfel_trg", true));
-    ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
-                1., 0., "sfel_trg", true));
+    //     "EGamma_SF2D", 0., "id", "nominal", "prim_ele_coll", true));
+    // ele_trg_sf.reset(new MCConstantScalefactor(ctx, 
+    //             0.99, 0.02, "sfel_trg", true));
+    // ele_trg_nosf.reset(new MCConstantScalefactor(ctx, 
+    //             1., 0., "sfel_trg", true));
    
 
-    weight_ele_hndl = ctx.get_handle<float>("weight_el_trg");
+    // weight_ele_hndl = ctx.get_handle<float>("weight_el_trg");
 
     // =====PRODUCERS========
 
@@ -175,37 +175,37 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
     // btag_sf_sr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand"));
 
     // DISABLE WHEN CALCULATING PRODUCING THE BTAG EFFICIENCY HISTS!
-    bool create_btag_eff = string2bool(ctx.get("create_btag_eff", "false"));
-    if (!create_btag_eff) {
-        // other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
-        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "jets_no_overlap"));
-        other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand",
-                                                            "central",
-                                                            "lt",
-                                                            "incl",
-                                                            "MCBtagEfficiencies",
-                                                            "_sj",
-                                                            "BTagCalibrationSubjet"));
+    // bool create_btag_eff = string2bool(ctx.get("create_btag_eff", "false"));
+    // if (!create_btag_eff) {
+    //     // other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
+    //     other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "jets_no_overlap"));
+    //     other_modules.emplace_back(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "ak8_higgs_cand",
+    //                                                         "central",
+    //                                                         "lt",
+    //                                                         "incl",
+    //                                                         "MCBtagEfficiencies",
+    //                                                         "_sj",
+    //                                                         "BTagCalibrationSubjet"));
 
-    }
+    // }
         // btag_sf_cr.reset(new MCBTagScaleFactor(ctx, CSVBTag::WP_MEDIUM, "tj_btag_sf_coll"));
 
-    other_modules.emplace_back(new HiggsMassSmear(ctx,
-                "topjets",
-                false, false
-                ));
-    other_modules.emplace_back(new HiggsMassSmear(ctx,
-                "ak8_boost",
-                false, false
-                ));
-    other_modules.emplace_back(new HiggsMassSmear(ctx,
-                "nomass_boost_1b",
-                false, false
-                ));
-    other_modules.emplace_back(new HiggsMassSmear(ctx,
-                "nomass_boost_2b",
-                false, false
-                ));
+    // other_modules.emplace_back(new HiggsMassSmear(ctx,
+    //             "topjets",
+    //             false, false
+    //             ));
+    // other_modules.emplace_back(new HiggsMassSmear(ctx,
+    //             "ak8_boost",
+    //             false, false
+    //             ));
+    // other_modules.emplace_back(new HiggsMassSmear(ctx,
+    //             "nomass_boost_1b",
+    //             false, false
+    //             ));
+    // other_modules.emplace_back(new HiggsMassSmear(ctx,
+    //             "nomass_boost_2b",
+    //             false, false
+    //             ));
 
 
     
@@ -224,25 +224,25 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
 
 
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm10",
-                "higgs_tags_1b_med_sm10",
+                "ak8_boost",
+                "higgs_tags_1b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm10",
-                "higgs_tags_2b_med_sm10",
+                "ak8_boost",
+                "higgs_tags_2b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
                 // true
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm20",
-                "higgs_tags_1b_med_sm20",
+                "ak8_boost",
+                "higgs_tags_1b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
     other_modules.emplace_back(new CollectionProducer<TopJet>(ctx,
-                "ak8_boost_sm20",
-                "higgs_tags_2b_med_sm20",
+                "ak8_boost",
+                "higgs_tags_2b_med",
                 TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))
                 ));
 
@@ -392,11 +392,11 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
 
         // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-        v_hists.emplace_back(vector<unique_ptr<Hists>>());
-        v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_reweighted_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_2h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_1h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        v_hists.emplace_back(vector<shared_ptr<Hists>>());
+        v_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_reweighted_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_2h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_1h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
 
 
         // auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());
@@ -413,69 +413,86 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
         if (version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
 
             ///////// HIGGS TAG EFFICIENCIES FOR MULTIPLE GEN REQUIREMENTS AS FUNCTION OF RECO VARIABLES
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreNoPt", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreNoPt", "ak8_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8)), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreNoPt", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreNoPt", "ak8_2b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8)), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPre", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPre", "ak8_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPre", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPre", "ak8_2b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300", "ak8_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300", "ak8_2b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsBsInJet", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsBsInJet", "ak8_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsBsInJet", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsBsInJet", "ak8_2b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 300., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_2b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 300., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_ex_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HiggsTagEfficiencyPreHiggsPt300BsInJet", "ak8_ex_1b", "topjets",
                 TopJetId(JetClosestGenPartId(25, 5, 0.8, 300., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), VetoId<Jet>(CSVBTag(CSVBTag::WP_MEDIUM))), PtEtaCut(300., 3.)))));
 
             ///////// HIGGS TAG EFFICIENCIES FOR MULTIPLE GEN REQUIREMENTS AS FUNCTION OF GEN VARIABLES
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPart", "ak8_1b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med_sm10", 25, 5, 0.8))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med", 25, 5, 0.8))));
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPart", "ak8_2b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med_sm10", 25, 5, 0.8))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med", 25, 5, 0.8))));
 
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsPt300", "ak8_1b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 300.)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med_sm10", 25, 5, 0.8, 300.))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 300.)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med", 25, 5, 0.8, 300.))));
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsPt300", "ak8_2b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 300.)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med_sm10", 25, 5, 0.8, 300.))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 300.)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med", 25, 5, 0.8, 300.))));
 
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsBsInJet", "ak8_1b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 0., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med_sm10", 25, 5, 0.8, 300., true))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 0., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med", 25, 5, 0.8, 300., true))));
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsBsInJet", "ak8_2b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 0., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med_sm10", 25, 5, 0.8, 300., true))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 0., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med", 25, 5, 0.8, 300., true))));
 
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsPt300BsInJet", "ak8_1b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 300., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med_sm10", 25, 5, 0.8, 300., true))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 300., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_1b_med", 25, 5, 0.8, 300., true))));
             v_hists.back().emplace_back(new TagEffHists<GenParticle>(ctx, cat+"/HiggsTagEfficiencyPreGenPartHiggsPt300BsInJet", "ak8_2b", "genparticles",
-                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets_sm10", 25, 5, 0.8, 300., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med_sm10", 25, 5, 0.8, 300., true))));
+                GenParticleId(GenPartClosestJetID<TopJet>(ctx, "topjets", 25, 5, 0.8, 300., true)), GenParticleId(GenPartClosestJetID<TopJet>(ctx, "higgs_tags_2b_med", 25, 5, 0.8, 300., true))));
 
             ///////// EFFICIENCIES OF HIGGS TAGGING CUTS
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/PtCutEfficiencyPre", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/PtCutEfficiencyPre", "ak8_1b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), JetClosestGenPartId(25, 5, 0.8))), TopJetId(PtEtaCut(300., 3.))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/PtCutEfficiencyPre", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/PtCutEfficiencyPre", "ak8_2b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), JetClosestGenPartId(25, 5, 0.8))), TopJetId(PtEtaCut(300., 3.))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/MassCutEfficiencyPre", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/MassCutEfficiencyPre", "ak8_1b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM)), JetClosestGenPartId(25, 5, 0.8, 0., true), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/MassCutEfficiencyPre", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/MassCutEfficiencyPre", "ak8_2b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), JetClosestGenPartId(25, 5, 0.8, 0., true), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))));
 
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/SubjetBtagCutEfficiencyPre", "ak8_1b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/SubjetBtagCutEfficiencyPre", "ak8_1b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS), JetClosestGenPartId(25, 5, 0.8, 0., true), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM)))));
-            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/SubjetBtagCutEfficiencyPre", "ak8_2b", "topjets_sm10",
+            v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/SubjetBtagCutEfficiencyPre", "ak8_2b", "topjets",
                 TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS), JetClosestGenPartId(25, 5, 0.8, 0., true), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))));
+            
+            CustomizableGenHists * gen_hists = new CustomizableGenHists(ctx, cat+"/NoSelection/GenHists");
+            gen_hists->add_genhistcoll(8000001, 0, {"mass", "decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
+            gen_hists->add_genhistcoll(8000001, 0, {"mass", "decay", "dRDecay", "dPhiDecay", "dEtaDecay"}, GenParticleId(GenParticleDaughterId(8000001, 6, 25)), "_to_tH");
+            gen_hists->add_genhistcoll(6, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
+            gen_hists->add_genhistcoll(11, 0, {"charge", "mother", "number"});
+            gen_hists->add_genhistcoll(13, 0, {"charge", "mother", "number"});
+            gen_hists->add_genhistcoll(11, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(0, 6)), "_from_T");
+            gen_hists->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(0, 6)), "_from_T");
+            gen_hists->add_genhistcoll(11, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
+            gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
+            gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "2d_dRDecay_pt"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
+            v_hists.back().push_back(shared_ptr<CustomizableGenHists>(gen_hists));
+            v_hists.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/NoSelection/RecoGenComparisons", "HT", "parton_ht", "HT_parton")); 
+            v_hists.back().emplace_back(new RecoGenVarComp<double>(ctx, cat+"/NoSelection/RecoGenComparisons", "HT", "gen_ht", "HT_gen")); 
+            // v_hists.back().emplace_back(new TTbarGenHists(ctx, cat+"/NoSelection/TTGenHists"));
         }
 
             // v_hists_after_sel.back().emplace_back(new TagEffHists<TopJet>(ctx, cat+"/HiggsTagEfficiencyPost", "all_ak8_1b", "topjets",
@@ -501,188 +518,204 @@ TpTpHiggsTagEfficiency::TpTpHiggsTagEfficiency(Context & ctx) : TpTpAnalysisModu
         
         ///////// MISTAG RATES FOR VARIOUS PROCESSES AS FUNCTION OF RECO VARIABLES
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartId(24, 4, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartId(24, 4, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartId(24, 2, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartId(24, 2, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCNoTopMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCNoTopMistagRate", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0., true))), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCNoTopMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoCNoTopMistagRate", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0., true))), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightNoTopMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightNoTopMistagRate", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 2, 0.8, 0., true))), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightNoTopMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/WtoLightNoTopMistagRate", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 2, 0.8, 0., true))), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/ZtoBBMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/ZtoBBMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartId(23, 5, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/ZtoBBMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/ZtoBBMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartId(23, 5, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicZMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicZMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartDaughterRangeId(23, 1, 4, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicZMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicZMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartDaughterRangeId(23, 1, 4, 0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopMergedMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopMergedMistagRate", "ak8_1b", "topjets",
             TopJetId(HadronicTopId(0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopMergedMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopMergedMistagRate", "ak8_2b", "topjets",
             TopJetId(HadronicTopId(0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopAllMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopAllMistagRate", "ak8_1b", "topjets",
             TopJetId(HadronicTopId(0.8, 0.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopAllMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HadronicTopAllMistagRate", "ak8_2b", "topjets",
             TopJetId(HadronicTopId(0.8, 0.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartId(21, 0, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartId(21, 0, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HeavyQuarkMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HeavyQuarkMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartRangeId(4, 5, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HeavyQuarkMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/HeavyQuarkMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartRangeId(4, 5, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/LightQuarkMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/LightQuarkMistagRate", "ak8_1b", "topjets",
             TopJetId(JetClosestGenPartRangeId(1, 3, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/LightQuarkMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/LightQuarkMistagRate", "ak8_2b", "topjets",
             TopJetId(JetClosestGenPartRangeId(1, 3, 0.8, 300.)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBMergedMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBMergedMistagRate", "ak8_1b", "topjets",
             TopJetId(GluonToBBId(0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBMergedMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBMergedMistagRate", "ak8_2b", "topjets",
             TopJetId(GluonToBBId(0.8, 0., true)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBAllMistagRate", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBAllMistagRate", "ak8_1b", "topjets",
             TopJetId(GluonToBBId(0.8)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBAllMistagRate", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/GluonToBBAllMistagRate", "ak8_2b", "topjets",
             TopJetId(GluonToBBId(0.8)), TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.)))));
 
         ///////// FRACTIONS OF PROCESSES IN TAGGED PARTICLES
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCAllMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCAllMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 4, 0.8, 0.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCAllMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCAllMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 4, 0.8, 0.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightAllMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightAllMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 2, 0.8, 0.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightAllMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightAllMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 2, 0.8, 0.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopAllMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopAllMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopAllMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopAllMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCMergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCMergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 4, 0.8, 0., true))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCMergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCMergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 4, 0.8, 0., true))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightMergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightMergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 2, 0.8, 0., true))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightMergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightMergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(24, 2, 0.8, 0., true))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopMergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopMergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0., true)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopMergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoCNoTopMergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 4, 0.8, 0., true)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightNoTopMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightNoTopMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 2, 0.8, 0., true)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightNoTopMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionWtoLightNoTopMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartId(24, 2, 0.8, 0., true)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionZtoBBMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionZtoBBMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(23, 5, 0.8, 0., true))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionZtoBBMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionZtoBBMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(23, 5, 0.8, 0., true))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicZMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicZMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartDaughterRangeId(23, 1, 4, 0.8, 0., true))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicZMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicZMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartDaughterRangeId(23, 1, 4, 0.8, 0., true))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTopAllMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTopAllMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTopAllMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTopAllMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop1MergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop1MergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 1))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop1MergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop1MergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 1))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop2MergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop2MergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 2))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop2MergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop2MergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 2))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop3MergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop3MergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 3))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop3MergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHadronicTop3MergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HadronicTopId(0.8, 0., 3))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(21, 0, 0.8, 300.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartId(21, 0, 0.8, 300.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonNoQuarkMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonNoQuarkMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartRangeId(1, 5, 0.8)), JetClosestGenPartId(21, 0, 0.8, 300.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonNoQuarkMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonNoQuarkMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartRangeId(1, 5, 0.8)), JetClosestGenPartId(21, 0, 0.8, 300.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartRangeId(4, 5, 0.8, 300.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartRangeId(4, 5, 0.8, 300.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartRangeId(1, 3, 0.8, 300.))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(JetClosestGenPartRangeId(1, 3, 0.8, 300.))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoGluonMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoGluonMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartId(21, 0, 0.8)), JetClosestGenPartRangeId(4, 5, 0.8, 300.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoGluonMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoGluonMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartId(21, 0, 0.8)), JetClosestGenPartRangeId(4, 5, 0.8, 300.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoGluonMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoGluonMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartId(21, 0, 0.8)), JetClosestGenPartRangeId(1, 3, 0.8, 300.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoGluonMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoGluonMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(JetClosestGenPartId(21, 0, 0.8)), JetClosestGenPartRangeId(1, 3, 0.8, 300.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoTopMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoTopMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartRangeId(4, 5, 0.8, 300.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoTopMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionHeavyQuarkNoTopMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartRangeId(4, 5, 0.8, 300.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoTopMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoTopMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartRangeId(1, 3, 0.8, 300.)))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoTopMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionLightQuarkNoTopMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(AndId<TopJet>(VetoId<TopJet>(HadronicTopId(0.8)), JetClosestGenPartRangeId(1, 3, 0.8, 300.)))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBMergedMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBMergedMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(GluonToBBId(0.8, 0., true))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBMergedMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBMergedMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(GluonToBBId(0.8, 0., true))));
 
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBAllMistag", "ak8_1b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBAllMistag", "ak8_1b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(GluonToBBId(0.8))));
-        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBAllMistag", "ak8_2b", "topjets_sm10",
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/FractionGluonToBBAllMistag", "ak8_2b", "topjets",
             TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(GluonToBBId(0.8))));        
 
+
+        ///////// EFFICIENCIES OF HIGGS TAGGING CUTS
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenPtCutEfficiencyPre", "ak8_1b", "topjets",
+            TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM))), TopJetId(PtEtaCut(300., 3.))));
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenPtCutEfficiencyPre", "ak8_2b", "topjets",
+            TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM))), TopJetId(PtEtaCut(300., 3.))));
+
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenMassCutEfficiencyPre", "ak8_1b", "topjets",
+            TopJetId(AndId<TopJet>(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM)))));
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenMassCutEfficiencyPre", "ak8_2b", "topjets",
+            TopJetId(AndId<TopJet>(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS, CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))));
+
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenSubjetBtagCutEfficiencyPre", "ak8_1b", "topjets",
+            TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM)))));
+        v_hists.back().emplace_back(new AK8TagEffHists(ctx, cat+"/NoGenSubjetBtagCutEfficiencyPre", "ak8_2b", "topjets",
+            TopJetId(AndId<TopJet>(HiggsFlexBTag(HIGGS_MIN_MASS, HIGGS_MAX_MASS), PtEtaCut(300., 3.))), TopJetId(HiggsFlexBTag(0., 999999., CSVBTag(CSVBTag::WP_MEDIUM), CSVBTag(CSVBTag::WP_MEDIUM)))));
     }
 
 
@@ -720,11 +753,11 @@ bool TpTpHiggsTagEfficiency::process(Event & event) {
 
     sel_modules_passed.clear();
 
-    int base_el_ind = -1;
-    for (unsigned i = 0; i < categories.size(); ++i) {
-        if (categories[i] == "El45_Baseline")
-            base_el_ind = i;
-    }
+    // int base_el_ind = -1;
+    // for (unsigned i = 0; i < categories.size(); ++i) {
+    //     if (categories[i] == "El45_Baseline")
+    //         base_el_ind = i;
+    // }
 
     // index 0 corresponds to combined
     for (unsigned i = 0; i < sel_modules.size(); ++i) {
@@ -771,11 +804,11 @@ bool TpTpHiggsTagEfficiency::process(Event & event) {
 
     // std::cout << "NEW EVENT 7" << std::endl;
 
-    if (base_el_ind >= 0 && sel_modules_passed[base_el_ind]) {
-        ele_trg_sf->process(event);
-    }
-    else
-        ele_trg_nosf->process(event);
+    // if (base_el_ind >= 0 && sel_modules_passed[base_el_ind]) {
+    //     ele_trg_sf->process(event);
+    // }
+    // else
+    //     ele_trg_nosf->process(event);
 
 
 

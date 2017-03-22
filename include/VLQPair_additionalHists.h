@@ -747,7 +747,6 @@ public:
             throw;
         const std::vector<T> coll_in = event.get(h_in_);
 
-        std::cout << "  NEW HISTOGRAM" << std::endl;
         for (const T & p : coll_in) {
             if (id_den_(p, event)) {
                 // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
@@ -872,4 +871,94 @@ private:
     Event::Handle<vector<TopJet>> h_in_;
     TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_, *h_num_mass_, *h_den_mass_, *h_num_nsjbtags_, *h_den_nsjbtags_, *h_num_incl_, *h_den_incl_;
     TYPE_ID id_den_, id_num_;
+};
+
+
+// SelectedSelHists
+template<typename T>
+class SelEffHists: public Hists {
+public:
+
+    // typedef std::function<bool (const T &, const uhh2::Event &)> TYPE_ID;
+
+    SelEffHists(Context & ctx,
+                         const string & dir,
+                         const string & h_in,
+                         const string & h_name,
+                         Selection * sel_den,
+                         Selection * sel_num,
+                         int n_bins, float min_x, float max_x,
+                         T inc_cut_min = -999999., T inc_cut_max = 999999.
+                         ):
+        Hists(ctx, dir),
+        h_in_name_(h_in),
+        h_in_(ctx.get_handle<T>(h_in)),
+        h_num_(book<TH1F>(h_name+"_sub", h_name+"_sub", n_bins, min_x, max_x)),
+        h_den_(book<TH1F>(h_name+"_tot", h_name+"_tot", n_bins, min_x, max_x)),
+        h_incl_num_(book<TH1F>(h_name+"_incl_sub", h_name+"_incl_sub", 1, .5, 1.5)),
+        h_incl_den_(book<TH1F>(h_name+"_incl_tot", h_name+"_incl_tot", 1, .5, 1.5)),
+        sel_den_(sel_den),
+        sel_num_(sel_num),
+        inc_cut_min_(inc_cut_min),
+        inc_cut_max_(inc_cut_max)
+    {}
+
+    // void insert_additional_hist(Hists * hists) {
+    //     v_hists.push_back(move(unique_ptr<Hists>(hists)));
+    // }
+
+    vector<shared_ptr<Hists>> & get_add_hists_den() {
+        return add_hists_den_;
+    }
+    vector<shared_ptr<Hists>> & get_add_hists_num() {
+        return add_hists_num_;
+    }
+
+    virtual void fill(const Event & event) override {
+        // SelectedSelHists::fill(event);
+        // double w = event.weight;
+
+        if (!event.is_valid(h_in_))
+            throw runtime_error("Handle " + h_in_name_ + " not valid!");
+        T var = event.get(h_in_);
+
+        if (sel_den_->passes(event)) {
+            // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+            // if (p.subjets().size())
+            //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+            // if (p.subjets().size() > 1)
+            //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+            // std::cout << std::endl;
+            // std::cout << "   DENOMINATOR:" << std::endl;
+            h_den_->Fill(var);
+            if (var > inc_cut_min_ && var < inc_cut_max_)
+                h_incl_den_->Fill(1.);
+            for (auto & hist : add_hists_den_) {
+                hist->fill(event);
+            }
+        }
+        if (sel_den_->passes(event) && sel_num_->passes(event)) {
+            // std::cout << "    topjet TAGGED pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
+            // if (p.subjets().size())
+            //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
+            // if (p.subjets().size() > 1)
+            //     std::cout << "/" << p.subjets()[1].btag_combinedSecondaryVertex();
+            // std::cout << std::endl;
+            // std::cout << "   NUMERATOR:" << std::endl;
+            h_num_->Fill(var);
+            if (var > inc_cut_min_ && var < inc_cut_max_)
+                h_incl_num_->Fill(1.);
+            for (auto & hist : add_hists_num_) {
+                hist->fill(event);
+            }
+        }
+    }
+
+private:
+    std::string h_in_name_;
+    Event::Handle<T> h_in_;
+    TH1F *h_num_, *h_den_, *h_incl_num_, *h_incl_den_;
+    Selection *sel_den_, *sel_num_;
+    vector<shared_ptr<Hists>> add_hists_den_, add_hists_num_;
+    T inc_cut_min_, inc_cut_max_;
 };

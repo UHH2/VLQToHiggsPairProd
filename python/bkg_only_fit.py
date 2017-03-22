@@ -271,8 +271,8 @@ def remove_nom_wrps(wrps):
         if w.sys_info:
             yield w
 
-def loader_hook(wrps, brs):
-    wrps = sensitivity.loader_hook(brs)(wrps)
+def loader_hook(wrps, brs, merge=True):
+    wrps = sensitivity.loader_hook(brs, merge=merge)(wrps)
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     wrps = gen.group(wrps, lambda w: w.in_file_path)
     wrps = common_plot.make_uncertainty_histograms(wrps, None, uncerts, False, False)

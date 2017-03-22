@@ -68,7 +68,7 @@ class NumTableNew(varial.tools.Tool):
 
     def get_precision(self, num):
         if num >= 1.0:
-            return "{0:17.1f}"
+            return "{0:8.1f}"
         elif num > 0:
             ex_dim = abs(floor(log10(num)))
             # add_prec = 0
@@ -76,10 +76,10 @@ class NumTableNew(varial.tools.Tool):
             #     add_prec = 1
             # prec = int(ex_dim+add_prec)
             prec = int(ex_dim)
-            prec = "{0:17."+str(prec)+"f}"
+            prec = "{0:8."+str(prec)+"f}"
             return prec
         else:
-            return "{0:17.0f}"
+            return "{0:8.0f}"
 
     def create_block(self, sample_dict):
         pass
@@ -138,7 +138,7 @@ class EffTable(NumTableNew):
                 baseline_count = self.norm_fct
             baseline_count = baseline_count/100.
             for r, r_dict in self.regions:
-                line += "&$ "
+                line += "&$ ("
                 info = None
                 # info = list(itertools.ifilter(s_func, r_dict))
                 # if len(info) != 1:
@@ -152,7 +152,7 @@ class EffTable(NumTableNew):
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
                 if 'data' in s.lower():
-                    prec = "{0:17.0f}"
+                    prec = "{0:8.0f}"
                 else:
                     prec = self.get_precision(info[1]/baseline_count)
                 if self.squash_errs:
@@ -161,27 +161,29 @@ class EffTable(NumTableNew):
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
                     tot_err /= baseline_count
-                    prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
+                    prec = "{0:8.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
-                        prec = "{0:17.1f}"
+                        prec = "{0:8.1f}"
                         nom_val = nom_val
                         tot_err = tot_err
                     line += prec.format(nom_val/baseline_count)
                     if 'data' not in s.lower():
-                        line += r" \% \pm " + prec.format(tot_err) + r" \%"
+                        line += r" \pm " + prec.format(tot_err) + r")\%"
                 elif sym_errs:
                     line += prec.format(info[0]/baseline_count)
                     if 'data' not in s.lower():
-                        line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                        line += r" \pm " + prec.format(info[1]/baseline_count)
                     if len(info) == 4:
                         syst_err = max(abs(info[2]), abs(info[3]))
                         line += r" \pm " + prec.format(syst_err/baseline_count)
+                    line +=  + r")\%"
                 else:
                     line += prec.format(info[0]/baseline_count)
                     if 'data' not in s.lower():
-                        line += r" \% \pm " + prec.format(info[1]/baseline_count) + r" \%"
+                        line += r" \pm " + prec.format(info[1]/baseline_count)
                     if len(info) == 4:
-                        line += "^{+"+prec.format(info[2]/baseline_count)+r" \%}_{"+prec.format(info[3]/baseline_count)+r" \%}"
+                        line += "^{+"+prec.format(info[2]/baseline_count)+r"}_{"+prec.format(info[3]/baseline_count)+r"}"
+                    line +=  + r")\%"
                 line += " $"
             line += r" \\"
             lines.append(line)
@@ -218,7 +220,7 @@ class CountTable(NumTableNew):
                     self.message('WARNING! No key word found for sample {0} and region {1}'.format(s, r))
                     continue
                 if 'data' in s.lower():
-                    prec = "{0:17.0f}"
+                    prec = "{0:8.0f}"
                 else:
                     prec = self.get_precision(info[1])
                 if self.squash_errs:
@@ -226,9 +228,9 @@ class CountTable(NumTableNew):
                     stat_err = info[1]
                     syst_err = max(abs(info[2]), abs(info[3])) if len(info) == 4 else 0.
                     tot_err = sqrt(stat_err**2+syst_err**2)
-                    prec = "{0:17.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
+                    prec = "{0:8.0f}" if 'data' in s.lower() else self.get_precision(tot_err)
                     if sig_dig_count:
-                        prec = "{0:17.1f}"
+                        prec = "{0:8.1f}"
                         nom_val = nom_val
                         tot_err = tot_err
                     line += prec.format(nom_val)

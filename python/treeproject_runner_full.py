@@ -36,8 +36,11 @@ varial.settings.max_num_processes = 23
 
 # samples_to_plot = hists_to_plot + list(g + '_thth' for g in plot.less_signals)
 
+# base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+#     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
 base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
-    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v26'
+sub_path = 'Files_and_Plots2'
 
 # common_plot.pas_normfactors = {}
 
@@ -65,30 +68,30 @@ comb_lep_chan = [
 # final regions
 
 sr2b_channel = baseline_selection_btag + [
-    'n_higgs_tags_2b_med_sm10    >= 1',
+    'n_higgs_tags_2b_med    >= 1',
     # 'n_additional_btags_medium  >= 1',
 ]
 
 sr1b_channel = baseline_selection_btag + [
-    'n_higgs_tags_2b_med_sm10    == 0',
-    'n_higgs_tags_1b_med_sm10    >= 1',
+    'n_higgs_tags_2b_med    == 0',
+    'n_higgs_tags_1b_med    >= 1',
     # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_channel = baseline_selection_btag + [
-    'n_higgs_tags_1b_med_sm10        == 0',
+    'n_higgs_tags_1b_med        == 0',
     'met                        >= 100',
     # 'n_additional_btags_medium  >= 1',
 ]
 
 sb_ttbar_channel = baseline_selection + [
-    'n_higgs_tags_1b_med_sm10        == 0',
+    'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  >= 2',
     'met                        >= 100',
 ]
 
 sb_wjets_channel = baseline_selection + [
-    'n_higgs_tags_1b_med_sm10        == 0',
+    'n_higgs_tags_1b_med        == 0',
     'n_additional_btags_medium  == 0',
     'met                        >= 100',
 ]
@@ -109,11 +112,14 @@ mu_channel = [
     'primary_lepton_pt     > 47.'
 ]
 
-ht_reweight_ttbar_no_top_pt_reweight = 'weight_htrew_tt*0.914621131' # last factor to correct discrepancy due to data but that you had previously
+# ht_reweight_ttbar_no_top_pt_reweight = 'weight_htrew_tt*0.914621131' # last factor to correct discrepancy due to data but that you had previously
+ht_reweight_ttbar_no_top_pt_reweight = 'weight_htrew_tt' # last factor to correct discrepancy due to data but that you had previously
 ht_reweight_wjets_no_top_pt_reweight = 'weight_htrew_wjets'
 # ht_reweight_ttbar_w_top_pt_reweight = 'weight_htrew_tt_toppt'
 # ht_reweight_wjets_w_top_pt_reweight = 'weight_htrew_wjets_toppt'
-# top_pt_reweight = '(weight_ttbar/0.9910819)'
+top_pt_reweight = '(weight_ttbar/0.9910819)'
+top_pt_reweight_nomax = '(weight_ttbar_nomax/0.9910819)'
+top_pt_reweight_new = '(weight_ttbar_new/1.)'
 jetpt_reweight_ttbar_no_top_pt_reweight = 'weight_jetpt'
 jetpt_reweight_wjets_no_top_pt_reweight = 'weight_jetpt'
 
@@ -172,6 +178,7 @@ def add_all_with_weight_uncertainties(dict_weight_uncerts):
             treeproject = kws.pop('treeproject', TreeProjector)
             sys_tps = []
             sys_tps += treeproject_tptp.add_higgs_smear_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
+            sys_tps += treeproject_tptp.add_higgs_scale_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
@@ -191,6 +198,7 @@ def add_all_no_weight_uncertainties():
             treeproject = kws.pop('treeproject', TreeProjector)
             sys_tps = []
             sys_tps += treeproject_tptp.add_higgs_smear_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
+            sys_tps += treeproject_tptp.add_higgs_scale_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             sys_tps += treeproject_tptp.add_generic_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             if treeproject_tptp.ttbar_smpl in samples:
@@ -206,6 +214,7 @@ def add_only_weight_uncertainties(dict_weight_uncerts):
         def tmp(**kws):
             treeproject = kws.pop('treeproject', TreeProjector)
             sys_tps = []
+            sys_tps += treeproject_tptp.add_scale_var_uncerts(base_path, regions, weights, samples, params, treeproject=treeproject, **kws)
             for weight_name, weight_dict in dict_weight_uncerts.iteritems():
                 sys_tps += treeproject_tptp.add_weight_uncerts(base_path, regions, weights, weight_name, weight_dict, samples, params, treeproject=treeproject, **kws)
             return sys_tps
@@ -218,7 +227,7 @@ def no_uncertainties(x, y):
     return tmp
 
 
-def run_treeproject_with_reweighting(final_dir, treeprojector, add_uncert_func=None, weight_dict=None):
+def run_treeproject_with_reweighting(final_dir, treeprojector, add_uncert_func=None, weight_dict=None, params=None, samples=None, final_states=None):
     weights = dict(def_weights)
     if weight_dict:
         weights.update(weight_dict)
@@ -228,9 +237,9 @@ def run_treeproject_with_reweighting(final_dir, treeprojector, add_uncert_func=N
     sys_pattern = list('../TreeProject/SysTreeProjectors*/%s*/{0}.root'% i for i in uncerts)
     input_pattern = nom_pattern+sys_pattern
 
-    signals_tt = treeproject_tptp.tptp_signal_samples
+    signals_tt = samples or treeproject_tptp.tptp_signal_samples
     signals_bb = treeproject_tptp.bpbp_signal_samples
-    final_states_tt = treeproject_tptp.tptp_final_states
+    final_states_tt = final_states or treeproject_tptp.tptp_final_states
     final_states_bb = treeproject_tptp.bpbp_final_states
 
     plot_hists = ['ST', 'HT', 'n_ak4', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt',
@@ -239,41 +248,42 @@ def run_treeproject_with_reweighting(final_dir, treeprojector, add_uncert_func=N
 
 
     tp_chain = [
-        treeproject_tptp.mk_tp(base_path+'/Files_and_Plots2', final_regions_all, weights, samples=treeproject_tptp.bkg_w_data, treeproject=treeprojector, 
-            name='TreeProjectorBkg'),
-        treeproject_tptp.mk_tp(base_path+'/Files_and_Plots2', final_regions_all, weights, samples=signals_tt, treeproject=treeprojector, 
-            name='TreeProjectorTT'),
-        # treeproject_tptp.mk_tp(base_path+'/Files_and_Plots2', final_regions_all, weights, samples=signals_bb, treeproject=treeprojector, 
-        #     name='TreeProjectorBB'),
+        treeproject_tptp.mk_tp(base_path+'/'+sub_path, final_regions_all, weights, samples=treeproject_tptp.bkg_w_data, treeproject=treeprojector, 
+            params=params or treeproject_tptp.all_params, name='TreeProjectorBkg'),
+        treeproject_tptp.mk_tp(base_path+'/'+sub_path, final_regions_all, weights, samples=signals_tt, treeproject=treeprojector, 
+            params=params or treeproject_tptp.all_params, name='TreeProjectorTT'),
+        treeproject_tptp.mk_tp(base_path+'/'+sub_path, final_regions_all, weights, samples=signals_bb, treeproject=treeprojector, 
+            params=params or treeproject_tptp.all_params, name='TreeProjectorBB'),
     ]
     if add_uncert_func:
-        tp_chain += [treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/Files_and_Plots2', final_regions_all, weights,
-            samples=treeproject_tptp.bkg_no_data, params=treeproject_tptp.sys_params),
+        tp_chain += [treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/'+sub_path, final_regions_all, weights,
+            samples=treeproject_tptp.bkg_no_data, params=params or treeproject_tptp.sys_params),
             name='SysTreeProjectorsBkg', treeproject=treeprojector),
         ]
-        tp_chain += list(treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/Files_and_Plots2', final_regions_all, weights,
-            samples=list(s + g for s in treeproject_tptp.tptp_signals), params=treeproject_tptp.st_only_params),
+        tp_chain += list(treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/'+sub_path, final_regions_all, weights,
+            samples=list(s + g for s in treeproject_tptp.tptp_signals), params=params or treeproject_tptp.st_only_params),
             name='SysTreeProjectorsTT'+g, treeproject=treeprojector) for g in final_states_tt)
-        # tp_chain += list(treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/Files_and_Plots2', final_regions_all, weights,
-        #     samples=list(s + g for s in treeproject_tptp.bpbp_signals), params=treeproject_tptp.st_only_params),
-        #     name='SysTreeProjectorsBB'+g, treeproject=treeprojector) for g in final_states_bb)
+        tp_chain += list(treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/'+sub_path, final_regions_all, weights,
+            samples=list(s + g for s in treeproject_tptp.bpbp_signals), params=params or treeproject_tptp.st_only_params),
+            name='SysTreeProjectorsBB'+g, treeproject=treeprojector) for g in final_states_bb)
 
     return varial.tools.ToolChain(final_dir, [
         # varial.tools.ToolChain('TreeProject',[
         varial.tools.ToolChainParallel('TreeProject', tp_chain, n_workers=2),
-        #     treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/Files_and_Plots2', final_regions_all, weights,
+        #     treeproject_tptp.mk_sys_tps(add_uncert_func(base_path+'/'+sub_path, final_regions_all, weights,
         #         samples=treeproject_tptp.tptp_signal_samples, params=treeproject_tptp.st_only_params),
         #         name='SysTreeProjectorsTT'),
             # ]),
             # ], n_workers=1),
-        plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
-            pattern=map(lambda w: w.format('*'), input_pattern),
-            web_create=True,
-            lookup_aliases=False
-            # quiet_mode=True
-            ),
-        pn.mk_histoloader_merge(list('../'+ i for i in input_pattern), plot_hists),
-        pn.mk_histograms_merge(uncerts, name='HistogramsMerged')
+        # plot.mk_toolchain('Histograms', plot.less_samples_to_plot_only_th, 
+        #     pattern=map(lambda w: w.format('*'), input_pattern),
+        #     web_create=True,
+        #     lookup_aliases=False
+        #     # quiet_mode=True
+        #     ),
+        # pn.mk_histoloader_merge(list('../'+ i for i in input_pattern), plot_hists),
+        # pn.mk_histograms_merge(uncerts, name='HistogramsMerged'),
+        # varial.tools.WebCreator()
         ])
 
 # sframe_tools = mk_sframe_and_plot_tools()
@@ -296,19 +306,52 @@ if __name__ == '__main__':
 
     all_tools = varial.tools.ToolChainParallel(final_dir,
         [
-            # run_treeproject_with_reweighting('HTReweighting', treeproject,
-            #     add_uncert_func=add_all_with_weight_uncertainties({
-            #             'jsf' : {
-            #                 treeproject_tptp.ttbar_smpl : ht_reweight_ttbar_no_top_pt_reweight,
-            #                 'WJets' : ht_reweight_wjets_no_top_pt_reweight
+            run_treeproject_with_reweighting('HTReweighting', treeproject,
+                add_uncert_func=add_all_with_weight_uncertainties({
+                        'jsf' : {
+                            treeproject_tptp.ttbar_smpl : ht_reweight_ttbar_no_top_pt_reweight,
+                            'WJets' : ht_reweight_wjets_no_top_pt_reweight
+                            }
+                        }),
+                weight_dict={
+                    treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
+                    'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
+                }),
+            # run_treeproject_with_reweighting('NoReweighting', treeproject,
+            #     add_uncert_func=add_all_no_weight_uncertainties()),
+            # run_treeproject_with_reweighting('TopPtReweighting', treeproject,
+            #     add_uncert_func=add_only_weight_uncertainties({
+            #             'top_pt_reweight' : {
+            #                 treeproject_tptp.ttbar_smpl : top_pt_reweight,
             #                 }
             #             }),
             #     weight_dict={
-            #         treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+ht_reweight_ttbar_no_top_pt_reweight,
-            #         'WJets' : treeproject_tptp.base_weight+'*'+ht_reweight_wjets_no_top_pt_reweight,
-            #     }),
-            run_treeproject_with_reweighting('NoReweighting', treeproject,
-                add_uncert_func=add_all_no_weight_uncertainties()),
+            #         treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+top_pt_reweight,
+            #     },
+            #     params=treeproject_tptp.st_only_params, samples=treeproject_tptp.tptp_signal_samples_only_thth,
+            #     final_states=['_thth']),
+            # run_treeproject_with_reweighting('TopPtNoMaxReweighting', treeproject,
+            #     add_uncert_func=add_only_weight_uncertainties({
+            #             'top_pt_reweight' : {
+            #                 treeproject_tptp.ttbar_smpl : top_pt_reweight_nomax,
+            #                 }
+            #             }),
+            #     weight_dict={
+            #         treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+top_pt_reweight_nomax,
+            #     },
+            #     params=treeproject_tptp.st_only_params, samples=treeproject_tptp.tptp_signal_samples_only_thth,
+            #     final_states=['_thth']),
+            # run_treeproject_with_reweighting('TopPtNewReweighting', treeproject,
+            #     add_uncert_func=add_only_weight_uncertainties({
+            #             'top_pt_reweight' : {
+            #                 treeproject_tptp.ttbar_smpl : top_pt_reweight_new,
+            #                 }
+            #             }),
+            #     weight_dict={
+            #         treeproject_tptp.ttbar_smpl : treeproject_tptp.base_weight+'*'+top_pt_reweight_new,
+            #     },
+            #     params=treeproject_tptp.st_only_params, samples=treeproject_tptp.tptp_signal_samples_only_thth,
+            #     final_states=['_thth']),
             varial.tools.WebCreator(no_tool_check=True)
             # combination_limits.mk_limit_list('Limits')
         ], n_workers=1)

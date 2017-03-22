@@ -35,8 +35,10 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 
 # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
 #     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24'
+# base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+#     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
 base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
-    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
+    'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v26'
 
 base_path_julie = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2'\
     '/VLQToHiggsPairProd/NewSamples-76X-v1/Julie_files/templates_minMlb_'
@@ -73,28 +75,28 @@ sys_pat_bb = list(sys_path+'Bkg/%s*/*.root'% i for i in uncerts) + list(sys_path
 
 br_list_tt = [
     ('bW0p5_tZ0p25_tH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
-    # ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
-    # ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
-    # ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
-    # ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
-    # ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
-    # ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
-    # ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
-    # ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
-    # ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
-    # ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
-    # ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
-    # ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
-    # ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
-    # ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
-    # ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
-    # ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
-    # ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
-    # ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
-    # ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
-    # ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
-    # ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
-    # ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
+    ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
+    ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
+    ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
+    ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
+    ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
+    ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
+    ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
+    ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
+    ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
+    ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
+    ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
+    ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
+    ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
+    ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
+    ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
+    ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
+    ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
+    ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
+    ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
+    ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
     ]
 
 br_list_bb = [
@@ -254,6 +256,12 @@ def rename_uncerts(wrps):
         for b, a in rename_uncerts_dict.iteritems():
             if b in w.sys_info:
                 w.sys_info = w.sys_info.replace(b, a)
+        yield w
+
+def split_scalevar_uncerts(wrps):
+    for w in wrps:
+        if 'ScaleVar' in w.sys_info:
+            w.sys_info = w.sys_info+'_'+w.sample
         yield w
 
 def rename_samples(wrps):
@@ -534,11 +542,10 @@ def mk_ind_graphs(brs, name='LimitWithGraphs', plot_obs=True):
             ),
         ])
 
-def mk_triangle():
+def mk_triangle(lim_path):
     return varial.tools.ToolChain('LimitTriangle',[
         vlq_common.TriangleMassLimitPlots(
-            limit_rel_path=list('../../Ind_Limits/Limit_%s/LimitsWithGraphs/LimitCurvesCompared' % i[0]
-                for i in br_list_tt if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5']),
+            limit_rel_path=lim_path,
             leg_x='BR(T #rightarrow tH)', leg_y='BR(T #rightarrow bW)'
             ),
         varial.plotter.Plotter(
@@ -625,7 +632,8 @@ def mk_limit_list(output_name, lim_func, asymptotic=True, model=theta_combined_t
 
     ind_limits = varial.tools.ToolChainParallel('Ind_Limits', limit_list, n_workers=1)
 
-    tr_list = mk_triangle()
+    tr_list = mk_triangle(list('../../Ind_Limits/Limit_%s/LimitsWithGraphs/LimitCurvesCompared' % i[0]
+                for i in br_list_tt if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5']))
     return varial.tools.ToolChain(output_name, [
         ind_limits,
         mk_bkg_only_fit('BkgFit', model=model),
@@ -687,17 +695,6 @@ def mk_tc_tex(source_dir):
 
 def mk_all_templates(source_dir):
     limit_list = []
-    for br_str, brs in br_list_bb:
-        # if ind > 5: break
-        tc = []
-        tc.append(varial.tools.ToolChainParallel(
-            'ThetaLimits', list(varial.tools.ToolChain(
-                sig, 
-                create_rootfiles(br_str, brs, sig, pattern=pattern_bb, sys_pat=sys_pat_bb))
-            for sig in bb_signals.keys())
-        ))
-        limit_list.append(
-            varial.tools.ToolChain('Limit_'+br_str, tc))
     for br_str, brs in br_list_tt:
         # if ind > 5: break
         tc = []
@@ -706,6 +703,17 @@ def mk_all_templates(source_dir):
                 sig, 
                 create_rootfiles(br_str, brs, sig, pattern=pattern_tt, sys_pat=sys_pat_tt))
             for sig in tt_signals.keys())
+        ))
+        limit_list.append(
+            varial.tools.ToolChain('Limit_'+br_str, tc))
+    for br_str, brs in br_list_bb:
+        # if ind > 5: break
+        tc = []
+        tc.append(varial.tools.ToolChainParallel(
+            'ThetaLimits', list(varial.tools.ToolChain(
+                sig, 
+                create_rootfiles(br_str, brs, sig, pattern=pattern_bb, sys_pat=sys_pat_bb))
+            for sig in bb_signals.keys())
         ))
         limit_list.append(
             varial.tools.ToolChain('Limit_'+br_str, tc))
@@ -729,17 +737,17 @@ if __name__ == '__main__':
             sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
 
     # all_tools = mk_limit_list()
-    varial.tools.Runner(varial.tools.ToolChainParallel(output_name, [
-        # mk_limit_list('LimitsBoostedHOnly', limits_only_boostH, False),
-        mk_limit_list('LimitsNoExtraUncert', limits_comb, False, model=theta_combined_template.get_full_model),
-        mk_limit_list('LimitsAntiCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_chan),
-        mk_limit_list('LimitsCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_chan),
-        mk_limit_list('LimitsAntiCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_btag),
-        mk_limit_list('LimitsCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_btag),
-        varial.tools.WebCreator()
-        ], n_workers=1), default_reuse=True)
+    # varial.tools.Runner(varial.tools.ToolChainParallel(output_name, [
+    #     # mk_limit_list('LimitsBoostedHOnly', limits_only_boostH, False),
+    #     mk_limit_list('LimitsNoExtraUncert', limits_comb, False, model=theta_combined_template.get_full_model),
+    #     mk_limit_list('LimitsAntiCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_chan),
+    #     mk_limit_list('LimitsCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_chan),
+    #     mk_limit_list('LimitsAntiCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_btag),
+    #     mk_limit_list('LimitsCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_btag),
+    #     varial.tools.WebCreator()
+    #     ], n_workers=1), default_reuse=True)
     # varial.tools.Runner(mk_bb_templates(output_name), default_reuse=True)
-    # varial.tools.Runner(mk_all_templates(output_name), default_reuse=True)
+    varial.tools.Runner(mk_all_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_bkg_only_fit_compare_comb(output_name), default_reuse=True)
     # varial.tools.Runner(mk_bkg_only_fit(output_name), default_reuse=True)
     # varial.tools.CopyTool('~/www/vlq_analysis/tight_selection2/',

@@ -127,9 +127,9 @@ def rebin_st(wrps, bounds):
                 w = varial.operations.rebin_nbins_max(w, bounds)
         yield w
 
-def loader_hook(brs, bounds=st_bounds):
+def loader_hook(brs, bounds=st_bounds, merge=True):
     def temp(wrps):
-        wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs)
+        wrps = common_sensitivity.loader_hook_scale_excl(wrps, brs, merge)
         wrps = rebin_st(wrps, bounds)
         wrps = common_plot.norm_smpl(wrps,
             smpl_fct=common_plot.normfactors,
@@ -196,7 +196,7 @@ def get_constr_uncerts(dict_path, prior_uncerts):
     return dict_uncerts
 
 
-def squash_unc_histos(grps, scl_dict, rate_uncertainties):
+def squash_unc_histos(grps, scl_dict, rate_uncertainties, veto_squash=()):
     for grp in grps:
         wrps = sorted(grp, key=lambda w: w.sample)
         wrps = list(gen.group(wrps, lambda w: w.sample))
@@ -209,6 +209,8 @@ def squash_unc_histos(grps, scl_dict, rate_uncertainties):
                 sys = h.sys_info.split('__')[0]
                 if sys == 'rate':
                     sys = nom.sample + '_rate'
+                    if sys in veto_squash:
+                        continue
                     prior = rate_uncertainties.get(nom.sample, None)
                     if not prior:
                         continue
@@ -220,9 +222,12 @@ def squash_unc_histos(grps, scl_dict, rate_uncertainties):
                     scl_fct = (prior_scl-1)/(prior-1)
                     setattr(nom, sys+'_post', (prior_scl-1)*100.)
                 else:
+                    if sys in veto_squash:
+                        continue
                     scl_fct = scl_dict.get(sys, None)
                     if not scl_fct:
                         scl_fct = 1.
+                    setattr(nom, sys+'_post', scl_fct*100.)
                 delta.Scale(scl_fct)
                 delta.Add(nom.histo)
                 h.histo = delta
@@ -263,6 +268,7 @@ def scale_bkg_postfit(wrps, theta_res_path, signal, rate_uncertainties):
             # w.legend = w.legend + ' post-fit'
             r = bkg_scl_dict[w.sample]
             w.histo.Scale(r)
+            setattr(w, w.sample+'_scale_post', r)
         yield w
 
 
@@ -273,7 +279,7 @@ def loader_hook_postfit(wrps, theta_res_path, signal, rate_uncertainties):
     return wrps
 
 
-def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate=False):
+def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_uncertainties, include_rate=False, veto_squash=()):
     theta_res = varial.analysis.lookup_result(theta_res_path)
     if not theta_res:
         theta_res = varial.analysis.lookup_result(os.path.join(varial.analysis.cwd, theta_res_path))
@@ -306,8 +312,9 @@ def plot_setup_postfit(grps, theta_res_path, signal, rate_uncertainties, shape_u
     for i in ['id', 'trg']:
         unc_dict['sflep_'+i] = max(unc_dict['sfel_'+i], unc_dict['sfmu_'+i])
 
+
     grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
-    grps = squash_unc_histos(grps, unc_dict, rate_uncertainties)
+    grps = squash_unc_histos(grps, unc_dict, rate_uncertainties, veto_squash)
     # grps = gen.mc_stack_n_data_sum(grps, calc_sys_integral=True)
     return grps
 

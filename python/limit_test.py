@@ -581,36 +581,38 @@ def mk_limit_list(output_name, lim_func, asymptotic=True):
     # return tmp
 
 def mk_tc_tex(source_dir, regions):
-    tc_tex_an = [
-        tex_content.mk_plot_ind(
-            (
-                ('limit_nominal', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_doublet', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_singlet', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_tH_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_bW_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('triangle_lim_exp', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
-                ('triangle_lim_obs', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
-                ('postfit', os.path.join(base_path, source_dir)+'/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.pdf'),
-            ), name='LimitPlotsBH'),
-        tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
-    ]
+    tc_tex_an = []
+    for a, b in [('pdf', ''), ('png', 'PNG')]:
+        tc_tex_an += [
+            tex_content.mk_plot_ind(
+                (
+                    ('limit_nominal', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.%s' % a),
+                    ('limit_doublet', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.%s' % a),
+                    ('limit_singlet', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.%s' % a),
+                    ('limit_tH_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.%s' % a),
+                    ('limit_bW_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.%s' % a),
+                    ('triangle_lim_exp', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxExp/lim_exp_lin.%s' % a),
+                    ('triangle_lim_obs', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxObs/lim_obs_lin.%s' % a),
+                    ('postfit', os.path.join(base_path, source_dir)+'/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.%s' % a),
+                ), name='LimitPlotsBH' + b),
+            # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
+            # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
+            # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
+        ]
+    tc_tex_an += [tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions)]
     # # if name == 'TopPtAndHTReweighting':
     # #     tc_tex_pas += [tex_content.mk_autoContentLimits(path_pas, 'El45', 'Mu45', 'LimitPlots_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # #     tc_tex_pas += [tex_content.mk_autoContentLimitsVarSize(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # # else:
     # #     tc_tex_pas += [tex_content.mk_autoContentLimits(path_pas, 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # #     tc_tex_pas += [tex_content.mk_autoContentLimitsVarSize(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-    tc_tex_pas = varial.tools.ToolChain('CopyPlots', [
+    tc_tex = varial.tools.ToolChain('CopyPlots', [
         varial.tools.ToolChain('TexAN', tc_tex_an),
         varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-16-343/trunk/', src='../TexAN/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, name='CopyToolAN'),
-        # varial.tools.ToolChain('TexPaper', tc_tex_pas),
+        # varial.tools.ToolChain('TexPaper', tc_tex),
         # varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, name='CopyToolPaper'),
         ])
-    return tc_tex_pas
+    return tc_tex
 
 def mk_all_templates(source_dir):
     limit_list = []

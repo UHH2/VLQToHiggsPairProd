@@ -116,7 +116,7 @@ private:
     // Event::Handle<float> jetpt_weight_hndl;
     // Event::Handle<int> use_sr_sf_hndl;
     // vector<vector<unique_ptr<Hists>>> v_reweighted_hists_after_sel;
-    vector<unique_ptr<Hists>> v_lep_combined_hists;
+    vector<shared_ptr<Hists>> v_lep_combined_hists;
     vector<string> categories;
     vector<shared_ptr<ofstream>> event_files;
 
@@ -346,11 +346,11 @@ TpTpEventNumberCheck::TpTpEventNumberCheck(Context & ctx) : TpTpAnalysisModule(c
 
         // TODO: set up and fill other histogram classes, e.g. your own HistCollector stuff
 
-        v_hists.emplace_back(vector<unique_ptr<Hists>>());
-        v_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_reweighted_hists_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_2h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
-        // v_genhist_1h_after_sel.emplace_back(vector<unique_ptr<Hists>>());
+        v_hists.emplace_back(vector<shared_ptr<Hists>>());
+        v_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_reweighted_hists_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_2h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
+        // v_genhist_1h_after_sel.emplace_back(vector<shared_ptr<Hists>>());
 
 
         auto nm1_hists = new Nm1SelHists(ctx, cat+"/Nm1Selection", *sel_helpers.back());

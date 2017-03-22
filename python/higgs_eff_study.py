@@ -33,6 +33,7 @@ import common_plot_new as common_plot
 # import tptp_sframe 
 # import compare_crs
 import analysis
+import tex_content_new as tex_content
 
 from ROOT import TLatex, TH2
 
@@ -109,11 +110,10 @@ rebin_list_pt = list(i for i in xrange(0, 1000, 40))
 rebin_list_pt += list(i for i in xrange(1000, 1600, 120))
 rebin_list_pt += list(i for i in xrange(1600, 2400, 240))
 
-print rebin_list_pt
 
 def rebin(wrps):
     for w in wrps:
-        if '_pt_' in w.name:
+        if '_pt_' in w.name and not 'TH2' in w.type:
             new_w_flex = op.rebin(w, rebin_list_pt, True)
             suffix = w.name[-4:]
             new_w_flex.name = w.name[:-4]+'_rebin_flex'+suffix
@@ -288,13 +288,32 @@ def run_sframe(name='Test'):
     #     list(SFrame(
     #             cfg_filename=sframe_cfg,
     #             # xml_tree_callback=set_uncert_func(uncert),
-    #             xml_tree_callback=sframe_setup(outputdir='./', count='-1', allowed_datasets=[a], cacheable='True'),
+    #             xml_tree_callback=sframe_setup(outputdir='./', count='10000', allowed_datasets=[a], cacheable='True'),
     #             name='workdir_'+a,
     #             add_aliases_to_analysis=False,
     #             # name='SFrame_' + uncert,
     #             halt_on_exception=False)
     #         for a in samples)
     #     )
+
+    
+    def mk_tc_tex(source_dir):
+        tc_tex = [
+            tex_content.mk_plot_ind(
+                (
+                    ('htag_eff_1b_mu', os.path.join(source_dir, 'Plots/StackedAll/Mu45_Baseline/HiggsTagEfficiencyPreGenPartHiggsBsInJet/sig_ak8_1b_pt_rebin_flex_eff_lin.pdf')),
+                    ('htag_eff_1b_el', os.path.join(source_dir, 'Plots/StackedAll/El45_Baseline/HiggsTagEfficiencyPreGenPartHiggsBsInJet/sig_ak8_1b_pt_rebin_flex_eff_lin.pdf')),
+                    ('htag_eff_2b_mu', os.path.join(source_dir, 'Plots/StackedAll/Mu45_Baseline/HiggsTagEfficiencyPreGenPartHiggsBsInJet/sig_ak8_2b_pt_rebin_flex_eff_lin.pdf')),
+                    ('htag_eff_2b_el', os.path.join(source_dir, 'Plots/StackedAll/El45_Baseline/HiggsTagEfficiencyPreGenPartHiggsBsInJet/sig_ak8_2b_pt_rebin_flex_eff_lin.pdf')),
+                ),
+                name='HiggsTagEffPlots'),
+            
+        ]
+        tc_tex = varial.tools.ToolChain('CopyPlots', [
+            varial.tools.ToolChain('TexThesis', tc_tex),
+            varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete'),
+            ])
+        return tc_tex 
 
     return varial.tools.ToolChain(name, [
         sframe,
@@ -310,7 +329,9 @@ def run_sframe(name='Test'):
             'Plots',
             lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_eff())
         ),
+        mk_tc_tex(name)
     ])
+
 
 
 

@@ -15,11 +15,12 @@ background_samples = [
 ]
 
 dict_uncerts_default = {
-'TTbar' : 1.10,
-'WJets' : 1.10,
-'QCD' : 2.0,
-'DYJets' : 1.2,
-'SingleTop' : 1.2,
+    'TTbar' : 1.20,
+    'WJets' : 1.20,
+    'DYJets' : 1.20,
+    'SingleTop' : 1.20,
+    'Diboson' : 1.20,
+    'QCD' : 2.0,
 }
 
 
@@ -40,6 +41,11 @@ def get_model_no_norm(dict_uncerts=None):
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
                 model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
+
+        obsvs = model.observables.keys()
+        for obs in obsvs:
+            if 'El45' in obs:
+                model.add_lognormal_uncertainty('sfel_trg', math.log(1.02), '*', obs)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')
@@ -70,6 +76,11 @@ def get_model_with_norm(dict_uncerts=None):
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
                 model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
+
+        obsvs = model.observables.keys()
+        for obs in obsvs:
+            if 'El45' in obs:
+                model.add_lognormal_uncertainty('sfel_trg', math.log(1.02), '*', obs)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')
@@ -120,6 +131,11 @@ def get_model_constr_uncerts(dict_path, prior_uncerts):
         if dict_uncerts:
             for s, u in dict_uncerts.iteritems():
                 model.add_lognormal_uncertainty(s+'_rate', math.log(u), s)
+                
+        obsvs = model.observables.keys()
+        for obs in obsvs:
+            if 'El45' in obs:
+                model.add_lognormal_uncertainty('sfel_trg', math.log(1.02), '*', obs)
         # model.add_lognormal_uncertainty('ttbar_rate', math.log(dict_uncerts['TTbar']), 'TTbar')
         # model.add_lognormal_uncertainty('wjets_rate', math.log(dict_uncerts['WJets']), 'WJets')
         # model.add_lognormal_uncertainty('qcd_rate', math.log(dict_uncerts['QCD']), 'QCD')

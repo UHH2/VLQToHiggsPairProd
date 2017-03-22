@@ -112,9 +112,9 @@ def tmp(smpl_grp):
     import ROOT
 
     sum_events = 0.
-    # sum_weight_pdf = [0.]*100
-    # sum_weight_scale = [0.]*9
-    sum_ht_weights = 0.
+    sum_weight_pdf = [0.]*100
+    sum_weight_scale = [0.]*9
+    # sum_ht_weights = 0.
 
     files = (ROOT.TFile(s) for s in smpl_grp)
     trees = (f.Get('AnalysisTree') for f in files)
@@ -124,17 +124,17 @@ def tmp(smpl_grp):
         if not sum_events % 10000:
             print 'at event:', sum_events, name
         sum_events += 1
-        # scale_uncert = e.genInfo.originalXWGTUP()
-        # for i in xrange(100):
-        #     sum_weight_pdf[i] += e.genInfo.systweights()[pdf_offset + i]/scale_uncert
+        scale_uncert = e.genInfo.originalXWGTUP()
+        for i in xrange(100):
+            sum_weight_pdf[i] += e.genInfo.systweights()[pdf_offset + i]/scale_uncert
 
-        # for i in xrange(9):
-        #     sum_weight_scale[i] += e.genInfo.systweights()[i]/scale_uncert
-        sum_ht_weights += e.weight_htrew_tt
+        for i in xrange(9):
+            sum_weight_scale[i] += e.genInfo.systweights()[i]/scale_uncert
+        # sum_ht_weights += e.weight_htrew_tt
 
-    # sum_weight_pdf = list(w / sum_events for w in sum_weight_pdf)
-    # sum_weight_scale = list(w / sum_events for w in sum_weight_scale)
-    sum_weight_ht = sum_ht_weights / sum_events
+    sum_weight_pdf = list(w / sum_events for w in sum_weight_pdf)
+    sum_weight_scale = list(w / sum_events for w in sum_weight_scale)
+    # sum_weight_ht = sum_ht_weights / sum_events
     # print '='*15, 'TOTAL EVENTS:', sum_events, name
     # return name, sum_weight_pdf, sum_weight_scale
     return name, sum_weight_ht
@@ -146,12 +146,12 @@ smpl_grps = list(list(g) for _, g in itertools.groupby(smpls, get_basename_ht_re
 
 pool = Pool(24)
 weight_list = list(pool.imap_unordered(tmp, smpl_grps))
-# weight_dict_pdf = dict((n, p) for n, p, _ in weight_list)
-# weight_dict_scale = dict((n, s) for n, _, s in weight_list)
-weight_dict_ht_rew = dict((n, s) for n, s in weight_list)
-# with open('weight_dict_pdf_'+out_name, 'a') as f:
-#     f.write(repr(weight_dict_pdf))
-# with open('weight_dict_scale_'+out_name, 'a') as f:
-#     f.write(repr(weight_dict_scale))
-with open('weight_dict_ht_rew_'+out_name, 'a') as f:
-    f.write(repr(weight_dict_ht_rew))
+weight_dict_pdf = dict((n, p) for n, p, _ in weight_list)
+weight_dict_scale = dict((n, s) for n, _, s in weight_list)
+# weight_dict_ht_rew = dict((n, s) for n, s in weight_list)
+with open('weight_dict_pdf_'+out_name, 'a') as f:
+    f.write(repr(weight_dict_pdf))
+with open('weight_dict_scale_'+out_name, 'a') as f:
+    f.write(repr(weight_dict_scale))
+# with open('weight_dict_ht_rew_'+out_name, 'a') as f:
+#     f.write(repr(weight_dict_ht_rew))
