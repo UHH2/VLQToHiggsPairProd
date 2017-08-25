@@ -9,7 +9,7 @@ import pprint
 
 
 out_name = 'test_dm'
-smpls = glob.glob('/pnfs/desy.de/cms/tier2/store/user/mmeyer/sframe-ntuples/RunII-ntuple-v3/signals/MC_TTbarDMJets_pseudoscalar_Mchi-10_Mphi-10_*.root')
+smpls = glob.glob('/pnfs/desy.de/cms/tier2/store/user/mmeyer/RunII_80X_v2/TTbarDMJets_*/*/*/*/Ntuple_*.root')
 pdf_offset = 110
 
 
@@ -21,6 +21,10 @@ def get_name(smpl):
 
 
 def get_basename(filename):
+    if filename.startswith('/pnfs'):
+        fn = filename.split('/')[9]
+        return fn
+
     filename = os.path.splitext(filename)[0]
     filename = os.path.basename(filename)
     tokens = filename.split('_')
@@ -40,7 +44,7 @@ def get_basename_ht_rew(smpl):
 
 
 def tmp(smpl_grp):
-    name = get_basename_ht_rew(smpl_grp[0])
+    name = get_basename(smpl_grp[0])
     print 'working on sample:', name
     import ROOT
 

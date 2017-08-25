@@ -792,7 +792,8 @@ public:
                          const string & h_name,
                          const string & h_in,
                          TYPE_ID const & id_den = TrueId<TopJet>::is_true,
-                         TYPE_ID const & id_num = TrueId<TopJet>::is_true
+                         TYPE_ID const & id_num = TrueId<TopJet>::is_true,
+                         float dR = 0.8
                          ):
         Hists(ctx, dir),
         h_in_(ctx.get_handle<std::vector<TopJet>>(h_in)),
@@ -806,8 +807,19 @@ public:
         h_den_nsjbtags_(book<TH1F>(h_name+"_nsjbtags_tot", h_name+"_nsjbtags_tot", 6, -0.5, 5.5)),
         h_num_incl_(book<TH1F>(h_name+"_incl_sub", h_name+"_incl_sub", 1, 0.5, 1.5)),
         h_den_incl_(book<TH1F>(h_name+"_incl_tot", h_name+"_incl_tot", 1, 0.5, 1.5)),
+        h_num_pdgid_1_(book<TH1F>(h_name+"_pdgid_1_sub", h_name+"_pdgid_1_sub", 27, -0.5, 26.5)),
+        h_den_pdgid_1_(book<TH1F>(h_name+"_pdgid_1_tot", h_name+"_pdgid_1_tot", 27, -0.5, 26.5)),
+        h_num_pdgid_2_(book<TH1F>(h_name+"_pdgid_2_sub", h_name+"_pdgid_2_sub", 27, -0.5, 26.5)),
+        h_den_pdgid_2_(book<TH1F>(h_name+"_pdgid_2_tot", h_name+"_pdgid_2_tot", 27, -0.5, 26.5)),
+        h_num_pdgid_3_(book<TH1F>(h_name+"_pdgid_3_sub", h_name+"_pdgid_3_sub", 27, -0.5, 26.5)),
+        h_den_pdgid_3_(book<TH1F>(h_name+"_pdgid_3_tot", h_name+"_pdgid_3_tot", 27, -0.5, 26.5)),
+        h_num_pdgid_4_(book<TH1F>(h_name+"_pdgid_4_sub", h_name+"_pdgid_4_sub", 27, -0.5, 26.5)),
+        h_den_pdgid_4_(book<TH1F>(h_name+"_pdgid_4_tot", h_name+"_pdgid_4_tot", 27, -0.5, 26.5)),
+        h_num_pdgid_5_(book<TH1F>(h_name+"_pdgid_5_sub", h_name+"_pdgid_5_sub", 27, -0.5, 26.5)),
+        h_den_pdgid_5_(book<TH1F>(h_name+"_pdgid_5_tot", h_name+"_pdgid_5_tot", 27, -0.5, 26.5)),
         id_den_(id_den),
-        id_num_(id_num)
+        id_num_(id_num),
+        dR_(dR)
     {}
 
     // void insert_additional_hist(Hists * hists) {
@@ -825,6 +837,25 @@ public:
         // std::cout << "  NEW HISTOGRAM" << std::endl;
         for (const TopJet & p : coll_in) {
             if (id_den_(p, event)) {
+                int pdgid_cl_p_1 = 0;
+                int pdgid_cl_p_2 = 0;
+                int pdgid_cl_p_3 = 0;
+                int pdgid_cl_p_4 = 0;
+                int pdgid_cl_p_5 = 0;
+                for (const GenParticle & gp : *event.genparticles) {
+                    if (deltaR(p, gp) <= dR_) {
+                        if (!pdgid_cl_p_1)
+                            pdgid_cl_p_1 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_2)
+                            pdgid_cl_p_2 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_3)
+                            pdgid_cl_p_3 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_4)
+                            pdgid_cl_p_4 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_5)
+                            pdgid_cl_p_5 = abs(gp.pdgId());
+                    }
+                }
                 // std::cout << "    topjet pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
                 // if (p.subjets().size())
                 //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
@@ -843,8 +874,32 @@ public:
                 h_den_mass_->Fill(p.softdropmass());
                 h_den_nsjbtags_->Fill(n_sj);
                 h_den_incl_->Fill(1.);
+                h_den_pdgid_1_->Fill(pdgid_cl_p_1);
+                h_den_pdgid_2_->Fill(pdgid_cl_p_2);
+                h_den_pdgid_3_->Fill(pdgid_cl_p_3);
+                h_den_pdgid_4_->Fill(pdgid_cl_p_4);
+                h_den_pdgid_5_->Fill(pdgid_cl_p_5);
             }
             if (id_den_(p, event) && id_num_(p, event)) {
+                int pdgid_cl_p_1 = 0;
+                int pdgid_cl_p_2 = 0;
+                int pdgid_cl_p_3 = 0;
+                int pdgid_cl_p_4 = 0;
+                int pdgid_cl_p_5 = 0;
+                for (const GenParticle & gp : *event.genparticles) {
+                    if (deltaR(p, gp) <= dR_) {
+                        if (!pdgid_cl_p_1)
+                            pdgid_cl_p_1 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_2)
+                            pdgid_cl_p_2 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_3)
+                            pdgid_cl_p_3 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_4)
+                            pdgid_cl_p_4 = abs(gp.pdgId());
+                        else if (!pdgid_cl_p_5)
+                            pdgid_cl_p_5 = abs(gp.pdgId());
+                    }
+                }
                 // std::cout << "    topjet TAGGED pt/eta/phi/mass/csv1/csv2: " << p.pt() << "/" << p.eta() << "/" << p.phi() << "/" << p.softdropmass();
                 // if (p.subjets().size())
                 //     std::cout << "/" << p.subjets()[0].btag_combinedSecondaryVertex();
@@ -863,6 +918,11 @@ public:
                 h_num_mass_->Fill(p.softdropmass());
                 h_num_nsjbtags_->Fill(n_sj);
                 h_num_incl_->Fill(1.);
+                h_num_pdgid_1_->Fill(pdgid_cl_p_1);
+                h_num_pdgid_2_->Fill(pdgid_cl_p_2);
+                h_num_pdgid_3_->Fill(pdgid_cl_p_3);
+                h_num_pdgid_4_->Fill(pdgid_cl_p_4);
+                h_num_pdgid_5_->Fill(pdgid_cl_p_5);
             }
         }
     }
@@ -870,7 +930,9 @@ public:
 private:
     Event::Handle<vector<TopJet>> h_in_;
     TH1F *h_num_pt_, *h_den_pt_, *h_num_eta_, *h_den_eta_, *h_num_mass_, *h_den_mass_, *h_num_nsjbtags_, *h_den_nsjbtags_, *h_num_incl_, *h_den_incl_;
+    TH1F *h_num_pdgid_1_, *h_den_pdgid_1_, *h_num_pdgid_2_, *h_den_pdgid_2_, *h_num_pdgid_3_, *h_den_pdgid_3_, *h_num_pdgid_4_, *h_den_pdgid_4_, *h_num_pdgid_5_, *h_den_pdgid_5_;
     TYPE_ID id_den_, id_num_;
+    float dR_;
 };
 
 

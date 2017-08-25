@@ -25,6 +25,7 @@ import sensitivity
 import analysis
 # import treeproject_tptp
 import model_vlqpair
+# import theta_combined_template_2 as theta_combined_template
 import theta_combined_template
 import common_sensitivity
 import tex_content_new as tex_content
@@ -32,6 +33,7 @@ from get_eff_count import CountTable, EffTable # EffNumTable,
 
 import UHH2.VLQSemiLepPreSel.common as vlq_common
 
+# CrossSectionTables
 
 # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
 #     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v24'
@@ -40,10 +42,12 @@ import UHH2.VLQSemiLepPreSel.common as vlq_common
 base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v26'
 
-base_path_julie = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2'\
+base_path_julie_tt = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2'\
     '/VLQToHiggsPairProd/NewSamples-76X-v1/Julie_files/templates_minMlb_'
+base_path_julie_bb = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2'\
+    '/VLQToHiggsPairProd/NewSamples-76X-v1/Julie_files/BBtemplates/templates_minMlb_'
 
-file_suffix = '_2p318fb_rebinnedDV.root'
+file_suffix = '_2p318fb_rebinnedDV_renamed.root'
 
 # pattern_tt = [base_path+'/Run8_withHighMassTTbarSample/'\
 #     'RunAnalysis/HTReweighting/TreeProject/TreeProjector/*.root',
@@ -75,28 +79,28 @@ sys_pat_bb = list(sys_path+'Bkg/%s*/*.root'% i for i in uncerts) + list(sys_path
 
 br_list_tt = [
     ('bW0p5_tZ0p25_tH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
-    # ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
-    # ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
-    # ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
-    # ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
-    # ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
-    # ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
-    # ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
-    # ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
-    # ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
-    # ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
-    # ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
-    # ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
-    # ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
-    # ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
-    # ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
-    # ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
-    # ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
-    # ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
-    # ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
-    # ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
-    # ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
-    # ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
+    ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
+    ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
+    ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
+    ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
+    ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
+    ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
+    ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
+    ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
+    ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
+    ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
+    ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
+    ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
+    ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
+    ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
+    ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
+    ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
+    ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
+    ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
+    ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
+    ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
     ]
 
 br_list_bb = [
@@ -123,6 +127,16 @@ br_list_bb = [
     ('tW0p6_bZ0p4_bH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
     ('tW0p8_bZ0p0_bH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
     ('tW0p8_bZ0p2_bH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    ]
+
+br_list_tt_only_important = [
+    ('bW0p5_tZ0p25_tH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
+    ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    ]
+
+br_list_bb_only_important = [
+    ('tW0p5_bZ0p25_bH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
+    ('tW0p0_bZ0p5_bH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
     ]
 
 regions = [
@@ -228,7 +242,7 @@ samples = [
 ]
 
 x_axis_lim="m_{T} [GeV]"
-y_axis_lim="Upper limit on #sigma(pp #rightarrow TT)[pb]"
+y_axis_lim="#sigma(pp #rightarrow T#bar{T}) [pb]"
 
 all_regions = [
     'SignalRegion2b_Mu45',
@@ -390,8 +404,52 @@ def create_rootfiles(br_string, brs, signal, pattern=pattern_tt, sys_pat=sys_pat
         )
     ]
 
+def apply_pad_styles(canvas):
 
-def mk_limit_tc(brs, input_path, model_func, signal='', asymptotic=True):
+    canvas.SetTopMargin(0.125)
+    canvas.SetBottomMargin(0.21)
+    #main.SetRightMargin(0.04)
+    canvas.SetLeftMargin(0.15)
+    canvas.SetRightMargin(0.15)
+
+    # pars = [ctypes.c_double(), ctypes.c_double(), ctypes.c_double(), ctypes.c_double()]
+    # main.GetPadPar(*pars)
+    # pars = [d.value for d in pars]
+    # pars[1] += 0.002  # lift ylow very slightly
+    # main.SetPad(*pars)
+
+    # first_obj = cnv_wrp.first_obj
+    # first_obj.GetYaxis().CenterTitle(1)
+    # first_obj.GetYaxis().SetTitleSize(0.045)
+    # first_obj.GetYaxis().SetTitleOffset(1.4)
+    # first_obj.GetYaxis().SetLabelSize(0.055)
+    # first_obj.GetXaxis().SetNdivisions(505)
+
+def apply_axis_style(obj, _):
+    obj.GetXaxis().SetNoExponent()
+    obj.GetXaxis().SetLabelSize(0.03)
+    obj.GetXaxis().LabelsOption("v")
+    obj.GetYaxis().SetLabelSize(0.03)
+    obj.SetMarkerSize(0.7)
+    # if not isinstance(obj, ROOT.TH2):
+
+def setup_corr_plot(wrps):
+    for w in wrps:
+        w.canvas_size_x = 3400
+        w.canvas_size_y = 2000
+        # for i in xrange(w.histo.GetNbinsX()+2):
+        #     w.histo.GetXaxis().ChangeLabel(i, 1.6, 0.5)
+
+        w._apply_pad_styles = apply_pad_styles
+        w._apply_axis_style = apply_axis_style
+        yield w
+
+def loader_hook_corr_plot(wrps):
+    wrps = setup_corr_plot(wrps)
+    return wrps
+
+
+def mk_limit_tc(brs, input_path, model_func, signal='', asymptotic=True, plot_corr_mat=False):
     # def tmp():
     limits = common_sensitivity.TpTpThetaLimitsFromFile(
         name='ThetaLimit',
@@ -417,27 +475,33 @@ def mk_limit_tc(brs, input_path, model_func, signal='', asymptotic=True):
         name='CorrelationPlot',
         input_result_path='../CorrelationMatrix',
         plot_setup=sensitivity.plot_setup_corr_matrix('colz text'),
-        # hook_loaded_histos=loader_hook_triangle,
-        # save_name_func=lambda w: w.save_name,
+        hook_loaded_histos=loader_hook_corr_plot,
+        save_name_func=lambda w: w.save_name,
         canvas_post_build_funcs=[
                     # varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
-                    common_plot.mk_tobject_draw_func(TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),
+                    common_plot.mk_tobject_draw_func(TLatex(0.62, 0.89, "#scale[0.45]{2.3/2.5/2.6 fb^{-1} (13 TeV)}")),
                     ],
         raise_on_no_histograms=False
         )
-    return [limits, postfit] #, corr_mat, corr_plotter, post_loader, plotter_postfit, 
+    # return [limits, postfit] #, corr_mat, corr_plotter, post_loader, plotter_postfit, 
+    return [limits, postfit] if not plot_corr_mat else [limits, postfit, corr_mat, corr_plotter] #, corr_mat, corr_plotter, post_loader, plotter_postfit, 
         # return tmp
 
-def mk_bkg_only_fit(output_name, model=theta_combined_template.get_full_model()):
+
+
+def mk_bkg_only_fit(output_name, model=theta_combined_template.get_full_model(None, lambda w: 'TpTp' not in w and '__q2__' not in w), base_path_julie=base_path_julie_tt):
     tc = [varial.tools.ToolChain(
         'BackgroundOnlyFit', 
         create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
         mk_limit_tc(
             [],
-            ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
-                base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-            lambda w: model(w, None, lambda w: 'TpTp' not in w),
+            [
+                '../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
+                base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix
+            ],
+            model,
             '',
+            plot_corr_mat=True
         )),
         # sensitivity.mk_tc_postfit_plot(theta_lim_path='../../ThetaLimit', pattern=pattern_tt, sys_pat=sys_pat_tt,
         #     sys_uncerts=uncerts, plots=['ST']),
@@ -447,7 +511,7 @@ def mk_bkg_only_fit(output_name, model=theta_combined_template.get_full_model())
     return varial.tools.ToolChain(output_name, tc)
 
 
-def mk_bkg_only_fit_compare_comb(output_name):
+def mk_bkg_only_fit_compare_comb(output_name, base_path_julie=base_path_julie_tt):
     tc = [varial.tools.ToolChain(
             'BackgroundOnlyFitCombined', 
             create_rootfiles('bkg_only', [], '', pattern=pattern_tt, sys_pat=sys_pat_tt) +\
@@ -455,7 +519,8 @@ def mk_bkg_only_fit_compare_comb(output_name):
                 [],
                 ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root',
                     base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                # lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                theta_combined_template.get_full_model(None, lambda w: 'TpTp' not in w and '__q2__' not in w),
                 '',
             ) +\
             sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
@@ -473,7 +538,8 @@ def mk_bkg_only_fit_compare_comb(output_name):
             mk_limit_tc(
                 [],
                 [base_path_julie+'TTM700_bW0p5_tZ0p25_tH0p25'+file_suffix],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                # lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                theta_combined_template.get_full_model(None, lambda w: 'TpTp' not in w),
                 '',
             ) +\
             sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
@@ -491,7 +557,8 @@ def mk_bkg_only_fit_compare_comb(output_name):
             mk_limit_tc(
                 [],
                 ['../HiggsTagTemplates/HiggsTagTemplate_bkg_only_.root'],
-                lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                # lambda w: theta_combined_template.get_full_model(w, None, lambda w: 'TpTp' not in w),
+                theta_combined_template.get_full_model(None, lambda w: 'TpTp' not in w),
                 '',
             ) +\
             sensitivity.mk_tc_postfit_plot(pattern=pattern_tt, sys_pat=sys_pat_tt,
@@ -535,18 +602,18 @@ def mk_ind_graphs(brs, name='LimitWithGraphs', plot_obs=True):
             # hook_canvas_post_build=lambda w: sensitivity.canvas_setup_post(w, max_y=100.),
             canvas_post_build_funcs=[
                 rnd.mk_legend_func(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
-                common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),
+                # common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.55, 0.89, "#scale[0.5]{2.3/2.5/2.6 fb^{-1} (13 TeV)}")),
                 ],
             # save_lin_log_scale=True
             ),
         ])
 
-def mk_triangle(lim_path):
+def mk_triangle(lim_path, leg_x='BR(T #rightarrow tH)', leg_y='BR(T #rightarrow bW)'):
     return varial.tools.ToolChain('LimitTriangle',[
         vlq_common.TriangleMassLimitPlots(
             limit_rel_path=lim_path,
-            leg_x='BR(T #rightarrow tH)', leg_y='BR(T #rightarrow bW)'
+            leg_x=leg_x, leg_y=leg_y
             ),
         varial.plotter.Plotter(
             name='PlotterBoxExp',
@@ -555,9 +622,11 @@ def mk_triangle(lim_path):
             plot_setup=sensitivity.plot_setup_triangle('col'),
             save_name_func=lambda w: w.save_name,
             canvas_post_build_funcs=[sensitivity.DrawLess700(),
-                common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),]
+                # common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                # common_plot.mk_tobject_draw_func(TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.81, "#scale[0.55]{Expected 95% CL}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.75, "#scale[0.55]{Lower mass limits}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.54, 0.89, "#scale[0.5]{2.3/2.5/2.6 fb^{-1} (13 TeV)}")),]
             ),
 
         varial.plotter.Plotter(
@@ -567,9 +636,11 @@ def mk_triangle(lim_path):
             plot_setup=sensitivity.plot_setup_triangle('col'),
             save_name_func=lambda w: w.save_name,
             canvas_post_build_funcs=[sensitivity.DrawLess700(),
-                common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
+                # common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 # common_plot.mk_tobject_draw_func(TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),]
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.81, "#scale[0.55]{Observed 95% CL}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.75, "#scale[0.55]{Lower mass limits}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.54, 0.89, "#scale[0.5]{2.3/2.5/2.6 fb^{-1} (13 TeV)}")),]
             ),
         ])
 
@@ -578,6 +649,7 @@ def limits_only_boostH(br_str, brs, asymptotic=True, model=theta_combined_templa
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
             create_rootfiles(br_str, brs, sig, pattern=pattern_tt, sys_pat=sys_pat_tt, categories=all_regions+['SidebandRegion_Mu45', 'SidebandRegion_El45']) +\
+            # create_rootfiles(br_str, brs, sig, pattern=pattern_tt, sys_pat=sys_pat_tt, categories=all_regions) +\
             mk_limit_tc(
                 brs,
                 ['../HiggsTagTemplates/HiggsTagTemplate_'+br_str+'_'+sig+'.root'],
@@ -588,7 +660,7 @@ def limits_only_boostH(br_str, brs, asymptotic=True, model=theta_combined_templa
         for sig, file_path in tt_signals.iteritems())
     )
 
-def limits_only_boostW(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model()):
+def limits_only_boostW(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model(), signals=tt_signals, base_path_julie=base_path_julie_tt):
     return varial.tools.ToolChainParallel(
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
@@ -599,14 +671,14 @@ def limits_only_boostW(br_str, brs, asymptotic=True, model=theta_combined_templa
                 sig,
                 asymptotic
             ))
-        for sig, file_path in tt_signals.iteritems())
+        for sig, file_path in signals.iteritems())
     )
 
-def limits_comb(br_str, brs, asymptotic=True, model=theta_combined_template.get_full_model()):
+def limits_comb(br_str, brs, asymptotic=True, pattern=pattern_tt, sys_pat=sys_pat_tt, model=theta_combined_template.get_full_model(), signals=tt_signals, base_path_julie=base_path_julie_tt):
     return varial.tools.ToolChainParallel(
         'ThetaLimits', list(varial.tools.ToolChain(
             sig, 
-            create_rootfiles(br_str, brs, sig, pattern=pattern_tt, sys_pat=sys_pat_tt) +\
+            create_rootfiles(br_str, brs, sig, pattern=pattern, sys_pat=sys_pat) +\
             mk_limit_tc(
                 brs,
                 ['../HiggsTagTemplates/HiggsTagTemplate_'+br_str+'_'+sig+'.root',
@@ -615,16 +687,16 @@ def limits_comb(br_str, brs, asymptotic=True, model=theta_combined_template.get_
                 sig,
                 asymptotic
             ))
-        for sig, file_path in tt_signals.iteritems())
+        for sig, file_path in signals.iteritems())
     )
 
-def mk_limit_list(output_name, lim_func, asymptotic=True, model=theta_combined_template.get_full_model()):
+def mk_limit_list(output_name, lim_func, br_list=br_list_tt, leg_x='BR(T #rightarrow tH)', leg_y='BR(T #rightarrow bW)'):
     # def tmp():
     limit_list = []
-    for br_str, brs in br_list_tt:
+    for br_str, brs in br_list:
         # if ind > 5: break
         tc = []
-        tc.append(lim_func(br_str, brs, asymptotic, model=model))
+        tc.append(lim_func(br_str, brs))
         tc.append(mk_ind_graphs(brs, 'LimitsWithGraphs', True))
         tc.append(mk_ind_graphs(brs, 'LimitsWithGraphsNoObs', False))
         limit_list.append(
@@ -633,47 +705,54 @@ def mk_limit_list(output_name, lim_func, asymptotic=True, model=theta_combined_t
     ind_limits = varial.tools.ToolChainParallel('Ind_Limits', limit_list, n_workers=1)
 
     tr_list = mk_triangle(list('../../Ind_Limits/Limit_%s/LimitsWithGraphs/LimitCurvesCompared' % i[0]
-                for i in br_list_tt if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5']))
+                for i in br_list if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5']), leg_x=leg_x, leg_y=leg_y)
     return varial.tools.ToolChain(output_name, [
-        ind_limits,
-        # mk_bkg_only_fit('BkgFit', model=model),
-        tr_list,
+        # ind_limits,
+        # tr_list,
+        mk_bkg_only_fit('BkgFit'),
         # mk_tc_tex(output_name),
-        varial.tools.WebCreator()
+        # varial.tools.WebCreator()
         ])
     # return tmp
     # return tmp
 
-def mk_tc_tex(source_dir):
-    tc_tex_an = [
+def mk_tc_tex():
+    tc_tex = [
         tex_content.mk_plot_ind(
             (
-                ('limit_nominal', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_tHtZ_0p5', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_tH_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_bW_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('triangle_lim_exp', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
-                ('triangle_lim_obs', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
-                ('postfit', os.path.join(base_path, source_dir)+'/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.pdf'),
-            ), name='LimitPlots'),
-        tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
-        
-    ]
-    tc_tex_pas = [
+                ('comb_limit_singlet', '../../../TTLimitsCombined/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_doublet', '../../../TTLimitsCombined/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_tH_1p0', '../../../TTLimitsCombined/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_bW_1p0', '../../../TTLimitsCombined/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_triangle_lim_exp', '../../../TTLimitsCombined/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                ('comb_triangle_lim_obs', '../../../TTLimitsCombined/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+                ('bW_only_limit_singlet', '../../../TTLimitsBoostedWOnly/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('bW_only_limit_doublet', '../../../TTLimitsBoostedWOnly/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('bW_only_limit_tH_1p0', '../../../TTLimitsBoostedWOnly/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('bW_only_limit_bW_1p0', '../../../TTLimitsBoostedWOnly/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('bW_only_triangle_lim_exp', '../../../TTLimitsBoostedWOnly/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                ('bW_only_triangle_lim_obs', '../../../TTLimitsBoostedWOnly/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+                ('postfit', '../../../TTLimitsCombined/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.pdf'),
+                ('corr_mat', '../../../TTLimitsCombined/BkgFit/BackgroundOnlyFit/CorrelationPlot/corr_matrix_lin.pdf'),
+            ), name='CombLimitPlotsTT'),
         tex_content.mk_plot_ind(
             (
-                ('limit_nominal', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_tHtZ_0p5', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p5_tH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_tH_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('limit_bW_1p0', os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
-                ('triangle_lim_exp', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
-                ('triangle_lim_obs', os.path.join(base_path, source_dir)+'/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
-                ('postfit', os.path.join(base_path, source_dir)+'/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.pdf'),
-            ), name='LimitPlots'),
-        # tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
+                ('comb_limit_singlet', '../../../BBLimitsCombined/Ind_Limits/Limit_tW0p5_bZ0p25_bH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_doublet', '../../../BBLimitsCombined/Ind_Limits/Limit_tW0p0_bZ0p5_bH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_tH_1p0', '../../../BBLimitsCombined/Ind_Limits/Limit_tW0p0_bZ0p0_bH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_limit_bW_1p0', '../../../BBLimitsCombined/Ind_Limits/Limit_tW1p0_bZ0p0_bH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('comb_triangle_lim_exp', '../../../BBLimitsCombined/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                ('comb_triangle_lim_obs', '../../../BBLimitsCombined/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+                ('bW_only_limit_singlet', '../../../BBLimitsBoostedWOnly/Ind_Limits/Limit_tW0p5_bZ0p25_bH0p25/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('bW_only_limit_doublet', '../../../BBLimitsBoostedWOnly/Ind_Limits/Limit_tW0p0_bZ0p5_bH0p5/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                # ('bW_only_limit_tH_1p0', '../../../TTLimitsCombined/Ind_Limits/Limit_bW0p0_tZ0p0_tH1p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                # ('bW_only_limit_bW_1p0', '../../../TTLimitsCombined/Ind_Limits/Limit_bW1p0_tZ0p0_tH0p0/LimitsWithGraphs/LimitCurvesCompared/lim_graph_log.pdf'),
+                # ('bW_only_triangle_lim_exp', '../../../TTLimitsCombined/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                # ('bW_only_triangle_lim_obs', '../../../TTLimitsCombined/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+                # ('postfit', '../../../TTLimitsCombined/BkgFit/BackgroundOnlyFit/PostFit/cnv_post_fit_.pdf'),
+                # ('corr_mat', '../../../TTLimitsCombined/BkgFit/BackgroundOnlyFit/CorrelationPlot/corr_matrix_lin.pdf'),
+            ), name='CombLimitPlotsBB'),
+        # tex_content.mk_autoContentSysTabs('../../../TTLimitsCombined/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits/{0}/ThetaLimit', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
         # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
@@ -685,13 +764,11 @@ def mk_tc_tex(source_dir):
     # # else:
     # #     tc_tex_pas += [tex_content.mk_autoContentLimits(path_pas, 'El45', 'Mu45', 'LimitPlots_'+name, prefix='LimitsAllUncertsAllRegions', mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
     # #     tc_tex_pas += [tex_content.mk_autoContentLimitsVarSize(path_pas, 'El45', 'Mu45', 'LimitPlotsLarge_'+name, mass_points=['TpTp_M-0700', 'TpTp_M-1000', 'TpTp_M-1300', 'TpTp_M-1700'])]
-    tc_tex_pas = varial.tools.ToolChain('CopyPlots', [
-        varial.tools.ToolChain('TexAN', tc_tex_an),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:AN-Dir/notes/AN-16-343/trunk/', src='../TexAN/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, name='CopyToolAN'),
-        varial.tools.ToolChain('TexPaper', tc_tex_pas),
-        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:PAS-Dir/notes/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, name='CopyToolPaper'),
+    tc_all = varial.tools.ToolChain('CopyPlots', [
+        varial.tools.ToolChain('TexThesis', tc_tex),
+        varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete'),
         ])
-    return tc_tex_pas
+    return tc_all
 
 def mk_all_templates(source_dir):
     limit_list = []
@@ -721,6 +798,23 @@ def mk_all_templates(source_dir):
     ind_limits = varial.tools.ToolChainParallel(source_dir, limit_list, n_workers=1)
     return ind_limits
 
+def mk_tc_comb_limits(output_name):
+    return varial.tools.ToolChainParallel(output_name, [
+        mk_limit_list('TTLimitsCombined', lambda a, b: limits_comb(a, b, asymptotic=False)),
+        # mk_limit_list('TTLimitsBoostedHOnly', limits_only_boostH, False),
+        # mk_limit_list('TTLimitsBoostedWOnly', lambda a, b: limits_only_boostW(a, b, asymptotic=False)),
+        # mk_limit_list('BBLimitsCombined', lambda a, b: limits_comb(a, b, asymptotic=False, pattern=pattern_bb, sys_pat=sys_pat_bb, model=theta_combined_template.get_full_model(signal='BpBp_M-*'), signals=bb_signals, base_path_julie=base_path_julie_bb), br_list_bb, leg_x='BR(B #rightarrow bH)', leg_y='BR(B #rightarrow tW)'),
+        # mk_limit_list('TTLimitsBoostedHOnly', limits_only_boostH, False),
+        # mk_limit_list('BBLimitsBoostedWOnly', lambda a, b: limits_only_boostW(a, b, asymptotic=False, model=theta_combined_template.get_full_model(signal='BpBp_M-*'), signals=bb_signals, base_path_julie=base_path_julie_bb), br_list_bb_only_important),
+        # mk_limit_list('LimitsNoExtraUncert', limits_comb, False, model=theta_combined_template.get_full_model),
+        # mk_limit_list('LimitsAntiCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_chan),
+        # mk_limit_list('LimitsCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_chan),
+        # mk_limit_list('LimitsAntiCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_btag),
+        # mk_limit_list('LimitsCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_btag),
+        mk_tc_tex(),
+        varial.tools.WebCreator()
+        ], n_workers=1)
+
 if __name__ == '__main__':
     output_name = sys.argv[1]
     if len(sys.argv) > 2:
@@ -737,15 +831,8 @@ if __name__ == '__main__':
             sys_pat_tt = list(sys_path+'/%s*/*.root'% i for i in uncerts) + list(sys_path+'Diboson/%s*/*.root'% i for i in uncerts)
 
     # all_tools = mk_limit_list()
-    varial.tools.Runner(varial.tools.ToolChainParallel(output_name, [
-        mk_limit_list('LimitsBoostedHOnly', limits_only_boostH, True),
-        # mk_limit_list('LimitsNoExtraUncert', limits_comb, True, model=theta_combined_template.get_full_model()),
-        # mk_limit_list('LimitsAntiCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_chan),
-        # mk_limit_list('LimitsCorrExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_chan),
-        # mk_limit_list('LimitsAntiCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_anticorr_btag),
-        # mk_limit_list('LimitsCorrBtagExUncert', limits_comb, False, model=theta_combined_template.get_model_ex_corr_btag),
-        varial.tools.WebCreator()
-        ], n_workers=1), default_reuse=True)
+    varial.tools.Runner(
+        varial.tools.ToolChain(output_name, [mk_tc_comb_limits('CombinationLimits')]), default_reuse=True)
     # varial.tools.Runner(mk_bb_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_all_templates(output_name), default_reuse=True)
     # varial.tools.Runner(mk_bkg_only_fit_compare_comb(output_name), default_reuse=True)

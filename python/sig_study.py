@@ -35,11 +35,11 @@ import common_plot_new as common_plot
 import analysis
 import tex_content_new as tex_content
 
-from ROOT import TLatex, TH2
+from ROOT import TLatex, TH2, kGreen, kOrange
 
 varial.settings.max_num_processes = 24
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpSignalStudies.xml'
+sframe_cfg = '/afs/desy.de/user/n/nowatsd/xxl-af-cms/SFrameUHH2/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpSignalStudies.xml'
 
 basenames_signals = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-0700',
@@ -69,6 +69,9 @@ basenames_backgrounds = list('uhh2.AnalysisModuleRunner.'+f for f in [
 basenames = basenames_signals_split + basenames_backgrounds
 
 varial.settings.colors.update({
+    'TpTp_M-0800' : kGreen+1,
+    'TpTp_M-1200' : kOrange+7, # 417
+    'TpTp_M-1600' : 596,
     'TTbar': 632,
     'WJets': 860,
     'El45_pt200_pt50' : 2,
@@ -78,55 +81,172 @@ varial.settings.colors.update({
     'Mu20_iso' : 3,
 })
 
+def sort_legend_signal(w):
+    if 'TeV' in w:
+        mass = w[-8:-5]
+        return -float(mass)
+    else:
+        return -100
+
 varial.settings.defaults_Legend.update({
-    'y_pos': 0.76,
+    'y_pos': 0.86,
+    'x_pos': 0.6,
+    'label_width': 0.3,
+    'label_height': 0.06,
+    'box_text_size' : 0.05,
+    'sort_legend' : sort_legend_signal,
     })
+
+# varial.settings.canvas_size_x = 550
+# varial.settings.canvas_size_y = 500
+
+
+def apply_axis_style(obj, y_bounds):
+    _, y_max = y_bounds
+    obj.GetXaxis().SetNoExponent()
+    obj.GetXaxis().SetLabelSize(0.052)
+    obj.GetXaxis().SetTitleSize(0.055)
+    obj.GetYaxis().SetTitleSize(0.055)
+    obj.GetXaxis().SetTitleOffset(1.)
+    obj.GetYaxis().SetTitleOffset(0.9)
+    obj.SetMinimum(y_max / 10000.)
+    obj.SetMaximum(y_max * 1.1)
+
+varial.settings.apply_axis_style = apply_axis_style
+
 
 default_canv_attr = dict(common_plot.default_canv_attr)
 
 default_canv_attr.update({
     # 'y_min_gr_zero' : 1e-9,
-    'y_max_fct' : 1.3,
+    'y_max_fct' : 1.4,
     # 'y_max_log_fct' : 1.,
-    # 'set_leg_2_col_lin' : False,
-    # 'set_leg_2_col_log' : False,
-    # 'set_leg_1_col_lin' : False,
-    # 'set_leg_1_col_log' : False,
+    # '_set_leg_2_col_lin' : False,
+    # '_set_leg_2_col_log' : False,
+    # '_set_leg_1_col_lin' : False,
+    # '_set_leg_1_col_log' : False,
     # 'move_exp' : False,
     # 'no_exp' : False,
 })
 
 mod_dict = {
-    # 'nomass_boost_2b_mass_softdrop_rebin_flex' : {
-    #         'y_max_fct' : 1.3,
-    #         'title' : 'M_{jet} [GeV]',
-    #         'bin_width' : 5,
-    #         'y_min_gr_zero' : 0.02,
-    #         'y_max_log_fct' : 1000.,
-    #         'scale' : 0.4,
-    #         'set_leg_1_col_lin' : {
-    #                 'x_pos': 0.74,
-    #                 'y_pos': 0.67,
-    #                 'label_width': 0.30,
-    #                 'label_height': 0.040,
-    #                 'box_text_size' : 0.033,
-    #                 'opt': 'f',
-    #                 'opt_data': 'pl',
-    #                 'reverse': True,
-    #                 'sort_legend' : lambda w: 'TT ' in w[1],
-    #             },
-    #         'text_box_lin' : (0.19, 0.82, "#scale[0.8]{#bf{CMS}}"),
-    #         },
+    'higgs_dRDecay_all' : {
+            # 'y_max_fct' : 1.3,
+            'title' : '#DeltaR(H decay products)',
+            # 'bin_width' : 5,
+            # 'y_min_gr_zero' : 0.02,
+            # 'y_max_log_fct' : 1000.,
+            # 'scale' : 0.4,
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                    # 'label_width': 0.30,
+                    # 'label_height': 0.040,
+                    # 'box_text_size' : 0.033,
+                    # 'opt': 'f',
+                    # 'opt_data': 'pl',
+                    # 'reverse': True,
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
+                },
+            # 'text_box_lin' : (0.19, 0.82, "#scale[0.8]{#bf{CMS}}"),
+            },
+    'higgs_to_bb_dRDecay_all' : {
+            'rebin_list' : list(float(i)/10 for i in xrange(0, 41)),
+            'title' : '#DeltaR_{H #rightarrow b#bar{b}}(b,#bar{b})',
+            'y_pad_margin' : 0.16,
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'higgs_to_bb_dRDecay_all_rebin_flex' : {
+            'title' : '#DeltaR_{H #rightarrow b#bar{b}}(b,#bar{b})',
+            'y_pad_margin' : 0.16,
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'higgs_pt_all' : {
+            'rebin' : 50,
+            # 'y_max_fct' : 1.3,
+            'title' : 'p_{T}(H)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'W_from_T_dRDecay_all' : {
+            # 'y_max_fct' : 1.3,
+            'title' : '#DeltaR(W decay products)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'W_from_T_pt_all' : {
+            'rebin' : 50,
+            # 'y_max_fct' : 1.3,
+            'title' : 'p_{T}(W)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'W_dRDecay_all' : {
+            # 'y_max_fct' : 1.3,
+            'rebin_list' : list(float(i)/10 for i in xrange(0, 41)),
+            'title' : "#DeltaR_{W #rightarrow q#bar{q}'}(q,#bar{q}')",
+            'y_pad_margin' : 0.16,
+            # 'title' : '#DeltaR(W decay products)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'W_dRDecay_all_rebin_flex' : {
+            # 'y_max_fct' : 1.3,
+            'title' : "#DeltaR_{W #rightarrow q#bar{q}'}(q,#bar{q}')",
+            'y_pad_margin' : 0.16,
+            # 'title' : '#DeltaR(W decay products)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'W_pt_all' : {
+            'rebin' : 50,
+            # 'y_max_fct' : 1.3,
+            'title' : 'p_{T}(W)',
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
+    'spec_max_deltaR_topprod' : {
+            # 'y_max_fct' : 1.3,
+            'title' : 'max(#DeltaR_{t #rightarrow bl#nu}(b,l,#nu))',
+            'y_pad_margin' : 0.16,
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.7,
+                    'y_pos': 0.7,
+                },
+            },
     }
+
+colors_mu = [797, 434, 409]
+colors_el = [625, 596, 617]
+all_colors = colors_el+colors_mu
+markers = [(21, 1), (22, 1.2), (23, 1.2), (20, 1), (24, 1), (25, 1), (26, 1)]
 
 def get_style():
     # _style = style or varial.settings.style
     return [
-        common_plot.mod_pre_bot_hist(),
+        common_plot.mod_pre_bot_hist(mod_dict),
         common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
         # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
         rnd.mk_legend_func(),
-        common_plot.mod_post_canv(default_attr=default_canv_attr),
+        common_plot.mod_post_canv(dict_cnv_attr=mod_dict, default_attr=default_canv_attr),
         # titlebox_func
     ]
 
@@ -145,48 +265,36 @@ def add_eff_to_wrp(wrps):
 def mod_title(wrps):
     for w in wrps:
         if 'electron' in w.name:
-            x_ax_pre = 'Electron'
+            x_ax_post = '(e) [GeV]'
         elif 'muon' in w.name:
-            x_ax_pre = 'Muon'
+            x_ax_post = '(#mu) [GeV]'
+        if 'FullSelectionST' in w.in_file_path:
+            x_ax_pre = 'S_{T}'
         else:
-            x_ax_pre = 'AK8 Jet'
-        if 'pt' in w.name:
-            x_ax_post = ' p_{T} [GeV]'
-        elif 'eta' in w.name:
-            x_ax_post = ' #eta'
-        elif 'mass' in w.name:
-            x_ax_post = ' Mass [GeV]'
-        elif 'nsjbtags' in w.name:
-            x_ax_post = ' N(sj b-tags)'
-        else:
-            x_ax_post = ''
-        if isinstance(w, varial.wrappers.HistoWrapper):
-            w.histo.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
-        elif isinstance(w, varial.wrappers.GraphWrapper):
-            w.graph.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
+            x_ax_pre = 'p_{T}'
+        # if isinstance(w, varial.wrappers.HistoWrapper):
+        #     w.histo.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
+        # elif isinstance(w, varial.wrappers.GraphWrapper):
+        #     w.graph.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
+        w.obj.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
 
-        if '1b' in w.name:
-            y_ax_post = ' (H-tag, #geq 1 sj b-tag)'
-        elif '2b' in w.name:
-            y_ax_post = ' (H-tag, 2 sj b-tags)'
-        else:
-            y_ax_post = ''
-        if 'eff' in w.name:
-            if isinstance(w, varial.wrappers.HistoWrapper):
-                w.histo.GetYaxis().SetTitle('Efficiency'+y_ax_post)
-            elif isinstance(w, varial.wrappers.GraphWrapper):
-                w.graph.GetYaxis().SetTitle('Efficiency'+y_ax_post)
+        # if isinstance(w, varial.wrappers.HistoWrapper):
+        #     w.histo.GetYaxis().SetTitle('Efficiency')
+        # elif isinstance(w, varial.wrappers.GraphWrapper):
+        #     w.graph.GetYaxis().SetTitle('Efficiency')
+        w.obj.GetYaxis().SetTitle('Efficiency')
 
         yield w
 
 def mod_title_norm(wrps):
     for w in wrps:
-        w.histo.GetYaxis().SetTitle('A. U.')
+        w.histo.GetYaxis().SetTitle('Arbitrary units')
+        # w.histo.GetXaxis().SetTitle('test')
         yield w
 
-rebin_list_pt = list(i for i in xrange(0, 1000, 40))
-rebin_list_pt += list(i for i in xrange(1000, 1600, 120))
-rebin_list_pt += list(i for i in xrange(1600, 2400, 240))
+rebin_list_pt = list(i for i in xrange(0, 1000, 80))
+rebin_list_pt += list(i for i in xrange(1000, 1600, 240))
+rebin_list_pt += list(i for i in xrange(1600, 2400, 480))
 
 # print rebin_list_pt
 
@@ -212,6 +320,55 @@ def mk_marker(wrps):
         if isinstance(w, wrappers.GraphWrapper):
             w.graph.SetMarkerStyle(1)
         yield w
+
+def marker_style(wrps, markers=markers):
+    n = 0
+    for wrp in wrps:
+        mrk = markers[n % len(markers)]
+        n += 1
+        if isinstance(wrp, wrappers.GraphWrapper):
+            wrp.graph.SetMarkerStyle(mrk[0])
+            wrp.graph.SetMarkerSize(mrk[1])
+        yield wrp
+
+def marker_col(wrps):
+    n = 0
+    for wrp in wrps:
+        if 'electron' in wrp.name:
+            col = colors_el[n % len(colors_el)]
+        elif 'muon' in wrp.name:
+            col = colors_mu[n % len(colors_mu)]
+        else:
+            col = all_colors[n % len(all_colors)]
+        n += 1
+        wrp.obj.SetLineColor(col)
+        wrp.obj.SetMarkerColor(col)
+        yield wrp
+
+
+
+def set_line_style(wrps):
+    line_style = {
+        'TpTp_M-0800' : 7,
+        'TpTp_M-1200' : 1,
+        'TpTp_M-1600' : 2,
+    }
+    for wrp in wrps:
+        if line_style.get(wrp.sample, None):
+            wrp.obj.SetLineStyle(line_style[wrp.sample])
+        yield wrp
+
+def colorize_gen_hists(wrps):
+    col_dict = {
+        'TpTp_M-0800' : 628,
+        'TpTp_M-1200' : 412,
+        'TpTp_M-1600' : 596,
+    }
+    for wrp in wrps:
+        if col_dict.get(wrp.sample, None):
+            wrp.obj.SetLineColor(col_dict[wrp.sample])
+        yield wrp
+
 
 def add_eff_to_info(canvas_builders):
 
@@ -262,20 +419,33 @@ def plot_grouper_comp_trg(wrps):
     return gen.group(wrps, key_func=comp_trg_group)
 
 def mod_legend_comp_trg(wrps):
+    dict_leg = {
+        'muon_pt_iso_full' : 'Iso. #mu sel.',
+        'muon_pt_full' : 'Non-iso. #mu sel.',
+        'electron_pt_iso_full' : 'Iso. e sel.',
+        'electron_pt_full' : 'Non-iso. e sel.',
+        'electron_pt_105_full' : 'Non-iso., high-p_{T} e sel.',
+    }
+
     for w in wrps:
-        if w.name.startswith('electron'):
-            chan = 'El'
-            suf = '45_pt200_pt50'
-            if '105' in w.name:
-                suf = '105'
-            elif 'iso' in w.name:
-                suf = '27_iso'
-        elif w.name.startswith('muon'):
-            chan = 'Mu'
-            suf = '45'
-            if 'iso' in w.name:
-                suf = '20_iso'
-        w.legend = chan + suf
+
+        # if w.name.startswith('electron'):
+        #     chan = 'El'
+        #     suf = '45_pt200_pt50'
+        #     if '105' in w.name:
+        #         suf = '105'
+        #     elif 'iso' in w.name:
+        #         suf = '27_iso'
+        # elif w.name.startswith('muon'):
+        #     chan = 'Mu'
+        #     suf = '45'
+        #     if 'iso' in w.name:
+        #         suf = '20_iso'
+        # w.legend = chan + suf
+        for k, v in dict_leg.iteritems():
+            if w.name.startswith(k):
+                w.legend = v
+                w.draw_option_legend = 'ple'
         yield w
 
 # def plot_grouper_sep_sig_bkg(wrps):
@@ -327,14 +497,15 @@ def loader_hook_eff(wrps):
     return wrps
 
 def loader_hook_gen_hists(wrps):
-    # wrps = common_plot.rebin_st_and_nak4(wrps)
+    wrps = common_plot.rebin_st_and_nak4(wrps, mod_dict)
     # wrps = plot.common_loader_hook(wrps)
-    wrps = rebin(wrps)
+    # wrps = rebin(wrps)
     # wrps = rebin_fix(wrps)
     wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
     wrps = filter_signal(wrps)
     wrps = common_plot.mod_legend(wrps)
     wrps = vlq_common.label_axes(wrps)
+    wrps = common_plot.mod_title(wrps, mod_dict)
 
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=False, yield_orig=False)
@@ -345,7 +516,10 @@ def loader_hook_gen_hists(wrps):
     # wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     # wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False, yield_orig=False)
     wrps = gen.gen_make_eff_graphs(wrps, yield_everything=True, pair_func=lambda w, l: w.sample+'_'+w.in_file_path[:-l])
-    wrps = mk_marker(wrps)
+    wrps = gen.apply_linewidth(wrps, 3)
+    wrps = set_line_style(wrps)
+    # wrps = colorize_gen_hists(wrps)
+    # wrps = mk_marker(wrps)
     wrps = add_eff_to_wrp(wrps)
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     return wrps
@@ -375,12 +549,12 @@ def loader_hook_split_leps(wrps):
 def loader_hook_comp_trg(wrps):
     # wrps = common_plot.rebin_st_and_nak4(wrps)
     # wrps = plot.common_loader_hook(wrps)
+    wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
     wrps = rebin(wrps)
     # wrps = rebin_fix(wrps)
-    wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
-    wrps = common_plot.mod_legend(wrps)
-    wrps = mod_legend_comp_trg(wrps)
+    # wrps = common_plot.mod_legend(wrps)
     wrps = vlq_common.label_axes(wrps)
+    wrps = mod_legend_comp_trg(wrps)
 
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_all', print_warning=False, yield_orig=True)
@@ -389,7 +563,8 @@ def loader_hook_comp_trg(wrps):
     wrps = sorted(wrps, key=lambda w: '{0}___{1}'.format(w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False, yield_orig=False)
     wrps = gen.gen_make_eff_graphs(wrps, yield_everything=True, pair_func=lambda w, l: w.sample+'_'+w.in_file_path[:-l])
-    wrps = mk_marker(wrps)
+    wrps = mod_title(wrps)
+    # wrps = mk_marker(wrps)
     wrps = add_eff_to_wrp(wrps)
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     return wrps
@@ -417,6 +592,16 @@ def loader_hook_split_leps_comp_trg(wrps):
     wrps = sorted(wrps, key=lambda w: w.in_file_path)
     return wrps
 
+
+def plot_setup_comp_trg(grps):
+    grps = (marker_col(ws) for ws in grps)
+    grps = (marker_col(ws) for ws in grps)
+    grps = (marker_style(ws, markers) for ws in grps)
+    grps = list(grps)
+    return grps
+
+
+
 def plotter_factory_eff():
 
     def tmp(**kws):
@@ -437,13 +622,15 @@ def plotter_factory_eff():
         return varial.tools.Plotter(stack=False, **kws)
     return tmp
 
-def plotter_factory_comp_trg():
+def plotter_factory_comp_trg(**args):
 
     def tmp(**kws):
         # common_plot.plotter_factory_eff(common_plot.normfactors, **kws)
         kws['filter_keyfunc'] = lambda w: 'base' not in w.in_file_path and (w.in_file_path.endswith('_sub') or w.in_file_path.endswith('_tot'))
         kws['hook_loaded_histos'] = loader_hook_comp_trg
         kws['plot_grouper'] = plot_grouper_comp_trg
+        kws['plot_setup'] = plot_setup_comp_trg
+        kws['stack_setup'] = plot_setup_comp_trg
         # kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
         # kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
         # kws['canvas_post_build_funcs'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
@@ -454,10 +641,11 @@ def plotter_factory_comp_trg():
         kws['save_name_func'] = lambda w: comp_trg_group(w._renderers[0])
         kws['canvas_post_build_funcs'] = get_style()
         kws['mod_log'] = common_plot.mod_log_usr()
+        kws.update(args)
         return varial.tools.Plotter(stack=False, **kws)
     return tmp
 
-def plotter_factory_gen_plots():
+def plotter_factory_gen_plots(**args):
 
     def tmp(**kws):
         # common_plot.plotter_factory_eff(common_plot.normfactors, **kws)
@@ -474,6 +662,7 @@ def plotter_factory_gen_plots():
         # kws['save_name_func'] = lambda w: comp_trg_group(w._renderers[0])
         kws['canvas_post_build_funcs'] = get_style()
         kws['mod_log'] = common_plot.mod_log_usr()
+        kws.update(args)
         return varial.tools.Plotter(stack=False, **kws)
     return tmp
 
@@ -504,8 +693,6 @@ def plotter_factory_split_leps_comp_trg():
         kws['filter_keyfunc'] = lambda w: 'base' not in w.in_file_path and (w.in_file_path.endswith('_sub') or w.in_file_path.endswith('_tot')) and '_lep_' in w.file_path
         kws['hook_loaded_histos'] = loader_hook_split_leps_comp_trg
         kws['plot_grouper'] = plot_grouper_comp_trg
-        # kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
-        # kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
         # kws['canvas_post_build_funcs'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
         # kws['y_axis_scale'] = 'lin'
         kws['hook_canvas_post_build'] = mod_cnv_postbuild
@@ -556,61 +743,74 @@ def mk_tc_tex(source_dir):
     tc_tex = [
         tex_content.mk_plot_ind(
             (
-                ('dr_top_prod', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/spec_max_deltaR_topprod_lin.pdf')),
-                ('dr_higg_prod', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/higgs_dRDecay_all_lin.pdf')),
-                ('T_pt', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/tprime_pt_all_lin.pdf')),
-                ('T_eta', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/tprime_eta_all_lin.pdf')),
-                ('T_phi', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/tprime_phi_all_lin.pdf')),
-                ('t_pt', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/t_pt_all_lin.pdf')),
-                ('t_eta', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/t_eta_all_lin.pdf')),
-                ('t_phi', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/t_phi_all_lin.pdf')),
-                ('higgs_pt', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/higgs_pt_all_lin.pdf')),
-                ('higgs_eta', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/higgs_eta_all_lin.pdf')),
-                ('higgs_phi', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/higgs_phi_all_lin.pdf')),
-                ('el_pt', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/el_pt_all_lin.pdf')),
-                ('mu_pt', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/mu_pt_all_lin.pdf')),
-                ('top_pt_vs_max_dR_TpTp_M-1600', os.path.join(source_dir, 'PlotsGen/StackedAll/NoSelection/GenHists/spec_top_pt_vs_max_dR_TpTp_M-1600_lin.pdf')),
+                ('dr_top_prod', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/spec_max_deltaR_topprod_lin.pdf')),
+                ('dr_higg_prod', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/higgs_dRDecay_all_lin.pdf')),
+                ('dr_higg_to_bb_prod', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/higgs_to_bb_dRDecay_all_lin.pdf')),
+                ('T_pt', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/tprime_pt_all_lin.pdf')),
+                ('T_eta', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/tprime_eta_all_lin.pdf')),
+                ('T_phi', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/tprime_phi_all_lin.pdf')),
+                ('t_pt', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/t_pt_all_lin.pdf')),
+                ('t_eta', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/t_eta_all_lin.pdf')),
+                ('t_phi', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/t_phi_all_lin.pdf')),
+                ('higgs_pt', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/higgs_pt_all_lin.pdf')),
+                ('higgs_eta', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/higgs_eta_all_lin.pdf')),
+                ('higgs_phi', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/higgs_phi_all_lin.pdf')),
+                ('el_pt', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/el_pt_all_lin.pdf')),
+                ('mu_pt', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/mu_pt_all_lin.pdf')),
+                ('top_pt_vs_max_dR_TpTp_M-1600', os.path.join(source_dir, 'Plots/PlotsGen/StackedAll/NoSelection/GenHists/spec_top_pt_vs_max_dR_TpTp_M-1600_lin.pdf')),
             ), name='GenPlots'),
         tex_content.mk_plot_ind(
             (
-                ('el_incl_qcd_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__QCD_lin.pdf')),
-                ('el_incl_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_all_lin.pdf')),
-                ('el_incl_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_all_lin.pdf')),
-                ('mu_incl_qcd_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__QCD_lin.pdf')),
-                ('mu_incl_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_all_lin.pdf')),
-                ('mu_incl_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_all_lin.pdf')),
-                ('el_T_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_lep_T_lin.pdf')),
-                ('el_T_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_lep_T_lin.pdf')),
-                ('mu_T_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_lep_T_lin.pdf')),
-                ('mu_T_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_lep_T_lin.pdf')),
-                ('el_top_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_lep_top_lin.pdf')),
-                ('el_top_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_lep_top_lin.pdf')),
-                ('mu_top_T0800_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_lep_top_lin.pdf')),
-                ('mu_top_T1600_eff_pt', os.path.join(source_dir, 'PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_lep_top_lin.pdf')),
-            ), name='TriggerStudies'),
-        # tex_content.mk_plot_ind(
-        #     (
-        #         ('higgs_tag_mass', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nomass_boost_2b_mass_softdrop_lin.pdf'),
-        #         ('higgs_tag_sjbtags', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nobtag_boost_mass_nsjbtags_log.pdf'),
-        #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
-        #         ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
-        #         ('st_h1b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
-        #         ('st_h2b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
-        #         ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.pdf'),
-        #     ), name='PaperPlotsPrefit'),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS'),
-        # # tex_content.mk_autoTable(path_an+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable'),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePostFit/count_table_content.tex', name='CountTablePostFit'),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePreFit/count_table_content.tex', name='CountTablePreFit'),
-        # tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir)+'/Ind_Limits/Limit_bW0p5_tZ0p25_tH0p25/ThetaLimits', 'SysTabs', mass_points=['TTM0700', 'TTM1200', 'TTM1700'], regions=regions),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/EffTableCompFSPAS/count_table_content.tex', name='EffTableCompFS_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable_'+name),
-        # tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/BackgroundOnlyFitNoTheory/CR/PostFitPlots/CountTablePostFitPAS/count_table_content.tex', name='CountTablePostFit_'+name),
-        
+                ('el_incl_qcd_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__QCD_lin.pdf')),
+                ('el_incl_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_all_lin.pdf')),
+                ('el_incl_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_all_lin.pdf')),
+                ('mu_incl_qcd_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__QCD_lin.pdf')),
+                ('mu_incl_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_all_lin.pdf')),
+                ('mu_incl_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_all_lin.pdf')),
+                ('el_T_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_lep_T_lin.pdf')),
+                ('el_T_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_lep_T_lin.pdf')),
+                ('mu_T_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_lep_T_lin.pdf')),
+                ('mu_T_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_lep_T_lin.pdf')),
+                ('el_top_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-0800_lep_top_lin.pdf')),
+                ('el_top_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/electron__full_rebin_flex_eff__TpTp_M-1600_lep_top_lin.pdf')),
+                ('mu_top_T0800_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-0800_lep_top_lin.pdf')),
+                ('mu_top_T1600_eff_pt', os.path.join(source_dir, 'Plots/PlotsCompTrg/StackedAll/NoSelection/FullSelection/muon__full_rebin_flex_eff__TpTp_M-1600_lep_top_lin.pdf')),
+            ), name='TriggerStudies'),        
+    ]
+    tc_tex_paper = [
+        tex_content.mk_plot_ind(
+            (
+                ('dr_top_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/spec_max_deltaR_topprod_lin.pdf')),
+                ('dr_w_all_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_dRDecay_all_lin.pdf')),
+                ('dr_w_all_prod_rebin', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_dRDecay_all_rebin_flex_lin.pdf')),
+                ('dr_w_fromT_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_from_T_dRDecay_all_lin.pdf')),
+                ('w_all_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_pt_all_lin.pdf')),
+                ('w_fromT_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_from_T_pt_all_lin.pdf')),
+                ('dr_higg_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_dRDecay_all_lin.pdf')),
+                ('dr_higg_to_bb_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_to_bb_dRDecay_all_lin.pdf')),
+                ('dr_higg_to_bb_prod_rebin', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_to_bb_dRDecay_all_rebin_flex_lin.pdf')),
+                ('higgs_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_pt_all_lin.pdf')),
+            ), name='GenPlots'),
+        tex_content.mk_plot_ind(
+            (
+                ('dr_top_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/spec_max_deltaR_topprod_lin.png')),
+                ('dr_w_all_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_dRDecay_all_lin.png')),
+                ('dr_w_all_prod_rebin', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_dRDecay_all_rebin_flex_lin.png')),
+                ('dr_w_fromT_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_from_T_dRDecay_all_lin.png')),
+                ('w_all_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_pt_all_lin.png')),
+                ('w_fromT_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/W_from_T_pt_all_lin.png')),
+                ('dr_higg_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_dRDecay_all_lin.png')),
+                ('dr_higg_to_bb_prod', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_to_bb_dRDecay_all_lin.png')),
+                ('dr_higg_to_bb_prod_rebin', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_to_bb_dRDecay_all_rebin_flex_lin.png')),
+                ('higgs_pt', os.path.join(source_dir, 'Plots/PlotsGenPaper/StackedAll/NoSelection/GenHists/higgs_pt_all_lin.png')),
+            ), name='GenPlotsPNG'),
     ]
     tc_tex = varial.tools.ToolChain('CopyPlots', [
         varial.tools.ToolChain('TexThesis', tc_tex),
-        varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete'),
+        varial.tools.ToolChain('TexPaper', tc_tex_paper),
+        varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete', name='CopyToolThesis'),
+        # varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/xxl-af-cms/PlotsToInspect', src='../../*', ignore=('*.svn', '*.log'), use_rsync=True, options='-qa --delete', name='CopyToolInspect'),
+        varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:Paper-Dir/papers/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), options='-qa --delete', use_rsync=True, name='CopyToolPaper'),
         ])
     return tc_tex
 
@@ -621,7 +821,7 @@ def run_sframe(name='Test'):
         # 'TpTp_M-0900',
         # 'TpTp_M-1000',
         # 'TpTp_M-1100',
-        # 'TpTp_M-1200',
+        'TpTp_M-1200',
         # 'TpTp_M-1300',
         # 'TpTp_M-1400',
         # 'TpTp_M-1500',
@@ -634,12 +834,12 @@ def run_sframe(name='Test'):
         # 'WJets_LNu_HT2500ToInf'
         # 'WJets'
         # 'QCD',
-        'QCD_Pt600to800_MuEnrichedPt5',
-        'QCD_Pt800to1000_MuEnrichedPt5',
-        'QCD_Pt1000toInf_MuEnrichedPt5',
-        'QCD_Pt-300toInf_EMEnriched',
-        'QCD_Pt_170to250_bcToE',
-        'QCD_Pt_250toInf_bcToE',
+        # 'QCD_Pt600to800_MuEnrichedPt5',
+        # 'QCD_Pt800to1000_MuEnrichedPt5',
+        # 'QCD_Pt1000toInf_MuEnrichedPt5',
+        # 'QCD_Pt-300toInf_EMEnriched',
+        # 'QCD_Pt_170to250_bcToE',
+        # 'QCD_Pt_250toInf_bcToE',
     ]
 
     # sframe = MySFrameBatch(
@@ -683,26 +883,68 @@ def run_sframe(name='Test'):
                 # filter_keyfunc=lambda w: any(f in w for f in samples_to_plot)
                 # overwrite=False
             ),
-        varial.tools.ToolChain(
-            'Plots',
-            lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_eff())
-        ),
-        varial.tools.ToolChain(
-            'PlotsCompTrg',
-            lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_comp_trg())
-        ),
-        varial.tools.ToolChain(
-            'PlotsGen',
-            lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_gen_plots())
-        ),
-        varial.tools.ToolChain(
-            'PlotsSplitLeps',
-            lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_split_leps())
-        ),
-        # varial.tools.ToolChain(
-        #     'PlotsSplitLepsCompTrg',
-        #     lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_split_leps_comp_trg())
-        # ),
+        varial.tools.ToolChainParallel('Plots', [
+            # varial.tools.ToolChain(
+            #     'Plots',
+            #     lazy_eval_tools_func=plot.mk_plots(pattern='../../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_eff())
+            # ),
+            # varial.tools.ToolChain(
+            #     'PlotsCompTrg',
+            #     lazy_eval_tools_func=plot.mk_plots(pattern='../../Hadd/*.root', web_create=True,
+            #         plotter_factory=plotter_factory_comp_trg(
+            #             canvas_post_build_funcs=get_style() + [
+            #                 common_plot.mk_tobject_draw_func(TLatex(0.77, 0.89, "#scale[0.6]{(13 TeV)}")),
+            #                 # common_plot.mk_tobject_draw_func(TLatex(0.19, 0.79, "#scale[0.8]{#bf{CMS}}")),
+            #                 common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.6]{Simulation}")),
+            #                 ]
+            #             )
+            #         )
+            # ),
+            varial.tools.ToolChain(
+                'PlotsGen',
+                lazy_eval_tools_func=plot.mk_plots(pattern='../../Hadd/*.root', web_create=True,
+                    plotter_factory=plotter_factory_gen_plots(
+                        canvas_post_build_funcs=[
+                            common_plot.mod_pre_bot_hist(mod_dict),
+                            # common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
+                            # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
+                            rnd.mk_legend_func(),
+                            common_plot.mod_post_canv(dict_cnv_attr=mod_dict, default_attr=default_canv_attr),
+                            # titlebox_func
+                            common_plot.mk_tobject_draw_func(TLatex(0.76, 0.89, "#scale[0.6]{(13 TeV)}")),
+                            # common_plot.mk_tobject_draw_func(TLatex(0.19, 0.79, "#scale[0.8]{#bf{CMS}}")),
+                            common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.6]{Simulation}")),
+                            ]
+                        )
+                    )
+            ),
+            # varial.tools.ToolChain(
+            #     'PlotsGenPaper',
+            #     lazy_eval_tools_func=plot.mk_plots(pattern='../../Hadd/*.root', web_create=True,
+            #         plotter_factory=plotter_factory_gen_plots(
+            #             canvas_post_build_funcs=[
+            #                 common_plot.mod_pre_bot_hist(mod_dict),
+            #                 # common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
+            #                 # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
+            #                 rnd.mk_legend_func(),
+            #                 common_plot.mod_post_canv(dict_cnv_attr=mod_dict, default_attr=default_canv_attr),
+            #                 # titlebox_func
+            #                 common_plot.mk_tobject_draw_func(TLatex(0.76, 0.89, "#scale[0.6]{(13 TeV)}")),
+            #                 common_plot.mk_tobject_draw_func(TLatex(0.19, 0.79, "#scale[0.8]{#bf{CMS}}")),
+            #                 common_plot.mk_tobject_draw_func(TLatex(0.19, 0.73, "#scale[0.6]{#it{Simulation}}")),
+            #                 ])
+            #         )
+            # ),
+            # varial.tools.ToolChain(
+            #     'PlotsSplitLeps',
+            #     lazy_eval_tools_func=plot.mk_plots(pattern='../../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_split_leps())
+            # ),
+            # varial.tools.ToolChain(
+            #     'PlotsSplitLepsCompTrg',
+            #     lazy_eval_tools_func=plot.mk_plots(pattern='../Hadd/*.root', web_create=True, plotter_factory=plotter_factory_split_leps_comp_trg())
+            # ),
+            ],
+        n_workers=1),
         mk_tc_tex(name),
         varial.tools.WebCreator()
     ])

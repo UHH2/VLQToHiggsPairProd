@@ -497,7 +497,7 @@ TpTpFinalSelectionTreeOutput::TpTpFinalSelectionTreeOutput(Context & ctx) : TpTp
     }
     if (version.find("TT") != string::npos || version.find("TpTp") != string::npos || version.find("BpBp") != string::npos) {
         other_modules.emplace_back(new HTReweighting(ctx, 1.24, -0.00036, 3000., "weight_htrew_tt_old"));
-        other_modules.emplace_back(new HTReweighting(ctx, 1.16, -0.00035, 3000., "weight_htrew_tt"));
+        other_modules.emplace_back(new HTReweighting(ctx, 1.16, -0.00035, 3000., "weight_htrew_tt")); // TH.: 1.12, -0.00032
         // other_modules.emplace_back(new HTReweighting(ctx, 1.424121, -0.000352462, 3000., "weight_htrew_tt_toppt"));
         other_modules.emplace_back(new JetPtAndMultFixerWeight<Jet>(ctx, "jets", 1.038, -0.0004778, 0.747, 200., 725., "weight_jetpt"));
     }

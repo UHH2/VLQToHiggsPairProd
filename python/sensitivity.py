@@ -513,10 +513,18 @@ def plot_setup_corr_matrix(opt):
         return grps
     return tmp
 
+def set_tr_range(wrps):
+    for w in wrps:
+        w.obj.SetMaximum(850)
+        w.obj.SetMinimum(700)
+        yield w
+
+
 def plot_setup_triangle(opt):
     def tmp(grps):
         grps = (add_draw_option(ws, opt) for ws in grps)
         grps = (gen.apply_markercolor(ws, colors=[1]) for ws in grps)
+        grps = (set_tr_range(ws) for ws in grps)
         return grps
     return tmp
 
@@ -529,7 +537,10 @@ def calc_intersection(graph1, graph2):
         y12 = graph1.Eval(x+1)
         y22 = graph2.Eval(x+1)
         if (y11 > y21 and y12 < y22) or (y11 < y21 and y12 > y22) or y11 == y21:
-            return x
+            if x % 10 < 5:
+                return x - (x % 10)
+            else:
+                return x + 10 - (x % 10)
 
 def plot_calc_intersect(grps):
     for g in grps:
@@ -551,9 +562,9 @@ def plot_calc_intersect(grps):
             setattr(g[0], 'obs_mass_excl', obsintersect)
         yield g
 
-def plot_setup_graphs(grps, th_x=None, th_y=None):
+def plot_setup_graphs(grps, th_x=None, th_y=None, legend='Theory T#bar{T} (NNLO)'):
     # grps = varial.plotter.default_plot_colorizer(grps)
-    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend='Theory T#bar{T} (NNLO)')
+    grps = add_th_curve(grps, th_x, th_y, min_thy=1e-2, legend=legend)
     grps = plot_calc_intersect(grps)
     return grps
 

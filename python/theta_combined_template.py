@@ -11,118 +11,136 @@ input1H = ''
 
 rFileName = input0H.split('/')[-1][:-5]
                                                                                                                                           
-def get_full_model(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
-    model = theta_auto.build_model_from_rootfile(input_file, histogram_filter=histogram_filter, include_mc_uncertainties=True)#,histogram_filter = (lambda s: s.count('jec')==0 and s.count('jer')==0)
-    
-    model.fill_histogram_zerobins()
-    if signal:
-        model.set_signal_processes(signal)
-    else:
-        model.set_signal_process_groups({'':[]})
-    
-    procs = model.processes
-    obsvs = model.observables.keys()
+def get_full_model(signal='TpTp_M-*', histogram_filter=lambda w: True):
+    def tmp(input_file=input0H):
+        print input_file
+        model = theta_auto.build_model_from_rootfile(input_file, histogram_filter=histogram_filter, include_mc_uncertainties=True)#,histogram_filter = (lambda s: s.count('jec')==0 and s.count('jer')==0)
+        
+        model.fill_histogram_zerobins()
+        if signal:
+            model.set_signal_processes(signal)
+        else:
+            model.set_signal_process_groups({'':[]})
+        
+        procs = model.processes
+        obsvs = model.observables.keys()
 
-    for obs in obsvs:
-        if 'SignalRegion' in obs or 'SidebandRegion' in obs:
-            try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.087), 'TTbar', obs) # from ttbar CR
-            except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.06), 'WJets', obs) # from ttbar CR
-            except RuntimeError: pass
-            # try: model.add_lognormal_uncertainty('DYJets_rate',  math.log(1.2), 'DYJets', obs) # from ttbar CR
-            # except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('QCD_rate',  math.log(2.00), 'QCD', obs) # from ttbar CR
-            except RuntimeError: pass
-            # try: model.add_lognormal_uncertainty('SingleTop_rate',  math.log(1.16), 'SingleTop', obs) # from ttbar CR
-            # except RuntimeError: pass
-            # try: model.add_lognormal_uncertainty('Diboson_rate',  math.log(1.15), 'Diboson', obs) # from ttbar CR
-            # except RuntimeError: pass
-
-    for obs in obsvs:
-        if 'isE' in obs:
-            try: model.add_lognormal_uncertainty('sfel_trg', math.log(1.05), '*', obs)
-            except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('sfel_id', math.log(1.01), '*', obs)
-            except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('sfel_iso', math.log(1.01), '*', obs)
-            except RuntimeError: pass
-        elif 'isM' in obs:
-            try: model.add_lognormal_uncertainty('sfmu_trg', math.log(1.05), '*', obs)
-            except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('sfmu_id', math.log(1.01), '*', obs)
-            except RuntimeError: pass
-            try: model.add_lognormal_uncertainty('sfmu_iso', math.log(1.01), '*', obs)
-            except RuntimeError: pass
-        elif 'El45' in obs:
-            try: model.add_lognormal_uncertainty('sfel_trg', math.log(1.02), '*', obs)
-            except RuntimeError: pass
-
-    try: model.add_lognormal_uncertainty('luminosity', math.log(1.027), '*', '*')
-    except RuntimeError: pass
-
-    try: model.add_lognormal_uncertainty('SingleTop_rate',  math.log(1.16), 'SingleTop', '*') # from ttbar CR
-    except RuntimeError: pass
-    try: model.add_lognormal_uncertainty('Diboson_rate',  math.log(1.15), 'Diboson', '*') # from ttbar CR
-    except RuntimeError: pass
-
-    for proc in procs:
-        if proc != 'TTbar': continue # and proc != 'SingleTop': continue
         for obs in obsvs:
-            if 'nW0_nB0' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.111), proc, obs) # from ttbar CR
+            if 'SignalRegion' in obs or 'SidebandRegion' in obs:
+                try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.087), 'TTbar', obs) # from ttbar CR
                 except RuntimeError: pass
-            if 'nW0_nB1' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.051), proc, obs) # from ttbar CR
+                try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.06), 'WJets', obs) # from ttbar CR
                 except RuntimeError: pass
-            if 'nW0_nB2' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.055), proc, obs) # from ttbar CR
+                try: model.add_lognormal_uncertainty('QCD_rate',  math.log(2.00), 'QCD', obs) # from ttbar CR
                 except RuntimeError: pass
-            if 'nW0_nB3p' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.055), proc, obs) # from ttbar CR
-                except RuntimeError: pass
-            if 'nW1p_nB0' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.111), proc, obs) # from ttbar CR
-                except RuntimeError: pass
-            if 'nW1p_nB1' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.051), proc, obs) # from ttbar CR
-                except RuntimeError: pass
-            if 'nW1p_nB2' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.055), proc, obs) # from ttbar CR
-                except RuntimeError: pass
-            if 'nW1p_nB3p' in obs:
-                try: model.add_lognormal_uncertainty('TTbar_rate',math.log(1.055), proc, obs) # from ttbar CR
+                # try: model.add_lognormal_uncertainty('SingleTop_rate',  math.log(1.16), 'SingleTop', obs) # from ttbar CR
+                # except RuntimeError: pass
+                # try: model.add_lognormal_uncertainty('Diboson_rate',  math.log(1.15), 'Diboson', obs) # from ttbar CR
+                # except RuntimeError: pass
+                # try: model.add_lognormal_uncertainty("btag_bc", math.log(1.03), '*', obs)
                 except RuntimeError: pass
 
-    for proc in procs:
-        if proc != 'WJets': continue #proc != 'DYJets' and 
+        for proc in procs:
+            if 'TpTp' in proc or 'BpBp' in proc:
+                try: model.add_lognormal_uncertainty("higgs_py2hw", math.log(1.05), proc, '*')
+                except RuntimeError:
+                    print obs, signal, 'COULD NOT ADD higgs_py2hw UNCERTAINTY'
+                    pass
+
+        # for obs in obsvs:
+        #     if 'minMlb' in obs:
+        #         try: model.add_lognormal_uncertainty("btag_bc", math.log(0.97), '*', obs)
+        #         except RuntimeError: pass
+
         for obs in obsvs:
-            if 'nW0_nB0' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.182), proc, obs) # from Wjets CR
+            if 'isE' in obs:
+                try: model.add_lognormal_uncertainty('sfel_trg', math.log(1.05), '*', obs)
                 except RuntimeError: pass
-            if 'nW0_nB1' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.182), proc, obs) # from Wjets CR
+                try: model.add_lognormal_uncertainty('sfel_id', math.log(1.01), '*', obs)
                 except RuntimeError: pass
-            if 'nW0_nB2' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.182), proc, obs) # from Wjets CR
+                try: model.add_lognormal_uncertainty('sfel_iso', math.log(1.01), '*', obs)
                 except RuntimeError: pass
-            if 'nW0_nB3p' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.182), proc, obs) # from Wjets CR
+            elif 'isM' in obs:
+                try: model.add_lognormal_uncertainty('sfmu_trg', math.log(1.05), '*', obs)
                 except RuntimeError: pass
-            if 'nW1p_nB0' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.046), proc, obs) # from Wjets CR
+                try: model.add_lognormal_uncertainty('sfmu_id', math.log(1.01), '*', obs)
                 except RuntimeError: pass
-            if 'nW1p_nB1' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.046), proc, obs) # from Wjets CR
+                try: model.add_lognormal_uncertainty('sfmu_iso', math.log(1.01), '*', obs)
                 except RuntimeError: pass
-            if 'nW1p_nB2' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.046), proc, obs) # from Wjets CR
-                except RuntimeError: pass
-            if 'nW1p_nB3p' in obs:
-                try: model.add_lognormal_uncertainty('WJets_rate',math.log(1.046), proc, obs) # from Wjets CR
+            elif 'El45' in obs:
+                try: model.add_lognormal_uncertainty('sfel_trg', math.log(1.02), '*', obs)
                 except RuntimeError: pass
 
+        try: model.add_lognormal_uncertainty('luminosity', math.log(1.027), '*', '*')
+        except RuntimeError: pass
 
-    return model
+
+        try: model.add_lognormal_uncertainty('DYJets_rate',  math.log(1.03), 'DYJets', obs) # from ttbar CR
+        except RuntimeError: pass
+        try: model.add_lognormal_uncertainty('SingleTop_rate',  math.log(1.16), 'SingleTop', '*') # from ttbar CR
+        except RuntimeError: pass
+        try: model.add_lognormal_uncertainty('Diboson_rate',  math.log(1.15), 'Diboson', '*') # from ttbar CR
+        except RuntimeError: pass
+
+        for proc in procs:
+            if proc != 'TTbar': continue # and proc != 'SingleTop': continue
+            for obs in obsvs:
+                if 'nW0_nB0' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.125), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW0_nB1' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.080), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW0_nB2' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate',  math.log(1.055), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW0_nB3p' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.055), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW1p_nB0' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.125), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW1p_nB1' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.080), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW1p_nB2' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate', math.log(1.055), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+                if 'nW1p_nB3p' in obs:
+                    try: model.add_lognormal_uncertainty('TTbar_rate',math.log(1.055), proc, obs) # from ttbar CR
+                    except RuntimeError: pass
+
+        for proc in procs:
+            if proc != 'WJets': continue #proc != 'DYJets' and 
+            for obs in obsvs:
+                if 'nW0_nB0' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.208), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW0_nB1' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.208), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW0_nB2' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate',  math.log(1.208), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW0_nB3p' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.208), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW1p_nB0' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.038), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW1p_nB1' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.038), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW1p_nB2' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate', math.log(1.038), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+                if 'nW1p_nB3p' in obs:
+                    try: model.add_lognormal_uncertainty('WJets_rate',math.log(1.038), proc, obs) # from Wjets CR
+                    except RuntimeError: pass
+
+
+        return model
+    return tmp
 
 def get_model_ex_anticorr_chan(input_file=input0H, signal='TpTp_M-*', histogram_filter=lambda w: True):
     model = get_full_model(input_file, signal, histogram_filter)

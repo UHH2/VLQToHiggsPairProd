@@ -5,6 +5,7 @@ import os
 import time
 import itertools
 import copy
+import ctypes
 
 import varial.settings as settings
 import varial.rendering as rnd
@@ -39,6 +40,40 @@ settings.tot_error_fill = 3004
 settings.defaults_BottomPlot['y_min'] = -1.99
 settings.defaults_BottomPlot['y_max'] = 1.99
 
+
+paper_normfactors = {
+    # 'TpTp' : 20.,
+    # '_thX' : 1./0.56,
+    # '_other' : 1./0.44,
+    # '_thth' : 1./0.111,
+    'TpTp_M-0700' : 10.,
+    'TpTp_M-0800' : 10.,
+    'TpTp_M-0900' : 10.,
+    'TpTp_M-1000' : 10.,
+    'TpTp_M-1100' : 100.,
+    'TpTp_M-1200' : 100.,
+    'TpTp_M-1300' : 100.,
+    'TpTp_M-1400' : 100.,
+    'TpTp_M-1500' : 1000.,
+    'TpTp_M-1600' : 1000.,
+    'TpTp_M-1700' : 1000.,
+    'TpTp_M-1800' : 1000.,
+    # 'BpBp_M-0700' : 1./0.455,
+    # 'BpBp_M-0800' : 1./0.196,
+    # 'BpBp_M-0900' : 1./0.0903,
+    # 'BpBp_M-1000' : 1./0.0440,
+    # 'BpBp_M-1100' : 1./0.0224,
+    # 'BpBp_M-1200' : 1./0.0118,
+    # 'BpBp_M-1300' : 1./0.00639,
+    # 'BpBp_M-1400' : 1./0.00354,
+    # 'BpBp_M-1500' : 1./0.00200,
+    # 'BpBp_M-1600' : 1./0.001148,
+    # 'BpBp_M-1700' : 1./0.000666,
+    # 'BpBp_M-1800' : 1./0.000391,
+}
+
+
+
 settings.defaults_Legend.update({
     'y_pos': 0.76,
     })
@@ -56,18 +91,20 @@ settings.colors.update({
     # 'SingleT': 416-9,
     # 'SingleTop': 416-9,
     # 'Diboson' :616-9,
-    'TOP' : ROOT.kAzure + 8,
-    'EWK' : ROOT.kMagenta - 2,
-    'QCD': ROOT.kOrange + 5,
+    'TOP' : ROOT.kAzure + 6,
+    'EW' : ROOT.kMagenta - 3,
+    'QCD': ROOT.kOrange + 7,
     'TpTp_M-0800' : ROOT.kBlack,
     'TpTp_M-1200' : ROOT.kBlack,
+    'TpTp_M-0800_thX' : ROOT.kBlack,
+    'TpTp_M-0800_other' : ROOT.kBlack,
     'TpTp_M-1200_thX' : ROOT.kBlack,
     'TpTp_M-1200_other' : ROOT.kBlack,
 })
 
 settings.stacking_order = [
     'QCD',
-    'EWK',
+    'EW',
     'TOP',
 ]
 
@@ -80,12 +117,12 @@ settings.bottom_pad_height = 0.25
 # def apply_split_pad_styles(cnv_wrp):
 #     main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
 
-#     main.SetTopMargin(0.1)
-#     main.SetBottomMargin(0.35)
+#     main.SetTopMargin(0.125)
+#     main.SetBottomMargin(settings.bottom_pad_height)
 #     #main.SetRightMargin(0.04)
 #     #main.SetLeftMargin(0.16)
 
-#     scnd.SetTopMargin(0.)
+#     scnd.SetTopMargin(0.05)
 #     scnd.SetBottomMargin(0.375)
 #     #scnd.SetRightMargin(0.04)
 #     #scnd.SetLeftMargin(0.16)
@@ -93,22 +130,30 @@ settings.bottom_pad_height = 0.25
 #     scnd.SetLeftMargin(main.GetLeftMargin())
 #     scnd.SetGridy()
 
+#     pars = [ctypes.c_double(), ctypes.c_double(), ctypes.c_double(), ctypes.c_double()]
+#     main.GetPadPar(*pars)
+#     pars = [d.value for d in pars]
+#     pars[1] += 0.002  # lift ylow very slightly
+#     main.SetPad(*pars)
+
 #     first_obj = cnv_wrp.first_obj
 #     first_obj.GetYaxis().CenterTitle(1)
-#     first_obj.GetYaxis().SetTitleSize(0.045)
-#     first_obj.GetYaxis().SetTitleOffset(1.3)
+#     first_obj.GetYaxis().SetTitleSize(0.055)
+#     first_obj.GetYaxis().SetTitleOffset(1.1)
 #     first_obj.GetYaxis().SetLabelSize(0.055)
 #     first_obj.GetXaxis().SetNdivisions(505)
 
 # settings.apply_split_pad_styles = apply_split_pad_styles
 
 
-line_styles = {
-    'TpTp_M-0800' : 1,
-    'TpTp_M-1200' : 2,
-    'TpTp_M-1200_thX' : 1,
-    'TpTp_M-1200_other' : 2,
-}
+# line_styles = {
+#     'TpTp_M-0800' : 1,
+#     'TpTp_M-1200' : 2,
+#     'TpTp_M-0800_thX' : 1,
+#     'TpTp_M-0800_other' : 2,
+#     'TpTp_M-1200_thX' : 1,
+#     'TpTp_M-1200_other' : 2,
+# }
 
 # signals = {'TpTp_M-0800' : ROOT.kViolet,
 #     'TpTp_M-1200' : ROOT.kBlue,
@@ -153,7 +198,7 @@ samples_for_tables += reduce(lambda x, y: x+y, (list(g + f for f in bpbp_finalst
 
 # base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
 #     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v25'
-base_path = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/'\
+base_path = '/afs/desy.de/user/n/nowatsd/xxl-af-cms/SFrameUHH2/CMSSW_7_6_3/src/UHH2/'\
     'VLQToHiggsPairProd/NewSamples-76X-v1/FinalSelection-v26'
 
 mod_dict = {
@@ -166,100 +211,127 @@ mod_dict = {
             'y_min_gr_zero' : 1e-3,
             'y_max_fct' : 1.2,
             'bin_width' : 100,
-            'err_empty_bins' : True
+            # 'err_empty_bins' : True
+            # 'draw_empty_bin_error' : True,
             },
     'ST_rebin_flex' : {
             'title' : 'S_{T} [GeV]',
             'y_max_log_fct' : 100000.,
-            'y_min_gr_zero' : 2e-3,
+            'y_min_gr_zero' : 2e-4,
             'bin_width' : 100,
-            'set_leg_2_col_log' : {
-                    'x_pos': 0.75,
-                    'y_pos': 0.7,
-                    'label_width': 0.25,
-                    'label_height': 0.045,
-                    'box_text_size' : 0.035,
+            'var_bin_size' : True,
+            '_set_leg_2_col_log' : {
+                    'x_pos': 0.74,
+                    'y_pos': 0.68,
+                    'label_width': 0.28,
+                    'label_height': 0.05,
+                    'box_text_size' : 0.043,
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             'y_max_fct' : 1.2,
             'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
             'text_box_log' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
             # 'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}}"),
-            'err_empty_bins' : True,
+            # 'err_empty_bins' : True,
             'draw_x_errs' : True,
-            # 'draw_empty_bin_error' : True
+            'draw_empty_bin_error' : 3
             },
 
     'nomass_boost_2b_mass_softdrop' : {
             # 'rebin_list' : list(x for x in xrange(0, 80, 20)) + list(x for x in xrange(80, 310, 10)), # [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
             'rebin' : 15,
-            'y_max_fct' : 1.6,
+            'y_max_fct' : 2.1,
             'title' : 'M_{jet} [GeV]',
             'bin_width' : 20,
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
-            'scale' : 0.4,
-            'set_leg_1_col_lin' : {
-                    'x_pos': 0.75,
-                    'y_pos': 0.67,
+            # 'scale' : 0.4,
+            'scl_fct' : 20.,
+            '_set_leg_1_col_lin' : {
+                    'x_pos': 0.56,
+                    'y_pos': 0.72,
                     'label_width': 0.20,
                     'label_height': 0.040,
                     'box_text_size' : 0.033,
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            # 'draw_empty_bin_error' : True,
             },
-    'nomass_boost_2b_mass_softdrop_rebin_flex' : {
-            # 'rebin_list' : list(x for x in xrange(0, 310, 10)) # [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
-            # 'rebin' : 30,
-            'y_max_fct' : 1.3,
-            'title' : 'M_{jet} [GeV]',
-            'bin_width' : 5,
-            'y_min_gr_zero' : 0.02,
-            'y_max_log_fct' : 1000.,
-            'scale' : 0.4,
-            'set_leg_1_col_lin' : {
-                    'x_pos': 0.75,
-                    'y_pos': 0.67,
-                    'label_width': 0.20,
-                    'label_height': 0.040,
-                    'box_text_size' : 0.033,
-                    'opt': 'f',
-                    'opt_data': 'pl',
-                    'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
-                },
-            'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
-            },
+    # 'nomass_boost_2b_mass_softdrop_rebin_flex' : {
+    #         # 'rebin_list' : list(x for x in xrange(0, 310, 10)) # [0., 800., 900., 1000., 1200., 1500., 2000., 2500., 3000., 4500., 6500.],
+    #         # 'rebin' : 30,
+    #         'y_max_fct' : 1.8,
+    #         'title' : 'M_{jet} [GeV]',
+    #         'bin_width' : 5,
+    #         'y_min_gr_zero' : 0.02,
+    #         'y_max_log_fct' : 1000.,
+    #         'scale' : 0.4,
+    #         '_set_leg_1_col_lin' : {
+    #                 'x_pos': 0.63,
+    #                 'y_pos': 0.72,
+    #                 'label_width': 0.20,
+    #                 'label_height': 0.040,
+    #                 'box_text_size' : 0.033,
+    #                 'opt': 'f',
+    #                 'opt_data': 'pl',
+    #                 'reverse': True,
+    #                 'sort_legend' : lambda w: 'TT ' in w[1],
+    #             },
+    #         'text_box_lin' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+    #         'draw_empty_bin_error' : 1,
+    #         },
     'nobtag_boost_mass_nsjbtags' : {
-            'title' : 'N(subjet b-tags)',
-            'y_min_gr_zero' : 100,
-            'y_max_log_fct' : 50.,
-            'set_leg_1_col_log' : {
-                    'x_pos': 0.74,
-                    'y_pos': 0.67,
+            'rebin_list' : [-0.5, 0.5, 1.5, 2.5],
+            'title' : 'N(b-tagged subjets)',
+            # 'title' : 'N(subjet b-tags)',
+            # 'y_min_gr_zero' : 100,
+            # 'y_max_log_fct' : 50.,
+            # '_set_leg_1_col_log' : {
+            #         'x_pos': 0.74,
+            #         'y_pos': 0.67,
+            #         'label_width': 0.30,
+            #         'label_height': 0.040,
+            #         'box_text_size' : 0.033,
+            #         'opt': 'f',
+            #         'opt_data': 'pl',
+            #         'reverse': True,
+            #         'sort_legend' : lambda w: 'TT ' in w[1],
+            #     },
+            # 'text_box_log' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            # 'draw_empty_bin_error' : True,
+            },
+    'nobtag_boost_mass_nsjbtags_rebin_flex' : {
+            'title' : 'N(b-tagged subjets)',
+            'y_min_gr_zero' : 2,
+            'y_max_log_fct' : 8000.,
+            'draw_x_errs' : False,
+            '_set_leg_1_col_log' : {
+                    'x_pos': 0.62,
+                    'y_pos': 0.72,
                     'label_width': 0.30,
                     'label_height': 0.040,
                     'box_text_size' : 0.033,
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             'text_box_log' : (0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
+            # 'draw_empty_bin_error' : True,
             },
     }
 
 def get_style():
     # _style = style or varial.settings.style
     return [
-        common_plot.mod_pre_bot_hist(),
+        common_plot.mod_pre_bot_hist(mod_dict),
         # common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
         # common_plot.mk_pull_plot_func(),  # mk_pull_plot_func()
         common_plot.mk_pull_plot_func_poisson(),  # mk_pull_plot_func()
@@ -292,7 +364,7 @@ def get_style():
 # tHtZ:     0.125               0.222
 # tHtH:     0.0625              0.111
 
-plot.normfactors_ind_fs = {
+normfactors_ind_fs = {
     '_thth' : 0.0625/0.111,
     '_tztz' : 0.0625/0.111,
     '_bwbw' : 0.25/0.111,
@@ -359,17 +431,17 @@ def rename_samples(wrps):
             w.sample = 'TOP__'+w.sample
             w.legend = 'TOP'
         if w.sample in ['WJets', 'DYJets', 'Diboson']:
-            w.sample = 'EWK__'+w.sample
-            w.legend = 'EWK'
+            w.sample = 'EW__'+w.sample
+            w.legend = 'EW'
         # if w.sample == 'QCD':
         #     w.sample = 'qcd'
         yield w
 
-def set_line_style(wrps):
-    for w in wrps:
-        if w.sample in line_styles.keys():
-            w.histo.SetLineStyle(line_styles[w.sample])
-        yield w
+# def set_line_style(wrps):
+#     for w in wrps:
+#         if w.sample in line_styles.keys():
+#             w.histo.SetLineStyle(line_styles[w.sample])
+#         yield w
 
 def set_line_width(wrps):
     for w in wrps:
@@ -382,6 +454,27 @@ def scale_new_lumi(wrps):
         if not w.is_data:
             w.histo.Scale(0.973)
         yield w
+
+def set_y_min_gr_zero(wrps):
+    for w in wrps:
+        if w.name == 'ST_rebin_flex' and 'SidebandTTJets' in w.in_file_path:
+            w.y_min_gr_zero_ind = 2.2*1e-5
+        elif w.name == 'ST_rebin_flex' and 'SignalRegion2b' in w.in_file_path:
+            w.y_min_gr_zero_ind = 2.2*1e-6
+        # elif w.name == 'nobtag_boost_mass_nsjbtags_rebin_flex' and 'BaseLineSelection' in w.in_file_path:
+        #     w.y_min_gr_zero_ind = 2.2*1e-6
+        yield w
+
+def mod_legend_eff_counts(wrps):
+    for w in wrps:
+        if w.legend.endswith('_thX'):
+            w.legend = w.legend[:-4]
+            w.legend = w.legend + '#rightarrow tH+X'
+        if w.legend.endswith('_other'):
+            w.legend = w.legend[:-6]
+            w.legend = w.legend + '#rightarrow other'
+        yield w
+
 
 # def stack_setup(grps, rate_uncertainties=analysis.rate_uncertainties, shape_uncertainties=analysis.shape_uncertainties, include_rate=False):
 #     grps = common_plot.make_uncertainty_histograms(grps, rate_uncertainties, shape_uncertainties, include_rate)
@@ -452,20 +545,55 @@ def group_by_uncerts_comp_ht_scalevar(wrps, first_sort_func):
 #             print get_base_selection(w), w.sample, w.sys_info, w.variable
 #     return wrps
 
+def loader_hook_merge_regions(wrps):
+    def get_base_selection(wrp):
+        res = wrp.in_file_path.split('/')[0]
+        if len(res.split('_')) > 1:
+            res = res.split('_')[0]
+        return res 
+
+    def get_sys_info(wrp):
+        if '_id__' in wrp.sys_info or '_trg__' in wrp.sys_info:
+            return 'sflep'+wrp.sys_info[4:]
+        else:
+            return wrp.sys_info
+
+    def get_new_infile_path(wrp):
+        comps = wrp.in_file_path.split('/')
+        return get_base_selection(wrp)+'/'+'/'.join(comps[1:])
+                  
+    key = lambda w: '{0}___{1}___{2}___{3}'.format(get_base_selection(w), w.sample, get_sys_info(w), w.variable)
+
+    wrps = plot.common_loader_hook(wrps)
+    wrps = gen.gen_make_th2_projections(wrps)
+    # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
+    # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_incl', print_warning=False, yield_orig=True)
+    wrps = list(wrps)
+    wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs, calc_scl_fct=False)
+    # wrps = common_plot.mod_legend_eff_counts(wrps)
+    wrps = sorted(wrps, key=key)
+    wrps = varial.gen.group(wrps, key)
+    wrps = varial.gen.gen_merge(wrps)
+    wrps = varial.gen.gen_add_wrp_info(wrps, in_file_path=get_new_infile_path, region=get_base_selection, sys_info=get_sys_info)
+    wrps = list(wrps)
+    return wrps
+
 def loader_hook_compare_finalstates(wrps):
     wrps = common_plot.rebin_st_and_nak4(wrps, mod_dict)
     wrps = plot.common_loader_hook(wrps)
+    wrps = common_plot.mod_title(wrps, mod_dict)
     # wrps = common_plot.norm_smpl(wrps, normfactors_ind_fs_rev, calc_scl_fct=False)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw'], suffix='_thX', print_warning=False)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_noH_tztz', '_noH_tzbw', '_noH_bwbw'], suffix='_other', print_warning=False)
-    wrps = set_line_style(wrps)
+    wrps = common_plot.set_line_style(wrps)
     # wrps = set_line_width(wrps)
     # wrps = gen.apply_linecolor(wrps)
-    wrps = common_plot.mod_legend_eff_counts(wrps)
+    wrps = mod_legend_eff_counts(wrps)
     wrps = scale_new_lumi(wrps)
-    wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors, mk_legend=False)
+    wrps = common_plot.norm_smpl_var(wrps, mod_dict=mod_dict, mk_legend=True)
+    # wrps = common_plot.norm_smpl(wrps, common_plot.pas_normfactors, mk_legend=True)
     # wrps = rename_samples(wrps)
     # wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.sys_info+'___'+w.sample)
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__TTbar', '__TTbar_split', '__SingleTop'], print_warning=False)
@@ -496,13 +624,27 @@ def plot_merged_channels_higgs(final_dir):
     #                 'n_ak8', 'met', 'pt_ld_ak4_jet', 'pt_subld_ak4_jet', 'jets[2].m_pt','jets[3].m_pt', 'jets[].m_pt', 'n_additional_btags_medium', 'n_prim_vertices',
     #                 'n_higgs_tags_1b_med_sm10', 'n_higgs_tags_2b_med_sm10', 'primary_electron_pt', 'primary_muon_pt', 'PrimaryLepton.Particle.m_eta', 'wtags_mass_softdrop',
     #                 'nobtag_boost_mass_nsjbtags', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt']
-    plot_hists = ['ST', 'HT', 'n_ak4', 'nomass_boost_1b_mass_softdrop', 'nomass_boost_2b_mass_softdrop', 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt', 'nobtag_boost_mass_nsjbtags']
+    plot_hists = [
+        # 'ST', 'HT', 'n_ak4', 'nomass_boost_1b_mass_softdrop',
+        'nomass_boost_2b_mass_softdrop', # 'noboost_mass_1b[0].m_pt', 'noboost_mass_2b[0].m_pt',
+        'nobtag_boost_mass_nsjbtags']
 
     stacking_order = [
         'TOP',
-        'EWK',
+        'EW',
         'QCD',
     ]
+
+    def sort_legend_func():
+        sort_list = ['Data', 'tH+X', 'other', 'TOP', 'EW', 'QCD', 'Bkg.']
+        def tmp(w):
+            ind = 0
+            for i in sort_list:
+                if i in w:
+                    ind = -sort_list.index(i)
+            return ind
+        return tmp
+
 
     return varial.tools.ToolChain(final_dir, [
         varial.tools.ToolChainParallel('HistoLoader',
@@ -512,7 +654,7 @@ def plot_merged_channels_higgs(final_dir):
                 'Region_Comb' not in w.in_file_path and\
                 any(w.in_file_path.endswith(f) for f in plot_hists), # and\
                 # common_plot.unselect_theory_uncert(w),
-            hook_loaded_histos=plot.loader_hook_merge_regions,
+            hook_loaded_histos=loader_hook_merge_regions,
             name='HistoLoader_'+g,
             lookup_aliases=False,
             raise_on_empty_result=False,
@@ -524,13 +666,22 @@ def plot_merged_channels_higgs(final_dir):
         #     plotter_factory=plotter_factory_stack(analysis.rate_uncertainties, def_uncerts, hook_loaded_histos=loader_hook_norm_to_int,
         #         plot_setup=stack_setup_norm_all_to_intgr)),
         plot.mk_toolchain('HistogramsHiggsComp', pattern=None, input_result_path='../HistoLoader/HistoLoader*',
-            filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-0800', 'TpTp_M-1600']) and common_plot.unselect_theory_uncert(w),
+            filter_keyfunc=lambda w: all(g not in w.sample for g in ['TpTp_M-1200', 'TpTp_M-1600']) and common_plot.unselect_theory_uncert(w),
             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
                 hook_loaded_histos=loader_hook_compare_finalstates,
                 stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=True, stack_order=stacking_order),
                 plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=True, stack_order=stacking_order),
                 mod_log=common_plot.mod_log_usr(mod_dict),
-                canvas_post_build_funcs=get_style()
+                canvas_post_build_funcs=[
+                        common_plot.mod_pre_bot_hist(mod_dict),
+                        # common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
+                        # common_plot.mk_pull_plot_func(),  # mk_pull_plot_func()
+                        common_plot.mk_pull_plot_func_poisson(),  # mk_pull_plot_func()
+                        # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
+                        rnd.mk_legend_func(sort_legend=sort_legend_func()),
+                        common_plot.mod_post_canv(mod_dict),
+                        common_plot.mk_tobject_draw_func(TLatex(0.53, 0.89, "#scale[0.45]{2.5 (e), 2.6 (#mu) fb^{-1} (13 TeV)}"))
+                    ]
                 ),
             parallel=True
             # pattern=None, input_result_path='../HistoLoader/HistoLoader*'
@@ -564,18 +715,57 @@ def remove_final_states(wrps):
             # print w.sample
             yield w
 
+def set_chan_text_box(wrps):
+    for w in wrps:
+        box_lin = []
+        box_log = []
+        if w.name in mod_dict:
+            d = mod_dict[w.name]
+            pars_lin = d.get('text_box_lin')
+            if pars_lin:
+                if not isinstance(pars_lin, list):
+                    pars_lin = [pars_lin]
+                box_lin += pars_lin
+            pars_log = d.get('text_box_log')
+            if pars_log:
+                if not isinstance(pars_log, list):
+                    pars_log = [pars_log]
+                box_log += pars_log
+        if 'SignalRegion1b' in w.in_file_path:
+            box_log += [(0.68, 0.62, '#scale[0.45]{#bf{e/#mu+jets, H1b}}')]
+            # if 'TH2' in w.type:
+                # box_log += [(0.71, 0.89, "#scale[0.45]{2.6 fb^{-1} (13 TeV)}"), (0.16, 0.89, '#scale[0.5]{#mu channel}')]
+            # else:
+                # box_log += [(0.68, 0.89, "#scale[0.45]{2.6 fb^{-1} (13 TeV)}"), (0.16, 0.89, '#scale[0.5]{#mu channel}')]
+        elif 'SignalRegion2b' in w.in_file_path:
+            box_log += [(0.68, 0.62, '#scale[0.45]{#bf{e/#mu+jets, H2b}}')]
+            # if 'TH2' in w.type:
+                # box_log += [(0.71, 0.89, "#scale[0.45]{2.5 fb^{-1} (13 TeV)}"), (0.16, 0.89, '#scale[0.5]{e channel}')]
+            # else:
+                # box_log += [(0.68, 0.89, "#scale[0.45]{2.5 fb^{-1} (13 TeV)}"), (0.16, 0.89, '#scale[0.5]{e channel}')]
+        w.text_box_log = box_log
+        w.text_box_lin = box_lin
+        yield w
+
+def scale_to_one_gev(wrps):
+    for w in wrps:
+        w.histo.Scale(1./100.)
+        yield w
 
 
 def loader_hook_nominal_brs(wrps):
     wrps = plot.common_loader_hook(wrps)
-    wrps = common_plot.mod_title(wrps)
     wrps = common_plot.rebin_st_and_nak4(wrps, mod_dict)
+    wrps = common_plot.mod_title(wrps, mod_dict)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=True, yield_orig=False)
     wrps = sorted(wrps, key=lambda w: '{0}___{1}___{2}'.format(w.sys_info, w.in_file_path, w.sample))
     wrps = vlq_common.merge_decay_channels(wrps, ['_bhbh', '_bhbz', '_bhtw', '_noH_bzbz', '_noH_bztw', '_noH_twtw'], print_warning=True, yield_orig=False)
-    wrps = set_line_style(wrps)
+    wrps = common_plot.set_line_style(wrps)
     wrps = scale_new_lumi(wrps)
+    wrps = set_y_min_gr_zero(wrps)
+    wrps = set_chan_text_box(wrps)
+    # wrps = scale_to_one_gev(wrps)
     # wrps = rename_samples(wrps)
     # wrps = sorted(wrps, key=lambda w: w.in_file_path+'___'+w.sys_info+'___'+w.sample)
     # wrps = vlq_common.merge_decay_channels(wrps, postfixes=['__TTbar', '__TTbar_split', '__SingleTop'], print_warning=False)
@@ -603,7 +793,7 @@ def plot_merged_channels_postfit(final_dir):
 
     # settings.stacking_order = [
     #     'QCD',
-    #     'EWK',
+    #     'EW',
     #     'TOP',
     # ]
 
@@ -615,7 +805,7 @@ def plot_merged_channels_postfit(final_dir):
                     any(f in w.file_path.split('/')[-1] for f in samples_to_plot_all) and\
                     'Region_Comb' not in w.in_file_path and\
                     any(w.in_file_path.endswith(f) for f in ['ST']),
-                hook_loaded_histos=plot.loader_hook_merge_regions,
+                hook_loaded_histos=loader_hook_merge_regions,
                 name='HistoLoader_'+g,
                 lookup_aliases=False,
                 raise_on_empty_result=False,
@@ -630,6 +820,7 @@ def plot_merged_channels_postfit(final_dir):
                 canvas_post_build_funcs=get_style()),
             pattern=None,
             input_result_path='../HistoLoaderPost/HistoLoader*',
+            parallel=False
             # auto_legend=False,
             # name='HistogramsPostfit',
             # lookup_aliases=varial.settings.lookup_aliases
@@ -641,9 +832,36 @@ def plot_merged_channels_prefit(final_dir):
 
     # settings.stacking_order = [
     #     'QCD',
-    #     'EWK',
+    #     'EW',
     #     'TOP',
     # ]
+
+
+    stacking_order = [
+        'TOP',
+        'EW',
+        'QCD',
+    ]
+
+    def sort_legend_func():
+        sort_list = ['Data', 'TOP', '0.8', 'EW', '1.2', 'QCD', 'Bkg.']
+        def tmp(w):
+            ind = 0
+            for i in sort_list:
+                if i in w:
+                    ind = -sort_list.index(i)
+            return ind
+        return tmp
+
+    def mod_legend(entries):
+        i = 0
+        for obj, label, opt in entries:
+            i += 1
+            if label == 'Bkg. uncert.':
+                entries.insert(i, (ROOT.NULL, '', ''))
+        return entries
+        # (TObject*)0, "", ""
+
 
     return varial.tools.ToolChain(final_dir, [
         varial.tools.ToolChainParallel('HistoLoaderPre',
@@ -653,7 +871,7 @@ def plot_merged_channels_prefit(final_dir):
                     any(f in w.file_path.split('/')[-1] for f in samples_to_plot_all) and\
                     'Region_Comb' not in w.in_file_path and\
                     any(w.in_file_path.endswith(f) for f in ['ST']),
-                hook_loaded_histos=plot.loader_hook_merge_regions,
+                hook_loaded_histos=loader_hook_merge_regions,
                 name='HistoLoader_'+g,
                 lookup_aliases=False,
                 raise_on_empty_result=False,
@@ -662,10 +880,19 @@ def plot_merged_channels_prefit(final_dir):
         plot.mk_toolchain('HistogramsPrefit', samples_to_plot_all,
             plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
                 hook_loaded_histos=loader_hook_nominal_brs,
-                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
-                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
+                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False, stack_order=stacking_order),
+                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False, stack_order=stacking_order),
                 mod_log=common_plot.mod_log_usr(mod_dict),
-                canvas_post_build_funcs=get_style()
+                canvas_post_build_funcs=[
+                        common_plot.mod_pre_bot_hist(mod_dict),
+                        # common_plot.mk_split_err_ratio_plot_func_mod(poisson_errs=True),  # mk_pull_plot_func()
+                        # common_plot.mk_pull_plot_func(),  # mk_pull_plot_func()
+                        common_plot.mk_pull_plot_func_poisson(),  # mk_pull_plot_func()
+                        # rnd.mk_split_err_ratio_plot_func(),  # mk_pull_plot_func()
+                        rnd.mk_legend_func(sort_legend=sort_legend_func(), mod_legend=mod_legend),
+                        common_plot.mod_post_canv(mod_dict),
+                        common_plot.mk_tobject_draw_func(TLatex(0.53, 0.89, "#scale[0.45]{2.5 (e), 2.6 (#mu) fb^{-1} (13 TeV)}"))
+                    ]
                 ),
             pattern=None,
             input_result_path='../HistoLoaderPre/HistoLoader*',
@@ -690,7 +917,7 @@ table_block_signal_small_bb = [
 
 table_block_background = [
     ('TOP', lambda w: 'Integral___TOP' in w, False, True),
-    ('EWK', lambda w: 'Integral___EWK' in w, False, True),
+    ('EW', lambda w: 'Integral___EW' in w, False, True),
     ('QCD', lambda w: 'Integral___QCD' in w, False, True),
 ]
 
@@ -703,7 +930,7 @@ def plot_merged_channels_tables(final_dir):
                     any(f in w.file_path.split('/')[-1] for f in samples_for_tables) and\
                     'Region_Comb' not in w.in_file_path and\
                     any(w.in_file_path.endswith(f) for f in ['ST']),
-                hook_loaded_histos=plot.loader_hook_merge_regions,
+                hook_loaded_histos=loader_hook_merge_regions,
                 name='HistoLoader_'+g,
                 lookup_aliases=False,
                 raise_on_empty_result=False,
@@ -723,10 +950,10 @@ def plot_merged_channels_tables(final_dir):
             # lookup_aliases=varial.settings.lookup_aliases
             ),
         plot.mk_toolchain('HistogramsTablesPrefit', samples_for_tables,
-            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=False, 
+            plotter_factory=plot.plotter_factory_stack(analysis.rate_uncertainties, uncerts, include_rate=True, 
                 hook_loaded_histos=loader_hook_nominal_brs,
-                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
-                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=False),
+                stack_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=True),
+                plot_setup=lambda w: stack_setup(w, analysis.rate_uncertainties, uncerts, include_rate=True),
                 mod_log=common_plot.mod_log_usr(mod_dict),
                 canvas_post_build_funcs=get_style()
                 ),
@@ -782,42 +1009,42 @@ def plot_merged_channels_tables(final_dir):
 
 def mk_tc_tex(source_dir):
     tc_tex_an = [
-        tex_content.mk_plot_ind(
-            (
-                ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
-                ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
-                ('st_h1b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
-                ('st_h2b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
-                ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.pdf'),
-            ), name='PaperPlotsPostfit'),
+        # tex_content.mk_plot_ind(
+        #     (
+        #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
+        #         ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
+        #         ('st_h1b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
+        #         ('st_h2b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
+        #         ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.pdf'),
+        #     ), name='PaperPlotsPostfit'),
         tex_content.mk_plot_ind(
             (
                 ('higgs_tag_mass', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nomass_boost_2b_mass_softdrop_lin.pdf'),
-                ('higgs_tag_sjbtags', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nobtag_boost_mass_nsjbtags_log.pdf'),
+                ('higgs_tag_sjbtags', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nobtag_boost_mass_nsjbtags_rebin_flex_log.pdf'),
                 ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.pdf'),
                 ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.pdf'),
                 ('st_h1b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion1b/ST_rebin_flex_log.pdf'),
                 ('st_h2b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
                 ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.pdf'),
-            ), name='PaperPlotsPrefit'),
-        tex_content.mk_plot_ind(
-            (
-                ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.png'),
-                ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.png'),
-                ('st_h1b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion1b/ST_rebin_flex_log.png'),
-                ('st_h2b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_log.png'),
-                ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.png'),
-            ), name='PaperPlotsPostfitPNG'),
-        tex_content.mk_plot_ind(
-            (
-                ('higgs_tag_mass', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nomass_boost_2b_mass_softdrop_lin.png'),
-                ('higgs_tag_sjbtags', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nobtag_boost_mass_nsjbtags_log.png'),
-                ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.png'),
-                ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.png'),
-                ('st_h1b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion1b/ST_rebin_flex_log.png'),
-                ('st_h2b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_log.png'),
-                ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.png'),
-            ), name='PaperPlotsPrefitPNG'),
+            ), name='PaperPlotsPrefitScaled'),
+        # tex_content.mk_plot_ind(
+        #     (
+        #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.png'),
+        #         ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.png'),
+        #         ('st_h1b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion1b/ST_rebin_flex_log.png'),
+        #         ('st_h2b', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_log.png'),
+        #         ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PostFitPlots/HistogramsPostfit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.png'),
+        #     ), name='PaperPlotsPostfitPNG'),
+        # tex_content.mk_plot_ind(
+        #     (
+        #         ('higgs_tag_mass', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nomass_boost_2b_mass_softdrop_lin.png'),
+        #         ('higgs_tag_sjbtags', os.path.join(base_path, source_dir)+'/HiggsPlots/HistogramsHiggsComp/StackedAll/BaseLineSelection/nobtag_boost_mass_nsjbtags_log.png'),
+        #         ('st_sideband_ttbar', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandTTJetsRegion/ST_rebin_flex_log.png'),
+        #         ('st_sideband_wjets', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SidebandWPlusJetsRegion/ST_rebin_flex_log.png'),
+        #         ('st_h1b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion1b/ST_rebin_flex_log.png'),
+        #         ('st_h2b', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_log.png'),
+        #         ('st_h2b_lin', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefit/StackedAll/SignalRegion2b/ST_rebin_flex_lin.png'),
+        #     ), name='PaperPlotsPrefitPNG'),
         tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFS/count_table_content.tex', name='EffTableCompFS'),
         # tex_content.mk_autoTable(path_an+'/MergeChannelsTablesNoTheory/CountTablePAS/count_table_content.tex', name='CountTable'),
         tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/CountTablePostFit/count_table_content.tex', name='CountTablePostFit'),
@@ -830,6 +1057,7 @@ def mk_tc_tex(source_dir):
     ]
     tc_tex_an = varial.tools.ToolChain('CopyPlots', [
         varial.tools.ToolChain('TexPaper', tc_tex_an),
+        # varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/xxl-af-cms/PlotsToInspect', src='../../*', ignore=('*.svn', '*.log'), use_rsync=True, options='-qa --delete', name='CopyToolInspect'),
         varial.tools.CopyTool('dnowatsc@lxplus.cern.ch:Paper-Dir/papers/B2G-16-024/trunk/', src='../TexPaper/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True),
         ])
     return tc_tex_an
@@ -848,7 +1076,7 @@ if __name__ == '__main__':
             # plot_merged_channels_postfit('PostFitPlots'),
             plot_merged_channels_prefit('PreFitPlots'),
             # plot_merged_channels_tables('Tables'),
-            mk_tc_tex(final_dir),
+            # mk_tc_tex(final_dir),
             varial.tools.WebCreator()
             # combination_limits.mk_limit_list('Limits')
         ], n_workers=1)

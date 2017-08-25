@@ -119,16 +119,28 @@ def get_style():
     #     ]
 
 
+# leg_2_col_def = {
+#     'x_pos': 0.7,
+#     'y_pos': 0.65,
+#     'label_width': 0.30,
+#     'label_height': 0.045,
+#     'box_text_size' : 0.035,
+#     'opt': 'f',
+#     'opt_data': 'pl',
+#     'reverse': True,
+#    'sort_legend' : lambda w: 'TT ' in w[1],
+# }
+
 leg_2_col_def = {
     'x_pos': 0.7,
-    'y_pos': 0.65,
+    'y_pos': 0.73,
     'label_width': 0.30,
     'label_height': 0.045,
     'box_text_size' : 0.035,
     'opt': 'f',
     'opt_data': 'pl',
     'reverse': True,
-    'sort_legend' : lambda w: 'TT ' in w[1],
+    # 'sort_legend' : lambda w: 'TT ' in w[1],
 }
 
 mod_dict_default = {
@@ -175,7 +187,7 @@ mod_dict_default = {
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_fct' : 1.8,
             # 'text_box_log' : (0.16, 0.89, "#scale[0.8]{#bf{CMS}} #scale[0.7]{#it{Preliminary}}"),
             'err_empty_bins' : True,
@@ -187,7 +199,7 @@ mod_dict_default = {
             'y_max_log_fct' : 100.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
-            'set_leg_1_col_log' : {
+            '_set_leg_1_col_log' : {
                 'x_pos': 0.7,
                 'y_pos': 0.75,
                 'label_width': 0.30,
@@ -196,7 +208,7 @@ mod_dict_default = {
                 'opt': 'f',
                 'opt_data': 'pl',
                 'reverse': True,
-                'sort_legend' : lambda w: 'TT ' in w[1],
+                # 'sort_legend' : lambda w: 'TT ' in w[1],
                 # 'clean_legend' : lambda w: any(a in w[1] for a in legend_entries),
             },
             'y_max_fct' : 1.8,
@@ -214,28 +226,21 @@ mod_dict_default = {
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_fct' : 1.8,
             'err_empty_bins' : True,
             'draw_x_errs' : True
             },
     'primary_electron_pt' : {
             'rebin' : 25,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'title' : 'Primary Electron p_{T} [GeV]',
             },
     'primary_muon_pt' : {
             'rebin' : 25,
-            'set_leg_2_col_log' : leg_2_col_def,
-            'y_max_log_fct' : 10000.,
-            'y_min_gr_zero' : 0.1,
-            'title' : 'Primary Muon p_{T} [GeV]',
-            },
-    'primary_muon_pt' : {
-            'rebin' : 25,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'title' : 'Primary Muon p_{T} [GeV]',
@@ -243,7 +248,7 @@ mod_dict_default = {
     'PrimaryLepton.Particle.m_eta' : {
             'rebin' : 25,
             'y_max_log_fct' : 100000.,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_min_gr_zero' : 0.1,
             'title' : 'Primary Lepton #eta [GeV]',
             },
@@ -256,7 +261,7 @@ mod_dict_default = {
             },
     'primary_lepton_pt' : {
             'rebin' : 25,
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'title' : 'Primary Lepton p_{T} [GeV]',
@@ -264,7 +269,7 @@ mod_dict_default = {
     'pt_ld_ak4_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} (1st AK4 Jet) [GeV]',
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'y_max_fct' : 1.5,
@@ -279,7 +284,7 @@ mod_dict_default = {
     'pt_subld_ak4_jet' : {
             'rebin' : 30,
             'title' : 'p_{T} (2nd AK4 Jet) [GeV]',
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'y_max_fct' : 1.5,
@@ -342,20 +347,20 @@ mod_dict_default = {
             },
     'n_ak4' : {
             'title' : 'N(AK4 jets)',
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-2,
             },
     'n_ak8' : {
             'title' : 'N(AK8 jets)',
-            'set_leg_2_col_log' : leg_2_col_def,
+            '_set_leg_2_col_log' : leg_2_col_def,
             'y_max_log_fct' : 1000000.,
             'y_min_gr_zero' : 2e-3,
             },
     'ak4_jets_btagged_dR_higgs_tags_1b_med' : {
             # 'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 2e-1,
-            'set_leg_2_col_lin' : True
+            '_set_leg_2_col_lin' : True
             },
 
     ##### p_{T}-leading HIGGS-TAG VARIABLES ######
@@ -403,7 +408,7 @@ mod_dict_default = {
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.4,
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.68,
                     'y_pos': 0.67,
                     'label_width': 0.30,
@@ -412,7 +417,7 @@ mod_dict_default = {
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 }
             },
     'nomass_boost_2b_mass_softdrop_rebin_flex' : {
@@ -423,7 +428,7 @@ mod_dict_default = {
             'y_max_log_fct' : 1000.,
             'scale' : 0.4,
             # 'no_exp' : True,
-            # 'set_leg_2_col_lin' : {
+            # '_set_leg_2_col_lin' : {
             #         'x_pos': 0.7,
             #         'y_pos': 0.65,
             #         'label_width': 0.30,
@@ -432,9 +437,9 @@ mod_dict_default = {
             #         'opt': 'f',
             #         'opt_data': 'pl',
             #         'reverse': True,
-            #         'sort_legend' : lambda w: 'TT ' in w[1],
+            #        'sort_legend' : lambda w: 'TT ' in w[1],
             #     },
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.74,
                     'y_pos': 0.67,
                     'label_width': 0.30,
@@ -443,16 +448,16 @@ mod_dict_default = {
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             # 'text_box_lin' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
                               # (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
             },
     'nobtag_boost_mass_nsjbtags' : {
-            'title' : 'N(subjet b-tags)',
+            'title' : 'N(b-tagged subjets)',
             'y_min_gr_zero' : 100,
             'y_max_log_fct' : 50.,
-            'set_leg_1_col_log' : {
+            '_set_leg_1_col_log' : {
                     'x_pos': 0.74,
                     'y_pos': 0.67,
                     'label_width': 0.30,
@@ -461,7 +466,7 @@ mod_dict_default = {
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             # 'text_box_log' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
                               # (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
@@ -494,7 +499,7 @@ mod_dict_default = {
             'title' : 'M_{gen}-M_{reco}/M_{gen}',
             # 'y_min_gr_zero' : 100,
             # 'y_max_log_fct' : 50.,
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.75,
                     'y_pos': 0.67,
                     'label_width': 0.25,
@@ -503,7 +508,7 @@ mod_dict_default = {
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             # 'text_box_log' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
             #                   (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
@@ -512,7 +517,7 @@ mod_dict_default = {
             'title' : 'M_{gen}-M_{reco}/M_{gen}',
             # 'y_min_gr_zero' : 100,
             # 'y_max_log_fct' : 50.,
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.75,
                     'y_pos': 0.67,
                     'label_width': 0.25,
@@ -521,7 +526,7 @@ mod_dict_default = {
                     'opt': 'f',
                     'opt_data': 'pl',
                     'reverse': True,
-                    'sort_legend' : lambda w: 'TT ' in w[1],
+                    # 'sort_legend' : lambda w: 'TT ' in w[1],
                 },
             # 'text_box_log' : [(0.19, 0.79, "#scale[0.8]{#bf{CMS}}"),
             #                   (0.19, 0.72, "#scale[0.7]{#it{Preliminary}}")],
@@ -532,37 +537,47 @@ mod_dict_default = {
             'title' : 'N(AK4 b tags)',
             'y_max_log_fct' : 10000000.,
             'y_min_gr_zero' : 1e-3,
-            'set_leg_2_col_log' : leg_2_col_def
+            '_set_leg_2_col_log' : leg_2_col_def
             },
     'n_higgs_tags_1b_med_sm10' : {
             'title' : 'N(Higgs-tag, 1 subjet b-tag)',
             'y_max_log_fct' : 10000000.,
             'y_min_gr_zero' : 3e-3,
-            'set_leg_2_col_log' : leg_2_col_def
+            '_set_leg_2_col_log' : leg_2_col_def
             },
     'n_higgs_tags_2b_med_sm10' : {
             'y_max_log_fct' : 10000000.,
             'title' : 'N(Higgs-tag, 2 subjet b-tags)',
             'y_min_gr_zero' : 1e-3,
-            'set_leg_2_col_log' : leg_2_col_def
+            '_set_leg_2_col_log' : leg_2_col_def
             },
     'n_higgs_tags_1b_med' : {
             'title' : 'N(Higgs-tag, 1 subjet b-tag)',
             'y_max_log_fct' : 10000000.,
             'y_min_gr_zero' : 3e-3,
-            'set_leg_2_col_log' : leg_2_col_def
+            '_set_leg_2_col_log' : leg_2_col_def
             },
     'n_higgs_tags_2b_med' : {
             'y_max_log_fct' : 10000000.,
             'title' : 'N(Higgs-tag, 2 subjet b-tags)',
             'y_min_gr_zero' : 1e-3,
-            'set_leg_2_col_log' : leg_2_col_def
+            '_set_leg_2_col_log' : leg_2_col_def
             },
 
 }
 
 
 
+line_styles = {
+    'TpTp_M-0800' : 1,
+    'TpTp_M-1200' : 2,
+    'TpTp_M-0800_thth' : 1,
+    'TpTp_M-1200_thth' : 2,
+    'TpTp_M-0800_thX' : 1,
+    'TpTp_M-0800_other' : 2,
+    'TpTp_M-1200_thX' : 1,
+    'TpTp_M-1200_other' : 2,
+}
 
 
 signal_indicators = ['TpTp_', 'BpBp_']
@@ -601,6 +616,12 @@ def set_line_width(wrps):
             w.histo.SetLineWidth(2)
         yield w
 
+def set_line_style(wrps):
+    for w in wrps:
+        if w.sample in line_styles.keys():
+            w.histo.SetLineStyle(line_styles[w.sample])
+        yield w
+
 
 def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=True):
     """histos must be sorted!!"""
@@ -637,52 +658,82 @@ def merge_finalstates_channels(wrps, finalstates=(), suffix='', print_warning=Tr
         yield do_merging(buf)
 
 
-def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True, mk_legend=False):
+def norm_smpl(wrps, smpl_fct=None, norm_all=1., calc_scl_fct=True, mk_legend=False, mark_scaled=''):
     for w in wrps:
-        if smpl_fct:
-            # print 'new sample', w.sample, norm_all
-            for fct_key, fct_val in smpl_fct.iteritems():
-                if fct_key in w.sample:
-                    # print '  key found', fct_key, fct_val
-                    # if w.analyzer = 'NoSelection' or
-                    # if calc_scl_fct:
-                    #     if hasattr(w, 'scl_fct'):
-                    #         w.scl_fct *= fct_val
-                    #         print '  scl_fct found', w.scl_fct, fct_val
-                    #     else:
-                    #         op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+        if (mark_scaled and getattr(w, 'mark_scaled', None) == mark_scaled): # or 'TH2' in w.type:
+            yield w
+        else:
+            if smpl_fct:
+                # print 'new sample', w.sample, norm_all
+                for fct_key, fct_val in smpl_fct.iteritems():
+                    if fct_key in w.sample:
+                        # print '  key found', fct_key, fct_val
+                        # if w.analyzer = 'NoSelection' or
+                        # if calc_scl_fct:
+                        #     if hasattr(w, 'scl_fct'):
+                        #         w.scl_fct *= fct_val
+                        #         print '  scl_fct found', w.scl_fct, fct_val
+                        #     else:
+                        #         op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+                        if mk_legend:
+                            scale_signal(w, fct_val, True)
+                        else:
+                            if calc_scl_fct:
+                                if hasattr(w, 'scl_fct'):
+                                    w.scl_fct *= fct_val
+                                    # print '  scl_fct found', w.scl_fct, fct_val
+                                else:
+                                    op.add_wrp_info(w, scl_fct=lambda _: fct_val)
+                            w.histo.Scale(fct_val)
+            if mk_legend:
+                scale_signal(w, norm_all, True)
+            else:
+                if hasattr(w, 'scl_fct'):
+                    w.scl_fct *= norm_all
+                else:
+                    op.add_wrp_info(w, scl_fct=lambda _: norm_all)
+                w.histo.Scale(norm_all)
+            if mark_scaled:
+                w.mark_scaled = mark_scaled
+            yield w
+
+def norm_smpl_var(wrps, mod_dict=mod_dict_default, calc_scl_fct=True, mk_legend=False, mark_scaled=''):
+    for w in wrps:
+        if not w.is_signal or (mark_scaled and getattr(w, 'mark_scaled', None) == mark_scaled):
+            yield w
+        else:
+            mod_wrp_dict = mod_dict.get(w.name, None)
+            if mod_wrp_dict:
+                scl_fct = mod_wrp_dict.get('scl_fct', None)
+                if scl_fct:
+                    # print 'new sample', w.sample, norm_all
                     if mk_legend:
-                        scale_signal(w, fct_val, True)
+                        scale_signal(w, scl_fct, show_tot_scl=True, cumulative=True)
                     else:
                         if calc_scl_fct:
                             if hasattr(w, 'scl_fct'):
-                                w.scl_fct *= fct_val
-                                # print '  scl_fct found', w.scl_fct, fct_val
+                                w.scl_fct *= scl_fct
+                                # print '  scl_fct found', w.scl_fct, scl_fct
                             else:
-                                op.add_wrp_info(w, scl_fct=lambda _: fct_val)
-                        w.histo.Scale(fct_val)
-        if mk_legend:
-            scale_signal(w, norm_all, True)
-        else:
-            if hasattr(w, 'scl_fct'):
-                w.scl_fct *= norm_all
-            else:
-                op.add_wrp_info(w, scl_fct=lambda _: norm_all)
-            w.histo.Scale(norm_all)
-        yield w
+                                op.add_wrp_info(w, scl_fct=lambda _: scl_fct)
+                        w.histo.Scale(scl_fct)
+                if mark_scaled:
+                    w.mark_scaled = mark_scaled
+            yield w
 
 def norm_to_int(wrps, use_bin_width=False):
     option = "width" if use_bin_width else ""
     for w in wrps:
         integr = w.histo.Integral(option)
         w.histo.Scale(1./integr)
+        w.unit_scale = integr
         if not w.is_signal and not w.is_data:
             w.sample = "Background"
             w.legend = "Background"
         yield w
 
 # @history.track_history
-def scale_signal(wrp, fct=1., show_tot_scl=False, calc_scl_fct=True):
+def scale_signal(wrp, fct=1., show_tot_scl=False, cumulative=False):
     if not hasattr(wrp, 'is_scaled'):
         if fct >= 5:
             fct = int(fct)
@@ -701,7 +752,8 @@ def scale_signal(wrp, fct=1., show_tot_scl=False, calc_scl_fct=True):
         else:
             op.add_wrp_info(wrp, scl_fct=lambda _: fct)
         wrp.histo.Scale(fct)
-        op.add_wrp_info(wrp, is_scaled=lambda w: True)
+        if not cumulative:
+            op.add_wrp_info(wrp, is_scaled=lambda w: True)
         if ' #times' in wrp.legend:
             wrp.legend = wrp.legend[:wrp.legend.find(' #times')]
         if show_tot_scl:
@@ -780,16 +832,19 @@ def mod_legend(wrps):
         if w.legend.startswith('TpTp'):
             suf = w.legend[11:]
             mass = float(w.legend[7:11])/1000.
-            w.legend = 'T#bar{T} (%.1f TeV)' % mass
+            # w.legend = 'T#bar{T} (%.1f TeV)' % mass
+            w.legend = 'T#bar{T} (M_{T}=%.1f TeV)' % mass
             w.legend += suf
         if w.legend == 'TTbar':
-            w.legend = 't#bar{t}'
+            w.legend = 't#bar{t} + jets'
         if w.legend == 'WJets':
             w.legend = 'W + jets'
         if w.legend == 'DYJetsToLL' or w.legend == 'DYJets':
             w.legend = 'DY + jets'
         if w.legend == 'SingleTop':
             w.legend = 'Single t'
+        # if w.legend == 'QCD':
+        #     w.legend = 'Multijet'
         yield w
 
 def mod_legend_eff_counts(wrps):
@@ -807,13 +862,13 @@ def mod_legend_eff_counts(wrps):
         if w.legend.endswith('_bwbw'):
             w.legend = w.legend[:-9] + '#rightarrowbW#bar{b}W'
         if w.legend.endswith('_thX'):
-            w.legend = w.legend[:-13]
+            w.legend = w.legend[:-4]
             w.legend = w.legend + '#rightarrow tH+X'
         if w.legend.endswith('_other'):
-            w.legend = w.legend[:-15]
+            w.legend = w.legend[:-6]
             w.legend = w.legend + '#rightarrow other'
         if w.legend.endswith('_incl'):
-            w.legend = w.legend[:-5] + '#rightarrowincl.'
+            w.legend = w.legend[:-5] + '#rightarrow incl.'
         yield w
 
 def mod_legend_no_thth(wrps):
@@ -827,13 +882,17 @@ def mod_legend_no_thth(wrps):
             w.legend = w.legend[:-5] + arr
         yield w
 
-def mod_title(wrps):
+def mod_title(wrps, dict_cnv_attr=None):
     for w in wrps:
-        mod_wrp_dict = mod_dict_default.get(w.name, None)
+        mod_dict = dict_cnv_attr or mod_dict_default
+        mod_wrp_dict = mod_dict.get(w.name, None)
         if mod_wrp_dict:
             new_title = mod_wrp_dict.get('title', None)
             if new_title:
                 w.histo.GetXaxis().SetTitle(new_title)
+            new_y_title = mod_wrp_dict.get('y_title', None)
+            if new_y_title:
+                w.histo.GetYaxis().SetTitle(new_y_title)
         if 'topjet' in w.histo.GetXaxis().GetTitle():
             title = w.histo.GetXaxis().GetTitle()
             w.histo.GetXaxis().SetTitle(title.replace('topjet', 'AK8 jet'))
@@ -856,7 +915,7 @@ def mod_title(wrps):
 
 
 
-def add_wrp_info(wrps, sig_ind=None):
+def add_wrp_info(wrps, sig_ind=signal_indicators):
     def fix_get_samplename(wrp):
         fname = os.path.basename(wrp.file_path)
         if fname.startswith('uhh2'):
@@ -891,7 +950,7 @@ def add_wrp_info(wrps, sig_ind=None):
         cat = filename.split('-')[2]
         return cat+'/'+'-'.join(filename.split('-')[3:])
 
-    sig_ind = sig_ind or signal_indicators
+    # sig_ind = sig_ind or signal_indicators
     if varial.settings.fix_presel_sample:
         get_samplename = fix_get_samplename
     else:
@@ -979,12 +1038,12 @@ def rebin_st_and_nak4(wrps, mod_dict=None):
             if mod_wrp_dict:
                 rebin_list = mod_wrp_dict.get('rebin_list', None)
                 rebin_fct = mod_wrp_dict.get('rebin', None)
-                if (rebin_list):
+                if rebin_list:
                     new_w_flex = op.rebin(w, rebin_list, True)
                     new_w_flex.name = w.name+'_rebin_flex'
                     new_w_flex.in_file_path = w.in_file_path.replace(w.name, w.name+'_rebin_flex')
                     yield new_w_flex
-                elif (rebin_fct):
+                if rebin_fct:
                     w = op.rebin_nbins_max(w, rebin_fct)
                     rebin_ind = True
             # if not rebin_ind:
@@ -996,15 +1055,20 @@ def rebin_st_and_nak4(wrps, mod_dict=None):
 #         dict_leg.update({'n_col' : 2})
 #         leg_mod(rnd, dict_leg)
 
-def leg_mod(wrp, dict_leg=varial.settings.defaults_Legend, n_col=1, set_ndc=True, y_fct=1.):
+def leg_mod(wrp, dict_leg=None, n_col=1, set_ndc=True, y_fct=1.):
     # if varial.settings.style != 'AN':
+    if not wrp.legend:
+        return
+    leg_dict=varial.settings.defaults_Legend
+    if dict_leg:
+        leg_dict.update(dict_leg)
     wrp.legend.SetNColumns(n_col)
-    wrp.legend.SetTextSize(dict_leg.get('box_text_size', varial.settings.box_text_size))
+    wrp.legend.SetTextSize(leg_dict.get('box_text_size', varial.settings.box_text_size))
     n_entries = len(wrp.legend.GetListOfPrimitives())
-    x_pos   = dict_leg['x_pos']
-    y_pos   = dict_leg['y_pos'] * y_fct
-    width   = dict_leg['label_width']
-    height  = dict_leg['label_height'] * n_entries / float(n_col)
+    x_pos   = leg_dict['x_pos']
+    y_pos   = leg_dict['y_pos'] * y_fct
+    width   = leg_dict['label_width']
+    height  = leg_dict['label_height'] * n_entries / float(n_col)
     if set_ndc:
         if n_col ==  2:
             wrp.legend.SetX1NDC(x_pos - 3*width/2.)
@@ -1109,10 +1173,10 @@ default_canv_attr = {
     'y_min_gr_zero' : 1e-9,
     'y_max_fct' : 1.,
     'y_max_log_fct' : 1.,
-    'set_leg_2_col_lin' : False,
-    'set_leg_2_col_log' : False,
-    'set_leg_1_col_lin' : False,
-    'set_leg_1_col_log' : False,
+    '_set_leg_2_col_lin' : False,
+    '_set_leg_2_col_log' : False,
+    '_set_leg_1_col_lin' : False,
+    '_set_leg_1_col_log' : False,
     'move_exp' : False,
     'no_exp' : False,
 }
@@ -1125,6 +1189,7 @@ def mod_pre_bot_hist(dict_cnv_attr=None):
         mod_wrp_dict = mod_dict.get(wrp.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
+        canv_attr.update(wrp.__dict__)
         # if wrp.renderers[0].scale == 'lin' and canv_attr.get('text_box_lin', None):
         #     box_list = canv_attr['text_box_lin']
         #     box_list = box_mod(box_list)
@@ -1136,16 +1201,18 @@ def mod_pre_bot_hist(dict_cnv_attr=None):
         #     for dec in box_list:
         #         g = dec(g)
         # make_empty_bins_dat(g)
-        if canv_attr.get('draw_x_errs'):
+        if canv_attr.get('y_pad_margin', None):
+            wrp.main_pad.SetBottomMargin(canv_attr['y_pad_margin'])
+        if canv_attr.get('draw_x_errs', None):
             wrp.draw_x_errs = True
         if canv_attr.get('draw_empty_bin_error'):
-            wrp.draw_empty_bin_error = True
+            wrp.draw_empty_bin_error = canv_attr.get('draw_empty_bin_error')
         if canv_attr.get('bin_width', None):
             wrp.bin_width = canv_attr['bin_width']
-        if 'rebin_flex' in wrp.name:
+        if 'rebin_flex' in wrp.name and canv_attr.get('draw_x_errs', None):
             for w in wrp._renderers:
                 if w.is_data:
-                    w.draw_option_legend = 'pl'
+                    w.draw_option_legend = 'ple'
         # if canv_attr.get('err_empty_bins', None):
         #     make_empty_bins_dat_error(g, canv_attr.get('bin_width', None))
         # return wrp
@@ -1197,29 +1264,39 @@ def mod_post_canv(dict_cnv_attr=None, default_attr=None):
         y_exp = None
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
+        canv_attr.update(wrp.__dict__)
         if not wrp.has_data:
-            leg_mod(wrp, set_ndc=False, y_fct=.88)
+            # leg_mod(wrp, set_ndc=False, y_fct=.88)
             wrp.canvas.SetCanvasSize(varial.settings.canvas_size_x, int(16./19.*varial.settings.canvas_size_y))
         if canv_attr['no_exp']:
             wrp.first_obj.GetYaxis().SetNoExponent()
         if canv_attr.get('bin_width', None):
             wrp.first_obj.GetYaxis().SetTitle('Events / %s GeV' % str(canv_attr['bin_width']))
+        if canv_attr.get('bin_width', None) and canv_attr.get('var_bin_size', None):
+            if canv_attr['bin_width'] == 1:
+                wrp.first_obj.GetYaxis().SetTitle('< Events / GeV >')
+            else:
+                wrp.first_obj.GetYaxis().SetTitle('< Events / %s GeV >' % str(canv_attr['bin_width']))
         if canv_attr.get('bin_width', None) and y_exp:
-            wrp.first_obj.GetYaxis().SetTitle('Events / (%s GeV #times 10^{%d})' % (str(canv_attr['bin_width']), y_exp))
+            wrp.first_obj.GetYaxis().SetTitle('< Events / (%s GeV #times 10^{%d}) >' % (str(canv_attr['bin_width']), y_exp))
         wrp.first_obj.GetYaxis().CenterTitle(kFALSE)
         if y_max > 1.:
-            wrp.first_obj.SetMinimum(canv_attr['y_min_gr_zero'])
-            wrp.y_min_gr_zero = canv_attr['y_min_gr_zero']
+            if hasattr(wrp, 'y_min_gr_zero_ind'):
+                wrp.first_obj.SetMinimum(wrp.y_min_gr_zero_ind)
+                wrp.y_min_gr_0 = wrp.y_min_gr_zero_ind
+            else:
+                wrp.first_obj.SetMinimum(canv_attr['y_min_gr_zero'])
+                wrp.y_min_gr_0 = canv_attr['y_min_gr_zero']
         # if getattr(wrp._renderers[0], 'scale', 'lin') == 'lin':
         wrp.first_obj.SetMaximum(y_max * canv_attr['y_max_fct'])
-        if canv_attr['set_leg_2_col_lin']:
-            if isinstance(canv_attr['set_leg_2_col_lin'], dict):
-                leg_mod(wrp, canv_attr['set_leg_2_col_lin'], n_col=2, set_ndc=False)
+        if canv_attr['_set_leg_2_col_lin']:
+            if isinstance(canv_attr['_set_leg_2_col_lin'], dict):
+                leg_mod(wrp, canv_attr['_set_leg_2_col_lin'], n_col=2, set_ndc=False)
             else:
                 leg_mod(wrp, n_col=2, set_ndc=False)
-        if canv_attr['set_leg_1_col_lin']:
-            if isinstance(canv_attr['set_leg_1_col_lin'], dict):
-                leg_mod(wrp, canv_attr['set_leg_1_col_lin'], set_ndc=False)
+        if canv_attr['_set_leg_1_col_lin']:
+            if isinstance(canv_attr['_set_leg_1_col_lin'], dict):
+                leg_mod(wrp, canv_attr['_set_leg_1_col_lin'], set_ndc=False)
             else:
                 leg_mod(wrp, set_ndc=False)
         if canv_attr.get('text_box_lin', None):
@@ -1235,6 +1312,9 @@ def mod_post_canv(dict_cnv_attr=None, default_attr=None):
                 box.Draw('SAME')
                 wrp.main_pad.cd()
             wrp._box_list = box_list
+        if canv_attr.get('bot_plot_mod', None):
+            bot_plot_mod_func = canv_attr['bot_plot_mod']
+            bot_plot_mod_func(wrp)
         return wrp
     return tmp
 
@@ -1470,15 +1550,16 @@ def mod_log_usr(dict_cnv_attr=None):
         mod_wrp_dict = mod_dict.get(wrp.name, None)
         if mod_wrp_dict:
             canv_attr.update(mod_wrp_dict)
+        canv_attr.update(wrp.__dict__)
         wrp.first_obj.SetMaximum(y_max * canv_attr['y_max_log_fct'])
-        if canv_attr['set_leg_2_col_log']:
-            if isinstance(canv_attr['set_leg_2_col_log'], dict):
-                leg_mod(wrp, canv_attr['set_leg_2_col_log'], n_col=2)
+        if canv_attr['_set_leg_2_col_log']:
+            if isinstance(canv_attr['_set_leg_2_col_log'], dict):
+                leg_mod(wrp, canv_attr['_set_leg_2_col_log'], n_col=2)
             else:
                 leg_mod(wrp, n_col=2)
-        if canv_attr['set_leg_1_col_log']:
-            if isinstance(canv_attr['set_leg_1_col_log'], dict):
-                leg_mod(wrp, canv_attr['set_leg_1_col_log'])
+        if canv_attr['_set_leg_1_col_log']:
+            if isinstance(canv_attr['_set_leg_1_col_log'], dict):
+                leg_mod(wrp, canv_attr['_set_leg_1_col_log'])
             else:
                 leg_mod(wrp)
         if canv_attr.get('text_box_log', None):
@@ -1597,9 +1678,11 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
 
     def mk_poisson_errs_graph(cnv_wrp, data_rnd, div_hist, mc_histo_no_err, par):
         y_title = par['y_title'] or (
-            '#frac{data-MC}{MC}'if data_rnd.is_data else '#frac{sig-bkg}{bkg}')
+            '#frac{Data-Bkg.}{Bkg.}'if data_rnd.is_data else '#frac{sig-bkg}{bkg}')
         rnds = cnv_wrp._renderers
+        scl_unit = getattr(cnv_wrp, 'unit_scale', 1.)
         data_hist = data_rnd.histo
+        data_hist.Scale(scl_unit)
         data_hist.SetBinErrorOption(TH1.kPoisson)  # CHECK: doesn't this have to go after the loop below and correction for bin_width??
         data_hist.Sumw2(False)                          # should be set elsewhere!
         gtop = TGraphAsymmErrors(data_hist)
@@ -1608,12 +1691,12 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
         gbot.SetMarkerSize(.7)
 
         # empty graphs implemented - still needed? already implemented in Heiner's function?
-        gtop_empty = TGraphAsymmErrors(data_hist)
-        gbot_empty = TGraphAsymmErrors(div_hist)
-        gtop_empty.SetMarkerStyle(1)
-        gbot_empty.SetMarkerStyle(1)
+        # gtop_empty = TGraphAsymmErrors(data_hist)
+        # gbot_empty = TGraphAsymmErrors(div_hist)
+        # gtop_empty.SetMarkerStyle(1)
+        # gbot_empty.SetMarkerStyle(1)
         div_hist.SetMarkerStyle(1)
-        if hasattr(cnv_wrp, 'bin_width'):
+        if getattr(cnv_wrp, 'bin_width', None):
             for i in xrange(data_hist.GetNbinsX()+2):
                 bin_count = data_hist.GetBinContent(i)*data_hist.GetBinWidth(i)/cnv_wrp.bin_width
                 data_hist.SetBinContent(i, bin_count)
@@ -1623,15 +1706,15 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
             x_val = mc_histo_no_err.GetBinCenter(i)
             x_err = 0.
             div_hist.SetBinError(i, 0.)
-            if hasattr(cnv_wrp, 'draw_x_errs'):
+            if getattr(cnv_wrp, 'draw_x_errs', None):
                 x_err = data_hist.GetBinWidth(i)/2.
             # if dat_val <= 0.:
             #     x_val = mc_histo_no_err.GetBinCenter(i)
             #     gtop.SetPoint(i -1, x_val, -1.)
             # if mc_val:
-            scl_fct = 1.
-            if hasattr(cnv_wrp, 'bin_width'):
-                scl_fct = data_hist.GetBinWidth(i)/cnv_wrp.bin_width
+            scl_fct = scl_unit
+            if getattr(cnv_wrp, 'bin_width', None):
+                scl_fct *= data_hist.GetBinWidth(i)/cnv_wrp.bin_width
             mc_val = mc_val or 1e-10
             if dat_val > 0.:
                 e_up = data_hist.GetBinErrorUp(i)
@@ -1639,24 +1722,22 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
                 gtop.SetPoint(i - 1, x_val, dat_val/scl_fct)
                 gtop.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
                 gbot.SetPointError(i - 1, x_err, x_err, e_lo/(mc_val*scl_fct), e_up/(mc_val*scl_fct))
-                gtop_empty.RemovePoint(i - 1)
-                gbot_empty.RemovePoint(i - 1)
-            elif hasattr(cnv_wrp, 'draw_empty_bin_error') and any(r.histo.GetBinContent(i) > 0. for r in rnds):
+                # gtop_empty.RemovePoint(i - 1)
+                # gbot_empty.RemovePoint(i - 1)
+            elif getattr(cnv_wrp, 'draw_empty_bin_error', None) and cnv_wrp.draw_empty_bin_error < i:
                 e_up = data_hist.GetBinErrorUp(i)
                 e_lo = data_hist.GetBinErrorLow(i)
-                gtop_empty.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
-                gbot_empty.SetPointError(i - 1, x_err, x_err, e_lo/(mc_val*scl_fct), e_up/(mc_val*scl_fct))
-                gbot.RemovePoint(i - 1)
-                gtop.RemovePoint(i - 1)
+                gtop.SetPoint(i - 1, x_val, 0.)
+                gtop.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
+                gbot.SetPointError(i - 1, x_err, x_err, e_lo/(mc_val*scl_fct), e_up/(mc_val*scl_fct))
             else:
                 gtop.RemovePoint(i - 1)
-                gtop_empty.RemovePoint(i - 1)
                 gbot.RemovePoint(i - 1)
-                gbot_empty.RemovePoint(i - 1)
 
         gtop.SetTitle('Data')
-        gtop_empty.SetTitle('dummy')
-        gbot_empty.SetTitle('dummy')
+        # gtop_empty.SetTitle('dummy')
+        # gbot_empty.SetTitle('dummy')
+        data_hist.Scale(1/scl_unit)
         data_hist.Sumw2()
         data_rnd.graph_draw = gtop
         data_rnd.draw_option = '0P'
@@ -1682,7 +1763,7 @@ def mk_split_err_ratio_plot_func_mod(**outer_kws):
         rnds = cnv_wrp._renderers
         mcee_rnd, data_rnd = rnd.bottom_plot_get_div_hists(rnds)
         y_title = par['y_title'] or (
-            '#frac{data-MC}{MC}'if data_rnd.is_data else '#frac{sig-bkg}{bkg}')
+            '#frac{Data-Bkg.}{Bkg.}'if data_rnd.is_data else '#frac{sig-bkg}{bkg}')
 
         # overlaying ratio histogram
         mc_histo_no_err = mcee_rnd.histo.Clone()
@@ -1785,7 +1866,6 @@ def mk_bottom_plot_ratio_uncerts():
         #     return False
 
         if n_hists < 2:
-            print wrp._renderers
             raise RuntimeError('ERROR BottomPlotControlSignalRatio can only be created '
                                'with exactly three histograms!')
         return n_hists >= 2
@@ -1809,11 +1889,11 @@ def mk_bottom_plot_ratio_uncerts():
         div_cols = dict((r.histo.GetTitle(), r.color) for r in rnds[1:] if hasattr(r, 'color'))
         # div_hist_down = rnds[1].histo.Clone()
         # div_hist_up = rnds[2].histo.Clone()
-        nom_histo.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+        nom_histo.SetYTitle('#frac{syst. - nom.}{nom.}')
         for d in div_hists:
             d.Add(nom_histo, -1)
             d.Divide(nom_histo)
-            d.SetYTitle('#frac{uncert. hist - nominal hist}{nominal hist}')
+            d.SetYTitle('#frac{syst. - nom.}{nom.}')
             d.SetMarkerSize(0)
             if d.GetTitle() in div_cols:
                 d.SetLineColor(div_cols[d.GetTitle()])
@@ -1862,12 +1942,14 @@ def mk_bottom_plot_ratio_uncerts():
         wrp._bottom_hists[0].GetYaxis().SetRangeUser(y_min, y_max)
         wrp._bottom_hists[0].GetYaxis().SetNoExponent()
         # wrp._bottom_hists[0].GetYaxis().SetTitleSize(0.10)
+        wrp.first_obj.GetYaxis().CenterTitle(0)
         wrp._bottom_hists[0].GetYaxis().CenterTitle(1)
-        wrp._bottom_hists[0].GetYaxis().SetTitleOffset(0.4)
-        wrp._bottom_hists[0].GetYaxis().SetTitleSize(0.08)
+        wrp._bottom_hists[0].GetYaxis().SetTitleOffset(0.5)
+        wrp._bottom_hists[0].GetYaxis().SetTitleSize(0.13)
         wrp._bottom_hists[0].GetYaxis().SetLabelSize(0.13)
         wrp._bottom_hists[0].GetXaxis().SetTitleSize(0.13)
         wrp._bottom_hists[0].GetXaxis().SetLabelSize(0.13)
+        wrp._bottom_hists[0].GetXaxis().SetNoExponent()
         wrp._bottom_hists[0].SetTitle('')
         wrp._bottom_hists[0].Draw('E0')
         for w in wrp._bottom_hists[1:]:
@@ -1875,7 +1957,7 @@ def mk_bottom_plot_ratio_uncerts():
             w.Draw('sameE0')
         wrp.bottom_hist_mc_err.Draw('sameE2')
         wrp.main_pad.cd()
-        wrp.legend.AddEntry(wrp.bottom_hist_mc_err, 'Stat. Uncert. MC', 'f')
+        wrp.legend.AddEntry(wrp.bottom_hist_mc_err, 'Bkg. uncert. (stat.)', 'f')
 
     return rnd.PostBuildFuncWithSetup(
         draw_full_plot,
@@ -1899,7 +1981,6 @@ def mk_bottom_plot_sig_bkg_ratio():
         #     return False
 
         if n_hists < 2:
-            print n_hists
             raise RuntimeError('ERROR Bottom plot sig/bkg ratio can only be created '
                                'with more than 1 histogram!')
         return n_hists >= 2
@@ -2053,20 +2134,20 @@ def mk_pull_plot_func_poisson(**outer_kws):
         gtop = TGraphAsymmErrors(data_hist)
 
         # empty graphs implemented - still needed? already implemented in Heiner's function?
-        gtop_empty = TGraphAsymmErrors(data_hist)
+        # gtop_empty = TGraphAsymmErrors(data_hist)
 
         # for i in xrange(data_hist.GetNbinsX()+2):
         #     test_string += ' %s/%s/%s' % (data_hist.GetBinContent(i), data_hist.GetBinErrorLow(i), data_hist.GetBinErrorUp(i)) 
         # if cnv_wrp.name == ST_rebin_flex:
         #     print test_string
 
-        gtop_empty.SetMarkerStyle(1)
+        # gtop_empty.SetMarkerStyle(1)
 
         # test_string = cnv_wrp.in_file_path + ' data nom/low/up -- mc nom/low/up -- mc_syst nom/low/up -- scl_fct - dat_stat/mc_stat/mc_syst/sqr_quad/sigma\n'
         
         div_hist = data_hist.Clone()                    # NOW CLONING!
 
-        if hasattr(cnv_wrp, 'bin_width'):
+        if getattr(cnv_wrp, 'bin_width', None):
             for i in xrange(data_hist.GetNbinsX()+2):
                 bin_count = data_hist.GetBinContent(i)*data_hist.GetBinWidth(i)/cnv_wrp.bin_width
                 data_hist.SetBinContent(i, bin_count)
@@ -2074,14 +2155,14 @@ def mk_pull_plot_func_poisson(**outer_kws):
             dat_val = data_hist.GetBinContent(i)
             x_val = mc_histo.GetBinCenter(i)
             x_err = 0.
-            if hasattr(cnv_wrp, 'draw_x_errs'):
+            if getattr(cnv_wrp, 'draw_x_errs', None):
                 x_err = data_hist.GetBinWidth(i)/2.
             # if dat_val <= 0.:
             #     x_val = mc_histo.GetBinCenter(i)
             #     gtop.SetPoint(i -1, x_val, -1.)
             # if mc_val:
             scl_fct = 1.
-            if hasattr(cnv_wrp, 'bin_width'):
+            if getattr(cnv_wrp, 'bin_width', None):
                 scl_fct = data_hist.GetBinWidth(i)/cnv_wrp.bin_width
 
             sigma_histo.SetBinError(i, 0.)
@@ -2110,15 +2191,19 @@ def mk_pull_plot_func_poisson(**outer_kws):
                 e_lo = data_hist.GetBinErrorLow(i)
                 gtop.SetPoint(i - 1, x_val, dat_val/scl_fct)
                 gtop.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
-                gtop_empty.RemovePoint(i - 1)
-            elif hasattr(cnv_wrp, 'draw_empty_bin_error') and any(r.histo.GetBinContent(i) > 0. for r in rnds):
+                # gtop_empty.RemovePoint(i - 1)
+            elif getattr(cnv_wrp, 'draw_empty_bin_error', None) and cnv_wrp.draw_empty_bin_error < i:
                 e_up = data_hist.GetBinErrorUp(i)
                 e_lo = data_hist.GetBinErrorLow(i)
-                gtop_empty.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
-                gtop.RemovePoint(i - 1)
+                gtop.SetPoint(i - 1, x_val, 0.)
+                gtop.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
+                # gtop_empty.SetPoint(i - 1, x_val, 0.)
+                # gtop_empty.SetPointError(i - 1, x_err, x_err, e_lo/scl_fct, e_up/scl_fct)
+                # gtop.RemovePoint(i - 1)
+
             else:
                 gtop.RemovePoint(i - 1)
-                gtop_empty.RemovePoint(i - 1)
+                # gtop_empty.RemovePoint(i - 1)
 
 
         # if cnv_wrp.in_file_path == 'SignalRegion2b/ST_rebin_flex':
@@ -2129,10 +2214,12 @@ def mk_pull_plot_func_poisson(**outer_kws):
 
 
         gtop.SetTitle('Data')
-        gtop_empty.SetTitle('dummy')
+        # gtop_empty.SetTitle('dummy')
         data_hist.Sumw2()
         data_rnd.graph_draw = gtop
+        # cnv_wrp.empty_graph = gtop_empty
         data_rnd.draw_option = '0P'
+        # data_rnd.draw_option_legend = 'PE'
         # par['draw_opt'] = '0P'
         # par['draw_opt_first'] = '0P'
 
@@ -2154,8 +2241,10 @@ def mk_pull_plot_func_poisson(**outer_kws):
 
         # draw histo
         cnv_wrp.second_pad.cd()
+        cnv_wrp.bottom_hist.GetYaxis().SetTitleOffset(0.3)
         cnv_wrp.bottom_hist.Draw(par['draw_opt'])
         cnv_wrp.main_pad.cd()
+        # cnv_wrp.empty_graph.Draw('0P')
         return cnv_wrp
 
     return rnd.PostBuildFuncWithSetup(
@@ -2325,22 +2414,39 @@ def mk_fit_bottom_plot(**outer_kws):
 
         x, y = ctypes.c_double(), ctypes.c_double()
         cnv_wrp.second_pad.cd()
-        cnv_wrp.bottom_graph.Fit("pol1", "0")
+        cnv_wrp.bottom_graph.Fit("pol2", "0", "")
         # cnv_wrp.bottom_graph.Fit("pol0")
-        tf1 = cnv_wrp.bottom_graph.GetFunction("pol1")
+        tf1 = cnv_wrp.bottom_graph.GetFunction("pol2")
         tf1.SetLineWidth(2)
         tf1.SetLineColor(2)
         # tf1.GetRange(x, y)
         const_val = tf1.Eval(3000)
+        p0 = tf1.GetParameter(0)
+        p0_err = tf1.GetParError(0)
+        p1 = tf1.GetParameter(1)
+        p1_err = tf1.GetParError(1)
+        p2 = tf1.GetParameter(2)
+        p2_err = tf1.GetParError(2)
+        chi2 = tf1.GetChisquare()
+        ndof = tf1.GetNDF()
         tf2 = TF1("tf2","[0]",3000,6500)
         tf2.SetParameter(0, const_val)
         tf2.SetLineWidth(2)
         tf2.SetLineColor(2)
-        tf1.SetRange(400, 3000)
+        # tf1.SetRange(400, 3000)
         tf1.Draw('LSAME')
         tf2.DrawCopy('LSAME')
         cnv_wrp.second_pad.Update()
         cnv_wrp.main_pad.cd()
+        # pprint.pprint(cnv_wrp.__dict__)
+        cnv_wrp.__dict__.update({
+            'Fit_p0' : (p0, p0_err),
+            'Fit_p1' : (p1, p1_err),
+            'Fit_const' : const_val,
+            'Chi2' : chi2,
+            'NDOF' : ndof
+        }
+        )
         legend = cnv_wrp.legend
         legend.AddEntry(tf1, 'Linear Fit', 'l')
         # for o in cnv_wrp.second_pad.GetListOfPrimitives():

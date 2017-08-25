@@ -40,6 +40,7 @@ using namespace uhh2;
 
 // using namespace vlqToHiggsPair;
 
+
 // typedef VectorAndSelection MyAndSelection;
 
 class TpTpSignalStudies: public TpTpAnalysisModule {
@@ -769,6 +770,8 @@ TpTpSignalStudies::TpTpSignalStudies(Context & ctx) : TpTpAnalysisModule(ctx) {
     gen_hists->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(AndId<GenParticle>(GenParticleMotherId(0, 6), GenParticleMotherId(0, 25), GenParticleMotherId(0, 23))), "_from_T");
     gen_hists->add_genhistcoll(11, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
     gen_hists->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
+    gen_hists->add_genhistcoll(24, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "mother"});
+    gen_hists->add_genhistcoll(24, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "mother"}, GenParticleId(AndId<GenParticle>(GenParticleMotherId(0, 6), GenParticleMotherId(0, 25), GenParticleMotherId(8000001))), "_from_T");
     gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
     gen_hists->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "2d_dRDecay_pt"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
     CustomizableGenHists * gen_hists_after = new CustomizableGenHists(ctx, "BaseSelection/GenHists");
@@ -781,6 +784,8 @@ TpTpSignalStudies::TpTpSignalStudies(Context & ctx) : TpTpAnalysisModule(ctx) {
     gen_hists_after->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(AndId<GenParticle>(GenParticleMotherId(0, 6), GenParticleMotherId(0, 25), GenParticleMotherId(0, 23))), "_from_T");
     gen_hists_after->add_genhistcoll(11, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
     gen_hists_after->add_genhistcoll(13, 0, {"charge", "mother", "number"}, GenParticleId(GenParticleMotherId(6)), "_from_top");
+    gen_hists_after->add_genhistcoll(24, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "mother"});
+    gen_hists_after->add_genhistcoll(24, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "mother"}, GenParticleId(AndId<GenParticle>(GenParticleMotherId(0, 6), GenParticleMotherId(0, 25), GenParticleMotherId(8000001))), "_from_T");
     gen_hists_after->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay"});
     gen_hists_after->add_genhistcoll(25, 0, {"decay", "dRDecay", "dPhiDecay", "dEtaDecay", "2d_dRDecay_pt"}, GenParticleId(GenParticleDaughterId(25, 5, 5)), "_to_bb");
     v_hists.back().push_back(shared_ptr<CustomizableGenHists>(gen_hists));

@@ -2,7 +2,7 @@
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"
 [
 <!ENTITY NEVT "10000">
-<!ENTITY SOURCEDIR "/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
+<!ENTITY SOURCEDIR "/afs/desy.de/user/n/nowatsd/xxl-af-cms/SFrameUHH2/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/">
 <!ENTITY OUTPUTDIR "NewSamples-76X-v1/TestSignalStudies/">
 
 <!ENTITY MC_QCD_Pt80to120_MuEnrichedPt5   SYSTEM "../../common/datasets/RunII_76X_v1/QCD_Pt-80to120_MuEnrichedPt5.xml">

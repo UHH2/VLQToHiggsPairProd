@@ -111,7 +111,7 @@ less_signals = [
     # 'TpTp_M-1300',
     # # 'TpTp_M-1400',
     # 'TpTp_M-1500',
-    'TpTp_M-1600',
+    # 'TpTp_M-1600',
     # 'TpTp_M-1700',
     # 'TpTp_M-1800',
 ]
@@ -170,6 +170,7 @@ get_samplename = vlq_common.get_samplename
 def common_loader_hook(wrps):
     wrps = common_plot.add_wrp_info(wrps, sig_ind=common_plot.signal_indicators) # , use_hadd_sample=False
     wrps = common_plot.mod_legend(wrps)
+    wrps = common_plot.set_line_style(wrps)
     wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
     wrps = vlq_common.label_axes(wrps)
     wrps = common_plot.mod_title(wrps)
@@ -320,10 +321,10 @@ def mk_style_uncert_plots(wrps, colors):
             n += 1
         wrp.obj.SetLineColor(color)
         wrp.color = color
-        if d == 'up':
-            wrp.obj.SetLineStyle(2)
-        elif d == 'down':
-            wrp.obj.SetLineStyle(3)
+        # wrp.obj.SetLineStyle(2)
+        # if d == 'up':
+        # elif d == 'down':
+            # wrp.obj.SetLineStyle(3)
         yield wrp
 
 def plot_setup_uncerts(grps):

@@ -1820,7 +1820,7 @@ public:
                     return true;
                 }
                 else
-                    return true;
+                    return false;
             }
         }
         // cout << "  Found right mother!\n";
@@ -1861,8 +1861,8 @@ private:
 class HadronicTopId
 {
 public:
-    HadronicTopId(float dR = 0.4, float pt_cut = 0., int d_in_tj = 0) :
-        dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj)
+    HadronicTopId(float dR = 0.4, float pt_cut = 0., int d_in_tj = 0, bool b_merged = false) :
+        dR_(dR), pt_cut_(pt_cut), d_in_tj_(d_in_tj), b_merged_(b_merged)
         {}
 
     bool operator()(const TopJet & tj, const Event & event)
@@ -1911,6 +1911,8 @@ public:
                         continue;
                     else if (d_in_tj_ == 3 && (dR_d1 > dR_ || dR_d2 > dR_ || dR_B > dR_))
                         continue;
+                    if (b_merged_ && dR_B > dR_)
+                        continue;
                     // std::cout << "    particle pt/eta/phi/pdgid/daughter pdgId: " << gp.pt() << "/" << gp.eta() << "/" << gp.phi() << "/" << gp.pdgId() << "/" << daughter1->pdgId() << std::endl;
                     // return true;
                     found = true;
@@ -1925,6 +1927,7 @@ public:
 private:
     float dR_, pt_cut_;
     int d_in_tj_;
+    bool b_merged_;
     int counter = 0;
 };  // HadronicTopId
 

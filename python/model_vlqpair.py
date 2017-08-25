@@ -25,13 +25,17 @@ dict_uncerts_default = {
 
 
 def get_model_no_norm(dict_uncerts=None):
-    def tmp(hist_dir, final_states=None):
+    def tmp(hist_dir, final_states=None, scale=None):
         import theta_auto
 
         model = theta_auto.build_model_from_rootfile(
             hist_dir,
             include_mc_uncertainties = True)#mc uncertainties=true
         model.fill_histogram_zerobins()
+
+        if scale:
+            model.scale_predictions(scale)
+
         if final_states:
             if isinstance(final_states, str):
                 final_states = [final_states]

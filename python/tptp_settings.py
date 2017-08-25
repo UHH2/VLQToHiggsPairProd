@@ -3,6 +3,7 @@ from varial import settings
 import varial.analysis as analysis
 import UHH2.VLQSemiLepPreSel.vlq_settings
 import ROOT
+import ctypes
 
 settings.rootfile_postfixes = ['.root', '.png', '.pdf']
 
@@ -26,18 +27,19 @@ settings.cutflow_precision.update({
 
 settings.pretty_names.update({
     'no sel._tex' : 'no sel.',
-    'trigger_accept_el45_tex' : 'trigger',
-    'trigger_accept_mu45_tex' : 'trigger',
-    'primary_lepton_pt_tex' : 'p_T(Lepton)',
-    'primary_electron_pt_tex' : 'p_T(Electron)',
-    'primary_muon_pt_tex' : 'p_T(Muon)',
-    'pt_ld_ak4_jet_tex' : 'p_T(1st AK4 jet)',
-    'pt_subld_ak4_jet_tex' : 'p_T(2nd AK4 jet)',
-    '2D cut_tex' : '2D cut',
+    'trigger_accept_el45_tex' : 'Trigger',
+    'trigger_accept_mu45_tex' : 'Trigger',
+    'primary_lepton_pt_tex' : r'$p_{\mathrm{T}}$(Lepton)',
+    'primary_electron_pt_tex' : r'$p_{\mathrm{T}}$(Electron)',
+    'primary_muon_pt_tex' : r'$p_{\mathrm{T}}$(Muon)',
+    'pt_ld_ak4_jet_tex' : r'$p_{\mathrm{T}}$(1st AK4 jet)',
+    'pt_subld_ak4_jet_tex' : r'$p_{\mathrm{T}}$(2nd AK4 jet)',
+    '2D cut_tex' : '2D isolation',
     'ST_tex' : 'ST',
     'n_ak4_tex' : 'N(AK4 jets)',
     'n_ak8_tex' : 'N(AK8 jets)',
     'pt_ld_ak8_jet_tex' : 'p_T(1st AK8 jet)',
+    'tot. eff._tex' : 'tot. eff.',
     'output/input_tex' : 'output/input',
     'TpTp_M-0700' : r'$\mathrm{T\bar{T}}$ (0.7 TeV)',
     'TpTp_M-0800' : r'$\mathrm{T\bar{T}}$ (0.8 TeV)',
@@ -63,26 +65,27 @@ settings.pretty_names.update({
     'BpBp_M-1600' : r'$\mathrm{B\bar{B}}$ (1.6 TeV)',
     'BpBp_M-1700' : r'$\mathrm{B\bar{B}}$ (1.7 TeV)',
     'BpBp_M-1800' : r'$\mathrm{B\bar{B}}$ (1.8 TeV)',
+    'TTbar' : r'$\mathrm{t\bar{t}}$',
     'DYJetsToLL' : 'DY + jets',
-    'SingleTop' : 'Single T',
+    'SingleTop' : 'Single top',
     'WJets' : 'W + jets',
     'ttbar_rate': 't#bar{t} rate',
     'qcd_rate': 'QCD rate',
     'wjets_rate': 'W+jets rate',
     'zjets_rate': 'Z+jets rate',
     'singlet_rate': 'Single t rate',
-    'TTbar_rate': 't#bar{t} rate',
-    'QCD_rate': 'QCD rate',
-    'Diboson_rate': 'VV rate',
+    'TTbar_rate': 't#bar{t} + jets rate',
+    'QCD_rate': 'Multijet rate',
+    'Diboson_rate': 'Diboson rate',
     'WJets_rate': 'W+jets rate',
     'DYJets_rate': 'Z+jets rate',
     'SingleTop_rate': 'Single t rate',
     'jec' : 'JES',
     'jer' : 'JER',
-    'luminosity' : 'Lumi',
-    'btag_bc' : 'B tag: bc',
-    'btag_udsg' : 'B tag: udsg',
-    'pu' : 'Pileup',
+    'luminosity' : 'Luminosity',
+    'btag_bc' : 'B tag: heavy fl.',
+    'btag_udsg' : 'B tag: light fl.',
+    'pu' : 'Pileup rew.',
     'sfmu_id' : 'ID: #mu',
     'sfmu_trg' : 'Trigger: #mu',
     'sfmu_iso' : 'Iso: #mu',
@@ -93,14 +96,21 @@ settings.pretty_names.update({
     'PDF' : 'PDF',
     'ttbar_scale' : 'PS scale',
     'PSScale' : 'PS scale',
-    'top_pt_reweight' : 'top-p_{T} reweighting',
-    'ht_reweight' : 'H_{T}-reweighting',
+    'top_pt_reweight' : 'top-p_{T} rew.',
+    'ht_reweight' : 'H_{T}-rew.',
     'q2' : 'Top shower',
-    'higgs_smear' : 'Jet mass res.',
-    'higgs_scale' : 'Jet mass scale',
+    'higgs_smear' : 'AK8 mass res.',
+    'higgs_scale' : 'AK8 mass scale',
     'jmr' : 'Pruned mass resolution',
     'jms' : 'Pruned mass scale',
-    'jsf' : 'H_{T} reweighting',
+    'jsf' : 'H_{T}-rew.',
+    'tau21' : 'W tagging: #tau_{2}/#tau_{1}',
+    'taupt' : 'W tagging: #tau_{2}/#tau_{1} p_{T} dep.',
+    'ScaleVarWJets' : '#mu_{RF} scales: W + jets',
+    'ScaleVarTTbar' : '#mu_{RF} scales: t#bar{t} + jets',
+    'ScaleVarSingleTop' : '#mu_{RF} scales: Single t',
+    'ScaleVarQCD' : '#mu_{RF} scales: QCD',
+    'ScaleVarDYJets' : '#mu_{RF} scales: Z + jets',
 } )
 # settings.defaults_Legend['x_pos'] = 0.80
 # settings.defaults_Legend['label_width'] = 0.36
@@ -121,6 +131,22 @@ settings.tot_error_color_bot = (921, 0.6)
 settings.tot_error_fill_bot = 3644
 settings.stack_line_color = None
 settings.signal_linewidth = 2
+
+def tot_error_style(histo, **kws):
+    fill_color, fill_style = kws.get('tot_fill_color', settings.tot_error_color), kws.get('tot_fill_style', settings.tot_error_fill)
+    kws.update({ 'fill_color' : fill_color, 'fill_style' : fill_style})
+    histo.SetTitle(kws.get('tot_err_legend', 'Bkg. uncert.'))
+    settings.apply_error_hist_style(histo, **kws)
+
+
+def stat_error_style(histo, **kws):
+    fill_color, fill_style = kws.get('stat_fill_color', settings.stat_error_color), kws.get('stat_fill_style', settings.stat_error_fill)
+    kws.update({ 'fill_color' : fill_color, 'fill_style' : fill_style})
+    histo.SetTitle(kws.get('stat_err_legend', 'Bkg. uncert. (stat.)'))
+    settings.apply_error_hist_style(histo, **kws)
+
+settings.tot_error_style = tot_error_style
+settings.stat_error_style = stat_error_style
 
 # Heiner's settings for total error:
 # style = 3475
@@ -164,6 +190,22 @@ settings.__setattr__('legend_entries', [
     ]
     )
 
+
+def sort_legend_func(w):
+    if 'Data' in w:
+        ind = 0
+    elif '0.8' in w:        
+        ind = -1
+    elif '1.2' in w:        
+        ind = -2
+    elif 'TeV' in w:
+        ind = -3
+    elif 'uncert' in w:
+        ind = -999
+    else:
+        ind = -5
+    return ind
+
 # if settings.style != 'AN':
 settings.defaults_Legend.update({
     'x_pos': 0.7,
@@ -174,7 +216,7 @@ settings.defaults_Legend.update({
     'opt': 'f',
     'opt_data': 'pl',
     'reverse': True,
-    'sort_legend' : lambda w: 'TT ' in w[1],
+    'sort_legend' : sort_legend_func,
     # 'clean_legend' : lambda w: any(a in w[1] for a in legend_entries),
 })
 
@@ -198,28 +240,9 @@ settings.root_style.SetPadBottomMargin(0.125)
 settings.root_style.SetPadRightMargin(0.1)
 
 settings.bottom_pad_height = 0.3
-# def apply_split_pad_styles(cnv_wrp):
-#     main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
 
-#     main.SetTopMargin(0.1)
-#     main.SetBottomMargin(0.3)
-#     #main.SetRightMargin(0.04)
-#     #main.SetLeftMargin(0.16)
 
-#     scnd.SetTopMargin(0.)
-#     scnd.SetBottomMargin(0.375)
-#     #scnd.SetRightMargin(0.04)
-#     #scnd.SetLeftMargin(0.16)
-#     scnd.SetRightMargin(main.GetRightMargin())
-#     scnd.SetLeftMargin(main.GetLeftMargin())
-#     scnd.SetGridy()
 
-#     first_obj = cnv_wrp.first_obj
-#     first_obj.GetYaxis().CenterTitle(1)
-#     first_obj.GetYaxis().SetTitleSize(0.045)
-#     first_obj.GetYaxis().SetTitleOffset(1.3)
-#     first_obj.GetYaxis().SetLabelSize(0.055)
-#     first_obj.GetXaxis().SetNdivisions(505)
 
 # def set_bottom_plot_general_style(obj):
 #     obj.GetYaxis().CenterTitle(1)
@@ -244,7 +267,7 @@ def apply_split_pad_styles(cnv_wrp):
     #main.SetRightMargin(0.04)
     #main.SetLeftMargin(0.16)
 
-    scnd.SetTopMargin(0.)
+    scnd.SetTopMargin(0.05)
     scnd.SetBottomMargin(0.375)
     #scnd.SetRightMargin(0.04)
     #scnd.SetLeftMargin(0.16)
@@ -252,10 +275,16 @@ def apply_split_pad_styles(cnv_wrp):
     scnd.SetLeftMargin(main.GetLeftMargin())
     scnd.SetGridy()
 
+    pars = [ctypes.c_double(), ctypes.c_double(), ctypes.c_double(), ctypes.c_double()]
+    main.GetPadPar(*pars)
+    pars = [d.value for d in pars]
+    pars[1] += 0.002  # lift ylow very slightly
+    main.SetPad(*pars)
+
     first_obj = cnv_wrp.first_obj
     first_obj.GetYaxis().CenterTitle(1)
-    first_obj.GetYaxis().SetTitleSize(0.055)
-    first_obj.GetYaxis().SetTitleOffset(1.1)
+    first_obj.GetYaxis().SetTitleSize(0.045)
+    first_obj.GetYaxis().SetTitleOffset(1.4)
     first_obj.GetYaxis().SetLabelSize(0.055)
     first_obj.GetXaxis().SetNdivisions(505)
 
@@ -278,15 +307,15 @@ settings.set_bottom_plot_pull_style = set_bottom_plot_pull_style
 #     'ST': 434, # Orange
 #     'QCD': 870,   # Light blue
 # }
-signals = {'TpTp_M-0800' : ROOT.kViolet,
-    'TpTp_M-1200' : ROOT.kBlue,
-    'TpTp_M-1600' : ROOT.kRed
+signals = {'TpTp_M-0800' : ROOT.kBlack,
+    'TpTp_M-1200' : ROOT.kBlack,
+    'TpTp_M-1600' : ROOT.kBlack
     }
 final_states = final_states = ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw', '_incl']
 
 for s, c in signals.iteritems():
     settings.colors.update(dict((s + f, c) for f in final_states))
-    settings.colors.update({s+'_thX' : ROOT.kAzure, s+'_other' : ROOT.kMagenta})
+    settings.colors.update({s+'_thX' : ROOT.kBlack, s+'_other' : ROOT.kBlack})
 
 
 
@@ -295,7 +324,7 @@ settings.colors.update({
     'nominal' : 1,
     'plus' : 2,
     'minus' : 3,
-    'TTbar': 632 - 7,
+    'TTbar': 632-7,
     'WJets': 400-9,
     'ZJets': 432-9,
     'DYJets': 432-9,
@@ -304,4 +333,10 @@ settings.colors.update({
     'SingleTop': 416-9,
     'Diboson' :616-9,
     'QCD': 851,
+    'TpTp_M-0800' : ROOT.kBlack,
+    'TpTp_M-1200' : ROOT.kBlack,
+    'TpTp_M-0800_thX' : ROOT.kBlack,
+    'TpTp_M-0800_other' : ROOT.kBlack,
+    'TpTp_M-1200_thX' : ROOT.kBlack,
+    'TpTp_M-1200_other' : ROOT.kBlack,
 })

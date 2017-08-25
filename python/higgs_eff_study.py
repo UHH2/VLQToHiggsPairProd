@@ -38,7 +38,7 @@ import tex_content_new as tex_content
 from ROOT import TLatex, TH2
 
 
-sframe_cfg = '/nfs/dust/cms/user/nowatsd/sFrameNew/RunII_76X_v1/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpHiggsTagEfficiency.xml'
+sframe_cfg = '/afs/desy.de/user/n/nowatsd/xxl-af-cms/SFrameUHH2/CMSSW_7_6_3/src/UHH2/VLQToHiggsPairProd/config/TpTpHiggsTagEfficiency.xml'
 
 basenames = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-0700',
@@ -54,13 +54,62 @@ basenames = list('uhh2.AnalysisModuleRunner.'+f for f in [
     'MC.TpTp_M-1700',
     'MC.TpTp_M-1800',
     'MC.TTbar',
-    'MC.WJets'
+    'MC.WJets',
+    'MC.QCD'
     ])
 
 varial.settings.colors.update({
     'TTbar': 632,
     'WJets': 860,
 })
+
+
+def apply_split_pad_styles(cnv_wrp):
+    main, scnd = cnv_wrp.main_pad, cnv_wrp.second_pad
+
+    main.SetTopMargin(0.125)
+    main.SetBottomMargin(bottom_pad_height)
+    #main.SetRightMargin(0.04)
+    #main.SetLeftMargin(0.16)
+
+    scnd.SetTopMargin(0.)
+    scnd.SetBottomMargin(0.375)
+    #scnd.SetRightMargin(0.04)
+    #scnd.SetLeftMargin(0.16)
+    scnd.SetRightMargin(main.GetRightMargin())
+    scnd.SetLeftMargin(main.GetLeftMargin())
+    scnd.SetGridy()
+
+    first_obj = cnv_wrp.first_obj
+    first_obj.GetYaxis().CenterTitle(1)
+    first_obj.GetYaxis().SetTitleSize(0.05)
+    first_obj.GetYaxis().SetTitleOffset(1.)
+    first_obj.GetYaxis().SetLabelSize(0.055)
+    first_obj.GetXaxis().SetNdivisions(505)
+
+varial.settings.apply_split_pad_styles = apply_split_pad_styles
+
+
+
+def sort_legend_signal(w):
+    if 'TeV' in w:
+        mass = w[-8:-5]
+        return -float(mass)
+    else:
+        return -100
+
+varial.settings.defaults_Legend.update({
+    'y_pos': 0.75,
+    'x_pos': 0.33,
+    'label_width': 0.25,
+    'label_height': 0.05,
+    'box_text_size' : 0.036,
+    'sort_legend' : sort_legend_signal,
+    })
+# colors_mu = [797, 434, 409]
+# colors_el = [625, 596, 617]
+all_colors = [797, 434, 409, 625, 596, 617]
+markers = [(21, 0.8), (22, 1.), (23, 1.), (20, 0.8), (24, 0.8), (25, 0.8), (26, 0.8)]
 
 def add_eff_to_wrp(wrps):
     for w in wrps:
@@ -85,7 +134,7 @@ def mod_title(wrps):
         elif 'mass' in w.name:
             x_ax_post = ' Mass [GeV]'
         elif 'nsjbtags' in w.name:
-            x_ax_post = ' N(sj b-tags)'
+            x_ax_post = ' N(b-tagged subjets)'
         else:
             x_ax_post = ''
         if isinstance(w, varial.wrappers.HistoWrapper):
@@ -94,9 +143,9 @@ def mod_title(wrps):
             w.graph.GetXaxis().SetTitle(x_ax_pre+x_ax_post)
 
         if '1b' in w.name:
-            y_ax_post = '(H-tag, #geq 1 sj b-tag)'
+            y_ax_post = '(H-tag, #geq 1 b-tagged subjets)'
         elif '2b' in w.name:
-            y_ax_post = '(H-tag, 2 sj b-tags)'
+            y_ax_post = '(H-tag, 2 b-tagged subjets)'
         if 'eff' in w.name:
             if isinstance(w, varial.wrappers.HistoWrapper):
                 w.histo.GetYaxis().SetTitle('Efficiency '+y_ax_post)
@@ -163,6 +212,31 @@ def mk_name(wrp):
     else:
         return 'bkg_'
 
+def marker_style(wrps, markers=markers):
+    n = 0
+    for wrp in wrps:
+        mrk = markers[n % len(markers)]
+        n += 1
+        if isinstance(wrp, wrappers.GraphWrapper):
+            wrp.graph.SetMarkerStyle(mrk[0])
+            wrp.graph.SetMarkerSize(mrk[1])
+            wrp.draw_option_legend = 'ple'
+        yield wrp
+
+def marker_col(wrps):
+    n = 0
+    for wrp in wrps:
+        # if 'electron' in wrp.name:
+        #     col = colors_el[n % len(colors_el)]
+        # elif 'muon' in wrp.name:
+        #     col = colors_mu[n % len(colors_mu)]
+        # else:
+        col = all_colors[n % len(all_colors)]
+        n += 1
+        wrp.obj.SetLineColor(col)
+        wrp.obj.SetMarkerColor(col)
+        yield wrp
+
 def plot_grouper_sep_sig_bkg(wrps):
     # if separate_th2:
     #     wrps = rename_th2(wrps)
@@ -173,6 +247,13 @@ def mod_cnv_postbuild(cnvs):
     cnvs = add_eff_to_info(cnvs)
     return cnvs
 
+
+def plot_setup(grps):
+    grps = (marker_col(ws) for ws in grps)
+    grps = (marker_col(ws) for ws in grps)
+    grps = (marker_style(ws, markers) for ws in grps)
+    grps = list(grps)
+    return grps
 
 def loader_hook_eff(wrps):
     # wrps = varial.gen.gen_noex_rebin_nbins_max(wrps, nbins_max=60)
@@ -190,7 +271,7 @@ def loader_hook_eff(wrps):
     wrps = gen.gen_make_eff_graphs(wrps, yield_everything=True, pair_func=lambda w, l: w.sample+'_'+w.in_file_path[:-l])
     wrps = mod_title(wrps)
     # wrps = (w for w in wrps if w.histo.Integral() > 1e-20)
-    wrps = mk_marker(wrps)
+    # wrps = mk_marker(wrps)
     # wrps = gen.sort(wrps, ['sys_info', 'in_file_path', 'sample'])
     # # if varial.settings.merge_decay_channels:
     # wrps = vlq_common.merge_decay_channels(wrps, ['_thth', '_thtz', '_thbw', '_noH_tztz', '_noH_tzbw', '_noH_bwbw'], print_warning=False)
@@ -205,10 +286,10 @@ def plotter_factory_eff():
 
 	def tmp(**kws):
 	    # common_plot.plotter_factory_eff(common_plot.normfactors, **kws)
-	    # kws['filter_keyfunc'] = lambda w: (f in w.sample for f in datasets_to_plot)
+	    kws['filter_keyfunc'] = lambda w: 'HiggsTagEfficiencyPreGenPartHiggsBsInJet' in w.in_file_path
 	    kws['hook_loaded_histos'] = loader_hook_eff
 	    kws['plot_grouper'] = plot_grouper_sep_sig_bkg
-	    # kws['plot_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
+	    kws['plot_setup'] = plot_setup
 	    # kws['stack_setup'] = lambda w: stack_setup_norm_sig(w, rate_uncertainties, shape_uncertainties, include_rate)
 	    # kws['canvas_post_build_funcs'] += [rnd.TitleBox(text='CMS Simulation 20fb^{-1} @ 13TeV')]
 	    # kws['y_axis_scale'] = 'lin'
@@ -216,7 +297,12 @@ def plotter_factory_eff():
 	    # kws['hook_canvas_post_build'] = canvas_setup_post
 	    # kws['hook_canvas_pre_build'] = common_plot.mod_pre_canv
 	    kws['save_name_func'] = lambda w: mk_name(w._renderers[0])+w.name
-	    kws['canvas_post_build_funcs'] = common_plot.get_style()
+	    kws['canvas_post_build_funcs'] = [
+                    rnd.mk_legend_func(),
+                    # common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}}")),
+                    common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.6]{Simulation}")),
+                    common_plot.mk_tobject_draw_func(TLatex(0.79, 0.89, "#scale[0.45]{(13 TeV)}")),
+                    ]
 	    kws['mod_log'] = common_plot.mod_log_usr()
 	    return varial.tools.Plotter(stack=False, **kws)
 	return tmp
@@ -272,7 +358,8 @@ def run_sframe(name='Test'):
         # 'TpTp_M-1800',
         'TTbar',
         # 'WJets_LNu_HT2500ToInf'
-        'WJets'
+        'WJets',
+        'QCD'
     ]
 
     sframe = MySFrameBatch(
@@ -311,6 +398,7 @@ def run_sframe(name='Test'):
         ]
         tc_tex = varial.tools.ToolChain('CopyPlots', [
             varial.tools.ToolChain('TexThesis', tc_tex),
+            varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/xxl-af-cms/PlotsToInspect', src='../../Plots/StackedAll/Mu45_Baseline/*', ignore=('*.svn', '*.log'), use_rsync=True, options='-qa --delete', name='CopyToolInspect'),
             varial.tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete'),
             ])
         return tc_tex 

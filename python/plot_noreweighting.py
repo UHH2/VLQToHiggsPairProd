@@ -89,7 +89,7 @@ mod_dict = {
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
-            'set_leg_2_col_log' : {
+            '_set_leg_2_col_log' : {
                     'x_pos': 0.7,
                     'y_pos': 0.67,
                     'label_width': 0.30,
@@ -118,7 +118,7 @@ mod_dict = {
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 1e-5,
             'bin_width' : 100,
-            'set_leg_2_col_lin' : {
+            '_set_leg_2_col_lin' : {
                     'x_pos': 0.7,
                     'y_pos': 0.67,
                     'label_width': 0.30,
@@ -135,7 +135,7 @@ mod_dict = {
             },
     'primary_lepton_pt' : {
             'rebin' : 25,
-            'set_leg_2_col_log' : common_plot.leg_2_col_def,
+            '_set_leg_2_col_log' : common_plot.leg_2_col_def,
             'y_max_log_fct' : 10000.,
             'y_min_gr_zero' : 0.1,
             'title' : 'Primary Lepton p_{T} [GeV]',

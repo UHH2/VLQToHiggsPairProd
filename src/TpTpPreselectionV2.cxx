@@ -36,7 +36,7 @@
 #include "UHH2/VLQToHiggsPairProd/include/TpTpAnalysisModule.h"
 
 using namespace std;
-using namespace uhh2;
+using namespace uhh2;   
 
 // using namespace vlqToHiggsPair;
 
@@ -47,13 +47,15 @@ public:
 
     // NEW VALUES FOR CUTS BELOW, OLD ONES COMMENTED OUT! USE THE NEW ONES WHEN RERUNNING PRESELECTION (and make sure you implement tighter cuts in TpTpFinalSelectionTreeOutput.cxx)
 
+    const vector<shared_ptr<SelectionItem>> SEL_ITEMS_NO_SEL {};
+
     const vector<shared_ptr<SelectionItem>> SEL_ITEMS_BASELINE_SEL {
         // shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 700)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 2)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         shared_ptr<SelectionItem>(new SelDatD("ST", "ST", 65, 0, 6500, 500)),
         shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 1)),
-        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 2)),
+        shared_ptr<SelectionItem>(new SelDatI("n_ak4", "N(Ak4 Jets)", 20, -.5, 19.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatD("HT", "HT", 25, 0, 4500)),
         // shared_ptr<SelectionItem>(new SelDatI("n_ak8", "N(Ak8 Jets)", 8, -.5, 7.5, 3)),
         // shared_ptr<SelectionItem>(new SelDatF("pt_ld_ak8_jet", "Pt leading Ak8 Jet", 60, 0., 1500., 300.)),
@@ -85,6 +87,8 @@ public:
     const float DR_2D_CUT_PRESEL = 0.4;
     const float DPT_2D_CUT_PRESEL = 40.0;
 
+    unsigned pos_2d_cut = 0;
+
     explicit TpTpPreselectionV2(Context & ctx);
     virtual bool process(Event & event) override;
 
@@ -110,7 +114,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
     //             ));
     
     CommonModules* commonObjectCleaning = new CommonModules();
-    commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(20.0,2.4)));
+    commonObjectCleaning->set_jet_id(AndId<Jet>(JetPFID(JetPFID::WP_LOOSE), PtEtaCut(10.0,2.4)));
     commonObjectCleaning->disable_jersmear();
         // commonObjectCleaning->disable_mcpileupreweight();
     commonObjectCleaning->set_electron_id(AndId<Electron>(ElectronID_Spring15_25ns_medium_noIso,PtEtaCut(20.0, 2.4)));
@@ -180,7 +184,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
     for (auto const & cat : categories) {
 
         string triggername = "trigger_accept_"+cat;
-        SEL_ITEMS_FULL_SEL.push_back(SEL_ITEMS_BASELINE_SEL);
+        SEL_ITEMS_FULL_SEL.push_back(SEL_ITEMS_NO_SEL);
 
         // if (split(cat, "-").size() > 1 && split(cat, "-")[1] == "uncleaned") {
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("n_ak8_uncleaned", "N(Ak8 Jets)", 8, -.5, 7.5, 3));
@@ -227,13 +231,31 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         }
         else if (cat == "Mu45") {
             
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Muon p_{T}", 60, 0., 1200., 47.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 1));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_muon_pt", "Primary Muon p_{T}", 60, 0., 1200., 47.));
+            for (auto sel : SEL_ITEMS_BASELINE_SEL) {
+                SEL_ITEMS_FULL_SEL.back().emplace_back(sel);
+            }
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500.));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
+            pos_2d_cut = 2;
+        }
+        else if (cat == "El45") {
+            
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200., 50.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 150.));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 35.));
+            for (auto sel : SEL_ITEMS_BASELINE_SEL) {
+                SEL_ITEMS_FULL_SEL.back().emplace_back(sel);
+            }
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 0, 0));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
+            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
+            pos_2d_cut = 4;
         }
         else if (cat == "El105") {
             
@@ -244,16 +266,6 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 0, 0));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
             SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt_el105", "Primary Lepton p_{T}", 60, 0., 1200.));
-        }
-        else if (cat == "El45") {
-            
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_electron_pt", "Primary Electron p_{T}", 60, 0., 1200., 50.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_ld_ak4_jet", "Pt leading Ak4 Jet", 60, 0., 1500., 150.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("pt_subld_ak4_jet", "Pt subleading Ak4 Jet", 60, 0., 1500., 35.));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_el45", "Trigger Accept", 2, -.5, 1.5, 1));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_mu45", "Trigger Accept", 2, -.5, 1.5, 0, 0));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatI("trigger_accept_lep_comb", "Trigger Accept", 2, -.5, 1.5));
-            SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatF("primary_lepton_pt", "Primary Lepton p_{T}", 60, 0., 1200.));
         }
         else if (cat == "El45mva") {
             
@@ -295,7 +307,7 @@ TpTpPreselectionV2::TpTpPreselectionV2(Context & ctx) : TpTpAnalysisModule(ctx) 
         //     SEL_ITEMS_FULL_SEL.back().emplace_back(new SelDatD("HT", "HT", 25, 0, 4500, 850));
         // }
 
-        unsigned pos_2d_cut = 4;
+        // unsigned pos_2d_cut = 4;
 
         other_modules.emplace_back(new TwoDCutProducer(ctx, "PrimaryMuon_iso", "TwoDcut_Dr_iso", "TwoDcut_Dpt_iso"));
 

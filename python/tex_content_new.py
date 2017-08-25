@@ -870,6 +870,11 @@ def my_mod_sys_table(table):
         return new_columns
 
     lines = table.split('\n')
+    header = lines[0].split('|')
+    header[1] = 'L{3.5cm}'
+    for i, _ in enumerate(header[2:-1]):
+    	header[i+2] = 'C{1.7cm}'
+    lines[0] = '|'.join(header)
     indizes = find_column_string(lines[1], 'rate') + find_column_string(lines[1], 'luminosity')\
         + find_column_string(lines[3], '---') + find_column_string(lines[1], 'lumiSys')\
         + find_column_string(lines[3], '(r)')
@@ -878,16 +883,35 @@ def my_mod_sys_table(table):
         lines[i] = remove_column(line, indizes)
     table = '\n'.join(lines)
     table = limits.tex_table_mod(table, [
+        # ('|l', '|L{2.5cm}'),
         ('(gauss) ', '  '),
-        ('TpTp ', 'TT '),
+        ('TpTp ', r'$\mathrm{T\bar{T}}$ '),
         (' (s) ', ''),
-        ('process / nuisance parameter', 'pr./ns. par.'),
-        ('higgs smear', 'SD m.res.'),
+        ('M-0800', 'M(T)=0.8 TeV'),
+        ('M-1200', 'M(T)=1.2 TeV'),
+        ('M-1600', 'M(T)=1.6 TeV'),
+        ('DYJets', 'Z + jets'),
+        ('WJets', 'W + jets'),
+        ('TTbar', r'$\mathrm{t\bar{t}}$ + jets'),
+        ('SingleTop', 'Single t'),
+        ('QCD', 'Multijet'),
+        ('process / nuisance parameter', 'proc./ns. par.'),
         ('q2', 'PS q2'),
-        ('ScaleVar', 'ME q2'),
-        ('jmr', 'pr. m. res.'),
-        ('jms', 'pr. m. sc.'),
-        ('jsf', 'bkg rew.'),
+        ('ScaleVar', r'$\mu_{\mathrm{RF}}$ scale var.'),
+        ('jmr', 'AK8 jet mass res.'),
+        ('jms', 'AK8 jet mass sc.'),
+        ('higgs smear', 'AK8 jet mass res.'),
+        ('higgs scale', 'AK8 jet mass sc.'),
+        ('jsf', r'$H_{\mathrm{T}}$ rew.'),
+        ('pu', 'Pileup rew.'),
+        ('jec', 'JEC'),
+        ('jer', 'JER'),
+        ('btag bc', r'$b$ tag eff., h.-fl.'),
+        ('btag udsg', r'$b$ tag eff., l.-fl.'),
+        ('sfel id', r'$e$ id. eff.'),
+        ('sfel trg', r'$e$ trg. eff.'),
+        ('sfmu id', r'$\mu$ id. eff.'),
+        ('sfmu trg', r'$\mu$ trg. eff.'),
         ('$^{+0.00}_{+0.00}$', '$\pm0.0$'),
         ('$^{-0.00}_{+0.00}$', '$\pm0.0$'),
         ('$^{-0.00}_{-0.00}$', '$\pm0.0$'),
@@ -930,6 +954,7 @@ def getSysTab(base, mass_points, mod=my_mod_sys_table, regions=default_regions):
         for mass in mass_points:
             filename = os.path.join(base.format(mass), 'sysrate_tables_{0}.tex'.format(region))
             # print filename
+            filename = varial.analysis.lookup_filename(filename)
             try:
                 with open(filename) as f:
                     cont = f.read()
@@ -962,10 +987,10 @@ def mk_autoContentSysTabs(base, name='AutoContentSysTabs', prefix='', mass_point
     # muchannel = mu_channel or mu_channel_def
     # elchannel = el_channel or el_channel_def
     # lim_dict = getPostfitLarge(base, mass_points)
-    tab_dict = dict(getSysTab(base, mass_points, regions=regions))
+    # tab_dict = dict(getSysTab(base, mass_points, regions=regions))
     return varial.extensions.tex.TexContent(
         {},
-        tab_dict,
+        lambda : dict(getSysTab(base, mass_points, regions=regions)),
         include_str=r'\includegraphics[width=0.45\textwidth]{%s}',
         name=name,
     )
@@ -977,7 +1002,6 @@ def mk_autoContentSysTabs(base, name='AutoContentSysTabs', prefix='', mass_point
 #########################################################
 
 def getTable(filepath, tab_name, mod=None):
-    path = filepath
     if isinstance(filepath, str):
         path = {filepath : tab_name}
     for p in path:

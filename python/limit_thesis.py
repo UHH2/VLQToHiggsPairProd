@@ -8,6 +8,8 @@ import copy
 import pprint
 import cPickle
 
+import theta_auto
+
 import varial.settings as settings
 import varial.rendering as rnd
 import varial.generators as gen
@@ -94,8 +96,72 @@ theta_model_norm = model_vlqpair.get_model_with_norm(dum_rate_uncerts)
 
 theta_model_final = model_vlqpair.get_model_no_norm(final_rate_uncerts)
 
-x_axis_lim="m_{T} [GeV]"
-y_axis_lim="Upper limit on #sigma(pp #rightarrow TT)[pb]"
+x_axis_lim="M_{T} [GeV]"
+y_axis_lim="#sigma(pp #rightarrow T#bar{T}) [pb]"
+
+
+def add_data_gof(grps):
+    for g in grps:
+        toy_hist = g[0]
+        toy_hist.histo.SetLineColor(2)
+        toy_hist.histo.GetXaxis().SetTitle(toy_hist.x_label)
+        toy_hist.histo.GetYaxis().SetTitle('A.U.')
+        gof_data = toy_hist.gof_data
+
+        bin_data = toy_hist.histo.FindBin(gof_data)
+        int_full = toy_hist.histo.Integral()
+        int_num = toy_hist.histo.Integral(bin_data, toy_hist.histo.GetNbinsX())
+        p_val = int_num/int_full 
+        toy_hist.p_value = p_val
+
+        gof_graph = ROOT.TGraph(2)
+        # pprint.pprint(cnv_wrp.__dict__)
+        gof_graph.SetPoint(0, gof_data, -0.01)
+        gof_graph.SetPoint(1, gof_data, toy_hist.histo.GetMaximum()*1.1)
+
+        gof_graph.SetLineStyle(2)
+
+        gof_wrp = varial.wrappers.GraphWrapper(
+            gof_graph,
+            legend='Data',
+            draw_option='C',
+            val_y_max=toy_hist.histo.GetMaximum(),
+            # val_y_min=min_log_y,
+            # val_y_max=max(th_y),
+            # is_th=True
+        )
+        g = list(g)
+        g.append(gof_wrp)
+        res = varial.wrappers.WrapperWrapper(g)
+        save_name = getattr(g[0], 'save_name', '')
+        if save_name:
+            res.save_name = save_name
+        yield res
+
+# def draw_data_gof(**outter_kws):
+
+#     def draw_graph(cnv_wrp, _):
+#         cnv_wrp.main_pad.cd()
+
+#         gof_data = getattr(cnv_wrp, 'gof_data', None)
+
+
+#         gof_graph = ROOT.TGraph(2)
+#         # pprint.pprint(cnv_wrp.__dict__)
+#         gof_graph.SetPoint(0, gof_data, 0)
+#         gof_graph.SetPoint(1, gof_data, cnv_wrp.y_bounds[1])
+
+#         gof_graph.SetLineStyle(2)
+#         gof_graph.Draw('Same')
+#         return cnv_wrp
+
+
+#     return rnd.PostBuildFuncWithSetup(
+#         draw_graph,
+#         ()
+#         )
+
+
 
 def mk_bkg_fit_tc(final_dir, pattern, sys_pat, filter_func=lambda _: True, theta_model=theta_model_bkg):
     # def tmp():
@@ -121,10 +187,45 @@ def mk_bkg_fit_tc(final_dir, pattern, sys_pat, filter_func=lambda _: True, theta
         # brs=brs,
         # model_func=lambda w: model_func(w, signal)
         model_func=theta_model,
+        postfit_func=lambda m, o: theta_auto.mle(m, options=o, input='data', n=1, with_covariance=True, ks=True, chi2=True),
         calc_limits=False
         # out_name=signal
         # do_postfit=False,
     ),
+    limits.ThetaLimits(
+        name='ThetaLimitToy',
+        cat_key=lambda w: w.category,
+        sys_key=lambda w: w.sys_info,
+        # name= 'ThetaLimitsSplit'+str(ind),
+        # asymptotic=False,
+        # brs=brs,
+        # model_func=lambda w: model_func(w, signal)
+        model_func=theta_model,
+        postfit_func=lambda m, o: theta_auto.mle(m, options=o, input='toys:0', n=5000, with_covariance=True, ks=True, chi2=True),
+        calc_limits=False
+        # out_name=signal
+        # do_postfit=False,
+    ),
+    limits.ThetaGOFPlots(
+        name='ThetaGOF',
+        input_path_data='../ThetaLimit',
+        input_path_toys='../ThetaLimitToy',
+        ),
+    Plotter(
+        name='ThetaGOFPlots',
+        input_result_path='../ThetaGOF',
+        plot_setup=add_data_gof,
+        # hook_loaded_histos=loader_hook_triangle,
+        save_name_func=lambda w: w.save_name,
+        canvas_post_build_funcs=[
+            # varial.rendering.TextBox(textbox=TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}} #scale[0.6]{#it{Preliminary}}")),
+            # draw_data_gof(),
+            rnd.mk_legend_func(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
+            # common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.6]{Simulation}")),
+            common_plot.mk_tobject_draw_func(TLatex(0.78, 0.89, "#scale[0.5]{(13 TeV)}"))
+            ],
+        raise_on_no_histograms=True
+        ),
     limits.ThetaPostFitPlot(
         name='PostFit',
         input_path='../ThetaLimit'
@@ -144,7 +245,8 @@ def mk_bkg_fit_tc(final_dir, pattern, sys_pat, filter_func=lambda _: True, theta
             common_plot.mk_tobject_draw_func(TLatex(0.67, 0.89, "#scale[0.5]{2.6 fb^{-1} (13 TeV)}")),
             ],
         raise_on_no_histograms=False
-        )
+        ),
+    tools.WebCreator()
     ])
 
 # def get_lims_comp_mass_split(grp):
@@ -177,9 +279,15 @@ def mk_bkg_fit_tc(final_dir, pattern, sys_pat, filter_func=lambda _: True, theta
 #     return x_list, y_exp_list, None, sigma1_band_low, sigma1_band_high, sigma2_band_low, sigma2_band_high
 
 
+def set_y_max(wrps):
+    for w in wrps:
+        if 'FinalLimitsBB' in w.file_path:
+            w.val_y_max = w.val_y_max * 6
+        yield w
 
+def_lum_args = (0.49, 0.89, "#scale[0.5]{2.5 (e), 2.6 (#mu) fb^{-1} (13 TeV)}")
 
-def mk_limit_tc(final_dir, brs, pattern, sys_pat, non_s_samples, signals, merge_final_states, filter_func=lambda _: True, asymptotic=True, plot_obs=False):
+def mk_limit_tc(final_dir, brs, pattern, sys_pat, non_s_samples, signals, merge_final_states, filter_func=lambda _: True, asymptotic=True, plot_obs=False, x_axis_lim=x_axis_lim, y_axis_lim=y_axis_lim, legend='Theory T#bar{T} (NNLO)', scale_hists=None, lum_args=def_lum_args):
 
     def filter_signal(signal):
         def tmp(wrp):
@@ -235,7 +343,7 @@ def mk_limit_tc(final_dir, brs, pattern, sys_pat, non_s_samples, signals, merge_
                     asymptotic=asymptotic,
                     # brs=brs,
                     # model_func=lambda w: model_func(w, signal)
-                    model_func=lambda w: theta_model_final(w, sig.split('_')[0]+'*'),
+                    model_func=lambda w: theta_model_final(w, sig.split('_')[0]+'*',scale_hists),
                     hook_result_wrp=sel_opt_study.hook_lim_graph_comp(final_dir)
                     # out_name=signal
                     # do_postfit=False,
@@ -256,20 +364,21 @@ def mk_limit_tc(final_dir, brs, pattern, sys_pat, non_s_samples, signals, merge_
             input_result_path='../LimitGraphsNew',
             # filter_keyfunc=lambda w: 'Uncleaned' in w.legend,
             # plot_setup=plot_setup,
-            hook_loaded_histos=sensitivity.limit_curve_loader_hook(brs),
+            hook_loaded_histos=lambda w: set_y_max(sensitivity.limit_curve_loader_hook(brs)(w)),
             plot_grouper=lambda ws: varial.gen.group(
                     ws, key_func=lambda w: w.save_name),
             # save_name_func=varial.plotter.save_by_name_with_hash
             save_name_func=lambda w: w.save_name,
             plot_setup=lambda w: sensitivity.plot_setup_graphs(w,
                 th_x=common_sensitivity.theory_masses,
-                th_y=common_sensitivity.theory_cs),
+                th_y=common_sensitivity.theory_cs,
+                legend=legend),
             keep_content_as_result=True,
             # hook_canvas_post_build=lambda w: sensitivity.canvas_setup_post(w, max_y=100.),
             canvas_post_build_funcs=[
-                rnd.mk_legend_func(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
+                rnd.mk_legend_func(x_pos=.65, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
                 # common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}}")),
-                # common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),
+                common_plot.mk_tobject_draw_func(TLatex(*lum_args)),
                 ],
             # save_lin_log_scale=True
             ),
@@ -310,7 +419,7 @@ def mk_tc_limgraphs_exp_lim(final_dir, lim_path):
             # canvas_post_build_funcs=[
             #     rnd.mk_legend_func(x_pos=.7, y_pos=0.7, label_width=0.25, label_height=0.06, text_size=0.036),
             #     # common_plot.mk_tobject_draw_func(TLatex(0.16, 0.89, "#scale[0.7]{#bf{CMS}}")),
-            #     # common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),
+            #     # common_plot.mk_tobject_draw_func(TLatex(0.49, 0.89, "#scale[0.5]{2.3/2.6/2.7 fb^{-1} (13 TeV)}")),
             #     ],
             # save_lin_log_scale=True
             ),
@@ -331,7 +440,9 @@ def mk_triangle(lim_path):
             canvas_post_build_funcs=[sensitivity.DrawLess700(),
                 # common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 # common_plot.mk_tobject_draw_func(TLatex(0.67, 0.73, "#scale[0.6]{#it{Simulation}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.81, "#scale[0.55]{Expected 95% CL}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.75, "#scale[0.55]{Lower mass limits}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.49, 0.89, "#scale[0.5]{2.5 (e), 2.6 (#mu) fb^{-1} (13 TeV)}")),]
             ),
 
         varial.plotter.Plotter(
@@ -343,7 +454,9 @@ def mk_triangle(lim_path):
             canvas_post_build_funcs=[sensitivity.DrawLess700(),
                 # common_plot.mk_tobject_draw_func(TLatex(0.75, 0.79, "#scale[0.7]{#bf{CMS}}")),
                 # common_plot.mk_tobject_draw_func(TLatex(0.66, 0.73, "#scale[0.6]{#it{Preliminary}}")),
-                common_plot.mk_tobject_draw_func(TLatex(0.57, 0.89, "#scale[0.5]{2.6 (e), 2.7 (#mu) fb^{-1} (13 TeV)}")),]
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.81, "#scale[0.55]{Observed 95% CL}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.52, 0.75, "#scale[0.55]{Lower mass limits}")),
+                common_plot.mk_tobject_draw_func(TLatex(0.49, 0.89, "#scale[0.5]{2.5 (e), 2.6 (#mu) fb^{-1} (13 TeV)}")),]
             ),
         ])
 
@@ -401,7 +514,58 @@ all_brs = [
     ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
     ]
 
-all_brs_bb = combination_limits.br_list_bb
+brs_test_sens = [
+    # ('bW0p5_tZ0p25_tH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
+    # ('bW0p0_tZ0p5_tH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    ('bW0p0_tZ0p0_tH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
+    # ('bW1p0_tZ0p0_tH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
+    # ('bW0p0_tZ0p2_tH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
+    # ('bW0p0_tZ0p4_tH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
+    # ('bW0p0_tZ0p6_tH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
+    # ('bW0p0_tZ0p8_tH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
+    # ('bW0p0_tZ1p0_tH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
+    # ('bW0p2_tZ0p0_tH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
+    # ('bW0p2_tZ0p2_tH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
+    # ('bW0p2_tZ0p4_tH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
+    # ('bW0p2_tZ0p6_tH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
+    # ('bW0p2_tZ0p8_tH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
+    # ('bW0p4_tZ0p0_tH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
+    # ('bW0p4_tZ0p2_tH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
+    # ('bW0p4_tZ0p4_tH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
+    # ('bW0p4_tZ0p6_tH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
+    # ('bW0p6_tZ0p0_tH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
+    # ('bW0p6_tZ0p2_tH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
+    # ('bW0p6_tZ0p4_tH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
+    # ('bW0p8_tZ0p0_tH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
+    # ('bW0p8_tZ0p2_tH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    ]
+
+# all_brs_bb = combination_limits.br_list_bb
+all_brs_bb = [
+    ('tW0p5_bZ0p25_bH0p25', { 'w' : 0.5, 'h' : 0.25, 'z' : 0.25 }),
+    ('tW0p0_bZ0p5_bH0p5', { 'w' : 0.0, 'z' : 0.5, 'h' : 0.5 }),
+    # ('tW0p0_bZ0p0_bH1p0', { 'w' : 0.0, 'z' : 0.0, 'h' : 1.0 }),
+    # ('tW1p0_bZ0p0_bH0p0', { 'w' : 1.0, 'z' : 0.0, 'h' : 0.0 }),
+    # ('tW0p0_bZ0p2_bH0p8', { 'w' : 0.0, 'z' : 0.2, 'h' : 0.8 }),
+    # ('tW0p0_bZ0p4_bH0p6', { 'w' : 0.0, 'z' : 0.4, 'h' : 0.6 }),
+    # ('tW0p0_bZ0p6_bH0p4', { 'w' : 0.0, 'z' : 0.6, 'h' : 0.4 }),
+    # ('tW0p0_bZ0p8_bH0p2', { 'w' : 0.0, 'z' : 0.8, 'h' : 0.2 }),
+    # ('tW0p0_bZ1p0_bH0p0', { 'w' : 0.0, 'z' : 1.0, 'h' : 0.0 }),
+    # ('tW0p2_bZ0p0_bH0p8', { 'w' : 0.2, 'z' : 0.0, 'h' : 0.8 }),
+    # ('tW0p2_bZ0p2_bH0p6', { 'w' : 0.2, 'z' : 0.2, 'h' : 0.6 }),
+    # ('tW0p2_bZ0p4_bH0p4', { 'w' : 0.2, 'z' : 0.4, 'h' : 0.4 }),
+    # ('tW0p2_bZ0p6_bH0p2', { 'w' : 0.2, 'z' : 0.6, 'h' : 0.2 }),
+    # ('tW0p2_bZ0p8_bH0p0', { 'w' : 0.2, 'z' : 0.8, 'h' : 0.0 }),
+    # ('tW0p4_bZ0p0_bH0p6', { 'w' : 0.4, 'z' : 0.0, 'h' : 0.6 }),
+    # ('tW0p4_bZ0p2_bH0p4', { 'w' : 0.4, 'z' : 0.2, 'h' : 0.4 }),
+    # ('tW0p4_bZ0p4_bH0p2', { 'w' : 0.4, 'z' : 0.4, 'h' : 0.2 }),
+    # ('tW0p4_bZ0p6_bH0p0', { 'w' : 0.4, 'z' : 0.6, 'h' : 0.0 }),
+    # ('tW0p6_bZ0p0_bH0p4', { 'w' : 0.6, 'z' : 0.0, 'h' : 0.4 }),
+    # ('tW0p6_bZ0p2_bH0p2', { 'w' : 0.6, 'z' : 0.2, 'h' : 0.2 }),
+    # ('tW0p6_bZ0p4_bH0p0', { 'w' : 0.6, 'z' : 0.4, 'h' : 0.0 }),
+    # ('tW0p8_bZ0p0_bH0p2', { 'w' : 0.8, 'z' : 0.0, 'h' : 0.2 }),
+    # ('tW0p8_bZ0p2_bH0p0', { 'w' : 0.8, 'z' : 0.2, 'h' : 0.0 }),
+    ]
 
 filter_func_bkg_norew = lambda w: unselect_standard_th_uncerts(w) and any(a in os.path.basename(w.file_path) for a in non_sig_samples) and sensitivity.default_selection(w) and any(w.in_file_path.split('/')[0] == a for a in sb_regions)
 filter_func_bkg_htrew = lambda w: filter_func_bkg_norew(w) and common_plot.unselect_theory_uncert(w)
@@ -415,10 +579,10 @@ def mk_tc_comp_bkg_mdl(final_dir):
     return tools.ToolChainParallel(final_dir, [
             mk_bkg_fit_tc('BkgOnlyNoReweighting', nom_pattern_norew, sys_pattern_norew, filter_func_bkg_norew),
             mk_bkg_fit_tc('BkgOnlyHTReweighting', nom_pattern_htrew, sys_pattern_htrew, filter_func_bkg_htrew),
-            mk_limit_tc('ExpLimitNoReweighting', brs_th_only, nom_pattern_norew, sys_pattern_norew, bkg_samples, list(a + '_thth' for a in treeproject_tptp.tptp_signals), merge_final_states=False, filter_func=filter_func_exp_lim_norew, asymptotic=False),
-            mk_limit_tc('ExpLimitHTReweighting', brs_th_only, nom_pattern_htrew, sys_pattern_htrew, bkg_samples, list(a + '_thth' for a in treeproject_tptp.tptp_signals), merge_final_states=False, filter_func=filter_func_exp_lim_htrew, asymptotic=False),
-            mk_tc_limgraphs_exp_lim('CompExpLimits', '../../ExpLimit*/ThetaLimits/*'),
-            mk_bkg_fit_tc('NormEvalHTReweighting', nom_pattern_htrew, sys_pattern_htrew, filter_func_bkg_htrew, theta_model=theta_model_norm),
+            # mk_limit_tc('ExpLimitNoReweighting', brs_th_only, nom_pattern_norew, sys_pattern_norew, bkg_samples, list(a + '_thth' for a in treeproject_tptp.tptp_signals), merge_final_states=False, filter_func=filter_func_exp_lim_norew, asymptotic=False),
+            # mk_limit_tc('ExpLimitHTReweighting', brs_th_only, nom_pattern_htrew, sys_pattern_htrew, bkg_samples, list(a + '_thth' for a in treeproject_tptp.tptp_signals), merge_final_states=False, filter_func=filter_func_exp_lim_htrew, asymptotic=False),
+            # mk_tc_limgraphs_exp_lim('CompExpLimits', '../../ExpLimit*/ThetaLimits/*'),
+            # mk_bkg_fit_tc('NormEvalHTReweighting', nom_pattern_htrew, sys_pattern_htrew, filter_func_bkg_htrew, theta_model=theta_model_norm),
             tools.WebCreator()
         ], n_workers=1)
 
@@ -429,8 +593,21 @@ def mk_tc_all_limits(final_dir):
                     mk_limit_tc('Limit_'+n, brs, nom_pattern_htrew, sys_pattern_htrew, non_sig_samples, treeproject_tptp.tptp_signals, merge_final_states=True, filter_func=filter_func_obs_lim_htrew, asymptotic=False, plot_obs=True)
                     for n, brs in all_brs
                 ), n_workers=1),
-            mk_triangle(list('../../IndLimits/Limit_%s/LimitCurvesCompared' % i[0]
-                for i in all_brs if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5'])),
+            # mk_triangle(list('../../IndLimits/Limit_%s/LimitCurvesCompared' % i[0]
+            #     for i in all_brs if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5'])),
+            tools.WebCreator()
+            ]
+        )
+
+
+def mk_tc_test_limits(final_dir, set_brs=brs_test_sens, scale=None, lum_args=def_lum_args):
+    return tools.ToolChain(final_dir, [
+            tools.ToolChainParallel('IndLimits', list(
+                    mk_limit_tc('Limit_'+n, brs, nom_pattern_htrew, sys_pattern_htrew, bkg_samples, treeproject_tptp.tptp_signals, merge_final_states=True, filter_func=filter_func_obs_lim_htrew, asymptotic=False, plot_obs=False, scale_hists=scale, lum_args=lum_args)
+                    for n, brs in set_brs
+                ), n_workers=1),
+            # mk_triangle(list('../../IndLimits/Limit_%s/LimitCurvesCompared' % i[0]
+            #     for i in all_brs if i[0] not in ['bW0p5_tZ0p25_tH0p25', 'bW0p0_tZ0p5_tH0p5'])),
             tools.WebCreator()
             ]
         )
@@ -439,7 +616,9 @@ def mk_tc_all_limits(final_dir):
 def mk_tc_all_limits_bb(final_dir):
     return tools.ToolChain(final_dir, [
             tools.ToolChainParallel('IndLimits', list(
-                    mk_limit_tc('Limit_'+n, brs, nom_pattern_htrew_bb, sys_pattern_htrew_bb, non_sig_samples, treeproject_tptp.bpbp_signals, merge_final_states=True, filter_func=filter_func_obs_lim_htrew, asymptotic=False, plot_obs=True)
+                    mk_limit_tc('Limit_'+n, brs, nom_pattern_htrew_bb, sys_pattern_htrew_bb, non_sig_samples, treeproject_tptp.bpbp_signals, merge_final_states=True, filter_func=filter_func_obs_lim_htrew, asymptotic=False,
+                        plot_obs=True, x_axis_lim="M_{B} [GeV]", y_axis_lim="#sigma(pp #rightarrow B#bar{B}) [pb]",
+                        legend='Theory B#bar{B} (NNLO)')
                     for n, brs in all_brs_bb
                 ), n_workers=1),
             mk_triangle(list('../../IndLimits/Limit_%s/LimitCurvesCompared' % i[0]
@@ -662,6 +841,10 @@ def mk_tc_tex(source_dir):
                 ('bkg_only_check_htrew_postfit', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyHTReweighting/PostFit/cnv_post_fit_.pdf'),
                 ('bkg_only_check_norew_corr_mat', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyNoReweighting/CorrelationPlot/correlation_matrix_d42c0f_lin.pdf'),
                 ('bkg_only_check_htrew_corr_mat', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyHTReweighting/CorrelationPlot/correlation_matrix_d42c0f_lin.pdf'),
+                ('bkg_only_check_norew_ks_test', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyNoReweighting/ThetaGOFPlots/ks_hist_lin.pdf'),
+                ('bkg_only_check_htrew_ks_test', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyHTReweighting/ThetaGOFPlots/ks_hist_lin.pdf'),
+                ('bkg_only_check_norew_chi2_test', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyNoReweighting/ThetaGOFPlots/chi2_hist_lin.pdf'),
+                ('bkg_only_check_htrew_chi2_test', os.path.join(base_path, source_dir)+'/BkgStudies/BkgOnlyHTReweighting/ThetaGOFPlots/chi2_hist_lin.pdf'),
             ), name='CompBkgModels'
         ),
         tex_content.mk_plot_ind(
@@ -688,7 +871,21 @@ def mk_tc_tex(source_dir):
                 ('h2b_ST_pull', os.path.join(base_path, source_dir)+'/PreFitPlots/HistogramsPrefitPulls/StackedAll/SignalRegion2b/ST_rebin_flex_log.pdf'),
             ), name='PreFitPlots'
         ),
-        tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir, 'FinalLimitsTT/IndLimits/Limit_bW0p0_tZ0p0_tH1p0/ThetaLimits/{0}'), 'SysTabs', mass_points=['TpTp_M-0800', 'TpTp_M-1200', 'TpTp_M-1600'], regions=final_regions),
+        tex_content.mk_plot_ind(
+            (
+                ('lim_tt_tH100', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/IndLimits/Limit_bW0p0_tZ0p0_tH1p0/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('lim_tt_singlet', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/IndLimits/Limit_bW0p5_tZ0p25_tH0p25/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('lim_tt_doublet', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/IndLimits/Limit_bW0p0_tZ0p5_tH0p5/LimitCurvesCompared/lim_graph_log.pdf'),
+                # ('lim_bb_tH100', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/IndLimits/Limit_tW0p0_bZ0p0_bH1p0/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('lim_bb_singlet', os.path.join(base_path, source_dir)+'/FinalLimitsBB/IndLimits/Limit_tW0p5_bZ0p25_bH0p25/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('lim_bb_doublet', os.path.join(base_path, source_dir)+'/FinalLimitsBB/IndLimits/Limit_tW0p0_bZ0p5_bH0p5/LimitCurvesCompared/lim_graph_log.pdf'),
+                ('lim_tt_triangle_exp', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                ('lim_tt_triangle_obs', os.path.join(base_path, source_dir)+'/FinalLimitsTT_2/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+                ('lim_bb_triangle_exp', os.path.join(base_path, source_dir)+'/FinalLimitsBB/LimitTriangle/PlotterBoxExp/lim_exp_lin.pdf'),
+                ('lim_bb_triangle_obs', os.path.join(base_path, source_dir)+'/FinalLimitsBB/LimitTriangle/PlotterBoxObs/lim_obs_lin.pdf'),
+            ), name='FinalLimits'
+        ),
+        tex_content.mk_autoContentSysTabs(os.path.join(base_path, source_dir, 'FinalLimitsTT_2/IndLimits/Limit_bW0p0_tZ0p0_tH1p0/ThetaLimits/{0}'), 'SysTabs', mass_points=['TpTp_M-0800', 'TpTp_M-1200', 'TpTp_M-1600'], regions=final_regions),
         tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFSAll/count_table_content.tex', name='EffTableCompFSAll'),
         tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFSFinalCuts/count_table_content.tex', name='EffTableCompFSFinalCuts'),
         tex_content.mk_autoTable(os.path.join(base_path, source_dir)+'/Tables/EffTableCompFSFinalCutsComb/count_table_content.tex', name='EffTableCompFSFinalCutsComb'),
@@ -699,6 +896,7 @@ def mk_tc_tex(source_dir):
     tc_tex = tools.ToolChain('CopyPlots', [
         tools.ToolChain('TexThesis', tc_tex),
         tools.CopyTool('/afs/desy.de/user/n/nowatsd/Documents/figures_thesis/', src='../TexThesis/*', ignore=('*.svn', '*.html', '*.log'), use_rsync=True, options='-qa --delete'),
+        # tools.CopyTool('/afs/desy.de/user/n/nowatsd/xxl-af-cms/PlotsToInspect', src='../../BkgStudies/*', ignore=('*.svn', '*.log'), use_rsync=True, options='-qa --delete', name='CopyToolInspect'),
         ])
     return tc_tex
 
@@ -712,10 +910,13 @@ if __name__ == '__main__':
     final_dir = sys.argv[1]
     all_tools = tools.ToolChainParallel(final_dir,
         [
-            mk_tc_all_limits('FinalLimitsTT'),
-            mk_tc_all_limits_bb('FinalLimitsBB'),
-            mk_tc_tex(final_dir),
-            tools.WebCreator()
+            # mk_tc_comp_bkg_mdl('BkgStudies'),
+            # mk_tc_all_limits('FinalLimitsTT_2'),
+            mk_tc_test_limits('TestSensitivity300', scale=115.4,lum_args=(0.65, 0.89, "#scale[0.5]{300 fb^{-1} (13 TeV)}")),
+            mk_tc_test_limits('TestSensitivity3000', scale=1154.,lum_args=(0.63, 0.89, "#scale[0.5]{3000 fb^{-1} (13 TeV)}")),
+            # mk_tc_all_limits_bb('FinalLimitsBB'),
+            # mk_tc_tex(final_dir),
+            tools.WebCreator(no_tool_check=True)
             # combination_limits.mk_limit_list('Limits')
         ], n_workers=1)
     tools.Runner(all_tools, default_reuse=True)

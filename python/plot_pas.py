@@ -173,7 +173,7 @@ mod_dict = {
             'y_max_log_fct' : 100000.,
             'y_min_gr_zero' : 2e-3,
             'bin_width' : 100,
-            'set_leg_2_col_log' : {
+            '_set_leg_2_col_log' : {
                     'x_pos': 0.7,
                     'y_pos': 0.7,
                     'label_width': 0.30,
@@ -201,7 +201,7 @@ mod_dict = {
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.4,
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.75,
                     'y_pos': 0.67,
                     'label_width': 0.20,
@@ -223,7 +223,7 @@ mod_dict = {
             'y_min_gr_zero' : 0.02,
             'y_max_log_fct' : 1000.,
             'scale' : 0.4,
-            'set_leg_1_col_lin' : {
+            '_set_leg_1_col_lin' : {
                     'x_pos': 0.75,
                     'y_pos': 0.67,
                     'label_width': 0.20,
@@ -240,7 +240,7 @@ mod_dict = {
             'title' : 'N(subjet b-tags)',
             'y_min_gr_zero' : 100,
             'y_max_log_fct' : 50.,
-            'set_leg_1_col_log' : {
+            '_set_leg_1_col_log' : {
                     'x_pos': 0.74,
                     'y_pos': 0.67,
                     'label_width': 0.30,
